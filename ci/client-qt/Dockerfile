@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gettext \
     libcanberra-gtk3-dev \
     libglib2.0-dev \
+    gsettings-desktop-schemas \
     libnotify-dev \
     libpcre3-dev \
     libxcb-shape0-dev \
