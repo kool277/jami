@@ -4,6 +4,7 @@
 # and /var/cache/jami holds the contrib tarballs and Rust crates.
 #   ci/client-qt/run.sh                         # = ci-build.sh
 #   ci/client-qt/run.sh sh /ci/ci-test.sh
+# DOCKER_RUN_ARGS adds options to docker run (word-split).
 set -eu
 
 here=$(cd "$(dirname "$0")" && pwd)
@@ -29,4 +30,5 @@ exec docker run --rm $tty \
     -e HOME=/tmp/home -e TARBALLS=/var/cache/jami -e CARGO_HOME=/var/cache/jami/cargo \
     -e JOBS="${JOBS:-16}" \
     -v "$ws:/src" -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
+    ${DOCKER_RUN_ARGS:-} \
     -w /src/jami-client-qt "$image" "$@"

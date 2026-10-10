@@ -6,6 +6,7 @@
 # absolute paths, and both containers share jami-daemon/contrib.
 #   ci/daemon/run.sh                      # configure + build
 #   ci/daemon/run.sh ctest --test-dir build -R '^base64$'
+# DOCKER_RUN_ARGS adds options to docker run (word-split).
 set -eu
 
 here=$(cd "$(dirname "$0")" && pwd)
@@ -30,4 +31,5 @@ exec docker run --rm $tty \
     -e HOME=/tmp -e TARBALLS=/var/cache/jami -e CARGO_HOME=/var/cache/jami/cargo \
     -e JOBS="${JOBS:-16}" \
     -v "$ws:/src" -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
+    ${DOCKER_RUN_ARGS:-} \
     -w /src/jami-daemon "$image" "$@"
