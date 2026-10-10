@@ -1,9 +1,11 @@
 # Building jami-daemon
 
-`jami-daemon/` is the only daemon source in this workspace; the clients'
-`daemon/` directories are symlinks to it. It builds in a container
-(`ci/daemon/Dockerfile`, Ubuntu 24.04) with the source bind-mounted, so
-`build/`, the contrib tree and the tarball cache persist between runs.
+`jami-daemon/` is the daemon every build in this workspace uses: the
+clients' `daemon` submodules stay uninitialized here, and
+`ci/client-qt/run.sh` mounts `jami-daemon/` in their place. It builds
+in a container (`ci/daemon/Dockerfile`, Ubuntu 24.04) with the source
+bind-mounted, so `build/`, the contrib tree and the tarball cache persist
+between runs.
 
 | Host path | Container path | Contents |
 |-----------|----------------|----------|

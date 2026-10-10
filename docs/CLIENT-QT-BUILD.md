@@ -2,13 +2,15 @@
 
 `jami-client-qt/` builds in a container (`ci/client-qt/Dockerfile`)
 layered on the daemon build image (`ci/daemon`, Ubuntu 24.04). The
-whole workspace is bind-mounted, so `jami-client-qt/daemon ->
-../jami-daemon` resolves and the client builds libjami from the same
-tree and contrib as `ci/daemon/run.sh` (see `DAEMON-BUILD.md`).
+whole workspace is bind-mounted, and `jami-daemon/` is mounted again
+over the client's (uninitialized) `daemon` submodule, so the client
+builds libjami from the same tree and contrib as `ci/daemon/run.sh`
+(see `DAEMON-BUILD.md`).
 
 | Host path | Container path | Contents |
 |-----------|----------------|----------|
 | workspace root | `/src` | working directory `/src/jami-client-qt`: source, `build/`, `install/` |
+| `jami-daemon/` | `/src/jami-client-qt/daemon` | the client's `daemon` submodule |
 | `/var/cache/jami` | `/var/cache/jami` | contrib tarballs (`TARBALLS`), Rust crates (`CARGO_HOME`) |
 | `ci/client-qt/` | `/ci` (read-only) | helper scripts |
 
