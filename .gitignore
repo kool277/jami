@@ -1,0 +1,16 @@
+# Build output (builds run in containers with the workspace bind-mounted)
+build/
+/jami-daemon/contrib/build-*/
+/jami-daemon/contrib/x86_64-*/
+/jami-daemon/contrib/aarch64-*/
+/jami-daemon/contrib/tarballs/
+/jami-client-qt/install/
+node_modules/
+
+# Local secrets and runtime data
+/deploy/.env
+/deploy/certs/
+/deploy/data/
+
+# Claude Code session worktrees
+/.claude/worktrees/
