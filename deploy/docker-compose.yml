@@ -1,0 +1,97 @@
+# Jami server side: JAMS behind Caddy (HTTPS), coturn (TURN) and an
+# OpenDHT node (DHT bootstrap + DHT proxy). Settings come from .env
+# (copy .env.example). See docs/SERVER-SETUP.md.
+name: jami
+
+services:
+  jams:
+    build:
+      context: ../jami-jams
+      target: prod
+    image: jams:local
+    entrypoint: ["sh", "/entrypoint.sh"]
+    volumes:
+      - ./jams/entrypoint.sh:/entrypoint.sh:ro
+      - jams-data:/home/jams
+    expose:
+      - "8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  caddy:
+    image: caddy:2.10.2-alpine
+    depends_on:
+      jams:
+        condition: service_healthy
+    environment:
+      JAMS_HOST: ${JAMS_HOST:?set JAMS_HOST in .env}
+      JAMS_TLS: ${JAMS_TLS:-internal}
+    ports:
+      - "${JAMS_HTTPS_PORT:-443}:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  coturn:
+    image: coturn/coturn:4.6.3
+    # TURN relays use a port range; host networking avoids publishing
+    # each port. The host's own coturn.service keeps 3478.
+    network_mode: host
+    entrypoint: ["sh", "/entrypoint.sh"]
+    environment:
+      TURN_REALM: ${TURN_REALM:?set TURN_REALM in .env}
+      TURN_USER: ${TURN_USER:?set TURN_USER in .env}
+      TURN_PASSWORD: ${TURN_PASSWORD:?set TURN_PASSWORD in .env}
+      TURN_PORT: ${TURN_PORT:-3479}
+      TURN_MIN_PORT: ${TURN_MIN_PORT:-49160}
+      TURN_MAX_PORT: ${TURN_MAX_PORT:-49200}
+      TURN_EXTERNAL_IP: ${TURN_EXTERNAL_IP:-}
+    volumes:
+      - ./coturn/entrypoint.sh:/entrypoint.sh:ro
+      - coturn-data:/var/lib/coturn
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "turnutils_stunclient -p ${TURN_PORT:-3479} 127.0.0.1 >/dev/null"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  dhtnode:
+    build: ./dhtnode
+    image: jami-dhtnode:local
+    command:
+      - dhtnode
+      - -s
+      - -p
+      - "4222"
+      - --proxyserver
+      - "8000"
+      - -b
+      - ${DHT_BOOTSTRAP:-bootstrap.jami.net}
+    ports:
+      - "${DHT_PORT:-4222}:4222/udp"
+      - "${DHT_PROXY_PORT:-8000}:8000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8000/ | grep -q node_id"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  jams-data:
+  caddy-data:
+  caddy-config:
+  coturn-data:

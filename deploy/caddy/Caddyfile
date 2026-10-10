@@ -1,0 +1,17 @@
+# TLS reverse proxy for JAMS.
+# JAMS_TLS=internal: certificate from Caddy's local CA (root exported to
+# deploy/certs/jams-root.crt by scripts/export-ca.sh).
+# For Let's Encrypt set JAMS_HOST to the public domain and JAMS_TLS to an
+# e-mail address; port 443 must be reachable from the internet.
+{
+	# nginx on the host owns port 80; Caddy only serves HTTPS.
+	auto_https disable_redirects
+	http_port 8081
+	# Clients connecting to an IP address send no SNI.
+	default_sni {$JAMS_HOST}
+}
+
+https://{$JAMS_HOST}:443 {
+	tls {$JAMS_TLS}
+	reverse_proxy jams:8080
+}
