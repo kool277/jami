@@ -1807,10 +1807,14 @@ ApiServer::setupNameserverRoutes()
             return headOnly
                        ? QHttpServerResponse(QHttpServerResponse::StatusCode::BadRequest)
                        : errorResponse(QHttpServerResponse::StatusCode::BadRequest, "Invalid username");
-        default:
+        case 2:
             return headOnly
                        ? QHttpServerResponse(QHttpServerResponse::StatusCode::NotFound)
                        : errorResponse(QHttpServerResponse::StatusCode::NotFound, "No such username found");
+        default:
+            return headOnly
+                       ? QHttpServerResponse(QHttpServerResponse::StatusCode::BadGateway)
+                       : errorResponse(QHttpServerResponse::StatusCode::BadGateway, "Registered name lookup failed");
         }
     };
 
@@ -1845,8 +1849,10 @@ ApiServer::setupNameserverRoutes()
             return QHttpServerResponse(lookupApiResultToJson(result));
         case 1:
             return errorResponse(QHttpServerResponse::StatusCode::BadRequest, "Invalid address");
-        default:
+        case 2:
             return errorResponse(QHttpServerResponse::StatusCode::NotFound, "No such address found");
+        default:
+            return errorResponse(QHttpServerResponse::StatusCode::BadGateway, "Address lookup failed");
         }
     });
 
@@ -1876,8 +1882,10 @@ ApiServer::setupNameserverRoutes()
             return QHttpServerResponse(lookupApiResultToJson(result));
         case 1:
             return errorResponse(QHttpServerResponse::StatusCode::BadRequest, "Invalid username");
-        default:
+        case 2:
             return errorResponse(QHttpServerResponse::StatusCode::NotFound, "No such username found");
+        default:
+            return errorResponse(QHttpServerResponse::StatusCode::BadGateway, "JAMS lookup failed");
         }
     });
 }

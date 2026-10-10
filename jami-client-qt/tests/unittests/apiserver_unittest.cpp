@@ -372,6 +372,23 @@ TEST_F(ApiServerFixture, NameserverNameHeadInvalidUsernameReturns400)
     EXPECT_EQ(resp.statusCode, 400);
 }
 
+// A lookup that fails to reach the name server is not a "not found".
+// Port 1 on localhost is closed, so the daemon's request fails at once.
+TEST_F(ApiServerFixture, NameserverNameLookupUnreachableServerReturns502)
+{
+    auto resp = getNoAuth("/api/ns/name/test@127.0.0.1:1");
+    EXPECT_EQ(resp.statusCode, 502);
+
+    const auto obj = resp.jsonObj();
+    EXPECT_EQ(obj["error"].toString(), "Registered name lookup failed");
+}
+
+TEST_F(ApiServerFixture, NameserverNameHeadUnreachableServerReturns502)
+{
+    auto resp = headNoAuth("/api/ns/name/test@127.0.0.1:1");
+    EXPECT_EQ(resp.statusCode, 502);
+}
+
 TEST_F(ApiServerFixture, NameserverAddressLookupInvalidAddressReturns400)
 {
     auto resp = getNoAuth("/api/ns/address/====");
