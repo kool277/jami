@@ -30,7 +30,7 @@ chmod 600 .env
 | `JAMS_TLS` | `internal` = Caddy's local CA; an e-mail address = Let's Encrypt |
 | `JAMS_ADMIN_USER` / `JAMS_ADMIN_PASSWORD` | JAMS administrator |
 | `JAMS_TEST_USERS` / `JAMS_TEST_PASSWORD` | Test users (comma-separated) |
-| `TURN_REALM`, `TURN_USER`, `TURN_PASSWORD`, `TURN_PORT`, `TURN_MIN_PORT`, `TURN_MAX_PORT` | coturn (long-term credentials) |
+| `TURN_REALM`, `TURN_USER`, `TURN_PASSWORD`, `TURN_PORT`, `TURN_MIN_PORT`, `TURN_MAX_PORT` | coturn (long-term credentials). Keep `TURN_REALM=ring`: JAMS does not push `TURN.realm`, and Jami clients default to `ring`, so any other realm makes their TURN authentication fail. |
 | `TURN_EXTERNAL_IP` | Public IP when clients reach the host through NAT |
 | `DHT_PORT`, `DHT_PROXY_PORT`, `DHT_BOOTSTRAP` | OpenDHT node |
 
