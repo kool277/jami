@@ -132,6 +132,25 @@ Currently `JAMS_TLS=internal`: Caddy issues a certificate for
 Clients that connect by IP send no SNI, so the Caddyfile sets
 `default_sni`.
 
+**Device certificates.** After signing in, a Jami device gets its JAMS
+device token from `POST /api/login` with its client certificate, which
+it needs for contact and conversation sync. Behind a reverse proxy, JAMS
+reads that certificate from the `X-Client-Cert` header, URL-decoded
+(nginx's `$ssl_client_escaped_cert`). The Caddyfile therefore:
+
+- requests a client certificate without requiring one
+  (`client_auth { mode request }`), so the web UI still works;
+- sets `X-Client-Cert` to the certificate in base64 DER with `+` sent as
+  `%2B`, and only when there is one: if the header is present, even
+  empty, JAMS skips username/password login. Any `X-Client-Cert` sent by
+  a client is removed first;
+- turns off `strict_sni_host`: with `client_auth` on, Caddy otherwise
+  answers 421 whenever `Host` differs from the SNI, which is every
+  request by IP.
+
+Without this every device gets 401 from `/api/login`, and contact
+requests between JAMS users do not arrive.
+
 To switch to **Let's Encrypt** when you have a domain:
 
 1. Create a DNS record `jams.example.org → <public IP>` and forward

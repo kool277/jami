@@ -9,9 +9,36 @@
 	http_port 8081
 	# Clients connecting to an IP address send no SNI.
 	default_sni {$JAMS_HOST}
+	servers {
+		# With client_auth on, Caddy by default rejects requests whose
+		# Host differs from the TLS SNI (421), which is every request by
+		# IP. There is one site and the client certificate only
+		# identifies the device to JAMS, so the check protects nothing.
+		strict_sni_host insecure_off
+	}
 }
 
 https://{$JAMS_HOST}:443 {
-	tls {$JAMS_TLS}
-	reverse_proxy jams:8080
+	tls {$JAMS_TLS} {
+		# Jami devices get their JAMS device token (POST /api/login) with
+		# their client certificate. Request one, without making it
+		# mandatory for the web UI.
+		client_auth {
+			mode request
+		}
+	}
+	# JAMS in reverse-proxy mode reads the certificate from X-Client-Cert
+	# and URL-decodes it (nginx $ssl_client_escaped_cert), so '+' must be
+	# sent as %2B. Set it only when there is a certificate: if the header
+	# is present, even empty, JAMS skips username/password login. Without
+	# a certificate the placeholder stays unreplaced, hence the match on
+	# the "MI" that starts every base64 DER certificate.
+	@client_cert vars_regexp {http.request.tls.client.certificate_der_base64} ^MI
+	# route keeps these in order (delete first, then set).
+	route {
+		request_header -X-Client-Cert
+		request_header @client_cert X-Client-Cert {http.request.tls.client.certificate_der_base64}
+		request_header @client_cert X-Client-Cert "\+" "%2B"
+		reverse_proxy jams:8080
+	}
 }
