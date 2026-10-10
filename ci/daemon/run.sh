@@ -1,12 +1,15 @@
 #!/bin/sh
-# Run a command in the jami-daemon build container with the source
-# tree at /src and the contrib tarball cache at /var/cache/jami.
+# Run a command in the jami-daemon build container with the workspace
+# at /src (working directory /src/jami-daemon) and the contrib tarball
+# cache at /var/cache/jami. The daemon must sit at the same path as in
+# ci/client-qt: contrib's installed CMake and pkg-config files record
+# absolute paths, and both containers share jami-daemon/contrib.
 #   ci/daemon/run.sh                      # configure + build
 #   ci/daemon/run.sh ctest --test-dir build -R '^base64$'
 set -eu
 
 here=$(cd "$(dirname "$0")" && pwd)
-src=$(cd "$here/../../jami-daemon" && pwd)
+ws=$(cd "$here/../.." && pwd)
 cache=${TARBALLS_HOST:-/var/cache/jami}
 image=${DAEMON_BUILD_IMAGE:-jami-daemon-build}
 
@@ -26,5 +29,5 @@ exec docker run --rm $tty \
     --user "$(id -u):$(id -g)" \
     -e HOME=/tmp -e TARBALLS=/var/cache/jami -e CARGO_HOME=/var/cache/jami/cargo \
     -e JOBS="${JOBS:-16}" \
-    -v "$src:/src" -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
-    -w /src "$image" "$@"
+    -v "$ws:/src" -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
+    -w /src/jami-daemon "$image" "$@"

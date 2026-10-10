@@ -7,7 +7,7 @@
 
 | Host path | Container path | Contents |
 |-----------|----------------|----------|
-| `jami-daemon/` | `/src` | source, `build/`, `contrib/x86_64-linux-gnu/` |
+| workspace root | `/src` | working directory `/src/jami-daemon`: source, `build/`, `contrib/x86_64-linux-gnu/` |
 | `/var/cache/jami` | `/var/cache/jami` | contrib tarballs (`TARBALLS`), Rust crates (`CARGO_HOME`) |
 | `ci/daemon/` | `/ci` (read-only) | helper scripts |
 
