@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "Configuracions de comptes";
+"global.username" = "Nom d'usuari";
+"global.recommended" = "Recomanat";
+"global.password" = "Contrasenya";
+"global.registerAUsername" = "Registra nom d'usuari";
+"global.enterPassword" = "Introduïu la contrasenya";
+"global.enterUsername" = "Inseriu el vostre nom d\'usuari";
+"global.cancel" = "Canceŀla";
+"global.blockContact" = "Bloqueja el contacte";
+"global.removeAccount" = "Elimina el compte";
+"global.incomingCall" = "Trucada entrant";
+"global.ok" = "D'acord";
+"global.close" = "Tanca";
+"global.share" = "Comparteix";
+"global.forward" = "A l'avant";
+"global.save" = "Desa";
+"global.resend" = "Enviar-ho";
+"global.preview" = "Previsualitzar";
+"global.accept" = "Accepta";
+"global.block" = "Bloca";
+"global.decline" = "Rebutja";
+"global.name" = "Nom";
+"global.copy" = "Copia";
+"global.reply" = "Respon";
+"global.search" = "Buscant...";
+"global.supportJami" = "Doneu suport al projecte Jami";
+"global.deleteMessage" = "Esborra missatge";
+"global.deleteFile" = "Eliminar fitxer del dispositiu";
+"global.editMessage" = "Modificar missatge";
+"global.editing" = "Editant";
+"global.create" = "Crear";
+"global.edit" = "Edita";
+"global.remove" = "Eliminar";
+"global.call" = "Trucada";
+"global.video" = "Vídeo";
+"global.time" = "Temps";
+"global.editPassword" = "Edita la contrasenya";
+"global.confirmPassword" = "Confirmi contrasenya";
+"global.confirm" = "Confirma";
+"global.cameraDisabled" = "L'accés a la càmera està deshabilitat. Habiliteu-lo en la configuració del dispositiu per fer servir aquesta funció.";
+"global.confirm" = "Confirma";
+"global.connect" = "Connectar";
+"global.leave" = "Deixar";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "Nom";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "Descripció";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Descarta";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "Mal codi QR";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "Buscar un contacte...";
+"swarmcreation.addDescription" = "Afegir descripció";
+// Swarm
+"swarm.muteConversation" = "Conversació mudada";
+"swarm.leaveConversation" = "Deixar la conversa";
+"swarm.removeConversation" = "Esborra conversa";
+"swarm.removeContact" = "Elimina el contacte";
+"swarm.restartConversation" = "Reinicia la conversa";
+"swarm.conversationEnded" = "La conversa ha finalitzat";
+"swarm.chooseColor" = "Color de conversa";
+"swarm.typeOfSwarm" = "Tipus de conversa";
+"swarm.identifier" = "Identificador";
+"swarm.conversationId" = "ID de la conversa";
+"swarm.settings" = "Opcions";
+"swarm.members" = "Membres";
+"swarm.contactHeader" = "Contacte";
+"swarm.showContactQRCode" = "Mostra el codi QR del contacte";
+"swarm.shareContactInfo" = "Comparteix la informació del contacte";
+"swarm.accessibilityContactQRCode" = "Mostra el codi QR del contacte";
+"swarm.accessibilityContactQRCodeHint" = "Obre una pantalla amb el codi QR del contacte";
+"swarm.accessibilityContactShareHint" = "Obre les opcions per compartir la informació del contacte";
+"swarm.accessibilityColorPicker" = "Selector de color de la conversa";
+"swarm.conversationHeader" = "Conversació";
+"swarm.shareContactMessage" = "Podeu afegir aquest contacte, %1@, a la plataforma de comunicació distribuïda Jami: https://jami.net";
+"swarm.oneToOne" = "Privat";
+"swarm.adminInvitesOnly" = "Grup privat (invites limitades)";
+"swarm.invitesOnly" = "Grup privat";
+"swarm.publicChat" = "Grup públic";
+"swarm.others" = "Altres";
+"swarm.member" = "Membre";
+"swarm.invited" = "Invitats";
+"swarm.admin" = "Admins";
+"swarm.blocked" = "Bloquejat";
+"swarm.unknown" = "Desconegut";
+"swarm.left" = "Ha sortit";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "Convidar membres";
+"swarm.inviteSelectedMembers" = "Convida els contactes seleccionats";
+"swarm.inviteMembersSelected" = "Seleccionat";
+"swarm.inviteMembersNotSelected" = "No seleccionat";
+"swarm.confirmLeaveConversation" = "Voleu abandonar aquesta conversa?";
+"swarm.Leave" = "Deixar";
+"swarm.newGroup" = "Crea un grup nou";
+"swarm.namePlaceholder" = "Nom del grup";
+"swarm.explanationText" = "Es pot convidar membres en qualsevol moment després de crear el grup.";
+"swarm.customizeProfile" = "Personalitza el perfil del grup";
+"swarm.changePicture" = "Canvia la imatge del grup";
+"swarm.customize" = "Personalitza el grup";
+"swarm.selectContacts" = "Seleccionar els contactes";
+
+// Contact Picker
+"contactPicker.calls" = "Trucades";
+"contactPicker.contacts" = "Contactes";
+
+// Smartlist
+"smartlist.yesterday" = "Ahir";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "Converses";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "No hi ha cap conversa que coincideixi amb la cerca.";
+"smartlist.newContact" = "Contacte nou";
+"smartlist.newGroup" = "Grup nou";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "Invitacions rebudes";
+"smartlist.noResults" = "Sense resultats";
+"smartlist.noConversation" = "No hi ha converses.";
+"smartlist.searchBarPlaceholder" = "Introduïu el nom...";
+"smartlist.searchBar" = "Buscar";
+"smartlist.noNetworkConnectivity" = "No hi ha connexió a la xarxa";
+"smartlist.cellularAccess" = "Assegureu-vos que l'accés a la xarxa mòbil estigui permès a la configuració.";
+"smartlist.accountsTitle" = "Comptes";
+"smartlist.addAccountButton" = "+ Afegeix un compte";
+"smartlist.noNumber" = "El contacte seleccionat no té cap número";
+"smartlist.selectOneNumber" = "Seleccioneu un dels números";
+"smartlist.invitations" = "Invitacions";
+"smartlist.aboutJami" = "Sobre Jami...";
+"smartlist.inviteFriends" = "Convida amics";
+"smartlist.disableDonation" = "Ara no";
+"smartlist.donationExplanation" = "Si gaudiu utilitzant Jami i creieu en la nostra missió, voleu fer un donatiu?";
+"smartlist.inSynchronization" = "S'està sincronitzant…";
+
+// Conversation
+"conversation.addToContactsButton" = "Afegeix als contactes";
+"conversation.sendInvitationButton" = "Enviar Invitació";
+"conversation.addToContactsLabel" = "Afegir als contactes?";
+"conversation.notContactLabel" = "%@ no és a la llista de contactes";
+"conversation.messagePlaceholder" = "Escriu a";
+"conversation.imageSaved" = "Desat";
+"conversation.errorSavingImage" = "No s'ha pogut desar la imatge";
+"conversation.errorSavingImageMessage" = "S'ha produït un error en desar la imatge a la fototeca.";
+"conversation.photoAccessRequiredMessage" = "Jami necessita accés a la vostra fototeca per desar imatges. Podeu habilitar-ho a la configuració.";
+"conversation.receivedRequest" = "%@ us ha enviat una invitació a una conversa.";
+"conversation.incomingRequest" = "us ha enviat una invitació a una conversa.";
+"conversation.requestMessage" = "Hola,\nvoleu unir-vos a la conversa?";
+"conversation.sendRequest" = "Envieu-los una invitació per poder conversar.";
+"conversation.sendRequestTitle" = "Envia una invitació a la conversa";
+"conversation.synchronizationTitle" = "Heu acceptat la invitació a la conversa.";
+"conversation.syncingTitle" = "S'està sincronitzant la conversa";
+"conversation.synchronizationMessage" = "S'està esperant que %@ es connecti per sincronitzar la conversa…";
+"conversation.inReplyTo" = "En resposta a";
+"conversation.repliedTo" = "%@ ha respost a %@";
+"conversation.yourself" = "Tu";
+"conversation.edited" = "Edicions";
+"conversation.deletedMessage" = "%@ ha suprimit un missatge";
+"conversation.contactBlocked" = "Contacte bloquejat";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "%@ està escrivint";
+"conversation.typingIndicatorTwoUsers" = "%1@ i %2@ estan escrivint";
+"conversation.typingIndicatorOtherUsers" = "%1@, %2@ i %3@ més estan escrivint";
+"conversation.typingIndicatorOthersUsers" = "%1@, %2@ i %3@ més estan escrivint";
+"conversation.lastMessageDeleted" = "(missatge suprimit)";
+
+// Invitations
+"invitations.noInvitations" = "No hi ha invitacions";
+"invitations.accepted" = "Acceptada";
+"invitations.declined" = "Rebutjada";
+"invitations.blocked" = "Bloquejat";
+"invitations.list" = "Invitacions rebudes";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Conpartiu de manera lliure i privada amb Jami";
+"welcome.text" = "Jami és una plataforma de comunicació lliure i universal que conserva la privacitat i llibertats dels usuaris";
+"welcome.haveAccount" = "Jo ja tinc un compte";
+"welcome.linkDevice" = "Importació des d'un altre dispositiu";
+"welcome.linkBackup" = "Importa des d'una còpia de seguretat d'arxiu";
+"welcome.createAccount" = "Creació de compte Jami";
+"welcome.connectToJAMS" = "Connecta a un servidor de gestió";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "Salta";
+"createProfile.profileCreated" = "Endavant";
+"createProfile.title" = "Personalitzeu el vostre perfil";
+"createProfile.enterNameLabel" = "Introdueix un nom de pantalla";
+"createProfile.enterNamePlaceholder" = "Introdueix el nom";
+"createProfile.subtitle" = "El vostre perfil només es comparteix amb els vostres contactes. El perfil es pot canviar en qualsevol moment.";
+"createProfile.createProfilePicture" = "Crea una imatge de perfil";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "Unir-se a Jami";
+"createAccount.lookingForUsernameAvailability" = "S'està comprovant la disponibilitat del nom d'usuari…";
+"createAccount.invalidUsername" = "Nom d'usuari no vàlid. Introduïu el nom d'usuari correcte.";
+"createAccount.usernameAlreadyTaken" = "Nom d'usuari ja registrat.";
+"createAccount.usernameValid" = "El nom d'usuari està disponible.";
+"createAccount.UsernameNotRegisteredTitle" = "Error de xarxa";
+"createAccount.UsernameNotRegisteredMessage" = "Es va crear un compte però no s'ha registrat el nom d'usuari";
+"createAccount.timeoutTitle" = "Creació d'un compte";
+"createAccount.timeoutMessage" = "El registre del nom d'usuari està en curs. Espereu…";
+"createAccount.sipConfigure" = "Configura un compte SIP existent";
+"createAccount.creatingAccount" = "S'està creant el compte";
+"createAccount.nameExplanation" = "Pots triar un nom d'usuari per ajudar els altres a trobar-te i arribar-te més fàcilment a Jami.";
+"createAccount.newAccount" = "Nou compte";
+"createAccount.encryptionEnabled" = "Protecció amb contrasenya habilitada";
+"createAccount.encrypt" = "Protegeix amb contrasenya";
+"createAccount.customize" = "Personalitzar";
+"createAccount.encryptTitle" = "Protegeix el compte amb contrasenya";
+"createAccount.encryptExplanation" = "Es crea un compte de Jami i s'emmagatzema localment només en aquest dispositiu com un arxiu que conté les seves claus de compte. L'accés a l'arxiu es pot protegir opcionalment amb una contrasenya.";
+
+// Link To Account form
+"linkToAccount.importAccount" = "Importa el compte";
+"linkToAccount.showQrCode" = "Codi QR";
+"linkToAccount.showPinCode" = "Codi d'autenticació";
+"linkToAccount.actionRequired" = "Es requereix una acció.\nConfirmeu el compte al dispositiu d'origen.";
+"linkToAccount.allSet" = "El compte s'ha importat correctament.";
+"linkToAccount.goToAccounts" = "Vés al compte importat";
+"linkToAccount.exportInstructions" = "Al dispositiu d'origen, inicieu l'exportació.";
+"linkToAccount.exportInstructionsPath" = "Seleccioneu Compte → Configuració del compte → Enllaça un dispositiu nou.";
+"linkToAccount.scanQrCode" = "Quan estigueu a punt, escanegeu el codi QR.";
+"linkToAccount.enterProvidedCode" = "Quan estigueu a punt, introduïu el codi d'autenticació.";
+"linkToAccount.accountLockedWithPassword" = "El compte està protegit amb contrasenya. Per continuar, introduïu la contrasenya del compte.";
+"linkToAccount.exit" = "Sortir";
+"linkToAccount.shareMessage" = "El vostre codi és: %@";
+"linkToAccount.alertTile" = "Voleu aturar l'enllaç del compte?";
+"linkToAccount.alertMessage" = "Si ho atureu, es cancel·larà l'operació d'importació del compte.";
+
+// Import from Archive
+"importFromArchive.explanation" = "Importar el compte Jami des de l'arxiu local.";
+"importFromArchive.passwordExplanation" = "Si el compte està protegit amb contrasenya, ompliu el camp següent.";
+"importFromArchive.title" = "Importa des d'un arxiu";
+"importFromArchive.buttonTitle" = "Importa";
+"importFromArchive.selectArchiveButton" = "Seleccionar arxiu";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "Iniciar sessió";
+"linkToAccountManager.title" = "Compte del servidor de gestió";
+"linkToAccountManager.accountManagerPlaceholder" = "URL del servidor de gestió";
+"linkToAccountManager.accountManagerLabel" = "Introduïu l'URL del servidor de gestió";
+"linkToAccountManager.jamsExplanation" = "Introduïu l'URL del servidor de gestió";
+"linkToAccountManager.enterCredentials" = "Introduïu les credencials del servidor de gestió";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "Error del compte";
+"alerts.accountCannotBeFoundMessage" = "No s'ha pogut trobar el compte a la xarxa Jami. Assegureu-vos que es va exportar al Jami des d'un dispositiu existent i que les credencials proporcionades són correctes.";
+"alerts.accountAddedTitle" = "Compte afegit";
+"alerts.accountNoNetworkTitle" = "Error de xarxa";
+"alerts.accountNoNetworkMessage" = "S'ha produït un error de connectivitat en afegir el compte de Jami a la xarxa distribuïda. Torneu-ho a provar. Si el problema persisteix, contacteu amb l'administrador del sistema.";
+"alerts.accountDefaultErrorTitle" = "Error del compte";
+"alerts.accountDefaultErrorMessage" = "S'ha produït un error en crear el compte.";
+"alerts.profileTakePhoto" = "Fer foto";
+"alerts.profileUploadPhoto" = "Carrega foto";
+"alerts.accountLinkedTitle" = "Conta de vincul";
+"alerts.dbFailedTitle" = "S'ha produït un error en iniciar Jami";
+"alerts.dbFailedMessage" = "Si us plau tanqueu la sol·licitud i intenteu obrir-la de nou";
+"alerts.confirmBlockContact" = "Voleu blocar aquest contacte? L'historial de converses amb aquest contacte també s'eliminarà permanentment.";
+"alerts.confirmDeleteConversation" = "Voleu eliminar aquesta conversa permanentment?";
+"alerts.confirmLeaveConversation" = "Voleu abandonar aquesta conversa?";
+"alerts.confirmRemoveOneToOneConversation" = "Voleu eliminar aquesta conversa? L'historial existent s'eliminarà. Es pot iniciar una conversa nova si no teniu altres converses amb aquest contacte.";
+"alerts.confimRemoveContact" = "Voleu eliminar aquest contacte? L'historial existent s'eliminarà.";
+"alerts.confirmDeleteConversationFromContact" = "Voleu eliminar la conversa amb aquest contacte?";
+"alerts.confirmDeleteConversationTitle" = "Suprimeix la conversa";
+"alerts.noMediaPermissionsTitle" = "Permissió de mitjans no concedida";
+"alerts.noLibraryPermissionsTitle" = "Accés a la biblioteca de fotografies no concedit";
+"alerts.noLocationPermissionsTitle" = "Accès a l'ubicació no concedida";
+"alerts.errorWrongCredentials" = "S'ha produït un error en connectar al servidor de gestió. Torneu-ho a provar. Si el problema persisteix, contacteu amb l'administrador del sistema.";
+"alerts.recordVideoMessage" = "Grava un missatge de vídeo";
+"alerts.recordAudioMessage" = "Enregistra missatge d'àudio";
+"alerts.uploadFile" = "Envia el fitxer";
+"alerts.uploadPhoto" = "Obre la galeria";
+"alerts.sendPhoto" = "Envia una foto";
+"alerts.locationServiceIsDisabled" = "Activeu els «Serveis d'ubicació» per permetre que «Jami» determini la ubicació del dispositiu.";
+"alerts.locationSharing" = "Comparteix la meva ubicació";
+"alerts.alreadylocationSharing" = "Ja comparteix ubicació amb aquest usuari";
+"alerts.locationSharingDurationTitle" = "Quant de temps ha de durar el partage de l'ubicació?";
+"alerts.locationSharingDuration10min" = "10 min";
+"alerts.locationSharingDuration1hour" = "1 hora";
+"alerts.mapInformation" = "Informació al mapa";
+"alerts.openStreetMapCopyright" = "© Contribuents d'OpenStreetMap";
+"alerts.openStreetMapCopyrightMoreInfo" = "Saber-ne més";
+
+// Actions
+"actions.deleteAction" = "Suprimeix";
+"actions.backAction" = "Enrere";
+"actions.doneAction" = "Fet";
+"actions.goToSettings" = "Passa a les configuracions";
+"actions.stopLocationSharing" = "Para de compartir";
+
+// Calls
+"calls.ringing" = "- El son...";
+"calls.connecting" = "Connectant…";
+"calls.callFinished" = "L' trucada acabada";
+"calls.currentCallWith" = "Llamem amb ";
+"calls.maximize" = "Maximitza";
+"calls.minimize" = "Minimitza";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "Configuració de moderador";
+"calls.removeModerator" = "Moderador desactivat";
+"calls.muteAudio" = "Silencia el micròfon";
+"calls.unmuteAudio" = "Activa el so del micròfon";
+"calls.raiseHand" = "Aixeca la mà";
+"calls.lowerHand" = "Man baixa";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "Recording";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "Hi ha una trucada en curs. Voleu unir-vos a la trucada? També us podeu unir a la trucada més tard des de la conversa.";
+"calls.activeCallInConversation" = "Una trucada està en curs.";
+"calls.acceptWithAudio" = "Acceptar amb audio";
+"calls.acceptWithVideo" = "Acceptar amb vídeo";
+
+// Account Page
+"accountPage.devicesListHeader" = "Dispositius";
+"accountPage.settingsHeader" = "Opcions";
+"accountPage.notificationsHeader" = "Notificacions";
+"accountPage.blockedContacts" = "Contactes bloquejats";
+"accountPage.unblockContact" = "Desbloqeja";
+"accountPage.proxyAddressAlert" = "Enviar l'adreça proxy";
+"accountPage.noProxyExplanationLabel" = "No es poden rebre notificacions quan el proxy està desactivat.";
+"accountPage.proxyPaceholder" = "Direcció de proxy";
+"accountPage.useProxyList" = "Utilitza la llista de proxies";
+"accountPage.proxyListURL" = "URL de la llista de servidors intermediaris";
+"accountPage.proxyExplanation" = "Les notificacions s'encaminen a través d'un proxy. Podeu utilitzar el proxy per defecte, introduir una adreça de proxy personalitzada o proporcionar un URL amb una llista de proxies.";
+"accountPage.proxyHeader" = "Intermediari";
+"accountPage.currentProxy" = "Proxy actual";
+"accountPage.enableNotifications" = "Abilitar notificacions";
+"accountPage.proxyDisabledAlertTitle" = "Servidor proxy desactivat";
+"accountPage.proxyDisabledAlertBody" = "Per rebre notificacions, per favor, habiliteu el proxy";
+"accountPage.removeDeviceTitle" = "Elimina el dispositiu";
+"accountPage.revokeDeviceMessage" = "Voleu eliminar aquest dispositiu? Aquesta acció no es pot desfer.";
+"accountPage.revokeDeviceButton" = "Revocació";
+"accountPage.revokeDevicePlaceholder" = "Introducir la contrasenya de compte";
+"accountPage.deviceRevoked" = "Revocació del dispositiu completada";
+"accountPage.deviceRevocationProgress" = "S'està eliminant…";
+"accountPage.deviceRevocationSuccess" = "Dispositiu eliminat";
+"accountPage.deviceRevocationTryAgain" = "Intentar de nou.";
+"accountPage.deviceRevocationWrongPassword" = "Contrasenya incorrecta";
+"accountPage.deviceRevocationUnknownDevice" = "Dispositiu desconegut";
+"accountPage.deviceRevocationError" = "Error de revocació de dispositiu";
+"accountPage.linkDeviceTitle" = "Vincula un altre dispositiu";
+"accountPage.other" = "Altres";
+"accountPage.removeAccountMessage" = "Si no s'ha fet una còpia de seguretat del compte ni s'ha afegit a un altre dispositiu, el compte i el nom d'usuari registrat es PERDRAN IRREVOCABLEMENT.";
+"accountPage.inviteFriends" = "Convida amics";
+"accountPage.contactMeOnJamiTitle" = "Contacta amb mi en Jami!";
+"accountPage.contactMeOnJamiContant" = "Contacteu amb mi mitjançant «%s» a la plataforma de comunicació distribuïda Jami: https://jami.net";
+"accountPage.passwordPlaceholder" = "Introducir la contrasenya de compte";
+"accountPage.usernamePlaceholder" = "Introducir el nom d'usuari desitjat";
+"accountPage.registerNameErrorMessage" = "El nom d'usuari no està disponible.";
+"accountPage.usernameRegistering" = "Registre";
+"accountPage.usernameRegisterAction" = "Registra";
+"accountPage.usernameRegistrationFailedTitle" = "El registre ha fallat";
+"accountPage.usernameRegistrationFailed" = "Comproveu la contrasenya del compte.";
+"accountPage.createPassword" = "Estableix contrasenya";
+"accountPage.changePassword" = "Canvia la contrasenya";
+"accountPage.currentPasswordPlaceholder" = "Introdueix la contrasenya actual";
+"accountPage.newPasswordPlaceholder" = "Introdueix una nova contrasenya";
+"accountPage.newPasswordConfirmPlaceholder" = "Confirmar la nova contrasenya";
+"accountPage.changePasswordError" = "Contrasenya incorrecta";
+"accountPage.enableBoothMode" = "Activació de l' mòde de l'estamp";
+"accountPage.disableBoothMode" = "Desactivar el mode de l'estamp";
+"accountPage.disableBoothModeExplanation" = "Proporcioneu la contrasenya del compte";
+"accountPage.boothModeExplanation" = "En mode cabina no s'ha guardat el historial de conversa i la funcionalitat jami limitada per fer trucades sortents.";
+"accountPage.noBoothMode" = "Per activar el mode cabina, primer protegiu el compte amb una contrasenya.";
+"accountPage.boothModeAlertMessage" = "Després d'activar el mode cabina, s'eliminaran totes les converses.";
+"accountPage.peerDiscovery" = "Activa el descobriment local de parells";
+"accountPage.peerDiscoveryExplanation" = "Connecta a altres nodes DHT anunciats en la nostra xarxa local";
+"accountPage.autoRegistration" = "Registre automàtic després de la expiració";
+"accountPage.connectivityHeader" = "Connectivitat";
+"accountPage.turnEnabled" = "Abilitar TURN";
+"accountPage.turnServer" = "Direcció de la TRUN";
+"accountPage.turnUsername" = "Usuari de TURN";
+"accountPage.turnPassword" = "Contrasenya de TURN";
+"accountPage.turnRealm" = "REMIÓ DE VURT";
+"accountPage.upnpEnabled" = "Utilitza UPnP";
+"accountPage.stunEnabled" = "Utilitza STUN";
+"accountPage.stunServer" = "Direcció STUN";
+"accountPage.publicAddressHeader" = "Adres públic";
+"accountPage.allowIPAutoRewrite" = "Permet la reescriptura automàtica de la IP";
+"accountPage.publishedSameAsLocal" = "Publica igual que la local";
+"accountPage.publishedAddress" = "Adreça";
+"accountPage.publishedPort" = "Port";
+"accountPage.security" = "Seguretat";
+"accountPage.enableSRTP" = "Permetre l'intercanvi de claus SDES";
+"accountPage.encryptNegotiation" = "Negociació de xifrat (TLS)";
+"accountPage.registerNameExplanation" = "Registreu un nom d'usuari perquè els altres us trobin i us contactin més fàcilment a Jami.";
+"accountPage.profileHeader" = "Perfil";
+"accountPage.profileNameNotSelected" = "Nom no seleccionat";
+"accountPage.accountHeader" = "Compte";
+"accountPage.profileName" = "Nom de perfil";
+"accountPage.profileNamePlaceholder" = "Introduïu el nom del perfil";
+"accountPage.editProfile" = "Edita el perfil";
+"accountPage.manageAccount" = "Administració del compte";
+"accountPage.encryptAccount" = "Contrasenya";
+"accountPage.passwordExplanation" = "El vostre compte Jami només està registrat en aquest dispositiu com un arxiu que conté les claus del vostre compte. L'accés a aquest arxiu es pot protegir amb una contrasenya.";
+"accountPage.passwordsDoNotMatch" = "Les contrasenyes no coincideixen.";
+"accountPage.passwordCreated" = "Contrasenya establerta";
+"accountPage.passwordUpdated" = "Contrasenya actualitzada";
+"accountPage.linkedDevices" = "Dispositius enllaçats";
+"accountPage.unlink" = "Desenllaça";
+"accountPage.generatingPin" = "S'està generant el codi PIN…";
+"accountPage.passwordForPin" = "El compte està protegit amb contrasenya. Introduïu la contrasenya per generar un codi PIN.";
+"accountPage.pinExplanationTitle" = "En un altre dispositiu";
+"accountPage.pinExplanationMessage" = "Instal·leu i inicieu el Jami. Seleccioneu «Importa des d'un altre dispositiu» i escanegeu el codi QR. Alternativament, introduïu el codi PIN manualment.";
+"accountPage.pinError" = "S'ha produït un error en generar el codi PIN.";
+"accountPage.notificationTitle" = "Notificacions";
+"accountPage.notificationError" = "Les notificacions de Jami estan desactivades. Activeu-les a la configuració del dispositiu per utilitzar aquesta funció.";
+"accountPage.callsFromUnknownContacts" = "Permet trucades de contactes desconeguts.";
+"accountPage.accountSettingsExplanation" = "Aquesta configuració només s'aplicarà a aquest compte.";
+"accountPage.appSettings" = "Configuració de l'aplicació";
+"accountPage.appSettingsExplanation" = "Aquesta configuració s'aplicarà a tota l'aplicació.";
+"accountPage.connectivityAndConfiguration" = "Connectivitat i configuracions";
+"accountPage.sipExpirationTime" = "Temps d'expirat de l'enregistrament (segons)";
+"accountPage.tlsVerifyServerCertificates" = "Verificar certificats TLS del servidor";
+"accountPage.tlsVerifyClientCertificates" = "Verifica els certificats TLS del client";
+"accountPage.tlsRequireTlsCertificate" = "Exigeix certificat per a les conexions TLS entrants";
+"accountPage.tlsDisableSecureDlgCheck" = "Desactivar la verificació de diàleg segura per a les dades entrants de TLS";
+"accountPage.editSipExpirationTime" = "Temps de caducitat";
+"accountPage.selectSipExpirationTime" = "Estableix el temps (en segons) per a la caducitat del registre";
+"accountPage.invalidSipExpirationTime" = "Introduïu un valor entre 60 i 604800 segons";
+"accountPage.invalidPort" = "Introduïu un valor entre 0 i 65535";
+"accountPage.invalidAddress" = "Introduïu una adreça vàlida";
+"accountPage.thisDevice" = "Aquest dispositiu";
+"accountPage.otherDevices" = "D'altres dispositius connectats";
+"accountPage.accountIdentity" = "Identitat del compte";
+"accountPage.bootstrap" = "Bootstrap";
+"accountPage.dhtConfiguration" = "Configuració de OpenDHT";
+"accountPage.nameServer" = "Servidor de noms";
+"accountPage.chats" = "Xats";
+"accountPage.typingIndicator" = "Indicador de mecanització";
+"accountPage.typingIndicatorExplanation" = "Indica quan s'estan escrivint missatges.";
+
+// Backup Account
+"backupAccount.explanation" = "Aquest compte de Jami només existeix en aquest dispositiu. El compte es perdrà si es perd aquest dispositiu o si es desinstal·la l'aplicació. Es recomana fer una còpia de seguretat d'aquest compte.";
+"backupAccount.title" = "Fes còpia de seguretat del compte";
+"backupAccount.creating" = "S'està creant la còpia de seguretat";
+"backupAccount.archiveName" = "Seleccioneu un nom per a l'arxiu.";
+"backupAccount.archiveNamePlaceholder" = "Nom de l'arxiu";
+"backupAccount.passwordRequest" = "Introduïu la contrasenya del compte.";
+"backupAccount.backupButton" = "Còpia de seguretat";
+"backupAccount.documentPickerButton" = "Obre la ubicació de la còpia de seguretat";
+"backupAccount.exportSuccess" = "Còpia de seguretat creada";
+"backupAccount.errorWrongLocation" = "El camí del fitxer seleccionat no és vàlid. Trieu una altra ubicació.";
+"backupAccount.errorAccessDenied" = "S'ha denegat l'accés a la ubicació seleccionada.";
+"backupAccount.errorFailed" = "S'ha produït un error en exportar el compte.";
+
+// Account
+"account.sipServer" = "Servidor";
+"account.port" = "Port";
+"account.proxyServer" = "Intermediari";
+"account.createSipAccount" = "Configura el compte SIP";
+"account.sipAccount" = "Compte SIP";
+"account.configure" = "Configura";
+"account.advancedFeatures" = "Funcions avançades";
+"account.serverLabel" = "Introducció d'adreça";
+"account.portLabel" = "Introducir el número de port";
+"account.accountStatus" = "Estatut de compte";
+"account.enableAccount" = "Habilitar el compte";
+"account.statusOnline" = "En línia";
+"account.statusOffline" = "Fora de línia";
+"account.statusConnecting" = "Connectant";
+"account.statusUnknown" = "Desconegut";
+"account.statusConnectionerror" = "Error de connexió";
+"account.needMigration" = "El compte requereix migració.";
+"account.me" = "Jo";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "Sense contactes blocats";
+
+// Link New Device
+"linkDevice.title" = "Coneix el nou dispositiu";
+"linkDevice.networkError" = "S'ha produït un error de xarxa en exportar el compte.";
+"linkDevice.errorWrongPassword" = "S'ha produït un error d'autenticació en enllaçar el dispositiu. Comproveu les credencials i torneu-ho a provar.";
+"linkDevice.errorNetwork" = "S'ha produït un error de xarxa en enllaçar el compte. Verifiqueu la connexió i torneu-ho a provar.";
+"linkDevice.errorTimeout" = "L'operació ha esgotat el temps d'espera. Torneu-ho a provar.";
+"linkDevice.errorCode" = "S'ha produït un error en generar el codi. Torneu-ho a provar.";
+"linkDevice.errorWrongData" = "S'ha produït un error en exportar el compte. Torneu-ho a provar.";
+"linkDevice.initialInfo" = "Al dispositiu nou, inicieu un compte nou.";
+"linkDevice.infoAddAccount" = "Seleccioneu Afegeix un compte → Connecta des d'un altre dispositiu.";
+"linkDevice.infoQRCode" = "Quan estigueu a punt, escanegeu el codi QR.";
+"linkDevice.infoCode" = "Quan estigueu a punt, introduïu el codi i toqueu Connecta.";
+"linkDevice.connecting" = "S'està connectant al vostre dispositiu nou…";
+"linkDevice.authenticationInfo" = "S'ha trobat un dispositiu nou a l'adreça IP següent. Sou vós? Per continuar l'exportació del compte, toqueu Confirma.";
+"linkDevice.newDeviceIP" = "Adreça IP del dispositiu nou: %1@";
+"linkDevice.code" = "codi";
+"linkDevice.wrongEntry" = "Identificador de dispositiu nou no reconegut. Seguiu les instruccions anteriors.";
+"linkDevice.exportInProgress" = "L'exportació del compte al dispositiu nou està en curs. Confirmeu la importació al dispositiu nou.";
+"linkDevice.completed" = "El compte s'ha importat correctament al dispositiu nou.";
+
+// Contact Page
+"contactPage.startAudioCall" = "Comença una trucada de veu.";
+"contactPage.startVideoCall" = "Comença una videotrucada";
+"contactPage.send" = "Envia";
+"contactPage.leaveConversation" = "Deixar la conversa";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "Inicialitzant…";
+"dataTransfer.readableStatusError" = "Error";
+"dataTransfer.readableStatusAwaiting" = "Esperant...";
+"dataTransfer.readableStatusOngoing" = "Transferència";
+"dataTransfer.readableStatusCanceled" = "Cancel·lada";
+"dataTransfer.sendingFailed" = "S'ha produït un error en enviar.";
+"dataTransfer.readableStatusSuccess" = "Complet";
+"dataTransfer.recordInBackgroundWarning" = "Gravar vídeo mentre feu multitasca amb diverses aplicacions pot donar vídeos de menor qualitat. Per obtenir els millors resultats, graveu sense fer multitasca";
+
+// Notifications
+"notifications.missedCall" = "L'anàlisi perduda";
+"notifications.newFile" = "Nou fitxer";
+"notifications.locationSharingStarted" = "Començament del partil·lació de localització";
+"notifications.locationSharingStopped" = "Partil·lació de localització entrant va ser interromput";
+"dataTransfer.readableStatusDecline" = "Rebutja";
+"dataTransfer.readableStatusAccept" = "Accepta";
+"dataTransfer.infoMessage" = "Toqueu per començar a gravar";
+"dataTransfer.sendMessage" = "Envia";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "S'ha rebut una invitació";
+"generatedMessage.swarmCreated" = "Conversa creada";
+"generatedMessage.invitationReceived" = "S'ha convidat %@ a la conversa.";
+"generatedMessage.invitationAccepted" = "%@ s'ha unit a la conversa.";
+"generatedMessage.youJoined" = "Us heu unit a la conversa.";
+"generatedMessage.contactBlocked" = "%@ ha estat bloquejat a la conversa.";
+"generatedMessage.contactUnblocked" = "%@ ha estat desbloquejat a la conversa.";
+"generatedMessage.outgoingCall" = "Trucada sortint";
+"generatedMessage.missedOutgoingCall" = "Trucada sortint perduda";
+"generatedMessage.missedIncomingCall" = "Trucada entrant perduda";
+"generatedMessage.liveLocationSharing" = "Partage de localització en directe";
+"generatedMessage.contactLeftConversation" = "%@ ha sortit de la conversa.";
+"generatedMessage.nonSwarmInvitationReceived" = "Heu enviat una invitació.";
+"generatedMessage.nonSwarmInvitationAccepted" = "S'ha acceptat la vostra invitació.";
+
+// General Settings
+"generalSettings.videoSettings" = "Configuració de vídeo";
+"generalSettings.videoAcceleration" = "Abilitar l'acceleració de vídeo";
+"generalSettings.fileTransfer" = "Transferència de fitxers";
+"generalSettings.locationSharing" = "Partil·lació de localització";
+"generalSettings.automaticAcceptIncomingFiles" = "Accepta automàticament fitxers entrants";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "(MB, 0 = il·limitat)";
+"generalSettings.limitLocationSharingDuration" = "Limitar la durada de la partil·lació de localització";
+"generalSettings.locationSharingDuration" = "Durada de la quota de posicions";
+"generalSettings.donationCampaign" = "Campanya de donacions";
+"generalSettings.enableDonationCampaign" = "Activa la campanya de donacions";
+
+// Log View
+"logView.title" = "Diagnòstics";
+"logView.description" = "Obre les opcions de diagnòstic";
+"logView.startLogging" = "Comença el registre";
+"logView.stopLogging" = "Atura les traces";
+"logView.saveError" = "S'ha produït un error en desar el fitxer.";
+"logView.shareError" = "S'ha produït un error en compartir el fitxer.";
+
+// Migrate Account
+"migrateAccount.title" = "Migració de compte";
+"migrateAccount.migrateButton" = "Compte de migració";
+"migrateAccount.explanation" = "Cal migrar el compte.";
+"migrateAccount.passwordExplanation" = "Per continuar amb la migració del compte, introduïu la contrasenya del compte.";
+"migrateAccount.error" = "S'ha produït un error en migrar el compte. Torneu-ho a provar o elimineu el compte.";
+"migrateAccount.migrating" = "S'està migrant…";
+"migrateAccount.migrateAnother" = "Migració a un altre compte";
+
+// About Jami
+"aboutJami.declaration1" = "Jami, un paquet de GNU, és programari per a la comunicació universal i distribuïda d'igual a igual que respecta la llibertat i la privadesa dels seus usuaris. Visiteu";
+"aboutJami.declaration2" = "per saber-ne més.";
+"aboutJami.noWarranty1" = "Aquest programa es proporciona sense cap mena de garantia. Vegeu la";
+"aboutJami.noWarranty2" = "versió 3 o posterior per a més detalls.";
+"aboutJami.contribute" = "Contribueix";
+"aboutJami.feedback" = "Comentaris";
+"aboutJami.developers" = "Desenvolupadors";
+"aboutJami.media" = "Mitjans";
+"aboutJami.communityManagement" = "Gestió de comunitat";
+"aboutJami.specialThanks" = "Agraïments especials per a";
+"aboutJami.info" = "Aquesta és una llista de persones que han fet una inversió significativa de temps, amb resultats útils, en Jami. Qualsevol col·laborador d'aquest tipus que vulgui ser afegit a la llista hauria de contactar amb nosaltres.";
+"aboutJami.header" = "Volem agrair els nostres col·laboradors, els esforços dels quals durant molts anys han fet d'aquest programari el que és.";
+
+// Accessibility
+"accessibility.close" = "Tanca";
+"accessibility.smartListSwitchAccounts" = "Canvia de compte";
+"accessibility.smartListConnectedAs" = "El compte actual és %@";
+"accessibility.smartListAddAccount" = "Afegeix un compte";
+"accessibility.aboutJamiTitle" = "Sobre Jami...";
+"accessibility.welcomeToJamiTitle" = "Benvingut a Jami";
+"accessibility.createAccountVerifyUsernamePrompt" = "Introduïu el nom d'usuari per comprovar-ne la disponibilitat.";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "Imatge de perfil";
+"accessibility.profilePicturePickerHint" = "Toqueu dues vegades per fer una foto o seleccionar una imatge de la biblioteca";
+"accessibility.swarmPicturePicker" = "Imatge del grup";
+"accessibility.accountSummaryQrCode" = "Codi QR";
+"accessibility.accountSummaryQrCodeHint" = "Toqueu dues vegades per veure el codi QR del compte";
+"accessibility.accountSummaryEditProfileHint" = "Toqueu dues vegades per editar el perfil";
+"accessibility.accountSummaryEditSettingsButton" = "Opcions";
+"accessibility.conversationStartVoiceCall" = "Inicia una trucada d'àudio amb %@";
+"accessibility.conversationStartVideoCall" = "Inicia una videotrucada amb %@";
+"accessibility.conversationComposeMessage" = "Redacta un missatge";
+"accessibility.conversationShareMedia" = "Comparteix mèdia";
+"accessibility.conversationCameraHint" = "Toqueu dues vegades per obrir la càmera";
+"accessibility.audioPlayerPlay" = "Reproduir";
+"accessibility.audioPlayerPause" = "Pausar";
+"accessibility.conversationRowUnreadCount" = "%@ missatges sense llegir.";
+"accessibility.conversationRowBlocked" = "Conversa blocada";
+"accessibility.conversationRowSyncing" = "Sincronització en curs";
+"accessibility.conversationRowLastMessage" = "Últim missatge a les %@";
+"accessibility.userPresenceOnline" = "En línia";
+"accessibility.userPresenceAvailable" = "Disponible";
+"accessibility.pendingRequestsRowPlural" = "Invitacions rebudes: %@ invitacions pendents";
+"accessibility.pendingRequestsRowSingular" = "Invitació rebuda: %@ invitació pendent";
+"accessibility.pendingRequestsRowHint" = "Toqueu dues vegades per revisar i respondre les invitacions que heu rebut";
+"accessibility.pendingRequestsListBlockUser" = "Bloca el remitent de la invitació";
+"accessibility.pendingRequestsListRejectInvitation" = "Rebutja la invitació";
+"accessibility.pendingRequestsListAcceptInvitation" = "Accepta la invitació";
+"accessibility.messageBubbleDeleted" = "Missatge eliminat";
+"accessibility.messageBubbleEdited" = "Edicions";
+"accessibility.messageBubbleRead" = "Llegit";
+"accessibility.messageBubbleUnread" = "Sense llegir";
+"accessibility.textNotAvailable" = "S'ha rebut un missatge de text buit a %@. És possible que no s'hagi enviat correctament.";
+"accessibility.fileTransferNoName" = "Fitxer rebut a %@, nom no disponible";
+"accessibility.inReply" = "En resposta al missatge";
+"accessibility.text.receivedOn" = "%1@, missatge rebut el %2@";
+"accessibility.text.sentOn" = "%1@, missatge enviat el %2@";
+"accessibility.fileTransfer.receivedOn" = "Fitxer: %1@, rebut el %2@";
+"accessibility.fileTransfer.sentOn" = "Fitxer: %1@, enviat el %2@";
+"accessibility.call.lasted" = "Ha durat %@";
+"accessibility.calls.default.toggleAudio" = "Silencia el micròfon";
+"accessibility.calls.default.toggleVideo" = "Inicia la càmera";
+"accessibility.calls.default.pauseCall" = "Pausa de trucada";
+"accessibility.calls.default.endCall" = "Finalitza la trucada";
+"accessibility.calls.default.addParticipant" = "Afegir participant";
+"accessibility.calls.default.switchCamera" = "Canvia de càmera";
+"accessibility.calls.default.toggleSpeaker" = "Activa l'altaveu";
+"accessibility.calls.default.openConversation" = "Obre conversa";
+"accessibility.calls.default.showDialpad" = "Mostra el teclat de marcatge";
+"accessibility.calls.default.raiseHand" = "Aixeca la mà";
+
+"accessibility.calls.alter.toggleAudio" = "Activa el so del micròfon";
+"accessibility.calls.alter.toggleVideo" = "Aparell de detenció";
+"accessibility.calls.alter.pauseCall" = "Reanudar la trucada";
+"accessibility.calls.alter.endCall" = "Finalitza la trucada";
+"accessibility.calls.alter.addParticipant" = "Afegir participant";
+"accessibility.calls.alter.switchCamera" = "Canvia de càmera";
+"accessibility.calls.alter.toggleSpeaker" = "Desactiva l'altaveu";
+"accessibility.calls.alter.openConversation" = "Obre conversa";
+"accessibility.calls.alter.showDialpad" = "Mostra el teclat de marcatge";
+"accessibility.calls.alter.raiseHand" = "Man baixa";
+"accessibility.conference.minimize" = "Minimitza";
+"accessibility.conference.maximize" = "Maximitza";
+"accessibility.conference.setModerator" = "Configuració de moderador";
+"accessibility.conference.unsetModerator" = "Moderador desactivat";
+"accessibility.conference.muteAudio" = "Silencia l'àudio";
+"accessibility.conference.unmuteAudio" = "Audió inmutat";
+"accessibility.conference.endCall" = "Finalitza la trucada";
+"accessibility.conference.lowerHand" = "Man baixa";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "Mà aixecada";
+"accessibility.conference.moderator" = "Moderador";
+"accessibility.conference.recording" = "Recording";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "Codi QR del testimoni";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "Rosa vibrant";
+"swarmColors.purple" = "Porpra";
+"swarmColors.violet" = "Violeta";
+"swarmColors.indigoBlue" = "Blau indi";
+"swarmColors.skyBlue" = "Blau cel";
+"swarmColors.cyan" = "Cian";
+"swarmColors.teal" = "Verd blavós";
+"swarmColors.green" = "Verd";
+"swarmColors.limeGreen" = "Verd llima";
+"swarmColors.mediumGray" = "Gris mitjà";
+"swarmColors.yellowGreen" = "Groc verdós";
+"swarmColors.amber" = "Ambre";
+"swarmColors.brightOrange" = "Taronja brillant";
+"swarmColors.brown" = "Marró";
+"swarmColors.steelBlue" = "Blau acer";
+
+// Share extension
+"shareExtension.noAccount.title" = "No s'ha trobat el compte";
+"shareExtension.noAccount.description" = "Per continuar, creeu un compte a l'aplicació principal.";
+"shareExtension.unsupportedType.title" = "Contingut no compatible";
+"shareExtension.unsupportedType.description" = "Compartir el contingut seleccionat actualment no és compatible.";
+"shareExtension.sending" = "S'està enviant…";
+"shareExtension.noSearchResults" = "Cap conversa coincideix amb la cerca";
+"shareExtension.tryDifferentFilter" = "Proveu un filtre diferent";
+"shareExtension.sendToConversation" = "Envia a %d conversa";
+"shareExtension.sendToConversationsPlural" = "Envia a %d converses";
+"shareExtension.selectAccountTitle" = "Selecciona el compte";
+"shareExtension.searchConversations" = "Cerca converses";
+"shareExtension.accessibilitySelectConversation" = "Toqueu dues vegades per seleccionar aquesta conversa";
+"shareExtension.accessibilitySelectedAccount" = "Compte seleccionat: %@. Toqueu dues vegades per canviar de compte.";
+"shareExtension.accessibilitySendButton" = "Toqueu dues vegades per enviar a les converses seleccionades";
+"shareExtension.accessibilitySelectAccount" = "Toqueu dues vegades per seleccionar aquest compte";
+
+// Peer Services
+"peerServices.title" = "Serveis compartits";
+"peerServices.refresh" = "Actualitza els serveis";
+"peerServices.empty" = "No hi ha serveis compartits disponibles";
+"peerServices.errorOffline" = "El contacte està fora de línia";
+"peerServices.errorUnreachable" = "No es pot contactar amb el contacte";
+"peerServices.errorTimeout" = "La sol·licitud ha excedit el temps d'espera";
+"peerServices.errorUnknown" = "No s'han pogut recuperar els serveis";
+"peerServices.done" = "Fet";
+"peerServices.notSupported" = "No compatible";
+"peerServices.open" = "Obre";
+
+// Collaborative documents
+"collab.documents" = "Documents";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "Crear";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "Enllaç";
+"collab.linkHint" = "Adreça";
+"collab.linkAdd" = "Afegir";
+"collab.linkRemove" = "Eliminar";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = "Negreta";
+"collab.italic" = "Cursiva";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "Ratllat";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "Centre";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "Desfés";
+"collab.redo" = "Refés";
+"collab.remove" = "Eliminar";
+"collab.open" = "Obre";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "Eliminar";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";

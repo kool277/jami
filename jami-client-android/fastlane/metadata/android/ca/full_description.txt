@@ -1,0 +1,46 @@
+<b>Jami</b>, un paquet GNU, és un programari per a la comunicació universal i distribuïda entre iguals que respecta la llibertat i la privadesa dels seus usuaris.
+
+Jami és la manera més senzilla i fàcil de connectar amb persones (i dispositius) amb missatgeria instantània, trucades d'àudio i vídeo a través d'<b>Internet</b> i <b>intranets</b> LAN/WAN.
+
+Jami és una <b>plataforma de comunicació</b> gratuïta, xifrada d'extrem a extrem i privada.
+
+Jami és un programari <b>de codi obert</b> que <b>prioritza la privadesa dels usuaris</b>.
+
+Jami té un disseny d'aspecte professional i està disponible per a una àmplia gamma de plataformes. A diferència de les alternatives, les <b>trucades de Jami són directament entre usuaris</b>, ja que no utilitza servidors per gestionar les trucades.
+
+Això ofereix la màxima privadesa, ja que la naturalesa <b>distribuïda</b> de Jami fa que les vostres trucades només siguin entre participants.
+
+Les converses individuals i <b>grups</b> amb Jami es milloren amb missatgeria instantània, trucades d'àudio i vídeo, enregistrament i enviament de missatges d'àudio i vídeo, transferències de fitxers, compartició de pantalla i ubicació compartida.
+
+Jami també pot funcionar com a <b>client SIP</b>.
+
+Hi ha diverses <b>extensions Jami</b> disponibles: Filtre d'àudio, Resposta automàtica, Pantalla verda, Segmentació, Filigrana i Transcripció xiuxiueja.
+
+Jami es pot implementar fàcilment a les organitzacions amb el <b>JAMS (Jami Account Management Server)</b>, que permet als usuaris connectar-se amb les seves credencials corporatives o crear comptes locals. JAMS us permet <b>gestionar la vostra pròpia</b> comunitat Jami alhora que aprofiteu l'arquitectura de xarxa distribuïda de Jami.
+
+Jami està <b>disponible per</b> GNU/Linux, Windows, macOS, iOS, Android, Android TV i navegadors web, la qual cosa fa que Jami sigui un marc de comunicació interoperable i multiplataforma.
+
+<b>Gestioneu diversos</b> comptes SIP, comptes Jami i comptes JAMS amb el client Jami instal·lat en un o diversos dispositius.
+
+Jami és gratuït, il·limitat, privat, sense publicitat, compatible, ràpid, autònom i anònim.
+
+<b>Més informació sobre:</b>
+Jami: https://jami.net/
+Extensions de Jami: https://jami.net/extensions/
+JAMS (Servidor de gestió de comptes Jami): https://jami.biz/
+Documentació de Jami: https://docs.jami.net/
+
+<b>Segueix-nos per obtenir més informació:</b>
+Mastodon: https://mstdn.io/@Jami
+Vídeos: https://docs.jami.net/videos/
+
+<b>Ens agradaria molt saber de tu! Uneix-te a la comunitat Jami:</b>
+Col·labora: https://jami.net/contribute/
+Fòrum: https://forum.jami.net/
+
+Creeu <b>projectes IoT</b> amb Jami. Torneu a utilitzar la tecnologia de comunicacions universal de Jami amb la seva biblioteca portàtil al vostre sistema que trieu.
+
+Jami per a Android TV es prova a NVIDIA SHIELD TV amb càmeres Logitech.
+
+Jami es publica sota la <b>llicència GPL</b>, versió 3 o superior.
+Drets d'autor © Savoir-faire Linux Inc.

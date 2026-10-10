@@ -1,0 +1,31 @@
+ARG JAVA_VERSION=26
+ARG MAVEN_VERSION=3.9.16
+
+FROM maven:${MAVEN_VERSION}-eclipse-temurin-${JAVA_VERSION}-noble
+
+# Install Node.js v24.x (Active LTS)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends curl ca-certificates && \
+    curl -sL https://deb.nodesource.com/setup_24.x | bash - && \
+    apt-get install -y nodejs && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install google-java-format tool
+RUN npm install -g google-java-format
+
+# This image only compiles, tests and lints the sources, so it must not run as root.
+RUN groupadd --gid 1001 jams && \
+    useradd --uid 1001 --gid jams --create-home --shell /bin/bash jams && \
+    mkdir -p /test && \
+    chown jams:jams /test
+
+# Keep the Maven local repository inside the unprivileged user's home.
+ENV HOME=/home/jams
+ENV MAVEN_CONFIG=/home/jams/.m2
+
+USER jams
+WORKDIR /test
+COPY --chown=jams:jams . .
+
+# Install client dependencies
+RUN cd jams-react-client && npm ci

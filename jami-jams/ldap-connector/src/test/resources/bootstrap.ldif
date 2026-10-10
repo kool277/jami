@@ -1,0 +1,57 @@
+dn: dc=savoirfairelinux,dc=net
+objectClass: top
+objectClass: domain
+
+dn: ou=dsa,dc=savoirfairelinux,dc=net
+ou: group
+objectClass: top
+objectclass: organizationalunit
+
+dn: cn=sipallow,ou=dsa,dc=savoirfairelinux,dc=net
+objectClass: posixAccount
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: top
+uid: sipallow
+userPassword: password
+
+dn: ou=users,dc=savoirfairelinux,dc=net
+ou: people
+objectClass: top
+objectclass: organizationalunit
+
+dn: uid=fsidokhine,ou=users,dc=savoirfairelinux,dc=net
+objectClass: posixAccount
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: top
+uid: fsidokhine
+userPassword: password
+givenName: Felix
+cn: Felix Sidokhine
+sn: Sidokhine
+mail: felix.sidokhine@savoirfairelinux.com
+
+dn: uid=aberaud,ou=users,dc=savoirfairelinux,dc=net
+objectClass: posixAccount
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: top
+uid: aberaud
+userPassword: password
+givenName: Adrien
+cn: Adrien Beraud
+sn: Beraud
+mail: adrien.beraud@savoirfairelinux.com
+
+dn: uid=plarose,ou=users,dc=savoirfairelinux,dc=net
+objectClass: posixAccount
+objectClass: inetorgperson
+objectClass: organizationalperson
+objectClass: top
+uid: plarose
+userPassword: password
+givenName: Philippe
+cn: Philippe Larose
+sn: Larose
+mail: philippe.larose@savoirfairelinux.com

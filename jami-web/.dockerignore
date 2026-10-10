@@ -1,0 +1,17 @@
+.git/
+
+**/.vscode/
+**/.idea/
+
+**/node_modules/
+**/dist/
+**/*.tsbuildinfo
+client/vite.config.js
+
+**/.env*
+
+daemon/
+
+server/jamid.node
+server/accounts.json
+server/admin.json

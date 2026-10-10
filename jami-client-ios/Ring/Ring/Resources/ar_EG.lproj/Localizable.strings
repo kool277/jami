@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "إعدادت الحساب";
+"global.username" = "اسم المستخدم";
+"global.recommended" = "موصى به";
+"global.password" = "كلمة السر";
+"global.registerAUsername" = "تسجيل اسم المستخدم";
+"global.enterPassword" = "أدخِل كلمة المرور";
+"global.enterUsername" = "أدخِل اسم المستخدم";
+"global.cancel" = "إلغاء الأمر";
+"global.blockContact" = "حظر جهة إتصال";
+"global.removeAccount" = "إزالة الحساب";
+"global.incomingCall" = "مكالمة واردة";
+"global.ok" = "موافق";
+"global.close" = "إغلاق";
+"global.share" = "مشاركة";
+"global.forward" = "للأمام";
+"global.save" = "سجل";
+"global.resend" = "إعادة إرسال";
+"global.preview" = "معاينة";
+"global.accept" = "اقبل";
+"global.block" = "حظر";
+"global.decline" = "رفض";
+"global.name" = "إسم";
+"global.copy" = "نسخ";
+"global.reply" = "رد";
+"global.search" = "يتم البحث...";
+"global.supportJami" = "ادعم مشروع جامي";
+"global.deleteMessage" = "حذف رسالة";
+"global.deleteFile" = "حذف الملف من الجهاز";
+"global.editMessage" = "إصلاح الرسالة";
+"global.editing" = "جارٍ التعديل";
+"global.create" = "إنشاء";
+"global.edit" = "تصحيح";
+"global.remove" = "احذف";
+"global.call" = "مكالمة";
+"global.video" = "شريط";
+"global.time" = "الوقت";
+"global.editPassword" = "تعديل كلمة المرور";
+"global.confirmPassword" = "تأكيد كلمة المرور";
+"global.confirm" = "تأكيد";
+"global.cameraDisabled" = "الوصول إلى الكاميرا معطّل. فعّله في إعدادات الجهاز لاستخدام هذه الميزة.";
+"global.confirm" = "تأكيد";
+"global.connect" = "إتصال";
+"global.leave" = "إرحل";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "إسم";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "وصف";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Discard";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "رمز QR غير صالح";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "البحث عن جهة اتصال…";
+"swarmcreation.addDescription" = "إضافة وصف";
+// Swarm
+"swarm.muteConversation" = "محادثة صامتة";
+"swarm.leaveConversation" = "أترك المحادثة";
+"swarm.removeConversation" = "إزالة المحادثة";
+"swarm.removeContact" = "إزالة الاتصال";
+"swarm.restartConversation" = "إعادة تشغيل المحادثة";
+"swarm.conversationEnded" = "انتهت المحادثة";
+"swarm.chooseColor" = "لون المحادثة";
+"swarm.typeOfSwarm" = "نوع المحادثة";
+"swarm.identifier" = "المعرف";
+"swarm.conversationId" = "معرّف المحادثة";
+"swarm.settings" = "الإعدادات";
+"swarm.members" = "الأعضاء";
+"swarm.contactHeader" = "إتصال";
+"swarm.showContactQRCode" = "عرض رمز QR لجهة الاتصال";
+"swarm.shareContactInfo" = "مشاركة معلومات جهة الاتصال";
+"swarm.accessibilityContactQRCode" = "عرض رمز QR لجهة الاتصال";
+"swarm.accessibilityContactQRCodeHint" = "يفتح شاشة تحتوي على رمز QR لجهة الاتصال";
+"swarm.accessibilityContactShareHint" = "يفتح خيارات مشاركة معلومات جهة الاتصال";
+"swarm.accessibilityColorPicker" = "منتقي لون المحادثة";
+"swarm.conversationHeader" = "محادثة";
+"swarm.shareContactMessage" = "يمكنك إضافة جهة الاتصال هذه، %1@، على منصة جامي للتواصل الموزّع: https://jami.net";
+"swarm.oneToOne" = "خاص";
+"swarm.adminInvitesOnly" = "مجموعة خاصة (دعوات مقيدة)";
+"swarm.invitesOnly" = "مجموعة خاصة";
+"swarm.publicChat" = "مجموعة عامة";
+"swarm.others" = "آخرون";
+"swarm.member" = "عضو";
+"swarm.invited" = "مدعوة";
+"swarm.admin" = "المدير";
+"swarm.blocked" = "محظور";
+"swarm.unknown" = "مجهول";
+"swarm.left" = "غادر";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "دعوة الأعضاء";
+"swarm.inviteSelectedMembers" = "دعوة جهات الاتصال المحددة";
+"swarm.inviteMembersSelected" = "محدد";
+"swarm.inviteMembersNotSelected" = "غير محدد";
+"swarm.confirmLeaveConversation" = "هل تريد مغادرة هذه المحادثة؟";
+"swarm.Leave" = "إرحل";
+"swarm.newGroup" = "إنشاء مجموعة جديدة";
+"swarm.namePlaceholder" = "اسم المجموعة";
+"swarm.explanationText" = "يمكن دعوة الأعضاء في أي وقت بعد إنشاء المجموعة.";
+"swarm.customizeProfile" = "تخصيص ملف المجموعة";
+"swarm.changePicture" = "تغيير صورة المجموعة";
+"swarm.customize" = "تخصيص المجموعة";
+"swarm.selectContacts" = "إختيار جهات الاتصال";
+
+// Contact Picker
+"contactPicker.calls" = "مكالمات";
+"contactPicker.contacts" = "جهات الاتصال";
+
+// Smartlist
+"smartlist.yesterday" = "البارحة";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "محادثات";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "لا توجد محادثات تطابق البحث.";
+"smartlist.newContact" = "جهة اتصال جديدة";
+"smartlist.newGroup" = "مجموعة جديدة";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "الدعوات المستلمة";
+"smartlist.noResults" = "لا يوجد نتائج";
+"smartlist.noConversation" = "لا يوجد محادثات";
+"smartlist.searchBarPlaceholder" = "أدخل الاسم…";
+"smartlist.searchBar" = "إبحث";
+"smartlist.noNetworkConnectivity" = "لا يوجد اتصال بالشبكة";
+"smartlist.cellularAccess" = "تأكّد من السماح بالوصول إلى بيانات الهاتف المحمول في الإعدادات.";
+"smartlist.accountsTitle" = "حسابات";
+"smartlist.addAccountButton" = "+ إضافة حساب";
+"smartlist.noNumber" = "لا تحتوى جهة الاتصال المحددة على أى رقم";
+"smartlist.selectOneNumber" = "حدد أحد الأرقام";
+"smartlist.invitations" = "الدعوات";
+"smartlist.aboutJami" = "حول جامي";
+"smartlist.inviteFriends" = "دعوة الأصدقاء";
+"smartlist.disableDonation" = "ليس الآن";
+"smartlist.donationExplanation" = "إذا كنت تستمتع باستخدام Jami وتؤمن برسالتنا، فهل تريد التبرّع؟";
+"smartlist.inSynchronization" = "جارٍ المزامنة…";
+
+// Conversation
+"conversation.addToContactsButton" = "إضافة إلى جهات الاتصال";
+"conversation.sendInvitationButton" = "إرسال دعوة";
+"conversation.addToContactsLabel" = "إضافة إلى جهات الإتصال؟";
+"conversation.notContactLabel" = "%@ ليس في قائمة جهات الاتصال";
+"conversation.messagePlaceholder" = "اكتب إلى";
+"conversation.imageSaved" = "تم الحفظ";
+"conversation.errorSavingImage" = "تعذّر حفظ الصورة";
+"conversation.errorSavingImageMessage" = "حدث خطأ أثناء حفظ الصورة في مكتبة الصور.";
+"conversation.photoAccessRequiredMessage" = "يحتاج جامي إلى الوصول إلى مكتبة الصور لحفظ الصور. يمكنك تفعيل ذلك في الإعدادات.";
+"conversation.receivedRequest" = "أرسل لك %@ دعوة محادثة.";
+"conversation.incomingRequest" = "أرسل لك دعوة محادثة.";
+"conversation.requestMessage" = "مرحبًا،\nهل تريد الانضمام إلى المحادثة؟";
+"conversation.sendRequest" = "أرسل لهم دعوة لتتمكّن من المحادثة.";
+"conversation.sendRequestTitle" = "إرسال دعوة محادثة";
+"conversation.synchronizationTitle" = "لقد قبلت دعوة المحادثة.";
+"conversation.syncingTitle" = "جارٍ مزامنة المحادثة";
+"conversation.synchronizationMessage" = "بانتظار اتصال %@ لمزامنة المحادثة…";
+"conversation.inReplyTo" = "في جواب";
+"conversation.repliedTo" = "ردّ %@ على %@";
+"conversation.yourself" = "أنت";
+"conversation.edited" = "تحرير";
+"conversation.deletedMessage" = "حذف %@ رسالة";
+"conversation.contactBlocked" = "تم حظر جهة الاتصال";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "%@ يكتب";
+"conversation.typingIndicatorTwoUsers" = "%1@ و%2@ يكتبان";
+"conversation.typingIndicatorOtherUsers" = "%1@ و%2@ و%3@ آخر يكتبون";
+"conversation.typingIndicatorOthersUsers" = "%1@ و%2@ و%3@ آخرين يكتبون";
+"conversation.lastMessageDeleted" = "(رسالة محذوفة)";
+
+// Invitations
+"invitations.noInvitations" = "لم تــرد أي دعوة";
+"invitations.accepted" = "مقبول";
+"invitations.declined" = "مرفوضة";
+"invitations.blocked" = "محظور";
+"invitations.list" = "الدعوات المستلمة";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "شارك بحرية وخصوصية مع جامي";
+"welcome.text" = "چامى هو منصة اتصال حرة وعالمية تحفظ خصوصية المستخدمين وحرياتهم";
+"welcome.haveAccount" = "لدي حساب بالفعل";
+"welcome.linkDevice" = "الاستيراد من جهاز آخر";
+"welcome.linkBackup" = "الاستيراد من النسخة الاحتياطية";
+"welcome.createAccount" = "إعداد حساب جامي";
+"welcome.connectToJAMS" = "الاتصال بخادم إدارة";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "تخطي";
+"createProfile.profileCreated" = "التالي";
+"createProfile.title" = "خصّص ملفك الشخصي";
+"createProfile.enterNameLabel" = "إدخال اسم العرض";
+"createProfile.enterNamePlaceholder" = "أدخِل اسم";
+"createProfile.subtitle" = "تتم مشاركة ملفك الشخصي مع جهات اتصالك فقط. يمكن تغيير الملف الشخصي في أي وقت.";
+"createProfile.createProfilePicture" = "إنشاء صورة الملف الشخصي";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "انضموا إلى جامي";
+"createAccount.lookingForUsernameAvailability" = "جارٍ التحقق من توفّر اسم المستخدم…";
+"createAccount.invalidUsername" = "اسم مستخدم غير صالح. يرجى إدخال اسم المستخدم الصحيح.";
+"createAccount.usernameAlreadyTaken" = "اسم المستخدم مستخدم بالفعل";
+"createAccount.usernameValid" = "اسم المستخدم متاح.";
+"createAccount.UsernameNotRegisteredTitle" = "خطأ في الشبكة";
+"createAccount.UsernameNotRegisteredMessage" = "تم إنشاء حساب ولكن لم يتم تسجيل اسم المستخدم";
+"createAccount.timeoutTitle" = "حساب تم إنشاؤه";
+"createAccount.timeoutMessage" = "جارٍ تسجيل اسم المستخدم. يرجى الانتظار…";
+"createAccount.sipConfigure" = "تكوين حساب SIP موجود";
+"createAccount.creatingAccount" = "جارٍ إنشاء الحساب";
+"createAccount.nameExplanation" = "يمكنك اختيار اسم مستخدم لمساعدة الآخرين على إيجادك و الوصول إليك بسهولة على جامي.";
+"createAccount.newAccount" = "حساب جديد";
+"createAccount.encryptionEnabled" = "تم تفعيل الحماية بكلمة مرور";
+"createAccount.encrypt" = "الحماية بكلمة مرور";
+"createAccount.customize" = "تخصيص";
+"createAccount.encryptTitle" = "حماية الحساب بكلمة مرور";
+"createAccount.encryptExplanation" = "يتم إنشاء حساب جامي وتخزينه محليًا فقط على هذا الجهاز كأرشيف يحتوي على مفاتيح الحساب. يمكن اختياريًا حماية الوصول إلى الأرشيف بكلمة مرور.";
+
+// Link To Account form
+"linkToAccount.importAccount" = "استيراد حساب";
+"linkToAccount.showQrCode" = "رمز QR";
+"linkToAccount.showPinCode" = "رمز المصادقة";
+"linkToAccount.actionRequired" = "إجراء مطلوب.\nيرجى تأكيد الحساب على الجهاز المصدر.";
+"linkToAccount.allSet" = "تم استيراد الحساب بنجاح.";
+"linkToAccount.goToAccounts" = "الانتقال إلى الحساب المستورد";
+"linkToAccount.exportInstructions" = "على الجهاز المصدر، ابدأ عملية التصدير.";
+"linkToAccount.exportInstructionsPath" = "اختر الحساب ← إعدادات الحساب ← ربط جهاز جديد.";
+"linkToAccount.scanQrCode" = "عند الاستعداد، امسح رمز QR.";
+"linkToAccount.enterProvidedCode" = "عند الاستعداد، أدخل رمز المصادقة.";
+"linkToAccount.accountLockedWithPassword" = "الحساب محمي بكلمة مرور. للمتابعة، أدخل كلمة مرور الحساب.";
+"linkToAccount.exit" = "غادر";
+"linkToAccount.shareMessage" = "رمزك هو: %@";
+"linkToAccount.alertTile" = "هل تريد إيقاف ربط الحساب؟";
+"linkToAccount.alertMessage" = "سيؤدي الإيقاف إلى إلغاء عملية استيراد الحساب.";
+
+// Import from Archive
+"importFromArchive.explanation" = "استيراد حساب جامي من ملف أرشيف محلي.";
+"importFromArchive.passwordExplanation" = "إذا كان الحساب محميًا بكلمة مرور، يُرجى ملء الحقل التالي.";
+"importFromArchive.title" = "استيراد من أرشيف";
+"importFromArchive.buttonTitle" = "استيراد";
+"importFromArchive.selectArchiveButton" = "حدد ملف الأرشيف";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "تسجيل الدخول";
+"linkToAccountManager.title" = "حساب خادم الإدارة";
+"linkToAccountManager.accountManagerPlaceholder" = "عنوان URL لخادم الإدارة";
+"linkToAccountManager.accountManagerLabel" = "أدخل عنوان URL لخادم الإدارة";
+"linkToAccountManager.jamsExplanation" = "أدخل عنوان URL لخادم الإدارة";
+"linkToAccountManager.enterCredentials" = "أدخل بيانات اعتماد خادم الإدارة";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "خطأ في الحساب";
+"alerts.accountCannotBeFoundMessage" = "تعذّر العثور على الحساب على شبكة جامي. تأكّد من أنه تم تصديره على جامي من جهاز موجود، وأن بيانات الاعتماد المُقدّمة صحيحة.";
+"alerts.accountAddedTitle" = "تمت إضافة الحساب";
+"alerts.accountNoNetworkTitle" = "خطأ في الشبكة";
+"alerts.accountNoNetworkMessage" = "حدث خطأ في الاتصال أثناء إضافة حساب جامي إلى الشبكة الموزّعة. يرجى المحاولة مرة أخرى. إذا استمرت المشكلة، فاتصل بمسؤول النظام.";
+"alerts.accountDefaultErrorTitle" = "خطأ في الحساب";
+"alerts.accountDefaultErrorMessage" = "حدث خطأ أثناء إنشاء الحساب.";
+"alerts.profileTakePhoto" = "التقاط صورة";
+"alerts.profileUploadPhoto" = "تحميل صورة";
+"alerts.accountLinkedTitle" = "جاري ربط الحساب";
+"alerts.dbFailedTitle" = "حدث خطأ عند تشغيل جامي";
+"alerts.dbFailedMessage" = "الرجاء إغلاق التطبيق ومحاولة فتحه مرة ثانية";
+"alerts.confirmBlockContact" = "هل تريد حظر جهة الاتصال هذه؟ سيتم أيضًا حذف سجل المحادثة مع جهة الاتصال هذه نهائيًا.";
+"alerts.confirmDeleteConversation" = "هل تريد إزالة هذه المحادثة نهائيًا؟";
+"alerts.confirmLeaveConversation" = "هل تريد مغادرة هذه المحادثة؟";
+"alerts.confirmRemoveOneToOneConversation" = "هل تريد إزالة هذه المحادثة؟ سيتم حذف السجل الحالي. قد تبدأ محادثة جديدة إذا لم تكن لديك محادثات أخرى مع جهة الاتصال هذه.";
+"alerts.confimRemoveContact" = "هل تريد إزالة جهة الاتصال هذه؟ سيتم حذف السجل الحالي.";
+"alerts.confirmDeleteConversationFromContact" = "هل تريد حذف المحادثة مع جهة الاتصال هذه؟";
+"alerts.confirmDeleteConversationTitle" = "حذف المحادثة";
+"alerts.noMediaPermissionsTitle" = "الإعلام غير مُمَنِح";
+"alerts.noLibraryPermissionsTitle" = "لا يُمنح الوصول إلى مكتبة الصور";
+"alerts.noLocationPermissionsTitle" = "الوصول إلى الموقع غير الممنوح";
+"alerts.errorWrongCredentials" = "حدث خطأ أثناء الاتصال بخادم الإدارة. يرجى المحاولة مرة أخرى. إذا استمرت المشكلة، فاتصل بمسؤول النظام.";
+"alerts.recordVideoMessage" = "تسجيل رسالة فيديو";
+"alerts.recordAudioMessage" = "تسجيل رسالة صوتية";
+"alerts.uploadFile" = "إرسال ملف";
+"alerts.uploadPhoto" = "معرض مفتوح";
+"alerts.sendPhoto" = "إرسال صورة";
+"alerts.locationServiceIsDisabled" = "فعّل «خدمات الموقع» للسماح لـ «جامي» بتحديد موقع الجهاز.";
+"alerts.locationSharing" = "شارك موقعي";
+"alerts.alreadylocationSharing" = "مشاركة الموقع مع هذا المستخدم";
+"alerts.locationSharingDurationTitle" = "كم من الوقت يجب أن يكون الموقع المشترك؟";
+"alerts.locationSharingDuration10min" = "10 دقائق";
+"alerts.locationSharingDuration1hour" = "ساعة واحدة";
+"alerts.mapInformation" = "خريطة المعلومات";
+"alerts.openStreetMapCopyright" = "© المساهمين في OpenStreetMap";
+"alerts.openStreetMapCopyrightMoreInfo" = "تعلم المزيد";
+
+// Actions
+"actions.deleteAction" = "حذف";
+"actions.backAction" = "السابق";
+"actions.doneAction" = "منجز";
+"actions.goToSettings" = "إذهب إلى الإعدادات";
+"actions.stopLocationSharing" = "إيقاف المشاركة";
+
+// Calls
+"calls.ringing" = "... يرن";
+"calls.connecting" = "اتصال جاري...";
+"calls.callFinished" = "المكالمة انتهت";
+"calls.currentCallWith" = "اتصل بـ";
+"calls.maximize" = "تكبير";
+"calls.minimize" = "خفض";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "حدد المدير";
+"calls.removeModerator" = "إزالة المدير";
+"calls.muteAudio" = "كتم ميكروفون";
+"calls.unmuteAudio" = "إلغاء كتم الميكروفون";
+"calls.raiseHand" = "رفع اليد";
+"calls.lowerHand" = "اليد السفلى";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "تسجيل";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "هناك مكالمة جارية. هل تريد الانضمام إلى المكالمة؟ يمكنك أيضًا الانضمام إلى المكالمة لاحقًا من المحادثة.";
+"calls.activeCallInConversation" = "مكالمة جارية هل تريد الانضمام إلى المكالمة؟";
+"calls.acceptWithAudio" = "القبول بالصوت";
+"calls.acceptWithVideo" = "القبول بالفيديو";
+
+// Account Page
+"accountPage.devicesListHeader" = "الأجهزة";
+"accountPage.settingsHeader" = "الإعدادات";
+"accountPage.notificationsHeader" = "الإشعارات";
+"accountPage.blockedContacts" = "جهات إتصال محظورة";
+"accountPage.unblockContact" = "إزالة حظر";
+"accountPage.proxyAddressAlert" = "إعطاء عنوان النظام الأساسي";
+"accountPage.noProxyExplanationLabel" = "لا يمكن تلقّي الإشعارات عند تعطيل الوكيل.";
+"accountPage.proxyPaceholder" = "عنوان النظام الأساسي";
+"accountPage.useProxyList" = "استخدام قائمة الوكلاء";
+"accountPage.proxyListURL" = "عنوان URL لقائمة الوكيل";
+"accountPage.proxyExplanation" = "يتم توجيه الإشعارات عبر وكيل. يمكنك استخدام الوكيل الافتراضي، أو إدخال عنوان وكيل مخصّص، أو توفير رابط يحتوي على قائمة بالوكلاء.";
+"accountPage.proxyHeader" = "الوكيل";
+"accountPage.currentProxy" = "الوكيل الحالي";
+"accountPage.enableNotifications" = "تمكين الإخطارات";
+"accountPage.proxyDisabledAlertTitle" = "محطم خادم النظام الأساسي";
+"accountPage.proxyDisabledAlertBody" = "من أجل تلقي الإخطارات، يرجى تمكين النظام الأساسي";
+"accountPage.removeDeviceTitle" = "إزالة الجهاز";
+"accountPage.revokeDeviceMessage" = "هل تريد إزالة هذا الجهاز؟ لا يمكن التراجع عن هذا الإجراء.";
+"accountPage.revokeDeviceButton" = "سحب";
+"accountPage.revokeDevicePlaceholder" = "أدخل كلمة مرور الحساب";
+"accountPage.deviceRevoked" = "إعادة إلغاء الجهاز قد تم الانتهاء منها";
+"accountPage.deviceRevocationProgress" = "جارٍ الإزالة…";
+"accountPage.deviceRevocationSuccess" = "تمت إزالة الجهاز";
+"accountPage.deviceRevocationTryAgain" = "حاول مرة أخرى";
+"accountPage.deviceRevocationWrongPassword" = "كلمة مرور خاطئة";
+"accountPage.deviceRevocationUnknownDevice" = "جهاز مجهول";
+"accountPage.deviceRevocationError" = "خطأ إلغاء الجهاز";
+"accountPage.linkDeviceTitle" = "اربط جهازاً آخر";
+"accountPage.other" = "آخر";
+"accountPage.removeAccountMessage" = "إذا لم يُنسخ الحساب احتياطيًا أو يُضف إلى جهاز آخر، فسيُفقد الحساب واسم المستخدم المسجّل بشكل لا رجعة فيه.";
+"accountPage.inviteFriends" = "دعوة الأصدقاء";
+"accountPage.contactMeOnJamiTitle" = "اتصل بي عن (جامي)!";
+"accountPage.contactMeOnJamiContant" = "تواصل معي باستخدام «%s» على منصة جامي للتواصل الموزّع: https://jami.net";
+"accountPage.passwordPlaceholder" = "أدخل كلمة مرور الحساب";
+"accountPage.usernamePlaceholder" = "أدخل اسم المستخدم المطلوب";
+"accountPage.registerNameErrorMessage" = "اسم المستخدم غير متاح.";
+"accountPage.usernameRegistering" = "التسجيل";
+"accountPage.usernameRegisterAction" = "سجل";
+"accountPage.usernameRegistrationFailedTitle" = "فشل التسجيل";
+"accountPage.usernameRegistrationFailed" = "يرجى التحقق من كلمة مرور الحساب.";
+"accountPage.createPassword" = "تعيين كلمة المرور";
+"accountPage.changePassword" = "تغيير كلمة المرور";
+"accountPage.currentPasswordPlaceholder" = "إدخال كلمة المرور الحالية";
+"accountPage.newPasswordPlaceholder" = "إدخال كلمة مرور جديدة";
+"accountPage.newPasswordConfirmPlaceholder" = "تأكيد كلمة المرور الجديدة";
+"accountPage.changePasswordError" = "كلمة مرور خاطئة";
+"accountPage.enableBoothMode" = "تمكين وضع المرفق";
+"accountPage.disableBoothMode" = "إيقاف وضع المرفق";
+"accountPage.disableBoothModeExplanation" = "يرجى إدخال كلمة مرور الحساب";
+"accountPage.boothModeExplanation" = "في وضع الكشك لا يتم حفظ تاريخ المحادثات و وظائف jami محدودة من خلال إجراء المكالمات الخارجة. عندما تمكن من وضع الكشك سيتم إزالة جميع المحادثات الخاصة بك.";
+"accountPage.noBoothMode" = "لتفعيل وضع الكشك، احمِ الحساب بكلمة مرور أولًا.";
+"accountPage.boothModeAlertMessage" = "بعد تفعيل وضع الكشك، ستتم إزالة جميع المحادثات.";
+"accountPage.peerDiscovery" = "تمكين اكتشاف النظراء المحلي";
+"accountPage.peerDiscoveryExplanation" = "اتصل بعقد DHT أخرى التي تعلن على شبكتنا المحلية";
+"accountPage.autoRegistration" = "سجل السيارات بعد انتهاء الصلاحية";
+"accountPage.connectivityHeader" = "الاتصال";
+"accountPage.turnEnabled" = "تمكين TURN";
+"accountPage.turnServer" = "عنوان بروتوكول TURN";
+"accountPage.turnUsername" = "اسم المستخدم لبروتوكول TURN";
+"accountPage.turnPassword" = "كلمة المرور لبروتوكول TURN";
+"accountPage.turnRealm" = "حقل بروتوكول TURN";
+"accountPage.upnpEnabled" = "استخدم UPnP";
+"accountPage.stunEnabled" = "إستعمل خادم STUN";
+"accountPage.stunServer" = "عنوان STUN";
+"accountPage.publicAddressHeader" = "العنوان العام";
+"accountPage.allowIPAutoRewrite" = "السماح بإعادة كتابة IP تلقائيًا";
+"accountPage.publishedSameAsLocal" = "منشور مثل المحلي";
+"accountPage.publishedAddress" = "العنوان";
+"accountPage.publishedPort" = "منفذ عبور";
+"accountPage.security" = "تأمين";
+"accountPage.enableSRTP" = "تمكين تبادل مفتاح SDES";
+"accountPage.encryptNegotiation" = "نظام تشفير التفاوض (TLS)";
+"accountPage.registerNameExplanation" = "سجّل اسم مستخدم لمساعدة الآخرين على العثور عليك والوصول إليك بسهولة أكبر على جامي.";
+"accountPage.profileHeader" = "الملف الشخصى";
+"accountPage.profileNameNotSelected" = "لم يتم تحديد الاسم";
+"accountPage.accountHeader" = "الحساب";
+"accountPage.profileName" = "اسم الملف الشخصي";
+"accountPage.profileNamePlaceholder" = "أدخل اسم الملف الشخصي";
+"accountPage.editProfile" = "تعديل الملف الشخصي";
+"accountPage.manageAccount" = "إدارة الحساب";
+"accountPage.encryptAccount" = "كلمة السر";
+"accountPage.passwordExplanation" = "حساب Jami الخاص بك مسجّل على هذا الجهاز فقط كأرشيف يحتوي على مفاتيح حسابك. يمكن حماية الوصول إلى هذا الأرشيف بكلمة مرور.";
+"accountPage.passwordsDoNotMatch" = "كلمتا المرور غير متطابقتين.";
+"accountPage.passwordCreated" = "تم تعيين كلمة المرور";
+"accountPage.passwordUpdated" = "تم تحديث كلمة المرور";
+"accountPage.linkedDevices" = "الأجهزة المتصلة";
+"accountPage.unlink" = "إلغاء الربط";
+"accountPage.generatingPin" = "جارٍ إنشاء رمز PIN…";
+"accountPage.passwordForPin" = "الحساب محمي بكلمة مرور. أدخل كلمة المرور لإنشاء رمز PIN.";
+"accountPage.pinExplanationTitle" = "على جهاز آخر";
+"accountPage.pinExplanationMessage" = "ثبّت جامي وشغّله. اختر «استيراد من جهاز آخر»، وامسح رمز QR. بدلًا من ذلك، أدخل رمز PIN يدويًا.";
+"accountPage.pinError" = "حدث خطأ أثناء إنشاء رمز PIN.";
+"accountPage.notificationTitle" = "الإشعارات";
+"accountPage.notificationError" = "إشعارات جامي معطّلة. فعّلها في إعدادات الجهاز لاستخدام هذه الميزة.";
+"accountPage.callsFromUnknownContacts" = "السماح بالمكالمات من جهات اتصال غير معروفة.";
+"accountPage.accountSettingsExplanation" = "ستنطبق هذه الإعدادات على هذا الحساب فقط.";
+"accountPage.appSettings" = "إعدادات التطبيق";
+"accountPage.appSettingsExplanation" = "ستنطبق هذه الإعدادات على التطبيق بأكمله.";
+"accountPage.connectivityAndConfiguration" = "الاتصال والإعدادات";
+"accountPage.sipExpirationTime" = "وقت انتهاء صلاحية التسجيل (ثواني)";
+"accountPage.tlsVerifyServerCertificates" = "التحقق من شهادات TLS الخادم";
+"accountPage.tlsVerifyClientCertificates" = "التحقق من شهادات TLS للعميل";
+"accountPage.tlsRequireTlsCertificate" = "ضرورة وجود شهادة لإتصالات TLS الواردة";
+"accountPage.tlsDisableSecureDlgCheck" = "إعاقة التحقق الآمن من الحوار للبيانات TLS الموصلة";
+"accountPage.editSipExpirationTime" = "وقت انتهاء الصلاحية";
+"accountPage.selectSipExpirationTime" = "اضبط الوقت (بالثواني) لانتهاء صلاحية التسجيل";
+"accountPage.invalidSipExpirationTime" = "أدخل قيمة بين 60 و604800 ثانية";
+"accountPage.invalidPort" = "أدخل قيمة بين 0 و65535";
+"accountPage.invalidAddress" = "أدخل عنوانًا صالحًا";
+"accountPage.thisDevice" = "هذا الجهاز";
+"accountPage.otherDevices" = "الأجهزة الأخرى المرتبطة";
+"accountPage.accountIdentity" = "هوية الحساب";
+"accountPage.bootstrap" = "تشغيل ذاتي";
+"accountPage.dhtConfiguration" = "تهيئة OpenDHT";
+"accountPage.nameServer" = "اسم خادم";
+"accountPage.chats" = "المحادثات";
+"accountPage.typingIndicator" = "مؤشر التطبيق";
+"accountPage.typingIndicatorExplanation" = "يُظهر عند كتابة الرسائل.";
+
+// Backup Account
+"backupAccount.explanation" = "يوجد حساب جامي هذا على هذا الجهاز فقط. سيُفقد الحساب إذا فُقد هذا الجهاز أو أُزيل التطبيق. يُنصح بعمل نسخة احتياطية من هذا الحساب.";
+"backupAccount.title" = "حساب احتياطي";
+"backupAccount.creating" = "جارٍ إنشاء نسخة احتياطية";
+"backupAccount.archiveName" = "اختر اسمًا للأرشيف.";
+"backupAccount.archiveNamePlaceholder" = "اسم الأرشيف";
+"backupAccount.passwordRequest" = "أدخل كلمة مرور الحساب.";
+"backupAccount.backupButton" = "نسخة احتياطية";
+"backupAccount.documentPickerButton" = "فتح موقع النسخة الاحتياطية";
+"backupAccount.exportSuccess" = "تم إنشاء النسخة الاحتياطية";
+"backupAccount.errorWrongLocation" = "مسار الملف المحدد غير صالح. يرجى اختيار موقع آخر.";
+"backupAccount.errorAccessDenied" = "تم رفض الوصول إلى الموقع المحدد.";
+"backupAccount.errorFailed" = "حدث خطأ أثناء تصدير الحساب.";
+
+// Account
+"account.sipServer" = "الخادم";
+"account.port" = "منفذ عبور";
+"account.proxyServer" = "الوكيل";
+"account.createSipAccount" = "إعداد حساب SIP";
+"account.sipAccount" = "حساب SIP";
+"account.configure" = "ترتيب";
+"account.advancedFeatures" = "الميزات المتقدمة";
+"account.serverLabel" = "إدخال العنوان";
+"account.portLabel" = "إدخال رقم الميناء";
+"account.accountStatus" = "حالة الحساب";
+"account.enableAccount" = "تمكين الحساب";
+"account.statusOnline" = "نشط";
+"account.statusOffline" = "خامل";
+"account.statusConnecting" = "يتم الإتصال";
+"account.statusUnknown" = "مجهول";
+"account.statusConnectionerror" = "خطأ الاتصال";
+"account.needMigration" = "يتطلّب الحساب الترحيل.";
+"account.me" = "شخصي";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "لا توجد جهات إتصال محظورة";
+
+// Link New Device
+"linkDevice.title" = "اربط جهاز جديد";
+"linkDevice.networkError" = "حدث خطأ في الشبكة أثناء تصدير الحساب.";
+"linkDevice.errorWrongPassword" = "حدث خطأ في المصادقة أثناء ربط الجهاز. يُرجى التحقق من بيانات الاعتماد والمحاولة مجددًا.";
+"linkDevice.errorNetwork" = "حدث خطأ في الشبكة أثناء ربط الحساب. يُرجى التحقق من اتصالك والمحاولة مجددًا.";
+"linkDevice.errorTimeout" = "انتهت مهلة العملية. يُرجى المحاولة مجددًا.";
+"linkDevice.errorCode" = "حدث خطأ أثناء إنشاء الرمز. يرجى المحاولة مرة أخرى.";
+"linkDevice.errorWrongData" = "حدث خطأ أثناء تصدير الحساب. يُرجى المحاولة مجددًا.";
+"linkDevice.initialInfo" = "على الجهاز الجديد، ابدأ حسابًا جديدًا.";
+"linkDevice.infoAddAccount" = "اختر إضافة حساب ← الاتصال من جهاز آخر.";
+"linkDevice.infoQRCode" = "عند الاستعداد، امسح رمز QR.";
+"linkDevice.infoCode" = "عند الاستعداد، أدخل الرمز وانقر على اتصال.";
+"linkDevice.connecting" = "جارٍ الاتصال بجهازك الجديد…";
+"linkDevice.authenticationInfo" = "تم العثور على جهاز جديد على عنوان IP التالي. هل هذا أنت؟ لمتابعة عملية تصدير الحساب، انقر على تأكيد.";
+"linkDevice.newDeviceIP" = "عنوان IP للجهاز الجديد: %1@";
+"linkDevice.code" = "رمز";
+"linkDevice.wrongEntry" = "معرّف جهاز جديد غير معروف. يُرجى اتباع التعليمات أعلاه.";
+"linkDevice.exportInProgress" = "عملية تصدير الحساب إلى الجهاز الجديد جارية. يرجى تأكيد الاستيراد على الجهاز الجديد.";
+"linkDevice.completed" = "تم استيراد الحساب بنجاح على الجهاز الجديد.";
+
+// Contact Page
+"contactPage.startAudioCall" = "بدأ مكالمة صوتية";
+"contactPage.startVideoCall" = "بدء مكالمة فيديو";
+"contactPage.send" = "إرسال";
+"contactPage.leaveConversation" = "أترك المحادثة";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "إبتدائية...";
+"dataTransfer.readableStatusError" = "خطأ";
+"dataTransfer.readableStatusAwaiting" = "في انتظار...";
+"dataTransfer.readableStatusOngoing" = "التحويل";
+"dataTransfer.readableStatusCanceled" = "تم الإلغاء";
+"dataTransfer.sendingFailed" = "حدث خطأ أثناء الإرسال.";
+"dataTransfer.readableStatusSuccess" = "كاملة";
+"dataTransfer.recordInBackgroundWarning" = "قد يؤدي تسجيل الفيديو أثناء تعدد المهام مع تطبيقات متعددة إلى جودة فيديو أقل. للحصول على أفضل النتائج، سجّل عند عدم تعدد المهام";
+
+// Notifications
+"notifications.missedCall" = "المكالمة المفقودة";
+"notifications.newFile" = "ملف جديد";
+"notifications.locationSharingStarted" = "بدأ تبادل الموقع المقبل";
+"notifications.locationSharingStopped" = "توقف مشاركة الموقع المقبل";
+"dataTransfer.readableStatusDecline" = "رفض";
+"dataTransfer.readableStatusAccept" = "اقبل";
+"dataTransfer.infoMessage" = "انقر لبدء التسجيل";
+"dataTransfer.sendMessage" = "إرسال";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "تم تلقي دعوة";
+"generatedMessage.swarmCreated" = "تم إنشاء المحادثة";
+"generatedMessage.invitationReceived" = "تمت دعوة %@ للانضمام إلى المحادثة.";
+"generatedMessage.invitationAccepted" = "انضم %@ إلى المحادثة.";
+"generatedMessage.youJoined" = "انضممت إلى المحادثة.";
+"generatedMessage.contactBlocked" = "تم حظر %@ من المحادثة.";
+"generatedMessage.contactUnblocked" = "تم إلغاء حظر %@ من المحادثة.";
+"generatedMessage.outgoingCall" = "مكالمة صادرة";
+"generatedMessage.missedOutgoingCall" = "مكالمة صادرة فائتة";
+"generatedMessage.missedIncomingCall" = "مكالمة واردة فائتة";
+"generatedMessage.liveLocationSharing" = "مشاركة الموقع المباشر";
+"generatedMessage.contactLeftConversation" = "غادر %@ المحادثة.";
+"generatedMessage.nonSwarmInvitationReceived" = "لقد أرسلت دعوة.";
+"generatedMessage.nonSwarmInvitationAccepted" = "تم قبول دعوتك.";
+
+// General Settings
+"generalSettings.videoSettings" = "إعدادات الفيديو";
+"generalSettings.videoAcceleration" = "تمكين تسريع الفيديو";
+"generalSettings.fileTransfer" = "نقل ملف";
+"generalSettings.locationSharing" = "مشاركة الموقع";
+"generalSettings.automaticAcceptIncomingFiles" = "تقبل الملفات الموصلة تلقائيًا";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "(ميجابايت، 0 = غير محدود)";
+"generalSettings.limitLocationSharingDuration" = "الحد من مدة مشاركة الموقع";
+"generalSettings.locationSharingDuration" = "مدة حصة الموقف";
+"generalSettings.donationCampaign" = "حملة التبرع";
+"generalSettings.enableDonationCampaign" = "تمكين حملة التبرعات";
+
+// Log View
+"logView.title" = "التشخيص";
+"logView.description" = "إعدادات سجل التشخيص المفتوحة";
+"logView.startLogging" = "بدء التسجيل";
+"logView.stopLogging" = "توقف عن التقطيع";
+"logView.saveError" = "حدث خطأ أثناء حفظ الملف.";
+"logView.shareError" = "حدث خطأ أثناء مشاركة الملف.";
+
+// Migrate Account
+"migrateAccount.title" = "هجرة الحساب";
+"migrateAccount.migrateButton" = "حساب الهجرة";
+"migrateAccount.explanation" = "ترحيل الحساب مطلوب.";
+"migrateAccount.passwordExplanation" = "لمتابعة ترحيل الحساب، أدخل كلمة مرور الحساب.";
+"migrateAccount.error" = "حدث خطأ أثناء ترحيل الحساب. أعد المحاولة أو احذف الحساب.";
+"migrateAccount.migrating" = "جارٍ الترحيل…";
+"migrateAccount.migrateAnother" = "تحويل حساب آخر";
+
+// About Jami
+"aboutJami.declaration1" = "جامي، وهو حزمة من GNU، هو برنامج للتواصل الشامل والموزّع من الند للند يحترم حرية مستخدميه وخصوصيتهم. تفضّل بزيارة";
+"aboutJami.declaration2" = "لمعرفة المزيد.";
+"aboutJami.noWarranty1" = "يأتي هذا البرنامج دون أي ضمان على الإطلاق. راجع";
+"aboutJami.noWarranty2" = "الإصدار 3 أو أحدث للتفاصيل.";
+"aboutJami.contribute" = "مساهمة";
+"aboutJami.feedback" = "سبر راي";
+"aboutJami.developers" = "المطوّرون";
+"aboutJami.media" = "وسائط";
+"aboutJami.communityManagement" = "إدارة المجتمع";
+"aboutJami.specialThanks" = "شكر خاص لـ";
+"aboutJami.info" = "هذه قائمة بالأشخاص الذين استثمروا قدرًا كبيرًا من الوقت، بنتائج مفيدة، في Jami. يمكن لأي من هؤلاء المساهمين الذين يرغبون في إضافتهم إلى القائمة الاتصال بنا.";
+"aboutJami.header" = "نود أن نشكر مساهمينا، الذين جعلت جهودهم على مدى سنوات عديدة هذا البرنامج كما هو عليه.";
+
+// Accessibility
+"accessibility.close" = "إغلاق";
+"accessibility.smartListSwitchAccounts" = "تبديل الحساب";
+"accessibility.smartListConnectedAs" = "الحساب الحالي هو %@";
+"accessibility.smartListAddAccount" = "أضف حساب";
+"accessibility.aboutJamiTitle" = "حول جامي";
+"accessibility.welcomeToJamiTitle" = "مرحبا بك في جامي";
+"accessibility.createAccountVerifyUsernamePrompt" = "أدخل اسم المستخدم للتحقق من التوفّر.";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "صورة الملف الشخصي";
+"accessibility.profilePicturePickerHint" = "انقر نقرًا مزدوجًا لالتقاط صورة أو تحديد صورة من المكتبة";
+"accessibility.swarmPicturePicker" = "صورة المجموعة";
+"accessibility.accountSummaryQrCode" = "رمز الإستجابة السريعة";
+"accessibility.accountSummaryQrCodeHint" = "انقر نقرًا مزدوجًا لعرض رمز QR للحساب";
+"accessibility.accountSummaryEditProfileHint" = "انقر نقرًا مزدوجًا لتعديل الملف الشخصي";
+"accessibility.accountSummaryEditSettingsButton" = "الإعدادات";
+"accessibility.conversationStartVoiceCall" = "بدء مكالمة صوتية مع %@";
+"accessibility.conversationStartVideoCall" = "بدء مكالمة فيديو مع %@";
+"accessibility.conversationComposeMessage" = "كتابة رسالة";
+"accessibility.conversationShareMedia" = "مشاركة الوسائط";
+"accessibility.conversationCameraHint" = "انقر نقرًا مزدوجًا لفتح الكاميرا";
+"accessibility.audioPlayerPlay" = "تشغيل";
+"accessibility.audioPlayerPause" = "إيقاف مؤقت";
+"accessibility.conversationRowUnreadCount" = "%@ رسائل غير مقروءة.";
+"accessibility.conversationRowBlocked" = "المحادثة محظورة";
+"accessibility.conversationRowSyncing" = "المزامنة جارية";
+"accessibility.conversationRowLastMessage" = "آخر رسالة في %@";
+"accessibility.userPresenceOnline" = "نشط";
+"accessibility.userPresenceAvailable" = "متاح";
+"accessibility.pendingRequestsRowPlural" = "الدعوات المستلمة: %@ دعوات معلّقة";
+"accessibility.pendingRequestsRowSingular" = "دعوة مستلمة: %@ دعوة معلّقة";
+"accessibility.pendingRequestsRowHint" = "انقر نقرًا مزدوجًا لمراجعة الدعوات التي استلمتها والرد عليها";
+"accessibility.pendingRequestsListBlockUser" = "حظر مُرسِل الدعوة";
+"accessibility.pendingRequestsListRejectInvitation" = "رفض الدعوة";
+"accessibility.pendingRequestsListAcceptInvitation" = "قبول الدعوة";
+"accessibility.messageBubbleDeleted" = "تم حذف الرسالة";
+"accessibility.messageBubbleEdited" = "تحرير";
+"accessibility.messageBubbleRead" = "مقروءة";
+"accessibility.messageBubbleUnread" = "غير مقروءة";
+"accessibility.textNotAvailable" = "تم استلام رسالة نصية فارغة في %@. قد لا تكون قد أُرسلت بشكل صحيح.";
+"accessibility.fileTransferNoName" = "تم استلام ملف في %@، الاسم غير متوفر";
+"accessibility.inReply" = "ردًا على رسالة";
+"accessibility.text.receivedOn" = "%1@، تم استلام الرسالة في %2@";
+"accessibility.text.sentOn" = "%1@، تم إرسال الرسالة في %2@";
+"accessibility.fileTransfer.receivedOn" = "ملف: %1@، تم استلامه في %2@";
+"accessibility.fileTransfer.sentOn" = "ملف: %1@، تم إرساله في %2@";
+"accessibility.call.lasted" = "استمرت %@";
+"accessibility.calls.default.toggleAudio" = "كتم ميكروفون";
+"accessibility.calls.default.toggleVideo" = "بدء الكاميرا";
+"accessibility.calls.default.pauseCall" = "وقفة المكالمة";
+"accessibility.calls.default.endCall" = "إنهاء المكالمة";
+"accessibility.calls.default.addParticipant" = "أضف مشارك";
+"accessibility.calls.default.switchCamera" = "تبديل الكاميرا";
+"accessibility.calls.default.toggleSpeaker" = "تشغيل مكبر الصوت";
+"accessibility.calls.default.openConversation" = "محادثة مفتوحة";
+"accessibility.calls.default.showDialpad" = "عرض لوحة الاتصال";
+"accessibility.calls.default.raiseHand" = "رفع اليد";
+
+"accessibility.calls.alter.toggleAudio" = "إلغاء كتم الميكروفون";
+"accessibility.calls.alter.toggleVideo" = "أوقف الكاميرا";
+"accessibility.calls.alter.pauseCall" = "استئناف المكالمة";
+"accessibility.calls.alter.endCall" = "إنهاء المكالمة";
+"accessibility.calls.alter.addParticipant" = "أضف مشارك";
+"accessibility.calls.alter.switchCamera" = "تبديل الكاميرا";
+"accessibility.calls.alter.toggleSpeaker" = "إيقاف مكبر الصوت";
+"accessibility.calls.alter.openConversation" = "محادثة مفتوحة";
+"accessibility.calls.alter.showDialpad" = "عرض لوحة الاتصال";
+"accessibility.calls.alter.raiseHand" = "اليد السفلى";
+"accessibility.conference.minimize" = "خفض";
+"accessibility.conference.maximize" = "تكبير";
+"accessibility.conference.setModerator" = "حدد المدير";
+"accessibility.conference.unsetModerator" = "إزالة المدير";
+"accessibility.conference.muteAudio" = "كتم الصوت";
+"accessibility.conference.unmuteAudio" = "صوت غير محكم";
+"accessibility.conference.endCall" = "إنهاء المكالمة";
+"accessibility.conference.lowerHand" = "اليد السفلى";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "يدي مرتفعة";
+"accessibility.conference.moderator" = "المُتَدَلِّل";
+"accessibility.conference.recording" = "تسجيل";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "رمز QR للرمز المميّز";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "وردي زاهٍ";
+"swarmColors.purple" = "أرجواني";
+"swarmColors.violet" = "بنفسجي";
+"swarmColors.indigoBlue" = "نيلي";
+"swarmColors.skyBlue" = "أزرق سماوي";
+"swarmColors.cyan" = "سماوي";
+"swarmColors.teal" = "أزرق مخضر";
+"swarmColors.green" = "أخضر";
+"swarmColors.limeGreen" = "أخضر ليموني";
+"swarmColors.mediumGray" = "رمادي متوسط";
+"swarmColors.yellowGreen" = "أصفر مخضر";
+"swarmColors.amber" = "كهرماني";
+"swarmColors.brightOrange" = "برتقالي زاهٍ";
+"swarmColors.brown" = "بني";
+"swarmColors.steelBlue" = "أزرق فولاذي";
+
+// Share extension
+"shareExtension.noAccount.title" = "لم يُعثر على الحساب";
+"shareExtension.noAccount.description" = "للمتابعة، أنشئ حسابًا في التطبيق الرئيسي.";
+"shareExtension.unsupportedType.title" = "محتوى غير مدعوم";
+"shareExtension.unsupportedType.description" = "مشاركة المحتوى المحدد غير مدعومة حاليًا.";
+"shareExtension.sending" = "جارٍ الإرسال…";
+"shareExtension.noSearchResults" = "لا توجد محادثات تطابق بحثك";
+"shareExtension.tryDifferentFilter" = "جرّب عامل تصفية مختلفًا";
+"shareExtension.sendToConversation" = "إرسال إلى %d محادثة";
+"shareExtension.sendToConversationsPlural" = "إرسال إلى %d محادثات";
+"shareExtension.selectAccountTitle" = "اختيار حساب";
+"shareExtension.searchConversations" = "البحث في المحادثات";
+"shareExtension.accessibilitySelectConversation" = "انقر نقرًا مزدوجًا لتحديد هذه المحادثة";
+"shareExtension.accessibilitySelectedAccount" = "الحساب المحدد: %@. انقر نقرًا مزدوجًا لتغيير الحساب.";
+"shareExtension.accessibilitySendButton" = "انقر نقرًا مزدوجًا للإرسال إلى المحادثات المحددة";
+"shareExtension.accessibilitySelectAccount" = "انقر نقرًا مزدوجًا لتحديد هذا الحساب";
+
+// Peer Services
+"peerServices.title" = "الخدمات المشتركة";
+"peerServices.refresh" = "تحديث الخدمات";
+"peerServices.empty" = "لا توجد خدمات مشتركة متاحة";
+"peerServices.errorOffline" = "جهة الاتصال غير متصلة";
+"peerServices.errorUnreachable" = "يتعذّر الوصول إلى جهة الاتصال";
+"peerServices.errorTimeout" = "انتهت مهلة الطلب";
+"peerServices.errorUnknown" = "تعذّر استرجاع الخدمات";
+"peerServices.done" = "منجز";
+"peerServices.notSupported" = "غير مدعوم";
+"peerServices.open" = "إفتح";
+
+// Collaborative documents
+"collab.documents" = "الوثائق";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "إنشاء";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "ربط";
+"collab.linkHint" = "العنوان";
+"collab.linkAdd" = "إضافة";
+"collab.linkRemove" = "احذف";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = "غامق";
+"collab.italic" = "مائل";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "يتوسطه خط";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "المركز";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "تراجع";
+"collab.redo" = "إعادة مرة اخرى";
+"collab.remove" = "احذف";
+"collab.open" = "إفتح";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "احذف";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";

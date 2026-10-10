@@ -1,0 +1,2 @@
+ALTER TABLE contacts ADD COLUMN banned BOOLEAN;
+ALTER TABLE contacts ADD COLUMN confirmed BOOLEAN;

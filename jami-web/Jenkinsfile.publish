@@ -1,0 +1,122 @@
+/*
+ * Copyright (C) 2022-2026 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation; either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+
+// NPM publishing pipeline for jami-web:
+//   @savoirfairelinux/jami-web-common  (shared types and interfaces)
+//   @savoirfairelinux/jami-web         (server including the bundled web client)
+
+pipeline {
+    agent { label 'linux-builder' }
+
+    options {
+        ansiColor('xterm')
+        timestamps()
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
+
+    parameters {
+        booleanParam(
+            name: 'DRY_RUN',
+            defaultValue: true,
+            description: 'Run npm pack without publishing (for verification).'
+        )
+    }
+
+    environment {
+        SCOPE = '@savoirfairelinux'
+        COMMON_PKG = "${SCOPE}/jami-web-common"
+        WEB_PKG = "${SCOPE}/jami-web"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            agent {
+                docker {
+                    image 'node:24-slim'
+                    reuseNode true
+                    args '-e HOME=/tmp'
+                }
+            }
+            steps {
+                sh 'npm ci'
+                // The jami-web prepack step rebuilds the client and common
+                // workspaces, but build them explicitly here so any failure
+                // surfaces early and clearly.
+                sh 'npm run build --workspace=@savoirfairelinux/jami-web-common'
+                sh 'npm run build --workspace=client'
+                sh 'npm run build --workspace=@savoirfairelinux/jami-web'
+            }
+        }
+
+        stage('Publish @savoirfairelinux/jami-web-common') {
+            when {
+                changeset 'common/**'
+            }
+            agent {
+                docker {
+                    image 'node:24-slim'
+                    reuseNode true
+                    args '-e HOME=/tmp'
+                }
+            }
+            steps {
+                publishWorkspace('@savoirfairelinux/jami-web-common')
+            }
+        }
+
+        stage('Publish @savoirfairelinux/jami-web') {
+            agent {
+                docker {
+                    image 'node:24-slim'
+                    reuseNode true
+                    args '-e HOME=/tmp'
+                }
+            }
+            steps {
+                publishWorkspace('@savoirfairelinux/jami-web')
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
+
+/**
+ * Publish (or pack, when DRY_RUN) a single npm workspace.
+ */
+void publishWorkspace(String workspace) {
+    withCredentials([string(credentialsId: 'npm-token', variable: 'NPM_TOKEN')]) {
+        writeFile file: '.npmrc', text: '//registry.npmjs.org/:_authToken=${NPM_TOKEN}\n'
+        if (params.DRY_RUN) {
+            sh "npm pack --dry-run --workspace=${workspace}"
+        } else {
+            sh "npm publish --access public --workspace=${workspace}"
+        }
+    }
+}

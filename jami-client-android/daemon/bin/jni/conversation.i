@@ -1,0 +1,140 @@
+/*
+ *  Copyright (C) 2004-2026 Savoir-faire Linux Inc.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+%header %{
+#include "jami/jami.h"
+#include "jami/conversation_interface.h"
+
+class ConversationCallback {
+public:
+    virtual ~ConversationCallback(){}
+    virtual void swarmLoaded(uint32_t /* id */, const std::string& /*accountId*/, const std::string& /* conversationId */, std::vector<libjami::SwarmMessage> /*messages*/){}
+    virtual void messagesFound(uint32_t /* id */, const std::string& /*accountId*/, const std::string& /* conversationId */, std::vector<std::map<std::string, std::string>> /*messages*/){}
+    virtual void swarmMessageReceived(const std::string& /*accountId*/, const std::string& /* conversationId */, const libjami::SwarmMessage& /*message*/){}
+    virtual void swarmMessageUpdated(const std::string& /*accountId*/, const std::string& /* conversationId */, const libjami::SwarmMessage& /*message*/){}
+    virtual void reactionAdded(const std::string& /*accountId*/, const std::string& /* conversationId */, const std::string& /* messageId */, std::map<std::string, std::string> /*reaction*/){}
+    virtual void reactionRemoved(const std::string& /*accountId*/, const std::string& /* conversationId */, const std::string& /* messageId */, const std::string& /* reactionId */){}
+    virtual void conversationProfileUpdated(const std::string& /*accountId*/, const std::string& /* conversationId */, std::map<std::string, std::string> /*profile*/){}
+    virtual void conversationRequestReceived(const std::string& /*accountId*/, const std::string& /* conversationId */, std::map<std::string, std::string> /*metadatas*/){}
+    virtual void conversationRequestDeclined(const std::string& /*accountId*/, const std::string& /* conversationId */){}
+    virtual void conversationReady(const std::string& /*accountId*/, const std::string& /* conversationId */){}
+    virtual void conversationRemoved(const std::string& /*accountId*/, const std::string& /* conversationId */){}
+    virtual void conversationMemberEvent(const std::string& /*accountId*/, const std::string& /* conversationId */, const std::string& /* memberUri */, int /* event */){}
+    virtual void onConversationError(const std::string& /*accountId*/, const std::string& /* conversationId */, uint32_t /* code */, const std::string& /* what */){}
+    virtual void conversationPreferencesUpdated(const std::string& /*accountId*/, const std::string& /* conversationId */, std::map<std::string, std::string> /* preferences */){}
+    virtual void collaborativeDocumentUpdate(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::vector<uint8_t>& /*update*/){}
+    virtual void collaborativeAwarenessChanged(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::string& /*peerId*/, uint64_t /*clientId*/, const std::string& /*state*/){}
+    virtual void collaborativeParticipantLeft(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::string& /*peerId*/, uint64_t /*clientId*/){}
+    virtual void collaborativeDocumentRenamed(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::string& /*name*/){}
+    virtual void collaborativeDocumentRemoved(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, bool /*everywhere*/){}
+    virtual void collaborativeAttachmentAdded(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::string& /*attachmentId*/){}
+};
+%}
+
+%feature("director") ConversationCallback;
+%template(SwarmMessageVect) std::vector<libjami::SwarmMessage>;
+
+namespace libjami {
+
+struct SwarmMessage
+{
+    std::string id;
+    std::string type;
+    std::string linearizedParent;
+    std::map<std::string, std::string> body;
+    std::vector<std::map<std::string, std::string>> reactions;
+    std::vector<std::map<std::string, std::string>> editions;
+    std::map<std::string, int32_t> status;
+};
+
+  // Conversation management
+  std::string startConversation(const std::string& accountId);
+  void acceptConversationRequest(const std::string& accountId, const std::string& conversationId);
+  void declineConversationRequest(const std::string& accountId, const std::string& conversationId);
+  bool removeConversation(const std::string& accountId, const std::string& conversationId);
+  std::vector<std::string> getConversations(const std::string& accountId);
+  std::vector<std::map<std::string, std::string>> getActiveCalls(const std::string& accountId, const std::string& conversationId);
+  std::vector<std::map<std::string, std::string>> getConversationRequests(const std::string& accountId);
+  void updateConversationInfos(const std::string& accountId, const std::string& conversationId, const std::map<std::string, std::string>& infos);
+  std::map<std::string, std::string> conversationInfos(const std::string& accountId, const std::string& conversationId);
+  void setConversationPreferences(const std::string& accountId, const std::string& conversationId, const std::map<std::string, std::string>& prefs);
+  std::map<std::string, std::string> getConversationPreferences(const std::string& accountId, const std::string& conversationId);
+
+  // Member management
+  void addConversationMember(const std::string& accountId, const std::string& conversationId, const std::string& contactUri);
+  void removeConversationMember(const std::string& accountId, const std::string& conversationId, const std::string& contactUri);
+  std::vector<std::map<std::string, std::string>> getConversationMembers(const std::string& accountId, const std::string& conversationId);
+
+  // Collaborative editing
+  std::string createCollaborativeDocument(const std::string& accountId, const std::string& conversationId, const std::string& name, const std::string& mimeType);
+  std::vector<uint8_t> openCollaborativeDocument(const std::string& accountId, const std::string& conversationId, const std::string& documentId);
+  bool removeCollaborativeDocument(const std::string& accountId, const std::string& conversationId, const std::string& documentId);
+  bool removeCollaborativeDocumentLocally(const std::string& accountId, const std::string& conversationId, const std::string& documentId);
+  void closeCollaborativeDocument(const std::string& accountId, const std::string& conversationId, const std::string& documentId);
+  void applyCollaborativeUpdate(const std::string& accountId, const std::string& conversationId, const std::string& documentId, const std::vector<uint8_t>& update);
+  void setCollaborativeAwareness(const std::string& accountId, const std::string& conversationId, const std::string& documentId, const std::string& state);
+  std::vector<uint8_t> collaborativeDocumentState(const std::string& accountId, const std::string& conversationId, const std::string& documentId);
+  void setCollaborativeDocumentName(const std::string& accountId, const std::string& conversationId, const std::string& documentId, const std::string& name);
+  std::string collaborativeDocumentName(const std::string& accountId, const std::string& conversationId, const std::string& documentId);
+  std::vector<std::map<std::string, std::string>> getCollaborativeDocuments(const std::string& accountId, const std::string& conversationId);
+  std::vector<std::map<std::string, std::string>> getCollaborativeDocumentHistory(const std::string& accountId, const std::string& conversationId, const std::string& documentId, uint32_t max);
+  std::vector<uint8_t> collaborativeDocumentStateAt(const std::string& accountId, const std::string& conversationId, const std::string& documentId, const std::string& commitId);
+  std::string addCollaborativeAttachment(const std::string& accountId, const std::string& conversationId, const std::string& documentId, const std::vector<uint8_t>& data);
+  std::vector<uint8_t> collaborativeAttachment(const std::string& accountId, const std::string& conversationId, const std::string& documentId, const std::string& attachmentId);
+
+  // Message send/load
+  void sendMessage(const std::string& accountId, const std::string& conversationId, const std::string& message, const std::string& replyTo, const int32_t& flag);
+  uint32_t loadConversation(const std::string& accountId, const std::string& conversationId, const std::string& fromMessage, size_t n);
+  uint32_t loadSwarmUntil(const std::string& accountId, const std::string& conversationId, const std::string& fromMessage, const std::string& toMessage);
+  uint32_t countInteractions(const std::string& accountId, const std::string& conversationId, const std::string& toId, const std::string& fromId, const std::string& authorUri);
+  void clearCache(const std::string& accountId, const std::string& conversationId);
+  uint32_t searchConversation(const std::string& accountId,
+           const std::string& conversationId,
+           const std::string& author,
+           const std::string& lastId,
+           const std::string& regexSearch,
+           const std::string& type,
+           const int64_t& after,
+           const int64_t& before,
+           const uint32_t& maxResult,
+           const int32_t& flag);
+}
+
+class ConversationCallback {
+public:
+    virtual ~ConversationCallback(){}
+    virtual void swarmLoaded(uint32_t /* id */, const std::string& /*accountId*/, const std::string& /* conversationId */, std::vector<libjami::SwarmMessage> /*messages*/){}
+    virtual void messagesFound(uint32_t /* id */, const std::string& /*accountId*/, const std::string& /* conversationId */, std::vector<std::map<std::string, std::string>> /*messages*/){}
+    virtual void swarmMessageReceived(const std::string& /*accountId*/, const std::string& /* conversationId */, const libjami::SwarmMessage& /*message*/){}
+    virtual void swarmMessageUpdated(const std::string& /*accountId*/, const std::string& /* conversationId */, const libjami::SwarmMessage& /*message*/){}
+    virtual void reactionAdded(const std::string& /*accountId*/, const std::string& /* conversationId */, const std::string& /* messageId */, std::map<std::string, std::string> /*messageId*/){}
+    virtual void reactionRemoved(const std::string& /*accountId*/, const std::string& /* conversationId */, const std::string& /* messageId */, const std::string& /* reactionId */){}
+    virtual void conversationProfileUpdated(const std::string& /*accountId*/, const std::string& /* conversationId */, std::map<std::string, std::string> /*profile*/){}
+    virtual void conversationRequestReceived(const std::string& /*accountId*/, const std::string& /* conversationId */, std::map<std::string, std::string> /*metadatas*/){}
+    virtual void conversationRequestDeclined(const std::string& /*accountId*/, const std::string& /* conversationId */){}
+    virtual void conversationReady(const std::string& /*accountId*/, const std::string& /* conversationId */){}
+    virtual void conversationRemoved(const std::string& /*accountId*/, const std::string& /* conversationId */){}
+    virtual void conversationMemberEvent(const std::string& /*accountId*/, const std::string& /* conversationId */, const std::string& /* memberUri */, int /* event */){}
+    virtual void onConversationError(const std::string& /*accountId*/, const std::string& /* conversationId */, uint32_t /* code */, const std::string& /* what */){}
+    virtual void conversationPreferencesUpdated(const std::string& /*accountId*/, const std::string& /* conversationId */, std::map<std::string, std::string> /* preferences */){}
+    virtual void collaborativeDocumentUpdate(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::vector<uint8_t>& /*update*/){}
+    virtual void collaborativeAwarenessChanged(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::string& /*peerId*/, uint64_t /*clientId*/, const std::string& /*state*/){}
+    virtual void collaborativeParticipantLeft(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::string& /*peerId*/, uint64_t /*clientId*/){}
+    virtual void collaborativeDocumentRenamed(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::string& /*name*/){}
+    virtual void collaborativeDocumentRemoved(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, bool /*everywhere*/){}
+    virtual void collaborativeAttachmentAdded(const std::string& /*account_id*/, const std::string& /*conversationId*/, const std::string& /*documentId*/, const std::string& /*attachmentId*/){}
+};

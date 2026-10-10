@@ -1,0 +1,11 @@
+.env*
+
+jamid.node
+
+/accounts.json
+/admin.json
+/config.json
+
+profile-avatar/*
+uploads/*
+uploads

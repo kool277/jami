@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "Тіркелгі параметрлері";
+"global.username" = "Пайдаланушы аты";
+"global.recommended" = "Ұсынылған";
+"global.password" = "Пароль";
+"global.registerAUsername" = "Пайдаланушы атауын тіркеу";
+"global.enterPassword" = "Парольді келтіріңіз";
+"global.enterUsername" = "Enter username";
+"global.cancel" = "Болдырмау";
+"global.blockContact" = "Блок контакт";
+"global.removeAccount" = "Тіркелгісін өшіру";
+"global.incomingCall" = "Келесі шақыру";
+"global.ok" = "Жарайды";
+"global.close" = "Жақында";
+"global.share" = "Ортақ";
+"global.forward" = "Алға қарай";
+"global.save" = "Сақтау";
+"global.resend" = "Қайта жіберу";
+"global.preview" = "Алдын ала қарау";
+"global.accept" = "Қабылда";
+"global.block" = "Блок";
+"global.decline" = "Ауыру";
+"global.name" = "Атауы";
+"global.copy" = "Көшірме";
+"global.reply" = "Жауап беру";
+"global.search" = "іздеу...";
+"global.supportJami" = "Support Jami project";
+"global.deleteMessage" = "Хатты өшіру";
+"global.deleteFile" = "Файлды құрылғыдан жою";
+"global.editMessage" = "Хатты өңдеу";
+"global.editing" = "Editing";
+"global.create" = "Жарату";
+"global.edit" = "Жасату";
+"global.remove" = "Алып тастау";
+"global.call" = "Зерттеу";
+"global.video" = "Видео";
+"global.time" = "Time";
+"global.editPassword" = "Edit password";
+"global.confirmPassword" = "Парольді растау";
+"global.confirm" = "Куәлікті растау";
+"global.cameraDisabled" = "Camera access is disabled. Enable it in device settings in order to use this feature.";
+"global.confirm" = "Куәлікті растау";
+"global.connect" = "Қосылыңыз";
+"global.leave" = "Кетіңіздер";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "Атауы";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "Тасуирлау";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Discard";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "Жаман QR код";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "Search for contact…";
+"swarmcreation.addDescription" = "Сипаттама қосу";
+// Swarm
+"swarm.muteConversation" = "Тілсіз әңгіме";
+"swarm.leaveConversation" = "Әңгімелеуді қалдырыңыз";
+"swarm.removeConversation" = "Әңгімелерді алып тастау";
+"swarm.removeContact" = "Байланысты алып тастау";
+"swarm.restartConversation" = "Restart conversation";
+"swarm.conversationEnded" = "Conversation ended";
+"swarm.chooseColor" = "Әңгімелеудің түсі";
+"swarm.typeOfSwarm" = "Әңгіме түрі";
+"swarm.identifier" = "Тұлғаны анықтау";
+"swarm.conversationId" = "Conversation ID";
+"swarm.settings" = "Параметрлері";
+"swarm.members" = "Қауым мүшелері";
+"swarm.contactHeader" = "Контакті";
+"swarm.showContactQRCode" = "Show contact QR code";
+"swarm.shareContactInfo" = "Share contact information";
+"swarm.accessibilityContactQRCode" = "Show contact QR code";
+"swarm.accessibilityContactQRCodeHint" = "Opens a screen with contact's QR code";
+"swarm.accessibilityContactShareHint" = "Opens sharing options for contact information";
+"swarm.accessibilityColorPicker" = "Conversation color picker";
+"swarm.conversationHeader" = "Әңгіме";
+"swarm.shareContactMessage" = "You can add this contact, %1@, on the Jami distributed communication platform: https://jami.net";
+"swarm.oneToOne" = "Жеке";
+"swarm.adminInvitesOnly" = "Жеке топ (шайықталған шақырулар)";
+"swarm.invitesOnly" = "Жеке топ";
+"swarm.publicChat" = "Қоғамдық топ";
+"swarm.others" = "Басқалар";
+"swarm.member" = "Қауым мүшесі";
+"swarm.invited" = "шақырылған";
+"swarm.admin" = "Әкімші";
+"swarm.blocked" = "Бұғатталған";
+"swarm.unknown" = "Белгісіз";
+"swarm.left" = "Left";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "Мүшелерді шақыру";
+"swarm.inviteSelectedMembers" = "Invite selected contacts";
+"swarm.inviteMembersSelected" = "Selected";
+"swarm.inviteMembersNotSelected" = "Not selected";
+"swarm.confirmLeaveConversation" = "Осы әңгімеден шыққыңыз келе ме?";
+"swarm.Leave" = "Кетіңіздер";
+"swarm.newGroup" = "Жаңа топ жасау";
+"swarm.namePlaceholder" = "Топ атауы";
+"swarm.explanationText" = "Members can be invited at any time after the group has been created.";
+"swarm.customizeProfile" = "Customize group profile";
+"swarm.changePicture" = "Change group picture";
+"swarm.customize" = "Customize group";
+"swarm.selectContacts" = "Байланыстарды таңдау";
+
+// Contact Picker
+"contactPicker.calls" = "Зерттеу";
+"contactPicker.contacts" = "Байланыстар";
+
+// Smartlist
+"smartlist.yesterday" = "Келесі күні";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "Әңгіме";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "No conversations match the search.";
+"smartlist.newContact" = "New contact";
+"smartlist.newGroup" = "New group";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "Invitations received";
+"smartlist.noResults" = "Нәтиже жоқ";
+"smartlist.noConversation" = "Әңгіме жоқ";
+"smartlist.searchBarPlaceholder" = "Enter name…";
+"smartlist.searchBar" = "Іздеу";
+"smartlist.noNetworkConnectivity" = "Желілік қосылым жоқ";
+"smartlist.cellularAccess" = "Ensure cellular access is granted in the settings.";
+"smartlist.accountsTitle" = "Есеп айырысу";
+"smartlist.addAccountButton" = "+ Add account";
+"smartlist.noNumber" = "Таңдалған байланыс нөмірі жоқ";
+"smartlist.selectOneNumber" = "Сандардың біреуін таңдаңыз";
+"smartlist.invitations" = "Шақырулар";
+"smartlist.aboutJami" = "Жами туралы";
+"smartlist.inviteFriends" = "Invite friends";
+"smartlist.disableDonation" = "Қазір емес";
+"smartlist.donationExplanation" = "Егер сізге Jami-ді пайдалану ұнаса және біздің миссияға сенсеңіз, қайырымдылық жасағыңыз келе ме?";
+"smartlist.inSynchronization" = "Syncing…";
+
+// Conversation
+"conversation.addToContactsButton" = "Add to Contacts";
+"conversation.sendInvitationButton" = "Send Invitation";
+"conversation.addToContactsLabel" = "Байланыстарға қосыл?";
+"conversation.notContactLabel" = "%@ is not in the contact list";
+"conversation.messagePlaceholder" = "Write to";
+"conversation.imageSaved" = "Saved";
+"conversation.errorSavingImage" = "Could not save image";
+"conversation.errorSavingImageMessage" = "An error occurred while saving the image to the photo library.";
+"conversation.photoAccessRequiredMessage" = "Jami needs access to your photo library to save images. You can enable this in Settings.";
+"conversation.receivedRequest" = "%@ sent you a conversation invitation.";
+"conversation.incomingRequest" = "sent you a conversation invitation.";
+"conversation.requestMessage" = "Сәлеметсіз бе,\nәңгімеге қосылғыңыз келе ме?";
+"conversation.sendRequest" = "Send them an invitation to be able converse.";
+"conversation.sendRequestTitle" = "Send conversation invitation";
+"conversation.synchronizationTitle" = "You have accepted the conversation invitation.";
+"conversation.syncingTitle" = "Syncing conversation";
+"conversation.synchronizationMessage" = "Waiting for %@ to connect to synchronize the conversation…";
+"conversation.inReplyTo" = "Жауап ретінде";
+"conversation.repliedTo" = "%@ replied to %@";
+"conversation.yourself" = "Сендер";
+"conversation.edited" = "Жазу";
+"conversation.deletedMessage" = "%@ deleted a message";
+"conversation.contactBlocked" = "Contact blocked";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "%@ is typing";
+"conversation.typingIndicatorTwoUsers" = "%1@ and %2@ are typing";
+"conversation.typingIndicatorOtherUsers" = "%1@, %2@ and %3@ other are typing";
+"conversation.typingIndicatorOthersUsers" = "%1@, %2@ and %3@ others are typing";
+"conversation.lastMessageDeleted" = "(жойылған хабарлама)";
+
+// Invitations
+"invitations.noInvitations" = "Шақыру жоқ";
+"invitations.accepted" = "Қабылдалды";
+"invitations.declined" = "Declined";
+"invitations.blocked" = "Бұғатталған";
+"invitations.list" = "Invitations received";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Share, freely and privately with Jami";
+"welcome.text" = "Jami - бұл пайдаланушылардың жеке өмірі мен бостандықтарын сақтайтын тегін және әмбебап байланыс платформасы";
+"welcome.haveAccount" = "Менде есеп бар.";
+"welcome.linkDevice" = "Басқа құрылғыдан импорттау";
+"welcome.linkBackup" = "Архивті резервтік көшірмеден импорттау";
+"welcome.createAccount" = "Jami тіркелгісін құру";
+"welcome.connectToJAMS" = "Connect to a management server";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "Кетіңіз";
+"createProfile.profileCreated" = "Келесі";
+"createProfile.title" = "Personalize your profile";
+"createProfile.enterNameLabel" = "Көрсету атауын келтіріңіз";
+"createProfile.enterNamePlaceholder" = "Атауын келтіріңіз";
+"createProfile.subtitle" = "Your profile is only shared with your contacts. The profile can be changed at any time.";
+"createProfile.createProfilePicture" = "Create profile picture";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "Жамиге қосыл";
+"createAccount.lookingForUsernameAvailability" = "Checking username availability…";
+"createAccount.invalidUsername" = "Invalid username. Please enter the correct username.";
+"createAccount.usernameAlreadyTaken" = "Қолданушының аты қолданылды";
+"createAccount.usernameValid" = "The username is available.";
+"createAccount.UsernameNotRegisteredTitle" = "Желі қатесі";
+"createAccount.UsernameNotRegisteredMessage" = "Тіркелгі құрылды, бірақ пайдаланушы аты тіркелмеген";
+"createAccount.timeoutTitle" = "Тіркелгі құрылды";
+"createAccount.timeoutMessage" = "Username registration is in progress. Please wait…";
+"createAccount.sipConfigure" = "Бар SIP тіркелгісін теңшеу";
+"createAccount.creatingAccount" = "Creating account";
+"createAccount.nameExplanation" = "Сіз басқаларға Жәмиде сізді табуға және қол жеткізуге көмектесу үшін пайдаланушы атын таңдауыңыз мүмкін.";
+"createAccount.newAccount" = "New account";
+"createAccount.encryptionEnabled" = "Password protection enabled";
+"createAccount.encrypt" = "Password protect";
+"createAccount.customize" = "Өзгерту";
+"createAccount.encryptTitle" = "Password protect account";
+"createAccount.encryptExplanation" = "A Jami account is created and stored locally only on this device as an archive containing its account keys. Access to the archive can optionally be protected with a password.";
+
+// Link To Account form
+"linkToAccount.importAccount" = "Import account";
+"linkToAccount.showQrCode" = "QR кодтары";
+"linkToAccount.showPinCode" = "Authentication code";
+"linkToAccount.actionRequired" = "Action required.\nPlease confirm account on the source device.";
+"linkToAccount.allSet" = "Тіркелгі сәтті импортталды.";
+"linkToAccount.goToAccounts" = "Go to imported account";
+"linkToAccount.exportInstructions" = "On the source device, initiate the exportation.";
+"linkToAccount.exportInstructionsPath" = "Select Account → Account Settings → Link new device.";
+"linkToAccount.scanQrCode" = "When ready, scan the QR code.";
+"linkToAccount.enterProvidedCode" = "When ready, enter the authentication code.";
+"linkToAccount.accountLockedWithPassword" = "The account is password protected. To continue, enter the account password.";
+"linkToAccount.exit" = "Exit";
+"linkToAccount.shareMessage" = "Your code is: %@";
+"linkToAccount.alertTile" = "Do you want to stop linking the account?";
+"linkToAccount.alertMessage" = "Stopping will cancel the import account operation.";
+
+// Import from Archive
+"importFromArchive.explanation" = "Жергiлiктi мұрағат файлынан Jami тіркелгiн импорттау.";
+"importFromArchive.passwordExplanation" = "Егер тіркелгі құпия сөзбен қорғалған болса, келесі өрісті толтырыңыз.";
+"importFromArchive.title" = "Import from archive";
+"importFromArchive.buttonTitle" = "Импорт";
+"importFromArchive.selectArchiveButton" = "Архив файлын таңдау";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "Sign in";
+"linkToAccountManager.title" = "Management server account";
+"linkToAccountManager.accountManagerPlaceholder" = "Басқару сервері URL мекенжайы";
+"linkToAccountManager.accountManagerLabel" = "Басқару сервері URL мекенжайын енгізіңіз";
+"linkToAccountManager.jamsExplanation" = "Басқару сервері URL мекенжайын енгізіңіз";
+"linkToAccountManager.enterCredentials" = "Enter the management server credentials";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "Account error";
+"alerts.accountCannotBeFoundMessage" = "Unable to find account on the Jami network. Make sure it was exported on Jami from an existing device, and that provided credentials are correct.";
+"alerts.accountAddedTitle" = "Account added";
+"alerts.accountNoNetworkTitle" = "Желі қатесі";
+"alerts.accountNoNetworkMessage" = "A connectivity error occurred while adding Jami account to the distributed network. Please try again. If the problem persists, contact your system administrator.";
+"alerts.accountDefaultErrorTitle" = "Account error";
+"alerts.accountDefaultErrorMessage" = "An error occurred while creating the account.";
+"alerts.profileTakePhoto" = "Суретке түсіріңіз";
+"alerts.profileUploadPhoto" = "Фотоны жүктеу";
+"alerts.accountLinkedTitle" = "Қосылған шот";
+"alerts.dbFailedTitle" = "An error happened when launching Jami";
+"alerts.dbFailedMessage" = "Өтінішті жабыңыз және оны қайта ашуға тырысыңыз";
+"alerts.confirmBlockContact" = "Do you want to block this contact? The conversation history with this contact will also be deleted permanently.";
+"alerts.confirmDeleteConversation" = "Do you want to remove this conversation permanently?";
+"alerts.confirmLeaveConversation" = "Осы әңгімеден шыққыңыз келе ме?";
+"alerts.confirmRemoveOneToOneConversation" = "Do you want to remove this conversation? The existing history will be deleted. A new conversation may be started if you do not have other conversations with this contact.";
+"alerts.confimRemoveContact" = "Do you want to remove this contact? The existing history will be deleted.";
+"alerts.confirmDeleteConversationFromContact" = "Do you want to delete the conversation with this contact?";
+"alerts.confirmDeleteConversationTitle" = "Әңгімені жою";
+"alerts.noMediaPermissionsTitle" = "БАҚ рұқсаты берілмеген";
+"alerts.noLibraryPermissionsTitle" = "Фото кітапханасына қол жеткізу рұқсат етілмеген";
+"alerts.noLocationPermissionsTitle" = "Орналасуына қол жеткізу рұқсат етілмеген";
+"alerts.errorWrongCredentials" = "An error occurred while connecting to the management server. Please try again. If the problem persists, contact your system administrator.";
+"alerts.recordVideoMessage" = "Record video message";
+"alerts.recordAudioMessage" = "Record audio message";
+"alerts.uploadFile" = "Файл жіберу";
+"alerts.uploadPhoto" = "Ашық галерея";
+"alerts.sendPhoto" = "Send photo";
+"alerts.locationServiceIsDisabled" = "Turn on “Location Services” to allow “Jami” to determine device location.";
+"alerts.locationSharing" = "Менің орналасқан жерімді бөліңіз";
+"alerts.alreadylocationSharing" = "Бұл пайдаланушымен орналасқан жерді бөлісу";
+"alerts.locationSharingDurationTitle" = "Орналасқан жерді бөлісу қанша уақытқа созылады?";
+"alerts.locationSharingDuration10min" = "10 минут";
+"alerts.locationSharingDuration1hour" = "1 сағат";
+"alerts.mapInformation" = "Карталық ақпарат";
+"alerts.openStreetMapCopyright" = "© OpenStreetMap қатысушылары";
+"alerts.openStreetMapCopyrightMoreInfo" = "Көбірек біліңіз";
+
+// Actions
+"actions.deleteAction" = "Өшіру";
+"actions.backAction" = "Қайта оралу";
+"actions.doneAction" = "Жарайды";
+"actions.goToSettings" = "Параметрлерге өту";
+"actions.stopLocationSharing" = "Ортақ қатынастарды тоқтату";
+
+// Calls
+"calls.ringing" = "Зыңғырады...";
+"calls.connecting" = "Қосылу...";
+"calls.callFinished" = "Зұрауы аяқталды";
+"calls.currentCallWith" = "";
+"calls.maximize" = "Максималды";
+"calls.minimize" = "Ең төмендеу";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "Модераторды орнату";
+"calls.removeModerator" = "Модераторды орнату";
+"calls.muteAudio" = "Ақысыз микрофон";
+"calls.unmuteAudio" = "Микрофон дыбысын қосу";
+"calls.raiseHand" = "Қолын көтеру";
+"calls.lowerHand" = "Төменгі қол";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "Recording";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "A call is in progress. Do you want to join the call? You can also join the call later from the conversation.";
+"calls.activeCallInConversation" = "Зұлымдар шақыруды жалғастыруда.";
+"calls.acceptWithAudio" = "Аудиомен қабылдау";
+"calls.acceptWithVideo" = "Бейнемен қабылдау";
+
+// Account Page
+"accountPage.devicesListHeader" = "Құрылғылар";
+"accountPage.settingsHeader" = "Параметрлері";
+"accountPage.notificationsHeader" = "Хабарламалар";
+"accountPage.blockedContacts" = "Ашық контакттар";
+"accountPage.unblockContact" = "Блокадасын ашу";
+"accountPage.proxyAddressAlert" = "Прокси мекенжайы";
+"accountPage.noProxyExplanationLabel" = "Unable to receive notifications when proxy is disabled.";
+"accountPage.proxyPaceholder" = "Прокси адресі";
+"accountPage.useProxyList" = "Use proxy list";
+"accountPage.proxyListURL" = "Прокси тізімінің URL мекенжайы";
+"accountPage.proxyExplanation" = "Notifications are routed through a proxy. You can either use the default proxy, enter a custom proxy address, or provide a URL with a list of proxies.";
+"accountPage.proxyHeader" = "Прокси";
+"accountPage.currentProxy" = "Current proxy";
+"accountPage.enableNotifications" = "Хабарламаларды рұқсат ету";
+"accountPage.proxyDisabledAlertTitle" = "Прокси сервері рұқсат етілмеген";
+"accountPage.proxyDisabledAlertBody" = "Хабарламаларды алу үшін проксиді қосу";
+"accountPage.removeDeviceTitle" = "Құрылғыны жою";
+"accountPage.revokeDeviceMessage" = "Do you want to remove this device? This action cannot be undone.";
+"accountPage.revokeDeviceButton" = "Қайталану";
+"accountPage.revokeDevicePlaceholder" = "Тіркелгі паролін келтіріңіз";
+"accountPage.deviceRevoked" = "Құрылғыны қайтарып алу аяқталды";
+"accountPage.deviceRevocationProgress" = "Removing…";
+"accountPage.deviceRevocationSuccess" = "Device removed";
+"accountPage.deviceRevocationTryAgain" = "Тағы да тырысыңыз";
+"accountPage.deviceRevocationWrongPassword" = "Қате пароль";
+"accountPage.deviceRevocationUnknownDevice" = "Белгісіз құрылғы";
+"accountPage.deviceRevocationError" = "Құрылғыны қайтарып алу қатесі";
+"accountPage.linkDeviceTitle" = "Басқа құрылғыны қосу";
+"accountPage.other" = "Басқа";
+"accountPage.removeAccountMessage" = "Егер тіркелгінің сақтық көшірмесі жасалмаса немесе басқа құрылғыға қосылмаса, тіркелгі және тіркелген пайдаланушы аты ҚАЙТАРЫЛМАЙТЫНДАЙ ЖОҒАЛАДЫ.";
+"accountPage.inviteFriends" = "Invite friends";
+"accountPage.contactMeOnJamiTitle" = "Jami-де менімен байланысыңыз!";
+"accountPage.contactMeOnJamiContant" = "Contact me using “%s” on the Jami distributed communication platform: https://jami.net";
+"accountPage.passwordPlaceholder" = "Тіркелгі паролін келтіріңіз";
+"accountPage.usernamePlaceholder" = "Қажетті пайдаланушы атауын келтіріңіз";
+"accountPage.registerNameErrorMessage" = "The username is unavailable.";
+"accountPage.usernameRegistering" = "Тіркеу";
+"accountPage.usernameRegisterAction" = "Тіркеу";
+"accountPage.usernameRegistrationFailedTitle" = "Registration failed";
+"accountPage.usernameRegistrationFailed" = "Please check the account password.";
+"accountPage.createPassword" = "Құпия сөзді орнату";
+"accountPage.changePassword" = "Парольді өзгерту";
+"accountPage.currentPasswordPlaceholder" = "Назардағы парольді келтіріңіз";
+"accountPage.newPasswordPlaceholder" = "Жаңа парольді келтіріңіз";
+"accountPage.newPasswordConfirmPlaceholder" = "Жаңа парольді растаңыз";
+"accountPage.changePasswordError" = "Қате пароль";
+"accountPage.enableBoothMode" = "Бут режимін қосу";
+"accountPage.disableBoothMode" = "Бут режимін өшіру";
+"accountPage.disableBoothModeExplanation" = "Please provide the account password";
+"accountPage.boothModeExplanation" = "Бут режиміне қосылғанда барлық әңгімелеріңіз алынып тасталады.";
+"accountPage.noBoothMode" = "To enable Booth mode, password protect the account first.";
+"accountPage.boothModeAlertMessage" = "After enabling booth mode, all the conversations will be removed.";
+"accountPage.peerDiscovery" = "Жергілікті теңгерімдерді табуға мүмкіндік беру";
+"accountPage.peerDiscoveryExplanation" = "Жергілікті желіде жарнамалаушы басқа DHT түйіндерге қосылыңыз";
+"accountPage.autoRegistration" = "Күші жойылды деп танылған";
+"accountPage.connectivityHeader" = "Қосылым";
+"accountPage.turnEnabled" = "ТУРН- ды қосу";
+"accountPage.turnServer" = "ТУРН мекенжайы";
+"accountPage.turnUsername" = "ТУРН пайдаланушы аты";
+"accountPage.turnPassword" = "ТУРН паролі";
+"accountPage.turnRealm" = "ТУРН әлемі";
+"accountPage.upnpEnabled" = "UPnP- ды қолдану";
+"accountPage.stunEnabled" = "STUN қолданылсын";
+"accountPage.stunServer" = "STUN адресі";
+"accountPage.publicAddressHeader" = "Қоғамдық мекенжай";
+"accountPage.allowIPAutoRewrite" = "Allow IP auto rewrite";
+"accountPage.publishedSameAsLocal" = "Жергілікті баспамен бірдей";
+"accountPage.publishedAddress" = "Адрес";
+"accountPage.publishedPort" = "Порт";
+"accountPage.security" = "Қауіпсіздік";
+"accountPage.enableSRTP" = "SDES кілттерін алмастыруды рұқсат ету";
+"accountPage.encryptNegotiation" = "Шифрлау келіссөздері (TLS)";
+"accountPage.registerNameExplanation" = "Register a username to help others more easily find and reach you on Jami.";
+"accountPage.profileHeader" = "Профиль";
+"accountPage.profileNameNotSelected" = "Name not selected";
+"accountPage.accountHeader" = "Есеп";
+"accountPage.profileName" = "Profile name";
+"accountPage.profileNamePlaceholder" = "Enter profile name";
+"accountPage.editProfile" = "Edit Profile";
+"accountPage.manageAccount" = "Тіркелгілерді басқару";
+"accountPage.encryptAccount" = "Пароль";
+"accountPage.passwordExplanation" = "Jami тіркелгіңіз осы құрылғыда ғана тіркелгіңіздің кілттерін қамтитын мұрағат ретінде тіркелген. Осы мұрағатқа қол жеткізуді құпия сөзбен қорғауға болады.";
+"accountPage.passwordsDoNotMatch" = "Passwords do not match.";
+"accountPage.passwordCreated" = "Password set";
+"accountPage.passwordUpdated" = "Password updated";
+"accountPage.linkedDevices" = "Қосылған құрылғылар";
+"accountPage.unlink" = "Unlink";
+"accountPage.generatingPin" = "Generating PIN code…";
+"accountPage.passwordForPin" = "The account is password protected. Enter the password to generate a PIN code.";
+"accountPage.pinExplanationTitle" = "On another device";
+"accountPage.pinExplanationMessage" = "Install and launch Jami. Select “Import from another device,” and scan the QR code. Alternatively, enter the PIN code manually.";
+"accountPage.pinError" = "An error occurred while generating the PIN code.";
+"accountPage.notificationTitle" = "Хабарламалар";
+"accountPage.notificationError" = "Notifications for Jami are disabled. Enable it in device settings in order to use this feature.";
+"accountPage.callsFromUnknownContacts" = "Allow calls from unknown contacts.";
+"accountPage.accountSettingsExplanation" = "These settings will only apply to this account.";
+"accountPage.appSettings" = "App settings";
+"accountPage.appSettingsExplanation" = "These settings will apply to the entire application.";
+"accountPage.connectivityAndConfiguration" = "Connectivity and configurations";
+"accountPage.sipExpirationTime" = "Тіркеу мерзімі (секундтар)";
+"accountPage.tlsVerifyServerCertificates" = "Сервердің TLS сертификаттарын тексеру";
+"accountPage.tlsVerifyClientCertificates" = "Verify client TLS certificates";
+"accountPage.tlsRequireTlsCertificate" = "Require a certificate for incoming TLS connections";
+"accountPage.tlsDisableSecureDlgCheck" = "TLS деректері үшін қауіпсіз диалог тексеруін өшіру";
+"accountPage.editSipExpirationTime" = "Expiration time";
+"accountPage.selectSipExpirationTime" = "Set time (in seconds) for registration expiration";
+"accountPage.invalidSipExpirationTime" = "Enter a value between 60 and 604800 seconds";
+"accountPage.invalidPort" = "Enter a value between 0 and 65535";
+"accountPage.invalidAddress" = "Enter a valid address";
+"accountPage.thisDevice" = "Бұл құрылғы";
+"accountPage.otherDevices" = "Басқа қосылған құрылғылар";
+"accountPage.accountIdentity" = "Account identity";
+"accountPage.bootstrap" = "Бастау шегі";
+"accountPage.dhtConfiguration" = "OpenDHT конфигурациясы";
+"accountPage.nameServer" = "Атау сервері";
+"accountPage.chats" = "Chats";
+"accountPage.typingIndicator" = "Типолау көрсеткіші";
+"accountPage.typingIndicatorExplanation" = "Indicate when messages are being typed.";
+
+// Backup Account
+"backupAccount.explanation" = "This Jami account exists only on this device. The account will be lost if this device is lost or if the application is uninstalled. It is recommended to make a backup of this account.";
+"backupAccount.title" = "Жасақтау шоты";
+"backupAccount.creating" = "Creating backup";
+"backupAccount.archiveName" = "Select a name for the archive.";
+"backupAccount.archiveNamePlaceholder" = "Archive name";
+"backupAccount.passwordRequest" = "Enter the account password.";
+"backupAccount.backupButton" = "Backup";
+"backupAccount.documentPickerButton" = "Open backup location";
+"backupAccount.exportSuccess" = "Backup created";
+"backupAccount.errorWrongLocation" = "The selected file path is invalid. Please choose a different location.";
+"backupAccount.errorAccessDenied" = "Access to the selected location was denied.";
+"backupAccount.errorFailed" = "An error occurred while exporting the account.";
+
+// Account
+"account.sipServer" = "Сервер";
+"account.port" = "Порт";
+"account.proxyServer" = "Прокси";
+"account.createSipAccount" = "Configure SIP Account";
+"account.sipAccount" = "SIP Account";
+"account.configure" = "Configure";
+"account.advancedFeatures" = "Advanced Features";
+"account.serverLabel" = "Адресті келтіріңіз";
+"account.portLabel" = "Порт нөмірін келтіріңіз";
+"account.accountStatus" = "Есепшоттың жағдайы";
+"account.enableAccount" = "Тіркелгісін рұқсат ету";
+"account.statusOnline" = "Онлайн";
+"account.statusOffline" = "Оффлайн";
+"account.statusConnecting" = "Қосылу";
+"account.statusUnknown" = "Белгісіз";
+"account.statusConnectionerror" = "Қосылу қатесі";
+"account.needMigration" = "Account requires migration.";
+"account.me" = "Мен...";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "Контакттар тосқауылданбаған";
+
+// Link New Device
+"linkDevice.title" = "Жаңа құрылғыны қосу";
+"linkDevice.networkError" = "A network error occurred while exporting the account.";
+"linkDevice.errorWrongPassword" = "Құрылғыны байланыстыру кезінде түпнұсқалық растау қатесі орын алды. Тіркелгі деректерін тексеріп, қайталап көріңіз.";
+"linkDevice.errorNetwork" = "Тіркелгіні байланыстыру кезінде желі қатесі орын алды. Байланысыңызды тексеріп, қайталап көріңіз.";
+"linkDevice.errorTimeout" = "Әрекет уақыты бітті. Қайталап көріңіз.";
+"linkDevice.errorCode" = "An error occurred while generating the code. Please try again.";
+"linkDevice.errorWrongData" = "Тіркелгіні экспорттау кезінде қате орын алды. Қайталап көріңіз.";
+"linkDevice.initialInfo" = "On the new device, initiate a new account.";
+"linkDevice.infoAddAccount" = "Select Add Account → Connect from another device.";
+"linkDevice.infoQRCode" = "When ready, scan the QR code.";
+"linkDevice.infoCode" = "When ready, enter the code and tap Connect.";
+"linkDevice.connecting" = "Connecting to your new device…";
+"linkDevice.authenticationInfo" = "New device found at the following IP address. Is that you? To continue the export account operation, tap Confirm.";
+"linkDevice.newDeviceIP" = "New device IP address: %1@";
+"linkDevice.code" = "code";
+"linkDevice.wrongEntry" = "Жаңа құрылғының идентификаторы танылмады. Жоғарыдағы нұсқауларды орындаңыз.";
+"linkDevice.exportInProgress" = "The export account operation to the new device is in progress. Please confirm import on the new device.";
+"linkDevice.completed" = "The account was imported successfully on the new device.";
+
+// Contact Page
+"contactPage.startAudioCall" = "Аудио шақыруды бастау";
+"contactPage.startVideoCall" = "Видео шақыруды бастаңыз";
+"contactPage.send" = "Жіберіңіз";
+"contactPage.leaveConversation" = "Әңгімелеуді қалдырыңыз";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "Бастапқыда...";
+"dataTransfer.readableStatusError" = "Қате";
+"dataTransfer.readableStatusAwaiting" = "Күтуде...";
+"dataTransfer.readableStatusOngoing" = "Алу";
+"dataTransfer.readableStatusCanceled" = "Бас тартылды";
+"dataTransfer.sendingFailed" = "An error occurred while sending.";
+"dataTransfer.readableStatusSuccess" = "Толық";
+"dataTransfer.recordInBackgroundWarning" = "Recording video while multitasking with multiple apps may result in lower quality videos. For best results, record when not multitasking";
+
+// Notifications
+"notifications.missedCall" = "Ұсталған шақыру";
+"notifications.newFile" = "Жаңа файл";
+"notifications.locationSharingStarted" = "Келесі жерді бөлісу басталды";
+"notifications.locationSharingStopped" = "Келуші жерді бөлу тоқтатылды";
+"dataTransfer.readableStatusDecline" = "Ауыру";
+"dataTransfer.readableStatusAccept" = "Қабылда";
+"dataTransfer.infoMessage" = "Tap to start recording";
+"dataTransfer.sendMessage" = "Жіберіңіз";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "Қабылданған шақыру";
+"generatedMessage.swarmCreated" = "Conversation created";
+"generatedMessage.invitationReceived" = "%@ was invited to join the conversation.";
+"generatedMessage.invitationAccepted" = "%@ has joined the conversation.";
+"generatedMessage.youJoined" = "Сіз әңгімеге қосылдыңыз.";
+"generatedMessage.contactBlocked" = "%@ was blocked from the conversation.";
+"generatedMessage.contactUnblocked" = "%@ was unblocked from the conversation.";
+"generatedMessage.outgoingCall" = "Шығушы шақыру";
+"generatedMessage.missedOutgoingCall" = "Шығып жатқан шақыруды жоғалтқан";
+"generatedMessage.missedIncomingCall" = "Келесі шақыруды жіберген";
+"generatedMessage.liveLocationSharing" = "Тікелей орналасқан жерді бөлісу";
+"generatedMessage.contactLeftConversation" = "%@ has left the conversation.";
+"generatedMessage.nonSwarmInvitationReceived" = "You sent an invitation.";
+"generatedMessage.nonSwarmInvitationAccepted" = "Your invitation was accepted.";
+
+// General Settings
+"generalSettings.videoSettings" = "Video settings";
+"generalSettings.videoAcceleration" = "Видео жылдамдатуды рұқсат ету";
+"generalSettings.fileTransfer" = "Файлдарды беру";
+"generalSettings.locationSharing" = "Орналасу ортақ";
+"generalSettings.automaticAcceptIncomingFiles" = "Түсетін файлдарды автоматты түрде қабылдау";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "(MB, 0 = unlimited)";
+"generalSettings.limitLocationSharingDuration" = "Орналасқан жерді бөлісудің ұзақтығын шектеу";
+"generalSettings.locationSharingDuration" = "Орналасқан позициялар";
+"generalSettings.donationCampaign" = "Donation campaign";
+"generalSettings.enableDonationCampaign" = "Қайырымдылық науқанын қосу";
+
+// Log View
+"logView.title" = "Диагностика";
+"logView.description" = "Диагностикалық журналды ашу параметрлері";
+"logView.startLogging" = "Start logging";
+"logView.stopLogging" = "Ағаштарды кесуді тоқтату";
+"logView.saveError" = "An error occurred while saving the file.";
+"logView.shareError" = "An error occurred while sharing the file.";
+
+// Migrate Account
+"migrateAccount.title" = "Есепшот көшіру";
+"migrateAccount.migrateButton" = "Көшіру шоты";
+"migrateAccount.explanation" = "Account migration required.";
+"migrateAccount.passwordExplanation" = "To continue with the account migration, enter the account password.";
+"migrateAccount.error" = "An error occurred while migrating the account. Retry or delete the account.";
+"migrateAccount.migrating" = "Migrating…";
+"migrateAccount.migrateAnother" = "Басқа тіркелгіге көшіру";
+
+// About Jami
+"aboutJami.declaration1" = "Jami, a GNU package, is software for universal and distributed peer-to-peer communication that respects the freedom and privacy of its users. Visit";
+"aboutJami.declaration2" = "to learn more.";
+"aboutJami.noWarranty1" = "This program comes with absolutely no warranty. See the";
+"aboutJami.noWarranty2" = "version 3 or later for details.";
+"aboutJami.contribute" = "Қосымша";
+"aboutJami.feedback" = "Сапар";
+"aboutJami.developers" = "Әзірлеушілер";
+"aboutJami.media" = "БАҚ";
+"aboutJami.communityManagement" = "Қауымдастықты басқару";
+"aboutJami.specialThanks" = "Ерекше алғыс";
+"aboutJami.info" = "Бұл — Jami-ге пайдалы нәтижелермен едәуір уақыт жұмсаған адамдардың тізімі. Тізімге қосылғысы келетін осындай үлес қосушылар бізбен байланысуы керек.";
+"aboutJami.header" = "Біз көп жыл бойы күш салып, осы бағдарламалық жасақтаманы қазіргідей еткен үлес қосушыларымызға алғыс айтқымыз келеді.";
+
+// Accessibility
+"accessibility.close" = "Жақында";
+"accessibility.smartListSwitchAccounts" = "Switch account";
+"accessibility.smartListConnectedAs" = "The current account is %@";
+"accessibility.smartListAddAccount" = "Есепті қосу";
+"accessibility.aboutJamiTitle" = "Жами туралы";
+"accessibility.welcomeToJamiTitle" = "Жамиге қош келдіңіздер";
+"accessibility.createAccountVerifyUsernamePrompt" = "Enter username to check availability.";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "Профиль түсірілімі";
+"accessibility.profilePicturePickerHint" = "Double-tap to take a picture or select a picture from the library";
+"accessibility.swarmPicturePicker" = "Group picture";
+"accessibility.accountSummaryQrCode" = "QR кодтары";
+"accessibility.accountSummaryQrCodeHint" = "Double-tap to view the account QR code";
+"accessibility.accountSummaryEditProfileHint" = "Double-tap to edit the profile";
+"accessibility.accountSummaryEditSettingsButton" = "Параметрлері";
+"accessibility.conversationStartVoiceCall" = "Start audio call with %@";
+"accessibility.conversationStartVideoCall" = "Start video call with %@";
+"accessibility.conversationComposeMessage" = "Compose a message";
+"accessibility.conversationShareMedia" = "Share media";
+"accessibility.conversationCameraHint" = "Double-tap to open camera";
+"accessibility.audioPlayerPlay" = "Ойын";
+"accessibility.audioPlayerPause" = "Тынығу";
+"accessibility.conversationRowUnreadCount" = "%@ unread messages.";
+"accessibility.conversationRowBlocked" = "Conversation blocked";
+"accessibility.conversationRowSyncing" = "Synchronization in progress";
+"accessibility.conversationRowLastMessage" = "Last message at %@";
+"accessibility.userPresenceOnline" = "Онлайн";
+"accessibility.userPresenceAvailable" = "Қолжетімді";
+"accessibility.pendingRequestsRowPlural" = "Invitations received: %@ pending invitations";
+"accessibility.pendingRequestsRowSingular" = "Invitation received: %@ pending invitation";
+"accessibility.pendingRequestsRowHint" = "Double-tap to review and reply to invitations you received";
+"accessibility.pendingRequestsListBlockUser" = "Block invitation sender";
+"accessibility.pendingRequestsListRejectInvitation" = "Шақыруды қабылдамау";
+"accessibility.pendingRequestsListAcceptInvitation" = "Шақыруды қабылдау";
+"accessibility.messageBubbleDeleted" = "Message deleted";
+"accessibility.messageBubbleEdited" = "Жазу";
+"accessibility.messageBubbleRead" = "Read";
+"accessibility.messageBubbleUnread" = "Unread";
+"accessibility.textNotAvailable" = "Empty text message received on %@. This might not have been sent correctly.";
+"accessibility.fileTransferNoName" = "File received on %@, name not available";
+"accessibility.inReply" = "In reply to message";
+"accessibility.text.receivedOn" = "%1@, message received on %2@";
+"accessibility.text.sentOn" = "%1@, message sent on %2@";
+"accessibility.fileTransfer.receivedOn" = "File: %1@ , received on %2@";
+"accessibility.fileTransfer.sentOn" = "File: %1@, sent on %2@";
+"accessibility.call.lasted" = "Lasted %@";
+"accessibility.calls.default.toggleAudio" = "Ақысыз микрофон";
+"accessibility.calls.default.toggleVideo" = "Камераны іске қосу";
+"accessibility.calls.default.pauseCall" = "Тындық шақыру";
+"accessibility.calls.default.endCall" = "Қоңырауды аяқтау";
+"accessibility.calls.default.addParticipant" = "Қатысушыны қосу";
+"accessibility.calls.default.switchCamera" = "Switch camera";
+"accessibility.calls.default.toggleSpeaker" = "Turn on speaker";
+"accessibility.calls.default.openConversation" = "Ашық әңгіме";
+"accessibility.calls.default.showDialpad" = "Show dialpad";
+"accessibility.calls.default.raiseHand" = "Қолын көтеру";
+
+"accessibility.calls.alter.toggleAudio" = "Микрофон дыбысын қосу";
+"accessibility.calls.alter.toggleVideo" = "Стенд камерасы";
+"accessibility.calls.alter.pauseCall" = "Қайталау шақыру";
+"accessibility.calls.alter.endCall" = "Қоңырауды аяқтау";
+"accessibility.calls.alter.addParticipant" = "Қатысушыны қосу";
+"accessibility.calls.alter.switchCamera" = "Switch camera";
+"accessibility.calls.alter.toggleSpeaker" = "Turn off speaker";
+"accessibility.calls.alter.openConversation" = "Ашық әңгіме";
+"accessibility.calls.alter.showDialpad" = "Show dialpad";
+"accessibility.calls.alter.raiseHand" = "Төменгі қол";
+"accessibility.conference.minimize" = "Ең төмендеу";
+"accessibility.conference.maximize" = "Максималды";
+"accessibility.conference.setModerator" = "Модераторды орнату";
+"accessibility.conference.unsetModerator" = "Модераторды орнату";
+"accessibility.conference.muteAudio" = "Ауызды үнсіз";
+"accessibility.conference.unmuteAudio" = "Ауызды үнсіз қалдыру";
+"accessibility.conference.endCall" = "Қоңырауды аяқтау";
+"accessibility.conference.lowerHand" = "Төменгі қол";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "Қол көтеріліп";
+"accessibility.conference.moderator" = "Модератор";
+"accessibility.conference.recording" = "Recording";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "Token QR code";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "Vibrant pink";
+"swarmColors.purple" = "Purple";
+"swarmColors.violet" = "Violet";
+"swarmColors.indigoBlue" = "Indigo blue";
+"swarmColors.skyBlue" = "Sky blue";
+"swarmColors.cyan" = "Cyan";
+"swarmColors.teal" = "Teal";
+"swarmColors.green" = "Green";
+"swarmColors.limeGreen" = "Lime green";
+"swarmColors.mediumGray" = "Medium gray";
+"swarmColors.yellowGreen" = "Yellow-green";
+"swarmColors.amber" = "Amber";
+"swarmColors.brightOrange" = "Bright orange";
+"swarmColors.brown" = "Brown";
+"swarmColors.steelBlue" = "Steel blue";
+
+// Share extension
+"shareExtension.noAccount.title" = "Account not found";
+"shareExtension.noAccount.description" = "To continue, create an account in the main application.";
+"shareExtension.unsupportedType.title" = "Unsupported content";
+"shareExtension.unsupportedType.description" = "The sharing of the selected content is currently unsupported.";
+"shareExtension.sending" = "Sending…";
+"shareExtension.noSearchResults" = "No conversations match your search";
+"shareExtension.tryDifferentFilter" = "Try a different filter";
+"shareExtension.sendToConversation" = "Send to %d conversation";
+"shareExtension.sendToConversationsPlural" = "Send to %d conversations";
+"shareExtension.selectAccountTitle" = "Select account";
+"shareExtension.searchConversations" = "Search conversations";
+"shareExtension.accessibilitySelectConversation" = "Double-tap to select this conversation";
+"shareExtension.accessibilitySelectedAccount" = "Selected account: %@. Double-tap to change account.";
+"shareExtension.accessibilitySendButton" = "Double-tap to send to selected conversations";
+"shareExtension.accessibilitySelectAccount" = "Double-tap to select this account";
+
+// Peer Services
+"peerServices.title" = "Shared Services";
+"peerServices.refresh" = "Refresh services";
+"peerServices.empty" = "No shared services available";
+"peerServices.errorOffline" = "Contact is offline";
+"peerServices.errorUnreachable" = "Contact is unreachable";
+"peerServices.errorTimeout" = "Request timed out";
+"peerServices.errorUnknown" = "Could not retrieve services";
+"peerServices.done" = "Жарайды";
+"peerServices.notSupported" = "Not supported";
+"peerServices.open" = "Ашық";
+
+// Collaborative documents
+"collab.documents" = "Құжаттар";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "Жарату";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "Тізім";
+"collab.linkHint" = "Адрес";
+"collab.linkAdd" = "Қосылу";
+"collab.linkRemove" = "Алып тастау";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = "Қалың";
+"collab.italic" = "Көлбеу";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "Сызылған";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "Орталығы";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "Undo";
+"collab.redo" = "Redo";
+"collab.remove" = "Алып тастау";
+"collab.open" = "Ашық";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "Алып тастау";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";

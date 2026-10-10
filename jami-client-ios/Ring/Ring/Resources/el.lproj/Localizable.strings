@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "Ρυθμίσεις λογαριασμού";
+"global.username" = "Όνομα χρήστη";
+"global.recommended" = "Προτεινόμενα";
+"global.password" = "Κωδικός";
+"global.registerAUsername" = "Καταχωρίστε το όνομα χρήστη";
+"global.enterPassword" = "Εισάγετε τον κωδικό πρόσβασης";
+"global.enterUsername" = "Εισαγάγετε όνομα χρήστη";
+"global.cancel" = "Ακύρωση";
+"global.blockContact" = "Μπλοκάρισμα επαφής";
+"global.removeAccount" = "Αποσύρουμε λογαριασμό";
+"global.incomingCall" = "Εισερχόμενη κλήση";
+"global.ok" = "Εντάξει";
+"global.close" = "Κλείσιμο";
+"global.share" = "Κοινοποίηση";
+"global.forward" = "Επανάληψη";
+"global.save" = "Αποθήκευση";
+"global.resend" = "Επιστροφή";
+"global.preview" = "Προεπισκόπηση";
+"global.accept" = "Αποδοχή";
+"global.block" = "Μπλοκάρισμα";
+"global.decline" = "Απόρριψη κλήσης";
+"global.name" = "Όνομα";
+"global.copy" = "Αντιγραφή";
+"global.reply" = "Απάντηση";
+"global.search" = "Γίνεται αναζήτηση...";
+"global.supportJami" = "Υποστηρίξτε το έργο Jami";
+"global.deleteMessage" = "Διαγραφή μηνύματος";
+"global.deleteFile" = "Διαγραφή αρχείου από τη συσκευή";
+"global.editMessage" = "Τροποποίηση μηνύματος";
+"global.editing" = "Επεξεργασία";
+"global.create" = "Δημιουργία";
+"global.edit" = "Επεξεργασία";
+"global.remove" = "Απομακρύνετε";
+"global.call" = "Κλήση";
+"global.video" = "Βίντεο";
+"global.time" = "Ώρα";
+"global.editPassword" = "Επεξεργασία κωδικού πρόσβασης";
+"global.confirmPassword" = "Επιβεβαίωση κωδικού";
+"global.confirm" = "Επιβεβαίωση";
+"global.cameraDisabled" = "Η πρόσβαση στην κάμερα είναι απενεργοποιημένη. Ενεργοποιήστε την στις ρυθμίσεις της συσκευής για να χρησιμοποιήσετε αυτή τη λειτουργία.";
+"global.confirm" = "Επιβεβαίωση";
+"global.connect" = "Σύνδεση";
+"global.leave" = "Φύγε";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "Όνομα";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "Περιγραφή";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Discard";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "Κακό QR κωδικό";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "Αναζήτηση επαφής…";
+"swarmcreation.addDescription" = "Προσθήκη περιγραφής";
+// Swarm
+"swarm.muteConversation" = "Μείνε αθόρυβα.";
+"swarm.leaveConversation" = "Αφήστε τη συζήτηση";
+"swarm.removeConversation" = "Διαγραφή συνομιλίας";
+"swarm.removeContact" = "Αποσύρουμε την επαφή";
+"swarm.restartConversation" = "Επανεκκίνηση συνομιλίας";
+"swarm.conversationEnded" = "Η συνομιλία έληξε";
+"swarm.chooseColor" = "Χρώμα συνομιλίας";
+"swarm.typeOfSwarm" = "Τύπος συνομιλίας";
+"swarm.identifier" = "Ταυτοποιητής";
+"swarm.conversationId" = "Αναγνωριστικό συνομιλίας";
+"swarm.settings" = "Ρυθμίσεις";
+"swarm.members" = "Μέλη";
+"swarm.contactHeader" = "Επαφή";
+"swarm.showContactQRCode" = "Εμφάνιση κωδικού QR επαφής";
+"swarm.shareContactInfo" = "Κοινή χρήση στοιχείων επαφής";
+"swarm.accessibilityContactQRCode" = "Εμφάνιση κωδικού QR επαφής";
+"swarm.accessibilityContactQRCodeHint" = "Ανοίγει μια οθόνη με τον κωδικό QR της επαφής";
+"swarm.accessibilityContactShareHint" = "Ανοίγει επιλογές κοινής χρήσης για τα στοιχεία επαφής";
+"swarm.accessibilityColorPicker" = "Επιλογέας χρώματος συνομιλίας";
+"swarm.conversationHeader" = "Συζήτηση";
+"swarm.shareContactMessage" = "Μπορείτε να προσθέσετε αυτή την επαφή, %1@, στην κατανεμημένη πλατφόρμα επικοινωνίας Jami: https://jami.net";
+"swarm.oneToOne" = "Ιδιωτικό";
+"swarm.adminInvitesOnly" = "Ιδιωτική ομάδα (συγκριτικές προσκλήσεις)";
+"swarm.invitesOnly" = "Ιδιωτική ομάδα";
+"swarm.publicChat" = "Δημόσια ομάδα";
+"swarm.others" = "Άλλοι";
+"swarm.member" = "Μέλος";
+"swarm.invited" = "Καλεσμένοι";
+"swarm.admin" = "Διαχειριστής";
+"swarm.blocked" = "Αποκλεισμένο";
+"swarm.unknown" = "Άγνωστοι";
+"swarm.left" = "Αποχώρησε";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "Πρόσκληση μελών";
+"swarm.inviteSelectedMembers" = "Πρόσκληση επιλεγμένων επαφών";
+"swarm.inviteMembersSelected" = "Επιλεγμένο";
+"swarm.inviteMembersNotSelected" = "Μη επιλεγμένο";
+"swarm.confirmLeaveConversation" = "Θέλετε να αποχωρήσετε από αυτήν τη συνομιλία;";
+"swarm.Leave" = "Φύγε";
+"swarm.newGroup" = "Δημιουργία νέας ομάδας";
+"swarm.namePlaceholder" = "Όνομα ομάδας";
+"swarm.explanationText" = "Τα μέλη μπορούν να προσκληθούν ανά πάσα στιγμή μετά τη δημιουργία της ομάδας.";
+"swarm.customizeProfile" = "Προσαρμογή προφίλ ομάδας";
+"swarm.changePicture" = "Αλλαγή εικόνας ομάδας";
+"swarm.customize" = "Προσαρμογή ομάδας";
+"swarm.selectContacts" = "Επιλέξτε επαφές";
+
+// Contact Picker
+"contactPicker.calls" = "Κλήσεις";
+"contactPicker.contacts" = "Επαφές";
+
+// Smartlist
+"smartlist.yesterday" = "Χθες";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "Συνομιλίες";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "Καμία συνομιλία δεν ταιριάζει με την αναζήτηση.";
+"smartlist.newContact" = "Νέα επαφή";
+"smartlist.newGroup" = "Νέα ομάδα";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "Ληφθείσες προσκλήσεις";
+"smartlist.noResults" = "Χωρίς αποτελέσματα";
+"smartlist.noConversation" = "Δεν έχουμε συνομιλίες.";
+"smartlist.searchBarPlaceholder" = "Εισαγάγετε όνομα…";
+"smartlist.searchBar" = "Αναζήτηση";
+"smartlist.noNetworkConnectivity" = "Καμία σύνδεση στο δίκτυο";
+"smartlist.cellularAccess" = "Βεβαιωθείτε ότι η πρόσβαση στο δίκτυο κινητής τηλεφωνίας έχει παραχωρηθεί στις ρυθμίσεις.";
+"smartlist.accountsTitle" = "Λογαριασμοί";
+"smartlist.addAccountButton" = "+ Προσθήκη λογαριασμού";
+"smartlist.noNumber" = "Η επιλεγμένη επαφή δεν έχει αριθμό";
+"smartlist.selectOneNumber" = "Επιλέξτε έναν από τους αριθμούς";
+"smartlist.invitations" = "Προσκλήσεις";
+"smartlist.aboutJami" = "Σχετικά με το Jami";
+"smartlist.inviteFriends" = "Πρόσκληση φίλων";
+"smartlist.disableDonation" = "Όχι τώρα";
+"smartlist.donationExplanation" = "Εάν σας αρέσει να χρησιμοποιείτε το Jami και πιστεύετε στην αποστολή μας, θέλετε να κάνετε μια δωρεά;";
+"smartlist.inSynchronization" = "Συγχρονισμός…";
+
+// Conversation
+"conversation.addToContactsButton" = "Προσθήκη στις επαφές";
+"conversation.sendInvitationButton" = "Αποστολή πρόσκλησης";
+"conversation.addToContactsLabel" = "Προσθήκη στις επαφές;";
+"conversation.notContactLabel" = "Ο/Η %@ δεν είναι στη λίστα επαφών";
+"conversation.messagePlaceholder" = "Γράψτε προς";
+"conversation.imageSaved" = "Αποθηκεύτηκε";
+"conversation.errorSavingImage" = "Δεν ήταν δυνατή η αποθήκευση της εικόνας";
+"conversation.errorSavingImageMessage" = "Παρουσιάστηκε σφάλμα κατά την αποθήκευση της εικόνας στη βιβλιοθήκη φωτογραφιών.";
+"conversation.photoAccessRequiredMessage" = "Το Jami χρειάζεται πρόσβαση στη βιβλιοθήκη φωτογραφιών σας για την αποθήκευση εικόνων. Μπορείτε να το ενεργοποιήσετε στις Ρυθμίσεις.";
+"conversation.receivedRequest" = "Ο/Η %@ σας έστειλε πρόσκληση συνομιλίας.";
+"conversation.incomingRequest" = "σας έστειλε πρόσκληση συνομιλίας.";
+"conversation.requestMessage" = "Γεια,\nθέλετε να συμμετάσχετε στη συνομιλία;";
+"conversation.sendRequest" = "Στείλτε τους μια πρόσκληση για να μπορείτε να συνομιλήσετε.";
+"conversation.sendRequestTitle" = "Αποστολή πρόσκλησης συνομιλίας";
+"conversation.synchronizationTitle" = "Αποδεχτήκατε την πρόσκληση συνομιλίας.";
+"conversation.syncingTitle" = "Συγχρονισμός συνομιλίας";
+"conversation.synchronizationMessage" = "Αναμονή σύνδεσης του/της %@ για συγχρονισμό της συνομιλίας…";
+"conversation.inReplyTo" = "Απαντώντας";
+"conversation.repliedTo" = "Ο/Η %@ απάντησε στον/στην %@";
+"conversation.yourself" = "Εσύ";
+"conversation.edited" = "Επορθωμένο";
+"conversation.deletedMessage" = "Ο/Η %@ διέγραψε ένα μήνυμα";
+"conversation.contactBlocked" = "Η επαφή αποκλείστηκε";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "Ο/Η %@ πληκτρολογεί";
+"conversation.typingIndicatorTwoUsers" = "Οι %1@ και %2@ πληκτρολογούν";
+"conversation.typingIndicatorOtherUsers" = "Οι %1@, %2@ και %3@ ακόμη πληκτρολογούν";
+"conversation.typingIndicatorOthersUsers" = "Οι %1@, %2@ και %3@ ακόμη πληκτρολογούν";
+"conversation.lastMessageDeleted" = "(διαγραμμένο μήνυμα)";
+
+// Invitations
+"invitations.noInvitations" = "Δεν υπάρχουν προσκλήσεις.";
+"invitations.accepted" = "Αποδεκτό";
+"invitations.declined" = "Απορρίφθηκε";
+"invitations.blocked" = "Αποκλεισμένο";
+"invitations.list" = "Ληφθείσες προσκλήσεις";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Μοιραστείτε, ελεύθερα και ιδιωτικά, με το Jami";
+"welcome.text" = "Η Jami είναι μια ελεύθερη και παγκόσμια πλατφόρμα επικοινωνίας που διατηρεί την ιδιωτικότητα και τις ελευθερίες των χρηστών";
+"welcome.haveAccount" = "Έχω ήδη λογαριασμό.";
+"welcome.linkDevice" = "Εισαγωγή από άλλη συσκευή";
+"welcome.linkBackup" = "Εισαγωγή απο αρχειοθετημένο αντίγραφο ασφαλείας";
+"welcome.createAccount" = "Δημιουργήστε λογαριασμό Jami";
+"welcome.connectToJAMS" = "Σύνδεση σε διακομιστή διαχείρισης";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "Παράληψη";
+"createProfile.profileCreated" = "Επόμενο";
+"createProfile.title" = "Εξατομικεύστε το προφίλ σας";
+"createProfile.enterNameLabel" = "Εισάγετε όνομα προβολής";
+"createProfile.enterNamePlaceholder" = "Εισάγετε όνομα";
+"createProfile.subtitle" = "Το προφίλ σας κοινοποιείται μόνο στις επαφές σας. Το προφίλ μπορεί να αλλάξει ανά πάσα στιγμή.";
+"createProfile.createProfilePicture" = "Δημιουργία εικόνας προφίλ";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "Δημιουργήστε λογαριασμό Jami";
+"createAccount.lookingForUsernameAvailability" = "Έλεγχος διαθεσιμότητας ονόματος χρήστη…";
+"createAccount.invalidUsername" = "Μη έγκυρο όνομα χρήστη. Εισαγάγετε το σωστό όνομα χρήστη.";
+"createAccount.usernameAlreadyTaken" = "Το όνομα χρήστη ήδη χρησιμοποιείται";
+"createAccount.usernameValid" = "Το όνομα χρήστη είναι διαθέσιμο.";
+"createAccount.UsernameNotRegisteredTitle" = "Σφάλμα δικτύου";
+"createAccount.UsernameNotRegisteredMessage" = "Δημιουργήθηκε λογαριασμός αλλά δεν καταχωρίστηκε όνομα χρήστη";
+"createAccount.timeoutTitle" = "Δημιουργήθηκε λογαριασμός";
+"createAccount.timeoutMessage" = "Η εγγραφή ονόματος χρήστη βρίσκεται σε εξέλιξη. Παρακαλώ περιμένετε…";
+"createAccount.sipConfigure" = "Διαμόρφωση υπάρχοντος λογαριασμού SIP";
+"createAccount.creatingAccount" = "Δημιουργία λογαριασμού";
+"createAccount.nameExplanation" = "Μπορείτε να επιλέξετε ένα όνομα χρήστη για να βοηθήσετε τους άλλους να σας βρουν και να σας φτάσουν πιο εύκολα στο Jami.";
+"createAccount.newAccount" = "Νέος Λογαριασμός";
+"createAccount.encryptionEnabled" = "Η προστασία με κωδικό πρόσβασης ενεργοποιήθηκε";
+"createAccount.encrypt" = "Προστασία με κωδικό πρόσβασης";
+"createAccount.customize" = "Προσαρμογή";
+"createAccount.encryptTitle" = "Προστασία λογαριασμού με κωδικό πρόσβασης";
+"createAccount.encryptExplanation" = "Ένας λογαριασμός Jami δημιουργείται και αποθηκεύεται τοπικά μόνο σε αυτή τη συσκευή ως αρχείο που περιέχει τα κλειδιά του λογαριασμού. Η πρόσβαση στο αρχείο μπορεί προαιρετικά να προστατευτεί με κωδικό πρόσβασης.";
+
+// Link To Account form
+"linkToAccount.importAccount" = "Εισαγωγή λογαριασμού";
+"linkToAccount.showQrCode" = "Κώδικας QR";
+"linkToAccount.showPinCode" = "Κωδικός ταυτοποίησης";
+"linkToAccount.actionRequired" = "Απαιτείται ενέργεια.\nΕπιβεβαιώστε τον λογαριασμό στην αρχική συσκευή.";
+"linkToAccount.allSet" = "Ο λογαριασμός εισήχθη με επιτυχία.";
+"linkToAccount.goToAccounts" = "Μετάβαση στον εισαγόμενο λογαριασμό";
+"linkToAccount.exportInstructions" = "Στην αρχική συσκευή, ξεκινήστε την εξαγωγή.";
+"linkToAccount.exportInstructionsPath" = "Επιλέξτε Λογαριασμός → Ρυθμίσεις λογαριασμού → Σύνδεση νέας συσκευής.";
+"linkToAccount.scanQrCode" = "Όταν είστε έτοιμοι, σαρώστε τον κωδικό QR.";
+"linkToAccount.enterProvidedCode" = "Όταν είστε έτοιμοι, εισαγάγετε τον κωδικό ταυτοποίησης.";
+"linkToAccount.accountLockedWithPassword" = "Ο λογαριασμός προστατεύεται με κωδικό πρόσβασης. Για να συνεχίσετε, εισαγάγετε τον κωδικό πρόσβασης του λογαριασμού.";
+"linkToAccount.exit" = "Έξοδος";
+"linkToAccount.shareMessage" = "Ο κωδικός σας είναι: %@";
+"linkToAccount.alertTile" = "Θέλετε να σταματήσετε τη σύνδεση του λογαριασμού;";
+"linkToAccount.alertMessage" = "Η διακοπή θα ακυρώσει τη λειτουργία εισαγωγής λογαριασμού.";
+
+// Import from Archive
+"importFromArchive.explanation" = "Εισαγωγή λογαριασμού Jami από το τοπικό αρχείο αρχείου.";
+"importFromArchive.passwordExplanation" = "Εάν ο λογαριασμός προστατεύεται με κωδικό πρόσβασης, συμπληρώστε το ακόλουθο πεδίο.";
+"importFromArchive.title" = "Εισαγωγή από αρχείο";
+"importFromArchive.buttonTitle" = "Εισαγωγή";
+"importFromArchive.selectArchiveButton" = "Επιλέξτε αρχείο αρχείου";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "Σύνδεση";
+"linkToAccountManager.title" = "Λογαριασμός διακομιστή διαχείρισης";
+"linkToAccountManager.accountManagerPlaceholder" = "URL διακομιστή διαχείρισης";
+"linkToAccountManager.accountManagerLabel" = "Εισαγάγετε το URL του διακομιστή διαχείρισης";
+"linkToAccountManager.jamsExplanation" = "Εισαγάγετε το URL του διακομιστή διαχείρισης";
+"linkToAccountManager.enterCredentials" = "Εισαγάγετε τα διαπιστευτήρια του διακομιστή διαχείρισης";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "Σφάλμα λογαριασμού";
+"alerts.accountCannotBeFoundMessage" = "Δεν είναι δυνατή η εύρεση του λογαριασμού στο δίκτυο Jami. Βεβαιωθείτε ότι εξήχθη στο Jami από μια υπάρχουσα συσκευή και ότι τα παρεχόμενα διαπιστευτήρια είναι σωστά.";
+"alerts.accountAddedTitle" = "Ο λογαριασμός προστέθηκε";
+"alerts.accountNoNetworkTitle" = "Σφάλμα δικτύου";
+"alerts.accountNoNetworkMessage" = "Παρουσιάστηκε σφάλμα συνδεσιμότητας κατά την προσθήκη του λογαριασμού Jami στο κατανεμημένο δίκτυο. Δοκιμάστε ξανά. Αν το πρόβλημα παραμένει, επικοινωνήστε με τον διαχειριστή του συστήματός σας.";
+"alerts.accountDefaultErrorTitle" = "Σφάλμα λογαριασμού";
+"alerts.accountDefaultErrorMessage" = "Παρουσιάστηκε σφάλμα κατά τη δημιουργία του λογαριασμού.";
+"alerts.profileTakePhoto" = "Λήψη φωτογραφίας";
+"alerts.profileUploadPhoto" = "Ανέβασε φωτογραφία";
+"alerts.accountLinkedTitle" = "Σύνδεση λογαριασμού";
+"alerts.dbFailedTitle" = "Παρουσιάστηκε σφάλμα κατά την εκκίνηση του Jami";
+"alerts.dbFailedMessage" = "Παρακαλώ κλείστε την εφαρμογή και προσπαθήστε να την ανοίξετε ξανά";
+"alerts.confirmBlockContact" = "Θέλετε να αποκλείσετε αυτή την επαφή; Το ιστορικό συνομιλιών με αυτή την επαφή θα διαγραφεί επίσης οριστικά.";
+"alerts.confirmDeleteConversation" = "Θέλετε να καταργήσετε οριστικά αυτή τη συνομιλία;";
+"alerts.confirmLeaveConversation" = "Θέλετε να αποχωρήσετε από αυτήν τη συνομιλία;";
+"alerts.confirmRemoveOneToOneConversation" = "Θέλετε να καταργήσετε αυτή τη συνομιλία; Το υπάρχον ιστορικό θα διαγραφεί. Μπορεί να ξεκινήσει μια νέα συνομιλία αν δεν έχετε άλλες συνομιλίες με αυτή την επαφή.";
+"alerts.confimRemoveContact" = "Θέλετε να καταργήσετε αυτή την επαφή; Το υπάρχον ιστορικό θα διαγραφεί.";
+"alerts.confirmDeleteConversationFromContact" = "Θέλετε να διαγράψετε τη συνομιλία με αυτή την επαφή;";
+"alerts.confirmDeleteConversationTitle" = "Διαγραφή συνομιλίας";
+"alerts.noMediaPermissionsTitle" = "Άδειας μέσων ενημέρωσης μη χορηγείται";
+"alerts.noLibraryPermissionsTitle" = "Πρόσβαση στη βιβλιοθήκη φωτογραφιών δεν χορηγείται";
+"alerts.noLocationPermissionsTitle" = "Πρόσβαση σε τοποθεσία που δεν χορηγείται";
+"alerts.errorWrongCredentials" = "Παρουσιάστηκε σφάλμα κατά τη σύνδεση με τον διακομιστή διαχείρισης. Δοκιμάστε ξανά. Αν το πρόβλημα παραμένει, επικοινωνήστε με τον διαχειριστή του συστήματός σας.";
+"alerts.recordVideoMessage" = "Εγγραφή μηνύματος βίντεο";
+"alerts.recordAudioMessage" = "Εγγραφή ηχητικού μηνύματος";
+"alerts.uploadFile" = "Αποστολή αρχείου";
+"alerts.uploadPhoto" = "Ανοιχτή γκαλερί";
+"alerts.sendPhoto" = "Αποστολή φωτογραφίας";
+"alerts.locationServiceIsDisabled" = "Ενεργοποιήστε τις «Υπηρεσίες τοποθεσίας» για να επιτρέψετε στο «Jami» να προσδιορίζει την τοποθεσία της συσκευής.";
+"alerts.locationSharing" = "Μοιραστείτε την τοποθεσία μου";
+"alerts.alreadylocationSharing" = "Ήδη μοιράζεται τοποθεσία με αυτόν τον χρήστη";
+"alerts.locationSharingDurationTitle" = "Πόσο θα πρέπει να διαρκέσει η μοιράωση της τοποθεσίας;";
+"alerts.locationSharingDuration10min" = "10 λεπτά";
+"alerts.locationSharingDuration1hour" = "1 ώρα";
+"alerts.mapInformation" = "Στοιχεία χάρτη";
+"alerts.openStreetMapCopyright" = "© Συμμετέχοντες στο OpenStreetMap";
+"alerts.openStreetMapCopyrightMoreInfo" = "Μάθετε περισσότερα";
+
+// Actions
+"actions.deleteAction" = "Διαγραφή";
+"actions.backAction" = "Πίσω";
+"actions.doneAction" = "Τελείωσε";
+"actions.goToSettings" = "Πηγαίνετε στις ρυθμίσεις";
+"actions.stopLocationSharing" = "Τερματισμός κοινοποίησης";
+
+// Calls
+"calls.ringing" = "- Ακούγεται...";
+"calls.connecting" = "Συνδέοντας...";
+"calls.callFinished" = "Η κλήση ολοκληρώθηκε";
+"calls.currentCallWith" = "Τηλεφώνησε με";
+"calls.maximize" = "Μεγιστοποίηση";
+"calls.minimize" = "Ελαχιστοποίηση";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "Ρυθμίστε τον διαχειριστή";
+"calls.removeModerator" = "Ανακατάσταση διαχειριστή";
+"calls.muteAudio" = "Σίγαση μικροφώνου";
+"calls.unmuteAudio" = "Κατάργηση σίγασης μικροφώνου";
+"calls.raiseHand" = "Σηκώστε το χέρι σας";
+"calls.lowerHand" = "Κάτω χέρι";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "Recording";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "Μια κλήση βρίσκεται σε εξέλιξη. Θέλετε να συμμετάσχετε στην κλήση; Μπορείτε επίσης να συμμετάσχετε στην κλήση αργότερα από τη συνομιλία.";
+"calls.activeCallInConversation" = "Υπάρχει μια κλήση σε εξέλιξη. Θα θέλατε να συμμετάσχετε σε αυτήν;";
+"calls.acceptWithAudio" = "Αποδοχή με ήχο";
+"calls.acceptWithVideo" = "Αποδοχή με βίντεο";
+
+// Account Page
+"accountPage.devicesListHeader" = "Συσκευές";
+"accountPage.settingsHeader" = "Ρυθμίσεις";
+"accountPage.notificationsHeader" = "Ειδοποιήσεις";
+"accountPage.blockedContacts" = "Μπλοκαρισμένες επαφές";
+"accountPage.unblockContact" = "Ανοίξτε την μπλοκ";
+"accountPage.proxyAddressAlert" = "Παρέξτε διεύθυνση αντιπροσωπευτικού χαρακτήρα";
+"accountPage.noProxyExplanationLabel" = "Δεν είναι δυνατή η λήψη ειδοποιήσεων όταν ο διακομιστής μεσολάβησης είναι απενεργοποιημένος.";
+"accountPage.proxyPaceholder" = "Δικαστική διεύθυνση";
+"accountPage.useProxyList" = "Χρήση λίστας διακομιστών μεσολάβησης";
+"accountPage.proxyListURL" = "URL λίστας διακομιστή μεσολάβησης";
+"accountPage.proxyExplanation" = "Οι ειδοποιήσεις δρομολογούνται μέσω ενός διακομιστή μεσολάβησης. Μπορείτε να χρησιμοποιήσετε τον προεπιλεγμένο διακομιστή μεσολάβησης, να εισαγάγετε μια προσαρμοσμένη διεύθυνση διακομιστή μεσολάβησης ή να παρέχετε μια διεύθυνση URL με λίστα διακομιστών μεσολάβησης.";
+"accountPage.proxyHeader" = "Διαμεσολαβητής";
+"accountPage.currentProxy" = "Τρέχων διακομιστής μεσολάβησης";
+"accountPage.enableNotifications" = "Ενεργοποίηση κοινοποιήσεων";
+"accountPage.proxyDisabledAlertTitle" = "Απασχολούνται οι διακομιστές αντιπροσωπευτικών";
+"accountPage.proxyDisabledAlertBody" = "Για να λάβετε ειδοποιήσεις, παρακαλώ ενεργοποιήστε το proxy";
+"accountPage.removeDeviceTitle" = "Αφαίρεση συσκευής";
+"accountPage.revokeDeviceMessage" = "Θέλετε να καταργήσετε αυτή τη συσκευή; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.";
+"accountPage.revokeDeviceButton" = "Απαλλαγή";
+"accountPage.revokeDevicePlaceholder" = "Εισάγετε κωδικό πρόσβασης λογαριασμού";
+"accountPage.deviceRevoked" = "Τελείωσε την ανάκληση της συσκευής";
+"accountPage.deviceRevocationProgress" = "Κατάργηση…";
+"accountPage.deviceRevocationSuccess" = "Η συσκευή καταργήθηκε";
+"accountPage.deviceRevocationTryAgain" = "Δοκίμασε ξανά.";
+"accountPage.deviceRevocationWrongPassword" = "Λάθος κωδικό πρόσβασης";
+"accountPage.deviceRevocationUnknownDevice" = "Άγνωστη συσκευή";
+"accountPage.deviceRevocationError" = "Λάθος ανάκλησης συσκευής";
+"accountPage.linkDeviceTitle" = "Συνδέστε άλλη συσκευή";
+"accountPage.other" = "Άλλα";
+"accountPage.removeAccountMessage" = "Εάν δεν έχει δημιουργηθεί αντίγραφο ασφαλείας του λογαριασμού ή δεν έχει προστεθεί σε άλλη συσκευή, ο λογαριασμός και το καταχωρισμένο όνομα χρήστη θα ΧΑΘΟΥΝ ΑΜΕΤΑΚΛΗΤΑ.";
+"accountPage.inviteFriends" = "Πρόσκληση φίλων";
+"accountPage.contactMeOnJamiTitle" = "Επικοινωνήστε μαζί μου για την Τζάμι!";
+"accountPage.contactMeOnJamiContant" = "Επικοινωνήστε μαζί μου χρησιμοποιώντας «%s» στην κατανεμημένη πλατφόρμα επικοινωνίας Jami: https://jami.net";
+"accountPage.passwordPlaceholder" = "Εισάγετε κωδικό πρόσβασης λογαριασμού";
+"accountPage.usernamePlaceholder" = "Εισάγετε το επιθυμητό όνομα χρήστη";
+"accountPage.registerNameErrorMessage" = "Το όνομα χρήστη δεν είναι διαθέσιμο.";
+"accountPage.usernameRegistering" = "Καταχώριση";
+"accountPage.usernameRegisterAction" = "Εγγραφή";
+"accountPage.usernameRegistrationFailedTitle" = "Η εγγραφή απέτυχε";
+"accountPage.usernameRegistrationFailed" = "Ελέγξτε τον κωδικό πρόσβασης του λογαριασμού.";
+"accountPage.createPassword" = "Ορισμός κωδικού πρόσβασης";
+"accountPage.changePassword" = "Αλλαγή κωδικού";
+"accountPage.currentPasswordPlaceholder" = "Εισάγετε τον τρέχοντα κωδικό πρόσβασης";
+"accountPage.newPasswordPlaceholder" = "Εισαγωγή νέου κωδικού";
+"accountPage.newPasswordConfirmPlaceholder" = "Επιβεβαίωση νέου κωδικού";
+"accountPage.changePasswordError" = "Λάθος κωδικό πρόσβασης";
+"accountPage.enableBoothMode" = "Ενεργοποιήστε τη λειτουργία Booth";
+"accountPage.disableBoothMode" = "Απαλείψτε τη λειτουργία Booth";
+"accountPage.disableBoothModeExplanation" = "Παρέχετε τον κωδικό πρόσβασης του λογαριασμού";
+"accountPage.boothModeExplanation" = "Στην κατάσταση του μπουθ, το ιστορικό συνομιλιών δεν έχει αποθηκευτεί και η λειτουργία του Jami περιορίζεται από τις εξόδους κλήσεων.";
+"accountPage.noBoothMode" = "Για να ενεργοποιήσετε τη λειτουργία θαλάμου, προστατέψτε πρώτα τον λογαριασμό με κωδικό πρόσβασης.";
+"accountPage.boothModeAlertMessage" = "Μετά την ενεργοποίηση της λειτουργίας θαλάμου, όλες οι συνομιλίες θα καταργηθούν.";
+"accountPage.peerDiscovery" = "Επιτρέψτε την τοπική ανακάλυψη ομοτίμων";
+"accountPage.peerDiscoveryExplanation" = "Συνδέστε με άλλους κόμβους DHT που διαφημίζουν στο τοπικό μας δίκτυο";
+"accountPage.autoRegistration" = "Μητρώο αυτοκινήτου μετά την λήξη ισχύος";
+"accountPage.connectivityHeader" = "Συνδεσιμότητα";
+"accountPage.turnEnabled" = "Ενεργοποιήστε το ΤΕΡΝ";
+"accountPage.turnServer" = "Διεύθυνση TURN";
+"accountPage.turnUsername" = "Όνομα χρήστη TURN";
+"accountPage.turnPassword" = "Κωδικός TURN";
+"accountPage.turnRealm" = "Το βασίλειο ΤΟΥΡΝ";
+"accountPage.upnpEnabled" = "Χρήση UPnP";
+"accountPage.stunEnabled" = "Χρήση STUN";
+"accountPage.stunServer" = "Διεύθυνση STUN";
+"accountPage.publicAddressHeader" = "Δημόσια διεύθυνση";
+"accountPage.allowIPAutoRewrite" = "Να επιτρέπεται η αυτόματη επανεγγραφή IP";
+"accountPage.publishedSameAsLocal" = "Εκδόθηκε με την ίδια τοπική";
+"accountPage.publishedAddress" = "Διεύθυνση";
+"accountPage.publishedPort" = "Θύρα";
+"accountPage.security" = "Ασφάλεια";
+"accountPage.enableSRTP" = "Επιτρέψτε την ανταλλαγή κλειδιών SDES";
+"accountPage.encryptNegotiation" = "Κρυπτογράφηση διαπραγμάτευσης (TLS)";
+"accountPage.registerNameExplanation" = "Καταχωρίστε ένα όνομα χρήστη για να βοηθήσετε άλλους να σας βρίσκουν και να επικοινωνούν μαζί σας πιο εύκολα στο Jami.";
+"accountPage.profileHeader" = "Προφίλ";
+"accountPage.profileNameNotSelected" = "Δεν επιλέχθηκε όνομα";
+"accountPage.accountHeader" = "Λογαριασμός";
+"accountPage.profileName" = "Όνομα προφίλ";
+"accountPage.profileNamePlaceholder" = "Εισαγάγετε όνομα προφίλ";
+"accountPage.editProfile" = "Επεξεργασία προφίλ";
+"accountPage.manageAccount" = "Διαχείριση Λογαριασμού";
+"accountPage.encryptAccount" = "Κωδικός";
+"accountPage.passwordExplanation" = "Ο λογαριασμός σας Jami είναι καταχωρισμένος μόνο σε αυτήν τη συσκευή ως αρχειοθήκη που περιέχει τα κλειδιά του λογαριασμού σας. Η πρόσβαση σε αυτήν την αρχειοθήκη μπορεί να προστατευτεί με κωδικό πρόσβασης.";
+"accountPage.passwordsDoNotMatch" = "Οι κωδικοί πρόσβασης δεν ταιριάζουν.";
+"accountPage.passwordCreated" = "Ο κωδικός πρόσβασης ορίστηκε";
+"accountPage.passwordUpdated" = "Ο κωδικός πρόσβασης ενημερώθηκε";
+"accountPage.linkedDevices" = "Συνδεδεμένες συσκευές";
+"accountPage.unlink" = "Αποσύνδεση";
+"accountPage.generatingPin" = "Δημιουργία κωδικού PIN…";
+"accountPage.passwordForPin" = "Ο λογαριασμός προστατεύεται με κωδικό πρόσβασης. Εισαγάγετε τον κωδικό πρόσβασης για να δημιουργήσετε έναν κωδικό PIN.";
+"accountPage.pinExplanationTitle" = "Σε άλλη συσκευή";
+"accountPage.pinExplanationMessage" = "Εγκαταστήστε και εκκινήστε το Jami. Επιλέξτε «Εισαγωγή από άλλη συσκευή» και σαρώστε τον κωδικό QR. Εναλλακτικά, εισαγάγετε τον κωδικό PIN χειροκίνητα.";
+"accountPage.pinError" = "Παρουσιάστηκε σφάλμα κατά τη δημιουργία του κωδικού PIN.";
+"accountPage.notificationTitle" = "Ειδοποιήσεις";
+"accountPage.notificationError" = "Οι ειδοποιήσεις για το Jami είναι απενεργοποιημένες. Ενεργοποιήστε τες στις ρυθμίσεις της συσκευής για να χρησιμοποιήσετε αυτή τη λειτουργία.";
+"accountPage.callsFromUnknownContacts" = "Να επιτρέπονται κλήσεις από άγνωστες επαφές.";
+"accountPage.accountSettingsExplanation" = "Αυτές οι ρυθμίσεις θα ισχύουν μόνο για αυτόν τον λογαριασμό.";
+"accountPage.appSettings" = "Ρυθμίσεις εφαρμογής";
+"accountPage.appSettingsExplanation" = "Αυτές οι ρυθμίσεις θα ισχύουν για ολόκληρη την εφαρμογή.";
+"accountPage.connectivityAndConfiguration" = "Συνδεσιμότητα και διαμορφώσεις";
+"accountPage.sipExpirationTime" = "Χρόνος λήξης της εγγραφής (δευτερόλεπτα)";
+"accountPage.tlsVerifyServerCertificates" = "Να επαληθεύονται τα πιστοποιητικά TLS του διακομιστή";
+"accountPage.tlsVerifyClientCertificates" = "Επαλήθευση πιστοποιητικών TLS πελάτη";
+"accountPage.tlsRequireTlsCertificate" = "Απαίτηση πιστοποιητικού για εισερχόμενες συνδέσεις TLS";
+"accountPage.tlsDisableSecureDlgCheck" = "Απασβήσετε την ασφαλή έλεγχο διαλόγου για εισερχόμενα δεδομένα TLS";
+"accountPage.editSipExpirationTime" = "Χρόνος λήξης";
+"accountPage.selectSipExpirationTime" = "Ορίστε χρόνο (σε δευτερόλεπτα) για τη λήξη της εγγραφής";
+"accountPage.invalidSipExpirationTime" = "Εισαγάγετε μια τιμή μεταξύ 60 και 604800 δευτερολέπτων";
+"accountPage.invalidPort" = "Εισαγάγετε μια τιμή μεταξύ 0 και 65535";
+"accountPage.invalidAddress" = "Εισαγάγετε μια έγκυρη διεύθυνση";
+"accountPage.thisDevice" = "Αυτή η συσκευή";
+"accountPage.otherDevices" = "Άλλα συνδεδεμένα όργανα";
+"accountPage.accountIdentity" = "Ταυτότητα λογαριασμού";
+"accountPage.bootstrap" = "Πυροσκόπηση";
+"accountPage.dhtConfiguration" = "Ρύθμιση OpenDHT";
+"accountPage.nameServer" = "Διοικητής ονόματος";
+"accountPage.chats" = "Συνομιλίες";
+"accountPage.typingIndicator" = "Δείκτης τυπογραφίας";
+"accountPage.typingIndicatorExplanation" = "Υποδεικνύει πότε πληκτρολογούνται μηνύματα.";
+
+// Backup Account
+"backupAccount.explanation" = "Αυτός ο λογαριασμός Jami υπάρχει μόνο σε αυτή τη συσκευή. Ο λογαριασμός θα χαθεί αν χαθεί αυτή η συσκευή ή αν απεγκατασταθεί η εφαρμογή. Συνιστάται να δημιουργήσετε αντίγραφο ασφαλείας αυτού του λογαριασμού.";
+"backupAccount.title" = "Αντίγραφο ασφαλείας λογαριασμού";
+"backupAccount.creating" = "Δημιουργία αντιγράφου ασφαλείας";
+"backupAccount.archiveName" = "Επιλέξτε ένα όνομα για το αρχείο.";
+"backupAccount.archiveNamePlaceholder" = "Όνομα αρχείου";
+"backupAccount.passwordRequest" = "Εισαγάγετε τον κωδικό πρόσβασης του λογαριασμού.";
+"backupAccount.backupButton" = "Αντίγραφο ασφαλείας";
+"backupAccount.documentPickerButton" = "Άνοιγμα τοποθεσίας αντιγράφου ασφαλείας";
+"backupAccount.exportSuccess" = "Το αντίγραφο ασφαλείας δημιουργήθηκε";
+"backupAccount.errorWrongLocation" = "Η επιλεγμένη διαδρομή αρχείου δεν είναι έγκυρη. Επιλέξτε διαφορετική τοποθεσία.";
+"backupAccount.errorAccessDenied" = "Η πρόσβαση στην επιλεγμένη τοποθεσία απορρίφθηκε.";
+"backupAccount.errorFailed" = "Παρουσιάστηκε σφάλμα κατά την εξαγωγή του λογαριασμού.";
+
+// Account
+"account.sipServer" = "Υπηρετή";
+"account.port" = "Θύρα";
+"account.proxyServer" = "Διαμεσολαβητής";
+"account.createSipAccount" = "Διαμόρφωση λογαριασμού SIP";
+"account.sipAccount" = "Λογαριασμός SIP";
+"account.configure" = "Διαμόρφωση";
+"account.advancedFeatures" = "Σύνθετες λειτουργίες";
+"account.serverLabel" = "Εισάγετε διεύθυνση";
+"account.portLabel" = "Εισάγετε τον αριθμό λιμένα";
+"account.accountStatus" = "Κατάσταση λογαριασμού";
+"account.enableAccount" = "Επιτρέψτε το λογαριασμό";
+"account.statusOnline" = "Συνδεδεμένος";
+"account.statusOffline" = "Απαλλαγή";
+"account.statusConnecting" = "Συνδέεται";
+"account.statusUnknown" = "Άγνωστοι";
+"account.statusConnectionerror" = "Λάθος σύνδεσης";
+"account.needMigration" = "Ο λογαριασμός απαιτεί μετεγκατάσταση.";
+"account.me" = "Εγώ";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "Μη αποκλεισμένες επαφές";
+
+// Link New Device
+"linkDevice.title" = "Σύνδεση νέας συσκευής";
+"linkDevice.networkError" = "Παρουσιάστηκε σφάλμα δικτύου κατά την εξαγωγή του λογαριασμού.";
+"linkDevice.errorWrongPassword" = "Παρουσιάστηκε σφάλμα ελέγχου ταυτότητας κατά τη σύνδεση της συσκευής. Ελέγξτε τα διαπιστευτήρια και δοκιμάστε ξανά.";
+"linkDevice.errorNetwork" = "Παρουσιάστηκε σφάλμα δικτύου κατά τη σύνδεση του λογαριασμού. Επαληθεύστε τη σύνδεσή σας και δοκιμάστε ξανά.";
+"linkDevice.errorTimeout" = "Έληξε ο χρόνος της λειτουργίας. Δοκιμάστε ξανά.";
+"linkDevice.errorCode" = "Παρουσιάστηκε σφάλμα κατά τη δημιουργία του κωδικού. Δοκιμάστε ξανά.";
+"linkDevice.errorWrongData" = "Παρουσιάστηκε σφάλμα κατά την εξαγωγή του λογαριασμού. Δοκιμάστε ξανά.";
+"linkDevice.initialInfo" = "Στη νέα συσκευή, ξεκινήστε έναν νέο λογαριασμό.";
+"linkDevice.infoAddAccount" = "Επιλέξτε Προσθήκη λογαριασμού → Σύνδεση από άλλη συσκευή.";
+"linkDevice.infoQRCode" = "Όταν είστε έτοιμοι, σαρώστε τον κωδικό QR.";
+"linkDevice.infoCode" = "Όταν είστε έτοιμοι, εισαγάγετε τον κωδικό και πατήστε Σύνδεση.";
+"linkDevice.connecting" = "Σύνδεση στη νέα σας συσκευή…";
+"linkDevice.authenticationInfo" = "Βρέθηκε νέα συσκευή στην ακόλουθη διεύθυνση IP. Είστε εσείς; Για να συνεχίσετε τη λειτουργία εξαγωγής λογαριασμού, πατήστε Επιβεβαίωση.";
+"linkDevice.newDeviceIP" = "Διεύθυνση IP νέας συσκευής: %1@";
+"linkDevice.code" = "κωδικός";
+"linkDevice.wrongEntry" = "Μη αναγνωρισμένο αναγνωριστικό νέας συσκευής. Ακολουθήστε τις παραπάνω οδηγίες.";
+"linkDevice.exportInProgress" = "Η λειτουργία εξαγωγής λογαριασμού στη νέα συσκευή βρίσκεται σε εξέλιξη. Επιβεβαιώστε την εισαγωγή στη νέα συσκευή.";
+"linkDevice.completed" = "Ο λογαριασμός εισήχθη με επιτυχία στη νέα συσκευή.";
+
+// Contact Page
+"contactPage.startAudioCall" = "Ξεκινάτε την οχητική κλήση";
+"contactPage.startVideoCall" = "Ξεκινήστε την κλήση βίντεο";
+"contactPage.send" = "Αποστολή";
+"contactPage.leaveConversation" = "Αφήστε τη συζήτηση";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "Αρχική...";
+"dataTransfer.readableStatusError" = "Σφάλμα";
+"dataTransfer.readableStatusAwaiting" = "Περιμένω...";
+"dataTransfer.readableStatusOngoing" = "Μεταφορά";
+"dataTransfer.readableStatusCanceled" = "Ακυρώθηκε";
+"dataTransfer.sendingFailed" = "Παρουσιάστηκε σφάλμα κατά την αποστολή.";
+"dataTransfer.readableStatusSuccess" = "Συμπλήρωση";
+"dataTransfer.recordInBackgroundWarning" = "Η εγγραφή βίντεο κατά την εκτέλεση πολλαπλών εργασιών με πολλές εφαρμογές μπορεί να οδηγήσει σε βίντεο χαμηλότερης ποιότητας. Για καλύτερα αποτελέσματα, κάντε εγγραφή χωρίς πολλαπλές εργασίες";
+
+// Notifications
+"notifications.missedCall" = "Απέλειψε την κλήση";
+"notifications.newFile" = "Νέο αρχείο";
+"notifications.locationSharingStarted" = "Η συμμετοχή αρχίζει";
+"notifications.locationSharingStopped" = "Η συμμετοχή των εισερχόμενων τοποθεσιών σταμάτησε";
+"dataTransfer.readableStatusDecline" = "Απόρριψη κλήσης";
+"dataTransfer.readableStatusAccept" = "Αποδοχή";
+"dataTransfer.infoMessage" = "Πατήστε για να ξεκινήσει η εγγραφή";
+"dataTransfer.sendMessage" = "Αποστολή";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "Η πρόσκληση παραλήφθηκε";
+"generatedMessage.swarmCreated" = "Η συνομιλία δημιουργήθηκε";
+"generatedMessage.invitationReceived" = "Ο/Η %@ προσκλήθηκε να συμμετάσχει στη συνομιλία.";
+"generatedMessage.invitationAccepted" = "Ο/Η %@ συμμετείχε στη συνομιλία.";
+"generatedMessage.youJoined" = "Συμμετείχατε στη συνομιλία.";
+"generatedMessage.contactBlocked" = "Ο/Η %@ αποκλείστηκε από τη συνομιλία.";
+"generatedMessage.contactUnblocked" = "Ο/Η %@ ξεμπλοκαρίστηκε από τη συνομιλία.";
+"generatedMessage.outgoingCall" = "Εξερχόμενη κλήση";
+"generatedMessage.missedOutgoingCall" = "Αναπάντητη εξερχόμενη κλήση";
+"generatedMessage.missedIncomingCall" = "Αναπάντητη εισερχόμενη κλήση";
+"generatedMessage.liveLocationSharing" = "Συνοχή τοποθεσιών ζωντανά";
+"generatedMessage.contactLeftConversation" = "Ο/Η %@ αποχώρησε από τη συνομιλία.";
+"generatedMessage.nonSwarmInvitationReceived" = "Στείλατε μια πρόσκληση.";
+"generatedMessage.nonSwarmInvitationAccepted" = "Η πρόσκλησή σας έγινε αποδεκτή.";
+
+// General Settings
+"generalSettings.videoSettings" = "Ρυθμίσεις βίντεο";
+"generalSettings.videoAcceleration" = "Επιτρέψτε την επιτάχυνση βίντεο";
+"generalSettings.fileTransfer" = "Μεταφορά Αρχείων";
+"generalSettings.locationSharing" = "Συνοχή τοποθεσιών";
+"generalSettings.automaticAcceptIncomingFiles" = "Αποδέχεται αυτόματα εισερχόμενα αρχεία";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "(MB, 0 = απεριόριστο)";
+"generalSettings.limitLocationSharingDuration" = "Περιορίστε τη διάρκεια της μοιράσεως θέσεων";
+"generalSettings.locationSharingDuration" = "Διάρκεια των μετοχών θέσης";
+"generalSettings.donationCampaign" = "Εκστρατεία δωρεών";
+"generalSettings.enableDonationCampaign" = "Ενεργοποίηση εκστρατείας δωρεών";
+
+// Log View
+"logView.title" = "Διαγνωστικά";
+"logView.description" = "Ανοίξτε τις ρυθμίσεις καταγραφής διαγνωστικού";
+"logView.startLogging" = "Έναρξη καταγραφής";
+"logView.stopLogging" = "Τερματισμός καταγραφής";
+"logView.saveError" = "Παρουσιάστηκε σφάλμα κατά την αποθήκευση του αρχείου.";
+"logView.shareError" = "Παρουσιάστηκε σφάλμα κατά την κοινή χρήση του αρχείου.";
+
+// Migrate Account
+"migrateAccount.title" = "Μεταφορά λογαριασμού";
+"migrateAccount.migrateButton" = "Λογαριασμός μετανάστευσης";
+"migrateAccount.explanation" = "Απαιτείται μετεγκατάσταση λογαριασμού.";
+"migrateAccount.passwordExplanation" = "Για να συνεχίσετε με τη μετεγκατάσταση του λογαριασμού, εισαγάγετε τον κωδικό πρόσβασης του λογαριασμού.";
+"migrateAccount.error" = "Παρουσιάστηκε σφάλμα κατά τη μετεγκατάσταση του λογαριασμού. Δοκιμάστε ξανά ή διαγράψτε τον λογαριασμό.";
+"migrateAccount.migrating" = "Μετεγκατάσταση…";
+"migrateAccount.migrateAnother" = "Μεταναστεύστε άλλο λογαριασμό";
+
+// About Jami
+"aboutJami.declaration1" = "Το Jami, ένα πακέτο GNU, είναι λογισμικό για καθολική και κατανεμημένη επικοινωνία ομότιμων που σέβεται την ελευθερία και το απόρρητο των χρηστών του. Επισκεφθείτε";
+"aboutJami.declaration2" = "για να μάθετε περισσότερα.";
+"aboutJami.noWarranty1" = "Αυτό το πρόγραμμα παρέχεται χωρίς καμία απολύτως εγγύηση. Δείτε την";
+"aboutJami.noWarranty2" = "έκδοση 3 ή μεταγενέστερη για λεπτομέρειες.";
+"aboutJami.contribute" = "Συνεισφέρετε";
+"aboutJami.feedback" = "Σχόλια";
+"aboutJami.developers" = "Προγραμματιστές";
+"aboutJami.media" = "Μέσα";
+"aboutJami.communityManagement" = "Διαχείριση κοινότητας";
+"aboutJami.specialThanks" = "Ιδιαίτερες ευχαριστίες σε";
+"aboutJami.info" = "Αυτή είναι μια λίστα ατόμων που έχουν επενδύσει σημαντικό χρόνο, με χρήσιμα αποτελέσματα, στο Jami. Όσοι τέτοιοι συνεισφέροντες θέλουν να προστεθούν στη λίστα μπορούν να επικοινωνήσουν μαζί μας.";
+"aboutJami.header" = "Θα θέλαμε να ευχαριστήσουμε τους συνεισφέροντές μας, των οποίων οι προσπάθειες επί πολλά χρόνια έκαναν αυτό το λογισμικό αυτό που είναι.";
+
+// Accessibility
+"accessibility.close" = "Κλείσιμο";
+"accessibility.smartListSwitchAccounts" = "Εναλλαγή λογαριασμού";
+"accessibility.smartListConnectedAs" = "Ο τρέχων λογαριασμός είναι %@";
+"accessibility.smartListAddAccount" = "Προσθήκη λογαριασμού";
+"accessibility.aboutJamiTitle" = "Σχετικά με το Jami";
+"accessibility.welcomeToJamiTitle" = "Καλώς ήλθατε στο  Jami";
+"accessibility.createAccountVerifyUsernamePrompt" = "Εισαγάγετε όνομα χρήστη για έλεγχο διαθεσιμότητας.";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "Φωτογραφία προφίλ";
+"accessibility.profilePicturePickerHint" = "Πατήστε δύο φορές για να τραβήξετε φωτογραφία ή να επιλέξετε εικόνα από τη βιβλιοθήκη";
+"accessibility.swarmPicturePicker" = "Εικόνα ομάδας";
+"accessibility.accountSummaryQrCode" = "QR κώδικας";
+"accessibility.accountSummaryQrCodeHint" = "Πατήστε δύο φορές για να δείτε τον κωδικό QR του λογαριασμού";
+"accessibility.accountSummaryEditProfileHint" = "Πατήστε δύο φορές για επεξεργασία του προφίλ";
+"accessibility.accountSummaryEditSettingsButton" = "Ρυθμίσεις";
+"accessibility.conversationStartVoiceCall" = "Έναρξη ηχητικής κλήσης με %@";
+"accessibility.conversationStartVideoCall" = "Έναρξη βιντεοκλήσης με %@";
+"accessibility.conversationComposeMessage" = "Σύνταξη μηνύματος";
+"accessibility.conversationShareMedia" = "Κοινή χρήση πολυμέσων";
+"accessibility.conversationCameraHint" = "Πατήστε δύο φορές για άνοιγμα της κάμερας";
+"accessibility.audioPlayerPlay" = "Αναπαραγωγή";
+"accessibility.audioPlayerPause" = "Παύση";
+"accessibility.conversationRowUnreadCount" = "%@ μη αναγνωσμένα μηνύματα.";
+"accessibility.conversationRowBlocked" = "Η συνομιλία αποκλείστηκε";
+"accessibility.conversationRowSyncing" = "Συγχρονισμός σε εξέλιξη";
+"accessibility.conversationRowLastMessage" = "Τελευταίο μήνυμα στις %@";
+"accessibility.userPresenceOnline" = "Συνδεδεμένος";
+"accessibility.userPresenceAvailable" = "Διαθέσιμο";
+"accessibility.pendingRequestsRowPlural" = "Ληφθείσες προσκλήσεις: %@ εκκρεμείς προσκλήσεις";
+"accessibility.pendingRequestsRowSingular" = "Ληφθείσα πρόσκληση: %@ εκκρεμής πρόσκληση";
+"accessibility.pendingRequestsRowHint" = "Πατήστε δύο φορές για να ελέγξετε και να απαντήσετε στις προσκλήσεις που λάβατε";
+"accessibility.pendingRequestsListBlockUser" = "Αποκλεισμός αποστολέα πρόσκλησης";
+"accessibility.pendingRequestsListRejectInvitation" = "Απόρριψη πρόσκλησης";
+"accessibility.pendingRequestsListAcceptInvitation" = "Αποδοχή πρόσκλησης";
+"accessibility.messageBubbleDeleted" = "Το μήνυμα διαγράφηκε";
+"accessibility.messageBubbleEdited" = "Επορθωμένο";
+"accessibility.messageBubbleRead" = "Αναγνωσμένο";
+"accessibility.messageBubbleUnread" = "Μη αναγνωσμένο";
+"accessibility.textNotAvailable" = "Ελήφθη κενό μήνυμα κειμένου στις %@. Ενδέχεται να μην στάλθηκε σωστά.";
+"accessibility.fileTransferNoName" = "Το αρχείο ελήφθη στις %@, το όνομα δεν είναι διαθέσιμο";
+"accessibility.inReply" = "Σε απάντηση στο μήνυμα";
+"accessibility.text.receivedOn" = "%1@, μήνυμα που ελήφθη στις %2@";
+"accessibility.text.sentOn" = "%1@, μήνυμα που στάλθηκε στις %2@";
+"accessibility.fileTransfer.receivedOn" = "Αρχείο: %1@, ελήφθη στις %2@";
+"accessibility.fileTransfer.sentOn" = "Αρχείο: %1@, στάλθηκε στις %2@";
+"accessibility.call.lasted" = "Διήρκεσε %@";
+"accessibility.calls.default.toggleAudio" = "Σίγαση μικροφώνου";
+"accessibility.calls.default.toggleVideo" = "Έναρξη κάμερας";
+"accessibility.calls.default.pauseCall" = "Παύση κλήσης";
+"accessibility.calls.default.endCall" = "Τερματισμός κλήσης";
+"accessibility.calls.default.addParticipant" = "Προσθήκη συμμετέχοντος";
+"accessibility.calls.default.switchCamera" = "Εναλλαγή κάμερας";
+"accessibility.calls.default.toggleSpeaker" = "Ενεργοποίηση ηχείου";
+"accessibility.calls.default.openConversation" = "Επικοινωνία ανοιχτή";
+"accessibility.calls.default.showDialpad" = "Εμφάνιση πληκτρολογίου κλήσης";
+"accessibility.calls.default.raiseHand" = "Σηκώστε το χέρι σας";
+
+"accessibility.calls.alter.toggleAudio" = "Κατάργηση σίγασης μικροφώνου";
+"accessibility.calls.alter.toggleVideo" = "Διακοπή κάμερας";
+"accessibility.calls.alter.pauseCall" = "Επαναφέρετε την κλήση";
+"accessibility.calls.alter.endCall" = "Τερματισμός κλήσης";
+"accessibility.calls.alter.addParticipant" = "Προσθήκη συμμετέχοντος";
+"accessibility.calls.alter.switchCamera" = "Εναλλαγή κάμερας";
+"accessibility.calls.alter.toggleSpeaker" = "Απενεργοποίηση ηχείου";
+"accessibility.calls.alter.openConversation" = "Επικοινωνία ανοιχτή";
+"accessibility.calls.alter.showDialpad" = "Εμφάνιση πληκτρολογίου κλήσης";
+"accessibility.calls.alter.raiseHand" = "Κάτω χέρι";
+"accessibility.conference.minimize" = "Ελαχιστοποίηση";
+"accessibility.conference.maximize" = "Μεγιστοποίηση";
+"accessibility.conference.setModerator" = "Ρυθμίστε τον διαχειριστή";
+"accessibility.conference.unsetModerator" = "Ανακατάσταση διαχειριστή";
+"accessibility.conference.muteAudio" = "Σίγαση ήχου";
+"accessibility.conference.unmuteAudio" = "Ανεκλειστικό ήχο";
+"accessibility.conference.endCall" = "Τερματισμός κλήσης";
+"accessibility.conference.lowerHand" = "Κάτω χέρι";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "Σήκωσε το χέρι";
+"accessibility.conference.moderator" = "Διαχειριστής";
+"accessibility.conference.recording" = "Recording";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "Κωδικός QR διακριτικού";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "Ζωντανό ροζ";
+"swarmColors.purple" = "Μωβ";
+"swarmColors.violet" = "Βιολετί";
+"swarmColors.indigoBlue" = "Λουλακί";
+"swarmColors.skyBlue" = "Γαλάζιο";
+"swarmColors.cyan" = "Κυανό";
+"swarmColors.teal" = "Πετρόλ";
+"swarmColors.green" = "Πράσινο";
+"swarmColors.limeGreen" = "Λαχανί";
+"swarmColors.mediumGray" = "Μέτριο γκρι";
+"swarmColors.yellowGreen" = "Κιτρινοπράσινο";
+"swarmColors.amber" = "Κεχριμπαρένιο";
+"swarmColors.brightOrange" = "Έντονο πορτοκαλί";
+"swarmColors.brown" = "Καφέ";
+"swarmColors.steelBlue" = "Ατσαλί μπλε";
+
+// Share extension
+"shareExtension.noAccount.title" = "Δεν βρέθηκε λογαριασμός";
+"shareExtension.noAccount.description" = "Για να συνεχίσετε, δημιουργήστε έναν λογαριασμό στην κύρια εφαρμογή.";
+"shareExtension.unsupportedType.title" = "Μη υποστηριζόμενο περιεχόμενο";
+"shareExtension.unsupportedType.description" = "Η κοινή χρήση του επιλεγμένου περιεχομένου δεν υποστηρίζεται προς το παρόν.";
+"shareExtension.sending" = "Αποστολή…";
+"shareExtension.noSearchResults" = "Καμία συνομιλία δεν ταιριάζει με την αναζήτησή σας";
+"shareExtension.tryDifferentFilter" = "Δοκιμάστε διαφορετικό φίλτρο";
+"shareExtension.sendToConversation" = "Αποστολή σε %d συνομιλία";
+"shareExtension.sendToConversationsPlural" = "Αποστολή σε %d συνομιλίες";
+"shareExtension.selectAccountTitle" = "Επιλογή λογαριασμού";
+"shareExtension.searchConversations" = "Αναζήτηση συνομιλιών";
+"shareExtension.accessibilitySelectConversation" = "Πατήστε δύο φορές για να επιλέξετε αυτή τη συνομιλία";
+"shareExtension.accessibilitySelectedAccount" = "Επιλεγμένος λογαριασμός: %@. Πατήστε δύο φορές για αλλαγή λογαριασμού.";
+"shareExtension.accessibilitySendButton" = "Πατήστε δύο φορές για αποστολή στις επιλεγμένες συνομιλίες";
+"shareExtension.accessibilitySelectAccount" = "Πατήστε δύο φορές για να επιλέξετε αυτόν τον λογαριασμό";
+
+// Peer Services
+"peerServices.title" = "Κοινόχρηστες υπηρεσίες";
+"peerServices.refresh" = "Ανανέωση υπηρεσιών";
+"peerServices.empty" = "Δεν υπάρχουν διαθέσιμες κοινόχρηστες υπηρεσίες";
+"peerServices.errorOffline" = "Η επαφή είναι εκτός σύνδεσης";
+"peerServices.errorUnreachable" = "Η επαφή δεν είναι προσβάσιμη";
+"peerServices.errorTimeout" = "Το αίτημα έληξε";
+"peerServices.errorUnknown" = "Δεν ήταν δυνατή η ανάκτηση των υπηρεσιών";
+"peerServices.done" = "Τελείωσε";
+"peerServices.notSupported" = "Δεν υποστηρίζεται";
+"peerServices.open" = "Ανοίξτε";
+
+// Collaborative documents
+"collab.documents" = "Έγγραφα";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "Δημιουργία";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "Σύνδεσμος";
+"collab.linkHint" = "Διεύθυνση";
+"collab.linkAdd" = "Προσθήκη";
+"collab.linkRemove" = "Απομακρύνετε";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = " Έντονα";
+"collab.italic" = "Πλάγια";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "Διακριτή διαγραφή";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "Κέντρο";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "Αναίρεση";
+"collab.redo" = "Redo";
+"collab.remove" = "Απομακρύνετε";
+"collab.open" = "Ανοίξτε";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "Απομακρύνετε";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";

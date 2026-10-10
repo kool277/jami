@@ -1,0 +1,6 @@
+github "RxSwiftCommunity/RxDataSources"
+github "AliSoftware/Reusable"
+github "SwiftyBeaver/SwiftyBeaver"
+github "andreamazz/AMPopTip"
+github "stephencelis/SQLite.swift"
+github "gskbyte/GSKStretchyHeaderView"

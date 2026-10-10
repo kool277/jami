@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "Konto-sekcioj";
+"global.username" = "Uzantnomo";
+"global.recommended" = "Recomandita";
+"global.password" = "Pasvorto";
+"global.registerAUsername" = "Registru uzantnomon";
+"global.enterPassword" = "Enigu pasvorton";
+"global.enterUsername" = "Enter username";
+"global.cancel" = "Nuligi";
+"global.blockContact" = "Kontakto blokita";
+"global.removeAccount" = "Forigu la konton";
+"global.incomingCall" = "Eniranta voko";
+"global.ok" = "Bone";
+"global.close" = "Proksima";
+"global.share" = "Kunhavi";
+"global.forward" = "Antaŭen";
+"global.save" = "Savi";
+"global.resend" = "Resend";
+"global.preview" = "Antaŭvido";
+"global.accept" = "Akcepti";
+"global.block" = "Bloko";
+"global.decline" = "Rifuzi";
+"global.name" = "Nomo";
+"global.copy" = "Kopii";
+"global.reply" = "Respondo";
+"global.search" = "Serĉante...";
+"global.supportJami" = "Support Jami project";
+"global.deleteMessage" = "Forviŝi mesaĝon";
+"global.deleteFile" = "Delete file from device";
+"global.editMessage" = "Redakti mesaĝon";
+"global.editing" = "Editing";
+"global.create" = "Krei";
+"global.edit" = "Modifi";
+"global.remove" = "Forigi";
+"global.call" = "Voko";
+"global.video" = "Video";
+"global.time" = "Horo";
+"global.editPassword" = "Edit password";
+"global.confirmPassword" = "Konfirmu pasvorton";
+"global.confirm" = "Konfirmu";
+"global.cameraDisabled" = "Camera access is disabled. Enable it in device settings in order to use this feature.";
+"global.confirm" = "Konfirmu";
+"global.connect" = "Konekti";
+"global.leave" = "Foriru";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "Nomo";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "Desegno";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Discard";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "Malbona QR-kodo";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "Search for contact…";
+"swarmcreation.addDescription" = "Add description";
+// Swarm
+"swarm.muteConversation" = "Silenta konversacio";
+"swarm.leaveConversation" = "Lasu la konversacion";
+"swarm.removeConversation" = "Forigu konversacion";
+"swarm.removeContact" = "Forigu kontakton";
+"swarm.restartConversation" = "Restart conversation";
+"swarm.conversationEnded" = "Conversation ended";
+"swarm.chooseColor" = "Koloro de konversacio";
+"swarm.typeOfSwarm" = "Conversation type";
+"swarm.identifier" = "Identigilo";
+"swarm.conversationId" = "Conversation ID";
+"swarm.settings" = "Agordoj";
+"swarm.members" = "Anoj";
+"swarm.contactHeader" = "Kontakto";
+"swarm.showContactQRCode" = "Show contact QR code";
+"swarm.shareContactInfo" = "Share contact information";
+"swarm.accessibilityContactQRCode" = "Show contact QR code";
+"swarm.accessibilityContactQRCodeHint" = "Opens a screen with contact's QR code";
+"swarm.accessibilityContactShareHint" = "Opens sharing options for contact information";
+"swarm.accessibilityColorPicker" = "Conversation color picker";
+"swarm.conversationHeader" = "Konversacio";
+"swarm.shareContactMessage" = "You can add this contact, %1@, on the Jami distributed communication platform: https://jami.net";
+"swarm.oneToOne" = "Privata";
+"swarm.adminInvitesOnly" = "Privata grupo (limigita invito)";
+"swarm.invitesOnly" = "Privata grupo";
+"swarm.publicChat" = "Publika grupo";
+"swarm.others" = "Aliaj";
+"swarm.member" = "Membro";
+"swarm.invited" = "Invitita";
+"swarm.admin" = "Administro";
+"swarm.blocked" = "Blocked";
+"swarm.unknown" = "Nekonata";
+"swarm.left" = "Left";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "Invite members";
+"swarm.inviteSelectedMembers" = "Invite selected contacts";
+"swarm.inviteMembersSelected" = "Selected";
+"swarm.inviteMembersNotSelected" = "Not selected";
+"swarm.confirmLeaveConversation" = "Do you want to leave this conversation?";
+"swarm.Leave" = "Foriru";
+"swarm.newGroup" = "Create new group";
+"swarm.namePlaceholder" = "Group name";
+"swarm.explanationText" = "Members can be invited at any time after the group has been created.";
+"swarm.customizeProfile" = "Customize group profile";
+"swarm.changePicture" = "Change group picture";
+"swarm.customize" = "Customize group";
+"swarm.selectContacts" = "Elektu kontaktojn";
+
+// Contact Picker
+"contactPicker.calls" = "Vokoj";
+"contactPicker.contacts" = "Kontaktoj";
+
+// Smartlist
+"smartlist.yesterday" = "Hieraŭ";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "Konversacioj";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "No conversations match the search.";
+"smartlist.newContact" = "New contact";
+"smartlist.newGroup" = "New group";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "Invitations received";
+"smartlist.noResults" = "Nula trovaĵon";
+"smartlist.noConversation" = "Neniu konversacio";
+"smartlist.searchBarPlaceholder" = "Enter name…";
+"smartlist.searchBar" = "Serĉu";
+"smartlist.noNetworkConnectivity" = "Sen reta konekto";
+"smartlist.cellularAccess" = "Ensure cellular access is granted in the settings.";
+"smartlist.accountsTitle" = "Kontoj";
+"smartlist.addAccountButton" = "+ Add account";
+"smartlist.noNumber" = "La elektita kontakto ne havas nombron";
+"smartlist.selectOneNumber" = "Elektu unu el la nombroj";
+"smartlist.invitations" = "Invitoj";
+"smartlist.aboutJami" = "Pri Jami";
+"smartlist.inviteFriends" = "Invite friends";
+"smartlist.disableDonation" = "Not now";
+"smartlist.donationExplanation" = "If you enjoy using Jami and believe in our mission, do you want to make a donation?";
+"smartlist.inSynchronization" = "Syncing…";
+
+// Conversation
+"conversation.addToContactsButton" = "Add to Contacts";
+"conversation.sendInvitationButton" = "Send Invitation";
+"conversation.addToContactsLabel" = "Ĉu aldoni al kontaktoj?";
+"conversation.notContactLabel" = "%@ is not in the contact list";
+"conversation.messagePlaceholder" = "Write to";
+"conversation.imageSaved" = "Saved";
+"conversation.errorSavingImage" = "Could not save image";
+"conversation.errorSavingImageMessage" = "An error occurred while saving the image to the photo library.";
+"conversation.photoAccessRequiredMessage" = "Jami needs access to your photo library to save images. You can enable this in Settings.";
+"conversation.receivedRequest" = "%@ sent you a conversation invitation.";
+"conversation.incomingRequest" = "sent you a conversation invitation.";
+"conversation.requestMessage" = "Hello,\nDo you want to join the conversation?";
+"conversation.sendRequest" = "Send them an invitation to be able converse.";
+"conversation.sendRequestTitle" = "Send conversation invitation";
+"conversation.synchronizationTitle" = "You have accepted the conversation invitation.";
+"conversation.syncingTitle" = "Syncing conversation";
+"conversation.synchronizationMessage" = "Waiting for %@ to connect to synchronize the conversation…";
+"conversation.inReplyTo" = "En respondo al";
+"conversation.repliedTo" = "%@ replied to %@";
+"conversation.yourself" = "Vi";
+"conversation.edited" = "Redaktita";
+"conversation.deletedMessage" = "%@ deleted a message";
+"conversation.contactBlocked" = "Contact blocked";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "%@ is typing";
+"conversation.typingIndicatorTwoUsers" = "%1@ and %2@ are typing";
+"conversation.typingIndicatorOtherUsers" = "%1@, %2@ and %3@ other are typing";
+"conversation.typingIndicatorOthersUsers" = "%1@, %2@ and %3@ others are typing";
+"conversation.lastMessageDeleted" = "(deleted message)";
+
+// Invitations
+"invitations.noInvitations" = "Neniu invito";
+"invitations.accepted" = "Akceptebla";
+"invitations.declined" = "Declined";
+"invitations.blocked" = "Blocked";
+"invitations.list" = "Invitations received";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Share, freely and privately with Jami";
+"welcome.text" = "Jami estas libera kaj universala komunikada platformo kiu konservas la privatecon kaj liberecojn de la uzantoj";
+"welcome.haveAccount" = "Mi jam havas konton.";
+"welcome.linkDevice" = "Importado de alia aparato";
+"welcome.linkBackup" = "Importado de arkiva kopiado";
+"welcome.createAccount" = "Kreu konto Jami";
+"welcome.connectToJAMS" = "Connect to a management server";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "Skip";
+"createProfile.profileCreated" = "Sekva";
+"createProfile.title" = "Personalize your profile";
+"createProfile.enterNameLabel" = "Enigu la nomon de la ekrano";
+"createProfile.enterNamePlaceholder" = "Enigu nomon";
+"createProfile.subtitle" = "Your profile is only shared with your contacts. The profile can be changed at any time.";
+"createProfile.createProfilePicture" = "Create profile picture";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "Aliĝu al Jami";
+"createAccount.lookingForUsernameAvailability" = "Checking username availability…";
+"createAccount.invalidUsername" = "Invalid username. Please enter the correct username.";
+"createAccount.usernameAlreadyTaken" = "Uzantnomo jam prenita";
+"createAccount.usernameValid" = "The username is available.";
+"createAccount.UsernameNotRegisteredTitle" = "Reta eraro";
+"createAccount.UsernameNotRegisteredMessage" = "Konto estis kreita sed uzantnomo ne estis registrita";
+"createAccount.timeoutTitle" = "Konto kreita";
+"createAccount.timeoutMessage" = "Username registration is in progress. Please wait…";
+"createAccount.sipConfigure" = "Configure existing SIP account";
+"createAccount.creatingAccount" = "Creating account";
+"createAccount.nameExplanation" = "Vi povas elekti uzan nomon por helpi aliajn pli facile trovi kaj atingi vin sur Jami.";
+"createAccount.newAccount" = "Nova konto";
+"createAccount.encryptionEnabled" = "Password protection enabled";
+"createAccount.encrypt" = "Password protect";
+"createAccount.customize" = "Personaligi";
+"createAccount.encryptTitle" = "Password protect account";
+"createAccount.encryptExplanation" = "A Jami account is created and stored locally only on this device as an archive containing its account keys. Access to the archive can optionally be protected with a password.";
+
+// Link To Account form
+"linkToAccount.importAccount" = "Import account";
+"linkToAccount.showQrCode" = "QR-kodo";
+"linkToAccount.showPinCode" = "Authentication code";
+"linkToAccount.actionRequired" = "Action required.\nPlease confirm account on the source device.";
+"linkToAccount.allSet" = "The account was imported successfully.";
+"linkToAccount.goToAccounts" = "Go to imported account";
+"linkToAccount.exportInstructions" = "On the source device, initiate the exportation.";
+"linkToAccount.exportInstructionsPath" = "Select Account → Account Settings → Link new device.";
+"linkToAccount.scanQrCode" = "When ready, scan the QR code.";
+"linkToAccount.enterProvidedCode" = "When ready, enter the authentication code.";
+"linkToAccount.accountLockedWithPassword" = "The account is password protected. To continue, enter the account password.";
+"linkToAccount.exit" = "Eliri";
+"linkToAccount.shareMessage" = "Your code is: %@";
+"linkToAccount.alertTile" = "Do you want to stop linking the account?";
+"linkToAccount.alertMessage" = "Stopping will cancel the import account operation.";
+
+// Import from Archive
+"importFromArchive.explanation" = "Importu la konton de Jami el loka arkivo.";
+"importFromArchive.passwordExplanation" = "If the account is password protected, please fill the following field.";
+"importFromArchive.title" = "Import from archive";
+"importFromArchive.buttonTitle" = "Enporti";
+"importFromArchive.selectArchiveButton" = "Elektu arkivan dosieron";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "Sign in";
+"linkToAccountManager.title" = "Management server account";
+"linkToAccountManager.accountManagerPlaceholder" = "Management server URL";
+"linkToAccountManager.accountManagerLabel" = "Enter the management server URL";
+"linkToAccountManager.jamsExplanation" = "Enter the management server URL";
+"linkToAccountManager.enterCredentials" = "Enter the management server credentials";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "Account error";
+"alerts.accountCannotBeFoundMessage" = "Unable to find account on the Jami network. Make sure it was exported on Jami from an existing device, and that provided credentials are correct.";
+"alerts.accountAddedTitle" = "Account added";
+"alerts.accountNoNetworkTitle" = "Reta eraro";
+"alerts.accountNoNetworkMessage" = "A connectivity error occurred while adding Jami account to the distributed network. Please try again. If the problem persists, contact your system administrator.";
+"alerts.accountDefaultErrorTitle" = "Account error";
+"alerts.accountDefaultErrorMessage" = "An error occurred while creating the account.";
+"alerts.profileTakePhoto" = "Foti";
+"alerts.profileUploadPhoto" = "Alŝuti foton";
+"alerts.accountLinkedTitle" = "Ligas konton";
+"alerts.dbFailedTitle" = "An error happened when launching Jami";
+"alerts.dbFailedMessage" = "Bonvolu fermu aplikaĵo kaj provu aktivigi ĝin denove";
+"alerts.confirmBlockContact" = "Do you want to block this contact? The conversation history with this contact will also be deleted permanently.";
+"alerts.confirmDeleteConversation" = "Do you want to remove this conversation permanently?";
+"alerts.confirmLeaveConversation" = "Do you want to leave this conversation?";
+"alerts.confirmRemoveOneToOneConversation" = "Do you want to remove this conversation? The existing history will be deleted. A new conversation may be started if you do not have other conversations with this contact.";
+"alerts.confimRemoveContact" = "Do you want to remove this contact? The existing history will be deleted.";
+"alerts.confirmDeleteConversationFromContact" = "Do you want to delete the conversation with this contact?";
+"alerts.confirmDeleteConversationTitle" = "Delete conversation";
+"alerts.noMediaPermissionsTitle" = "La permeso de amaskomunikiloj ne estas donita";
+"alerts.noLibraryPermissionsTitle" = "Aliro al fotbiblioteko ne koncedita";
+"alerts.noLocationPermissionsTitle" = "Aliro al loko ne koncedita";
+"alerts.errorWrongCredentials" = "An error occurred while connecting to the management server. Please try again. If the problem persists, contact your system administrator.";
+"alerts.recordVideoMessage" = "Record video message";
+"alerts.recordAudioMessage" = "Record audio message";
+"alerts.uploadFile" = "Sendu dosieron";
+"alerts.uploadPhoto" = "Malferma galerio";
+"alerts.sendPhoto" = "Send photo";
+"alerts.locationServiceIsDisabled" = "Turn on “Location Services” to allow “Jami” to determine device location.";
+"alerts.locationSharing" = "Dividu mian lokon";
+"alerts.alreadylocationSharing" = "Jam dividante lokon kun tiu uzanto";
+"alerts.locationSharingDurationTitle" = "Kiom longe daŭru la kunveno de loko?";
+"alerts.locationSharingDuration10min" = "10 min";
+"alerts.locationSharingDuration1hour" = "1 horo";
+"alerts.mapInformation" = "Mapo informoj";
+"alerts.openStreetMapCopyright" = "© OpenStreetMap kontribuantoj";
+"alerts.openStreetMapCopyrightMoreInfo" = "Lernu pli";
+
+// Actions
+"actions.deleteAction" = "Forigi";
+"actions.backAction" = "Reiri";
+"actions.doneAction" = "Finita";
+"actions.goToSettings" = "Iru al Agordoj";
+"actions.stopLocationSharing" = "Ĉesu dividi";
+
+// Calls
+"calls.ringing" = "Sonoras...";
+"calls.connecting" = "Konekti...";
+"calls.callFinished" = "La voko finiĝis";
+"calls.currentCallWith" = "Voku kun ";
+"calls.maximize" = "Maksimumi";
+"calls.minimize" = "Plejetigi";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "Seti moderilon";
+"calls.removeModerator" = "Malkonstruo moderilo";
+"calls.muteAudio" = "Muta mikrofono";
+"calls.unmuteAudio" = "Unmute microphone";
+"calls.raiseHand" = "Levu la manon";
+"calls.lowerHand" = "Malsupra mano";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "Registraĵo";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "A call is in progress. Do you want to join the call? You can also join the call later from the conversation.";
+"calls.activeCallInConversation" = "Oni telefonas, ĉu vi volas aliĝi al la telefonvoko?";
+"calls.acceptWithAudio" = "Accept with audio";
+"calls.acceptWithVideo" = "Accept with video";
+
+// Account Page
+"accountPage.devicesListHeader" = "Aparatoj";
+"accountPage.settingsHeader" = "Agordoj";
+"accountPage.notificationsHeader" = "Notifikaĵoj";
+"accountPage.blockedContacts" = "Blokiĝintaj kontaktoj";
+"accountPage.unblockContact" = "Malŝalti la blokon";
+"accountPage.proxyAddressAlert" = "Provizu proxy-adreson";
+"accountPage.noProxyExplanationLabel" = "Unable to receive notifications when proxy is disabled.";
+"accountPage.proxyPaceholder" = "Proksimula adreso";
+"accountPage.useProxyList" = "Use proxy list";
+"accountPage.proxyListURL" = "Proxy list URL";
+"accountPage.proxyExplanation" = "Notifications are routed through a proxy. You can either use the default proxy, enter a custom proxy address, or provide a URL with a list of proxies.";
+"accountPage.proxyHeader" = "Prokura Servilo";
+"accountPage.currentProxy" = "Current proxy";
+"accountPage.enableNotifications" = "Aktivigu notifikojn";
+"accountPage.proxyDisabledAlertTitle" = "Proxy-servilo malfunkciigita";
+"accountPage.proxyDisabledAlertBody" = "Por ricevi mesaĝojn, bonvolu aktivigi proxy";
+"accountPage.removeDeviceTitle" = "Remove device";
+"accountPage.revokeDeviceMessage" = "Do you want to remove this device? This action cannot be undone.";
+"accountPage.revokeDeviceButton" = "Revoĝo";
+"accountPage.revokeDevicePlaceholder" = "Enigu la pasvorton de la konto";
+"accountPage.deviceRevoked" = "La aparato estas nuligita";
+"accountPage.deviceRevocationProgress" = "Removing…";
+"accountPage.deviceRevocationSuccess" = "Device removed";
+"accountPage.deviceRevocationTryAgain" = "Provu denove.";
+"accountPage.deviceRevocationWrongPassword" = "Malĝusta pasvorto";
+"accountPage.deviceRevocationUnknownDevice" = "Nekonata aparato";
+"accountPage.deviceRevocationError" = "Eraro pri revokado de la aparato";
+"accountPage.linkDeviceTitle" = "Ligu alian aparaton";
+"accountPage.other" = "Alia";
+"accountPage.removeAccountMessage" = "If the account has not been backed up or added to another device, the account and registered username will be IRREVOCABLY LOST.";
+"accountPage.inviteFriends" = "Invite friends";
+"accountPage.contactMeOnJamiTitle" = "Kontaktu min pri Jami!";
+"accountPage.contactMeOnJamiContant" = "Contact me using “%s” on the Jami distributed communication platform: https://jami.net";
+"accountPage.passwordPlaceholder" = "Enigu la pasvorton de la konto";
+"accountPage.usernamePlaceholder" = "Enigu la deziratan uzantnomon";
+"accountPage.registerNameErrorMessage" = "The username is unavailable.";
+"accountPage.usernameRegistering" = "Registriĝo";
+"accountPage.usernameRegisterAction" = "Registri";
+"accountPage.usernameRegistrationFailedTitle" = "Registration failed";
+"accountPage.usernameRegistrationFailed" = "Please check the account password.";
+"accountPage.createPassword" = "Set password";
+"accountPage.changePassword" = "Ŝanĝu pasvorton";
+"accountPage.currentPasswordPlaceholder" = "Enigu la aktualan pasvorton";
+"accountPage.newPasswordPlaceholder" = "Enigu novan pasvorton";
+"accountPage.newPasswordConfirmPlaceholder" = "Konfirmu novan pasvorton";
+"accountPage.changePasswordError" = "Malĝusta pasvorto";
+"accountPage.enableBoothMode" = "Aktivigu la ŝarĝan reĝimon";
+"accountPage.disableBoothMode" = "Malŝaltu la buŝan reĝimon";
+"accountPage.disableBoothModeExplanation" = "Please provide the account password";
+"accountPage.boothModeExplanation" = "En la stand-modo konversacia historio ne estas savita kaj la funkcio de Jami limigita per farante elirantaj alvokojn. Kiam vi aktivigas stand-modo ĉiuj viaj konversacioj estos forigitaj.";
+"accountPage.noBoothMode" = "To enable Booth mode, password protect the account first.";
+"accountPage.boothModeAlertMessage" = "After enabling booth mode, all the conversations will be removed.";
+"accountPage.peerDiscovery" = "Aktivigu lokan samseksan malkovron";
+"accountPage.peerDiscoveryExplanation" = "Konekti al aliaj DHT-nodoj reklamantaj en nia loka reto";
+"accountPage.autoRegistration" = "Aŭtorejestro post eksvalido";
+"accountPage.connectivityHeader" = "Konektiveco";
+"accountPage.turnEnabled" = "Aktivigu TURN";
+"accountPage.turnServer" = "Adreso de la TIR-a";
+"accountPage.turnUsername" = "TURN uzantnomo";
+"accountPage.turnPassword" = "TURN pasvorto";
+"accountPage.turnRealm" = "RON regno";
+"accountPage.upnpEnabled" = "Uzu UPnP";
+"accountPage.stunEnabled" = "Uzi STUN";
+"accountPage.stunServer" = "Adreso STUN";
+"accountPage.publicAddressHeader" = "Publika adreso";
+"accountPage.allowIPAutoRewrite" = "Allow IP auto rewrite";
+"accountPage.publishedSameAsLocal" = "Publikita same kiel local";
+"accountPage.publishedAddress" = "Adreso";
+"accountPage.publishedPort" = "Pordo";
+"accountPage.security" = "Sekuro";
+"accountPage.enableSRTP" = "Akceli SDES ŝlosilo interŝanĝo";
+"accountPage.encryptNegotiation" = "Ĉifri intertraktadon (TLS)";
+"accountPage.registerNameExplanation" = "Register a username to help others more easily find and reach you on Jami.";
+"accountPage.profileHeader" = "Profilo";
+"accountPage.profileNameNotSelected" = "Name not selected";
+"accountPage.accountHeader" = "Konto";
+"accountPage.profileName" = "Profile name";
+"accountPage.profileNamePlaceholder" = "Enter profile name";
+"accountPage.editProfile" = "Edit Profile";
+"accountPage.manageAccount" = "Administri Konton";
+"accountPage.encryptAccount" = "Pasvorto";
+"accountPage.passwordExplanation" = "Your Jami account is registered only on this device as an archive containing the keys of your account. Access to this archive can be protected with a password.";
+"accountPage.passwordsDoNotMatch" = "Passwords do not match.";
+"accountPage.passwordCreated" = "Password set";
+"accountPage.passwordUpdated" = "Password updated";
+"accountPage.linkedDevices" = "Interligitaj aparatoj";
+"accountPage.unlink" = "Unlink";
+"accountPage.generatingPin" = "Generating PIN code…";
+"accountPage.passwordForPin" = "The account is password protected. Enter the password to generate a PIN code.";
+"accountPage.pinExplanationTitle" = "On another device";
+"accountPage.pinExplanationMessage" = "Install and launch Jami. Select “Import from another device,” and scan the QR code. Alternatively, enter the PIN code manually.";
+"accountPage.pinError" = "An error occurred while generating the PIN code.";
+"accountPage.notificationTitle" = "Notifikaĵoj";
+"accountPage.notificationError" = "Notifications for Jami are disabled. Enable it in device settings in order to use this feature.";
+"accountPage.callsFromUnknownContacts" = "Allow calls from unknown contacts.";
+"accountPage.accountSettingsExplanation" = "These settings will only apply to this account.";
+"accountPage.appSettings" = "App settings";
+"accountPage.appSettingsExplanation" = "These settings will apply to the entire application.";
+"accountPage.connectivityAndConfiguration" = "Connectivity and configurations";
+"accountPage.sipExpirationTime" = "La tempo de eksvalido de la registrado (sekundojn)";
+"accountPage.tlsVerifyServerCertificates" = "Verigu servantajn TLS-atestojn";
+"accountPage.tlsVerifyClientCertificates" = "Verify client TLS certificates";
+"accountPage.tlsRequireTlsCertificate" = "Bezoni atestilon por enirantaj TLS konektoj";
+"accountPage.tlsDisableSecureDlgCheck" = "Malŝaltu sekuran dialogan kontrolon por alvenantaj TLS-datenoj";
+"accountPage.editSipExpirationTime" = "Expiration time";
+"accountPage.selectSipExpirationTime" = "Set time (in seconds) for registration expiration";
+"accountPage.invalidSipExpirationTime" = "Enter a value between 60 and 604800 seconds";
+"accountPage.invalidPort" = "Enter a value between 0 and 65535";
+"accountPage.invalidAddress" = "Enter a valid address";
+"accountPage.thisDevice" = "Tiu aparato";
+"accountPage.otherDevices" = "Aliaj ligitaj aparatoj";
+"accountPage.accountIdentity" = "Account identity";
+"accountPage.bootstrap" = "Praŝarĝo";
+"accountPage.dhtConfiguration" = "OpenDHT-konfiguro";
+"accountPage.nameServer" = "Nomo servilo";
+"accountPage.chats" = "Chats";
+"accountPage.typingIndicator" = "Indicisto por tajpado";
+"accountPage.typingIndicatorExplanation" = "Indicate when messages are being typed.";
+
+// Backup Account
+"backupAccount.explanation" = "This Jami account exists only on this device. The account will be lost if this device is lost or if the application is uninstalled. It is recommended to make a backup of this account.";
+"backupAccount.title" = "Konto de rezervo";
+"backupAccount.creating" = "Creating backup";
+"backupAccount.archiveName" = "Select a name for the archive.";
+"backupAccount.archiveNamePlaceholder" = "Archive name";
+"backupAccount.passwordRequest" = "Enter the account password.";
+"backupAccount.backupButton" = "Backup";
+"backupAccount.documentPickerButton" = "Open backup location";
+"backupAccount.exportSuccess" = "Backup created";
+"backupAccount.errorWrongLocation" = "The selected file path is invalid. Please choose a different location.";
+"backupAccount.errorAccessDenied" = "Access to the selected location was denied.";
+"backupAccount.errorFailed" = "An error occurred while exporting the account.";
+
+// Account
+"account.sipServer" = "Servilo";
+"account.port" = "Pordo";
+"account.proxyServer" = "Prokura Servilo";
+"account.createSipAccount" = "Configure SIP Account";
+"account.sipAccount" = "SIP Konto";
+"account.configure" = "Agordi";
+"account.advancedFeatures" = "Advanced Features";
+"account.serverLabel" = "Enigu adreson";
+"account.portLabel" = "Enigu la portujan numeron";
+"account.accountStatus" = "Statuso de konto";
+"account.enableAccount" = "Aktivigu Konto";
+"account.statusOnline" = "Interreto";
+"account.statusOffline" = "Malkonektita";
+"account.statusConnecting" = "Konektiĝo";
+"account.statusUnknown" = "Nekonata";
+"account.statusConnectionerror" = "Eraro pri konekto";
+"account.needMigration" = "Account requires migration.";
+"account.me" = "Mi";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "Neniu blokita kontakto";
+
+// Link New Device
+"linkDevice.title" = "Ligi novan aparaton";
+"linkDevice.networkError" = "A network error occurred while exporting the account.";
+"linkDevice.errorWrongPassword" = "An authentication error occurred while linking the device. Please check credentials and try again.";
+"linkDevice.errorNetwork" = "A network error occurred while linking the account. Please verify your connection and try again.";
+"linkDevice.errorTimeout" = "The operation timed out. Please try again.";
+"linkDevice.errorCode" = "An error occurred while generating the code. Please try again.";
+"linkDevice.errorWrongData" = "An error occurred while exporting the account. Please try again.";
+"linkDevice.initialInfo" = "On the new device, initiate a new account.";
+"linkDevice.infoAddAccount" = "Select Add Account → Connect from another device.";
+"linkDevice.infoQRCode" = "When ready, scan the QR code.";
+"linkDevice.infoCode" = "When ready, enter the code and tap Connect.";
+"linkDevice.connecting" = "Connecting to your new device…";
+"linkDevice.authenticationInfo" = "New device found at the following IP address. Is that you? To continue the export account operation, tap Confirm.";
+"linkDevice.newDeviceIP" = "New device IP address: %1@";
+"linkDevice.code" = "code";
+"linkDevice.wrongEntry" = "Unrecognized new device identifier. Please follow the instructions above.";
+"linkDevice.exportInProgress" = "The export account operation to the new device is in progress. Please confirm import on the new device.";
+"linkDevice.completed" = "The account was imported successfully on the new device.";
+
+// Contact Page
+"contactPage.startAudioCall" = "Komenci la aŭdian alvokon";
+"contactPage.startVideoCall" = "Komenci videan alvokon";
+"contactPage.send" = "Sendi";
+"contactPage.leaveConversation" = "Lasu la konversacion";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "Komenciĝas...";
+"dataTransfer.readableStatusError" = "Eraro";
+"dataTransfer.readableStatusAwaiting" = "Mi atendas...";
+"dataTransfer.readableStatusOngoing" = "Transdono";
+"dataTransfer.readableStatusCanceled" = "Nuligita";
+"dataTransfer.sendingFailed" = "An error occurred while sending.";
+"dataTransfer.readableStatusSuccess" = "Kompleta";
+"dataTransfer.recordInBackgroundWarning" = "Recording video while multitasking with multiple apps may result in lower quality videos. For best results, record when not multitasking";
+
+// Notifications
+"notifications.missedCall" = "Maltrafita alvoko";
+"notifications.newFile" = "Nova dosiero";
+"notifications.locationSharingStarted" = "Envenanta loko partumado komenciĝis";
+"notifications.locationSharingStopped" = "Envenanta loko dividado haltis";
+"dataTransfer.readableStatusDecline" = "Rifuzi";
+"dataTransfer.readableStatusAccept" = "Akcepti";
+"dataTransfer.infoMessage" = "Tap to start recording";
+"dataTransfer.sendMessage" = "Sendi";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "Invito ricevita";
+"generatedMessage.swarmCreated" = "Conversation created";
+"generatedMessage.invitationReceived" = "%@ was invited to join the conversation.";
+"generatedMessage.invitationAccepted" = "%@ has joined the conversation.";
+"generatedMessage.youJoined" = "You joined the conversation.";
+"generatedMessage.contactBlocked" = "%@ was blocked from the conversation.";
+"generatedMessage.contactUnblocked" = "%@ was unblocked from the conversation.";
+"generatedMessage.outgoingCall" = "Eliranta voko";
+"generatedMessage.missedOutgoingCall" = "Maltrafis forirantan telefonon";
+"generatedMessage.missedIncomingCall" = "Maltrafis envenantan telefonon";
+"generatedMessage.liveLocationSharing" = "Viva kunhavado de lokoj";
+"generatedMessage.contactLeftConversation" = "%@ has left the conversation.";
+"generatedMessage.nonSwarmInvitationReceived" = "You sent an invitation.";
+"generatedMessage.nonSwarmInvitationAccepted" = "Your invitation was accepted.";
+
+// General Settings
+"generalSettings.videoSettings" = "Video settings";
+"generalSettings.videoAcceleration" = "Akceli la videoakceleraĵon";
+"generalSettings.fileTransfer" = "Transdono de dosieroj";
+"generalSettings.locationSharing" = "Loka dividado";
+"generalSettings.automaticAcceptIncomingFiles" = "Aŭtomate akceptu alvenantajn dosierojn";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "(MB, 0 = unlimited)";
+"generalSettings.limitLocationSharingDuration" = "Limigu la daŭron de la kuniga loko";
+"generalSettings.locationSharingDuration" = "La daŭro de poziciaj akcioj";
+"generalSettings.donationCampaign" = "Donation campaign";
+"generalSettings.enableDonationCampaign" = "Enable donation campaign";
+
+// Log View
+"logView.title" = "Diagnostikoj";
+"logView.description" = "Malfermu diagnozajn registrojn";
+"logView.startLogging" = "Start logging";
+"logView.stopLogging" = "Ĉesu arbarigo";
+"logView.saveError" = "An error occurred while saving the file.";
+"logView.shareError" = "An error occurred while sharing the file.";
+
+// Migrate Account
+"migrateAccount.title" = "Migrado de konto";
+"migrateAccount.migrateButton" = "Migrado Konto";
+"migrateAccount.explanation" = "Account migration required.";
+"migrateAccount.passwordExplanation" = "To continue with the account migration, enter the account password.";
+"migrateAccount.error" = "An error occurred while migrating the account. Retry or delete the account.";
+"migrateAccount.migrating" = "Migrating…";
+"migrateAccount.migrateAnother" = "Migrado al alia konto";
+
+// About Jami
+"aboutJami.declaration1" = "Jami, a GNU package, is software for universal and distributed peer-to-peer communication that respects the freedom and privacy of its users. Visit";
+"aboutJami.declaration2" = "to learn more.";
+"aboutJami.noWarranty1" = "This program comes with absolutely no warranty. See the";
+"aboutJami.noWarranty2" = "version 3 or later for details.";
+"aboutJami.contribute" = "Kontribui";
+"aboutJami.feedback" = "Reago";
+"aboutJami.developers" = "Developers";
+"aboutJami.media" = "Aŭdvidaĵoj";
+"aboutJami.communityManagement" = "Community Management";
+"aboutJami.specialThanks" = "Special thanks to";
+"aboutJami.info" = "This is a list of people who have made a significant investment of time, with useful results, into Jami. Any such contributors who want to be added to the list should contact us.";
+"aboutJami.header" = "We would like to thank our contributors, whose efforts over many years have made this software what it is.";
+
+// Accessibility
+"accessibility.close" = "Proksima";
+"accessibility.smartListSwitchAccounts" = "Switch account";
+"accessibility.smartListConnectedAs" = "The current account is %@";
+"accessibility.smartListAddAccount" = "Aldoni konton";
+"accessibility.aboutJamiTitle" = "Pri Jami";
+"accessibility.welcomeToJamiTitle" = "Bonvenon al Jami.";
+"accessibility.createAccountVerifyUsernamePrompt" = "Enter username to check availability.";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "Profilo bildo";
+"accessibility.profilePicturePickerHint" = "Double-tap to take a picture or select a picture from the library";
+"accessibility.swarmPicturePicker" = "Group picture";
+"accessibility.accountSummaryQrCode" = "QR-kodo";
+"accessibility.accountSummaryQrCodeHint" = "Double-tap to view the account QR code";
+"accessibility.accountSummaryEditProfileHint" = "Double-tap to edit the profile";
+"accessibility.accountSummaryEditSettingsButton" = "Agordoj";
+"accessibility.conversationStartVoiceCall" = "Start audio call with %@";
+"accessibility.conversationStartVideoCall" = "Start video call with %@";
+"accessibility.conversationComposeMessage" = "Compose a message";
+"accessibility.conversationShareMedia" = "Share media";
+"accessibility.conversationCameraHint" = "Double-tap to open camera";
+"accessibility.audioPlayerPlay" = "Ludi";
+"accessibility.audioPlayerPause" = "Paŭzi";
+"accessibility.conversationRowUnreadCount" = "%@ unread messages.";
+"accessibility.conversationRowBlocked" = "Conversation blocked";
+"accessibility.conversationRowSyncing" = "Synchronization in progress";
+"accessibility.conversationRowLastMessage" = "Last message at %@";
+"accessibility.userPresenceOnline" = "Interreto";
+"accessibility.userPresenceAvailable" = "Available";
+"accessibility.pendingRequestsRowPlural" = "Invitations received: %@ pending invitations";
+"accessibility.pendingRequestsRowSingular" = "Invitation received: %@ pending invitation";
+"accessibility.pendingRequestsRowHint" = "Double-tap to review and reply to invitations you received";
+"accessibility.pendingRequestsListBlockUser" = "Block invitation sender";
+"accessibility.pendingRequestsListRejectInvitation" = "Decline invitation";
+"accessibility.pendingRequestsListAcceptInvitation" = "Accept invitation";
+"accessibility.messageBubbleDeleted" = "Message deleted";
+"accessibility.messageBubbleEdited" = "Redaktita";
+"accessibility.messageBubbleRead" = "Read";
+"accessibility.messageBubbleUnread" = "Unread";
+"accessibility.textNotAvailable" = "Empty text message received on %@. This might not have been sent correctly.";
+"accessibility.fileTransferNoName" = "File received on %@, name not available";
+"accessibility.inReply" = "In reply to message";
+"accessibility.text.receivedOn" = "%1@, message received on %2@";
+"accessibility.text.sentOn" = "%1@, message sent on %2@";
+"accessibility.fileTransfer.receivedOn" = "File: %1@ , received on %2@";
+"accessibility.fileTransfer.sentOn" = "File: %1@, sent on %2@";
+"accessibility.call.lasted" = "Lasted %@";
+"accessibility.calls.default.toggleAudio" = "Muta mikrofono";
+"accessibility.calls.default.toggleVideo" = "Start camera";
+"accessibility.calls.default.pauseCall" = "Paŭzo alvoko";
+"accessibility.calls.default.endCall" = "Finigi vokon";
+"accessibility.calls.default.addParticipant" = "Aldoni partoprenanton";
+"accessibility.calls.default.switchCamera" = "Switch camera";
+"accessibility.calls.default.toggleSpeaker" = "Turn on speaker";
+"accessibility.calls.default.openConversation" = "Malferma konversacio";
+"accessibility.calls.default.showDialpad" = "Show dialpad";
+"accessibility.calls.default.raiseHand" = "Levu la manon";
+
+"accessibility.calls.alter.toggleAudio" = "Unmute microphone";
+"accessibility.calls.alter.toggleVideo" = "Haltu la fotilon";
+"accessibility.calls.alter.pauseCall" = "Reviziu la telefonvokon";
+"accessibility.calls.alter.endCall" = "Finigi vokon";
+"accessibility.calls.alter.addParticipant" = "Aldoni partoprenanton";
+"accessibility.calls.alter.switchCamera" = "Switch camera";
+"accessibility.calls.alter.toggleSpeaker" = "Turn off speaker";
+"accessibility.calls.alter.openConversation" = "Malferma konversacio";
+"accessibility.calls.alter.showDialpad" = "Show dialpad";
+"accessibility.calls.alter.raiseHand" = "Malsupra mano";
+"accessibility.conference.minimize" = "Plejetigi";
+"accessibility.conference.maximize" = "Maksimumi";
+"accessibility.conference.setModerator" = "Seti moderilon";
+"accessibility.conference.unsetModerator" = "Malkonstruo moderilo";
+"accessibility.conference.muteAudio" = "Silentigi aŭdion";
+"accessibility.conference.unmuteAudio" = "Neŝaltita aŭdio";
+"accessibility.conference.endCall" = "Finigi vokon";
+"accessibility.conference.lowerHand" = "Malsupra mano";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "Mano levita";
+"accessibility.conference.moderator" = "Moderator";
+"accessibility.conference.recording" = "Registraĵo";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "Token QR code";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "Vibrant pink";
+"swarmColors.purple" = "Purple";
+"swarmColors.violet" = "Violet";
+"swarmColors.indigoBlue" = "Indigo blue";
+"swarmColors.skyBlue" = "Sky blue";
+"swarmColors.cyan" = "Cyan";
+"swarmColors.teal" = "Teal";
+"swarmColors.green" = "Green";
+"swarmColors.limeGreen" = "Lime green";
+"swarmColors.mediumGray" = "Medium gray";
+"swarmColors.yellowGreen" = "Yellow-green";
+"swarmColors.amber" = "Amber";
+"swarmColors.brightOrange" = "Bright orange";
+"swarmColors.brown" = "Brown";
+"swarmColors.steelBlue" = "Steel blue";
+
+// Share extension
+"shareExtension.noAccount.title" = "Account not found";
+"shareExtension.noAccount.description" = "To continue, create an account in the main application.";
+"shareExtension.unsupportedType.title" = "Unsupported content";
+"shareExtension.unsupportedType.description" = "The sharing of the selected content is currently unsupported.";
+"shareExtension.sending" = "Sending…";
+"shareExtension.noSearchResults" = "No conversations match your search";
+"shareExtension.tryDifferentFilter" = "Try a different filter";
+"shareExtension.sendToConversation" = "Send to %d conversation";
+"shareExtension.sendToConversationsPlural" = "Send to %d conversations";
+"shareExtension.selectAccountTitle" = "Select account";
+"shareExtension.searchConversations" = "Search conversations";
+"shareExtension.accessibilitySelectConversation" = "Double-tap to select this conversation";
+"shareExtension.accessibilitySelectedAccount" = "Selected account: %@. Double-tap to change account.";
+"shareExtension.accessibilitySendButton" = "Double-tap to send to selected conversations";
+"shareExtension.accessibilitySelectAccount" = "Double-tap to select this account";
+
+// Peer Services
+"peerServices.title" = "Shared Services";
+"peerServices.refresh" = "Refresh services";
+"peerServices.empty" = "No shared services available";
+"peerServices.errorOffline" = "Contact is offline";
+"peerServices.errorUnreachable" = "Contact is unreachable";
+"peerServices.errorTimeout" = "Request timed out";
+"peerServices.errorUnknown" = "Could not retrieve services";
+"peerServices.done" = "Finita";
+"peerServices.notSupported" = "Not supported";
+"peerServices.open" = "Malfermu";
+
+// Collaborative documents
+"collab.documents" = "Dokumentoj";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "Krei";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "Rilato";
+"collab.linkHint" = "Adreso";
+"collab.linkAdd" = "Aldoni";
+"collab.linkRemove" = "Forigi";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = "Kuraĝa";
+"collab.italic" = "Italic";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "La trafo";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "Centro";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "Malfari";
+"collab.redo" = "Refari";
+"collab.remove" = "Forigi";
+"collab.open" = "Malfermu";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "Forigi";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";

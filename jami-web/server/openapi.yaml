@@ -1,0 +1,2784 @@
+openapi: 3.1.0
+info:
+  title: Jami Web Server API
+  description: |
+    REST API for the Jami Web application server.
+    Provides account management, messaging, calls, contacts, file transfers,
+    and administration capabilities backed by the Jami daemon.
+  version: 2.0.0
+  license:
+    name: AGPL-3.0-or-later
+    url: https://www.gnu.org/licenses/agpl-3.0.html
+  contact:
+    name: Savoir-faire Linux
+    url: https://jami.net
+
+servers:
+  - url: /api
+    description: API base path
+
+tags:
+  - name: Auth
+    description: Authentication (local, JAMS, guest, OAuth/OpenID, Electron)
+  - name: Passkeys
+    description: WebAuthn passkey authentication and credential management
+  - name: Account
+    description: Current user account management
+  - name: Contacts
+    description: Contact list management
+  - name: Conversations
+    description: Conversation (chat) operations
+  - name: ConversationRequests
+    description: Incoming conversation / trust requests
+  - name: Calls
+    description: Active call information
+  - name: DefaultModerators
+    description: Default moderator management
+  - name: Nameserver
+    description: Username / address lookups
+  - name: LinkPreview
+    description: URL link preview generation
+  - name: DataTransfer
+    description: File upload, download, and transfer
+  - name: Config
+    description: Server configuration (languages)
+  - name: Tokens
+    description: API token management
+  - name: Admin
+    description: Server administration
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT obtained from /auth/login or /admin/login
+    apiToken:
+      type: http
+      scheme: bearer
+      description: API token prefixed with jm_sk_
+
+  schemas:
+    # ── Auth ──────────────────────────────────────────────
+    UserCredentials:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        authMethod:
+          type: string
+          enum: [local, jams, guest]
+
+    AccessToken:
+      type: object
+      required: [accessToken]
+      properties:
+        accessToken:
+          type: string
+
+    OAuthProvider:
+      type: object
+      properties:
+        provider:
+          type: string
+        displayName:
+          type: string
+        icon:
+          type: string
+        colorTheme:
+          type: string
+        redirectUri:
+          type: string
+          format: uri
+
+    LinkAuthValues:
+      type: object
+      required: [accountId, password, scheme]
+      properties:
+        accountId:
+          type: string
+        password:
+          type: string
+        scheme:
+          type: string
+
+    LocalAccount:
+      type: object
+      required: [id, registeredName, displayName]
+      properties:
+        id:
+          type: string
+        registeredName:
+          type: string
+        displayName:
+          type: string
+
+    LocalAccounts:
+      type: object
+      required: [accounts]
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/LocalAccount'
+
+    # ── Passkeys ──────────────────────────────────────────
+    WebAuthnOptions:
+      type: object
+      description: >
+        JSON-serializable WebAuthn options for a browser ceremony. Registration
+        options include `challenge`, `rp`, `user`, and `pubKeyCredParams`;
+        authentication options include `challenge`, `rpId`, and
+        `allowCredentials`. See the SimpleWebAuthn server options shapes:
+        https://simplewebauthn.dev/docs/packages/server.
+      additionalProperties: true
+
+    WebAuthnCredential:
+      type: object
+      description: >
+        JSON-serializable PublicKeyCredential returned by a browser. Its
+        top-level keys include `id`, `rawId`, `type`, `response`, and optional
+        `clientExtensionResults` and `authenticatorAttachment`. See the
+        SimpleWebAuthn browser credential shape:
+        https://simplewebauthn.dev/docs/packages/browser.
+      additionalProperties: true
+
+    PasskeyCredential:
+      type: object
+      required: [credentialId, name, createdAt]
+      properties:
+        credentialId:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    PasskeyRegistrationVerification:
+      type: object
+      required: [credential]
+      properties:
+        credential:
+          $ref: '#/components/schemas/WebAuthnCredential'
+        name:
+          type: string
+          maxLength: 64
+
+    PasskeyAuthenticationVerification:
+      type: object
+      required: [challengeKey, credential]
+      properties:
+        challengeKey:
+          type: string
+        credential:
+          $ref: '#/components/schemas/WebAuthnCredential'
+
+    # ── Account ───────────────────────────────────────────
+    IContact:
+      type: object
+      required: [uri]
+      properties:
+        uri:
+          type: string
+          description: Jami URI (hash) of the contact
+        registeredName:
+          type: string
+          description: Registered username if available
+
+    ContactDetails:
+      type: object
+      properties:
+        id:
+          type: string
+        conversationId:
+          type: string
+        added:
+          type: string
+        confirmed:
+          type: string
+        banned:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: string
+
+    AccountDetails:
+      type: object
+      description: >
+        Key-value map of account details from the Jami daemon.
+        Keys use dotted notation such as "Account.displayName".
+      additionalProperties:
+        type: string
+
+    VolatileDetails:
+      type: object
+      properties:
+        Account.active:
+          type: string
+        Account.deviceAnnounced:
+          type: string
+        Account.registeredName:
+          type: string
+        Account.deviceID:
+          type: string
+
+    Devices:
+      type: object
+      description: Map of device ID → device name
+      additionalProperties:
+        type: string
+
+    IAccount:
+      type: object
+      properties:
+        id:
+          type: string
+        details:
+          $ref: '#/components/schemas/AccountDetails'
+        volatileDetails:
+          $ref: '#/components/schemas/VolatileDetails'
+        defaultModerators:
+          type: array
+          items:
+            $ref: '#/components/schemas/IContact'
+        devices:
+          $ref: '#/components/schemas/Devices'
+        canChangePassword:
+          type: boolean
+          description: Whether this account uses a local Jami Web password credential.
+
+    # ── Conversations ─────────────────────────────────────
+    ConversationInfos:
+      type: object
+      properties:
+        avatar:
+          type: string
+        description:
+          type: string
+        mode:
+          type: string
+          description: '"0" = private (1:1), "1" = group swarm'
+        title:
+          type: string
+
+    ConversationPreferences:
+      type: object
+      properties:
+        color:
+          type: string
+        emoji:
+          type: string
+        ignoreNotifications:
+          type: boolean
+
+    Reaction:
+      type: object
+      properties:
+        id:
+          type: string
+        author:
+          type: string
+        body:
+          type: string
+        timestamp:
+          type: string
+        react-to:
+          type: string
+        parents:
+          type: string
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        author:
+          type: string
+        timestamp:
+          type: number
+        type:
+          type: string
+          enum:
+            - application/call-history+json
+            - application/data-transfer+json
+            - application/update-profile
+            - initial
+            - member
+            - merge
+            - text/plain
+            - vote
+        linearizedParent:
+          type: string
+        parents:
+          type: string
+        action:
+          type: string
+          enum: [add, join, remove, ban, unban]
+        body: {}
+        duration:
+          type: string
+        to:
+          type: string
+        invited:
+          type: string
+        fileId:
+          type: string
+        reactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reaction'
+        displayName:
+          type: string
+        sha3sum:
+          type: string
+        tid:
+          type: string
+        totalSize:
+          type: number
+        editions:
+          oneOf:
+            - type: string
+            - type: array
+              items:
+                $ref: '#/components/schemas/Message'
+        status:
+          type: object
+          additionalProperties:
+            type: integer
+            description: 'MessageStatusCode: 1=sending, 2=sent, 3=read'
+        reply-to:
+          oneOf:
+            - type: string
+            - $ref: '#/components/schemas/Message'
+
+    IConversationMember:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [admin, member, invited, banned, left]
+        contact:
+          $ref: '#/components/schemas/IContact'
+
+    IConversationSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        avatar:
+          type: string
+        title:
+          type: string
+        mode:
+          type: string
+        membersNames:
+          type: array
+          items:
+            type: string
+        lastMessage:
+          $ref: '#/components/schemas/Message'
+
+    IConversationRequest:
+      type: object
+      properties:
+        conversationId:
+          type: string
+        infos:
+          $ref: '#/components/schemas/ConversationInfos'
+        from:
+          $ref: '#/components/schemas/IContact'
+        received:
+          type: string
+        membersNames:
+          type: array
+          items:
+            type: string
+
+    # ── Lookup ────────────────────────────────────────────
+    LookupResult:
+      type: object
+      properties:
+        accountId:
+          type: string
+        query:
+          type: string
+        state:
+          type: integer
+          description: 'RegisteredNameFoundState: 0=Found, 1=InvalidResponse, 2=NotFound, 3=Error'
+        address:
+          type: string
+        name:
+          type: string
+
+    # ── Link Preview ──────────────────────────────────────
+    LinkPreview:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        image:
+          type: string
+
+    # ── Admin ─────────────────────────────────────────────
+    AdminConfigState:
+      type: object
+      properties:
+        localAuthEnabled:
+          type: boolean
+        jamsAuthEnabled:
+          type: boolean
+        guestAccessEnabled:
+          type: boolean
+        openIdAuthEnabled:
+          type: boolean
+        conferenceResolution:
+          type: string
+          enum: [720p, 1080p, 1440p]
+        electronMode:
+          type: boolean
+        uploadPath:
+          type: string
+
+    AccountOverview:
+      type: object
+      properties:
+        username:
+          type: string
+        accountUri:
+          type: string
+        auth:
+          type: string
+        storage:
+          type: number
+          description: Size on disk in bytes
+        accountId:
+          type: string
+        expirationDate:
+          type: number
+          description: Expiration timestamp for guest accounts
+
+    AdminOAuthProvider:
+      type: object
+      properties:
+        name:
+          type: string
+        isActive:
+          type: boolean
+        displayName:
+          type: string
+
+    AdminOAuthProviderDetail:
+      type: object
+      properties:
+        clientId:
+          type: string
+        isActive:
+          type: boolean
+        redirectUri:
+          type: string
+          format: uri
+        documentation:
+          type: string
+        displayName:
+          type: string
+        icon:
+          type: string
+
+    # ── Tokens ────────────────────────────────────────────
+    ApiTokenInfo:
+      type: object
+      required: [id, prefix, scopes, name, createdAt]
+      properties:
+        id:
+          type: string
+        prefix:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+            enum:
+              - conversations:read
+              - conversations:write
+              - contacts:read
+              - contacts:write
+              - calls:read
+              - calls:write
+              - files:read
+              - files:write
+              - account:read
+              - account:write
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        lastUsedAt:
+          type: string
+          format: date-time
+
+    # ── Config ────────────────────────────────────────────
+    Language:
+      type: object
+      properties:
+        tag:
+          type: string
+          description: BCP 47 language tag
+        name:
+          type: string
+
+    # ── Errors ────────────────────────────────────────────
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
+security:
+  - bearerAuth: []
+  - apiToken: []
+
+paths:
+  # ════════════════════════════════════════════════════════
+  #  AUTH
+  # ════════════════════════════════════════════════════════
+  /auth/new-account:
+    post:
+      tags: [Auth]
+      summary: Create a new local account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  minLength: 1
+      responses:
+        '201':
+          description: Account created
+        '400':
+          description: Missing/invalid username or password, or local auth disabled
+        '409':
+          description: Username already exists
+        '500':
+          description: Internal server error
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Authenticate a user
+      description: |
+        Supports three authentication methods via `authMethod`:
+        - `local` – local username + password
+        - `jams` – JAMS federated authentication
+        - `guest` – anonymous guest access (no username/password needed)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCredentials'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          description: Missing credentials or auth method disabled
+        '401':
+          description: Incorrect password or invalid JAMS credentials
+        '404':
+          description: Username not found
+        '429':
+          description: Too many login attempts (rate limited)
+
+  /auth/link-token:
+    get:
+      tags: [Auth]
+      summary: Get a device link token
+      description: Initiates device linking and returns authentication state with a temporary JWT.
+      security: []
+      responses:
+        '200':
+          description: Link token data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accountId:
+                    type: string
+                  jwt:
+                    type: string
+                additionalProperties: true
+
+  /auth/link/authenticate:
+    post:
+      tags: [Auth]
+      summary: Authenticate a linked device
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [values]
+              properties:
+                values:
+                  $ref: '#/components/schemas/LinkAuthValues'
+      responses:
+        '200':
+          description: Authentication provided
+        '400':
+          description: Missing required fields
+
+  /auth/link/cancel:
+    post:
+      tags: [Auth]
+      summary: Cancel device linking
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountId]
+              properties:
+                accountId:
+                  type: string
+      responses:
+        '200':
+          description: Linking cancelled
+
+  /auth/link/password:
+    post:
+      tags: [Auth]
+      summary: Set password for a linked device
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountId, password]
+              properties:
+                accountId:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Password set, returns access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '404':
+          description: Username not found
+
+  /auth/guest/extend:
+    post:
+      tags: [Auth]
+      summary: Extend guest session
+      responses:
+        '200':
+          description: Extended session token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+
+  /auth/oauth/providers:
+    get:
+      tags: [Auth]
+      summary: List available OAuth/OpenID providers
+      security: []
+      responses:
+        '200':
+          description: List of configured providers with redirect URIs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OAuthProvider'
+
+  /auth/oauth/{provider}/callback:
+    get:
+      tags: [Auth]
+      summary: OAuth callback endpoint
+      description: Handles the OAuth authorization code callback and redirects to the login page with an access token.
+      security: []
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirects to /login?accessToken=...
+        '400':
+          description: Invalid or missing provider/code, or OpenID auth disabled
+
+  /auth/local-accounts:
+    get:
+      tags: [Auth]
+      summary: List local daemon accounts
+      description: Available only in Electron mode for desktop account selection.
+      security: []
+      responses:
+        '200':
+          description: Local daemon accounts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalAccounts'
+
+  /auth/switch-account:
+    post:
+      tags: [Auth]
+      summary: Authenticate as a local daemon account
+      description: Available only in Electron mode.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accountId]
+              properties:
+                accountId:
+                  type: string
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          description: Missing account ID
+        '404':
+          description: Account not found
+
+  /passkey/register/options:
+    post:
+      tags: [Passkeys]
+      summary: Get passkey registration options
+      responses:
+        '200':
+          description: WebAuthn registration options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebAuthnOptions'
+        '404':
+          description: Account not found
+
+  /passkey/register/verify:
+    post:
+      tags: [Passkeys]
+      summary: Verify and store a passkey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasskeyRegistrationVerification'
+      responses:
+        '200':
+          description: Passkey stored
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [verified]
+                properties:
+                  verified:
+                    type: boolean
+        '400':
+          description: Missing challenge or verification failed
+        '404':
+          description: Account not found
+
+  /passkey/login/options:
+    post:
+      tags: [Passkeys]
+      summary: Get passkey authentication options
+      description: Rate limited. An optional username scopes options to that user's credentials.
+      security: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+      responses:
+        '200':
+          description: WebAuthn authentication options and challenge key
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/WebAuthnOptions'
+                  - type: object
+                    required: [challengeKey]
+                    properties:
+                      challengeKey:
+                        type: string
+        '429':
+          description: Too many login attempts
+
+  /passkey/login/verify:
+    post:
+      tags: [Passkeys]
+      summary: Verify passkey authentication
+      description: Rate limited.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasskeyAuthenticationVerification'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          description: Missing credential or challenge key, or no pending challenge
+        '401':
+          description: Unknown credential or verification failed
+        '429':
+          description: Too many login attempts
+
+  /passkey/credentials:
+    get:
+      tags: [Passkeys]
+      summary: List current user's passkeys
+      responses:
+        '200':
+          description: Registered passkeys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PasskeyCredential'
+
+  /passkey/credentials/{credential-id}:
+    delete:
+      tags: [Passkeys]
+      summary: Delete a passkey
+      parameters:
+        - name: credential-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Passkey deleted
+        '404':
+          description: Account or credential not found
+
+  # ════════════════════════════════════════════════════════
+  #  ACCOUNT
+  # ════════════════════════════════════════════════════════
+  /account:
+    get:
+      tags: [Account]
+      summary: Get current account details
+      responses:
+        '200':
+          description: Account information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IAccount'
+    patch:
+      tags: [Account]
+      summary: Update account details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountDetails'
+      responses:
+        '204':
+          description: Account details updated
+        '400':
+          description: Invalid account ID
+
+  /account/password:
+    patch:
+      tags: [Account]
+      summary: Change the local Jami Web account password
+      description: >-
+        Invalidates every session and API token issued for the account and closes its open
+        websockets, so credentials minted under the previous password stop working.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [currentPassword, newPassword]
+              properties:
+                currentPassword:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        '204':
+          description: Password changed
+        '400':
+          description: Missing or invalid password fields
+        '403':
+          description: Password changes are unavailable for this account
+        '409':
+          description: Incorrect current password
+        '422':
+          description: New password does not meet requirements
+
+  /account/avatar:
+    post:
+      tags: [Account]
+      summary: Upload profile avatar
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Avatar uploaded
+        '400':
+          description: No file provided
+
+  /account/{device-id}/revoke:
+    post:
+      tags: [Account]
+      summary: Revoke a device
+      parameters:
+        - name: device-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Device revoked
+        '400':
+          description: Wrong password or unknown device
+        '500':
+          description: Internal server error
+
+  /account/display-name/reset:
+    post:
+      tags: [Account]
+      summary: Reset display name to username
+      responses:
+        '200':
+          description: Display name already matches username
+        '204':
+          description: Display name reset
+
+  /account/display-name:
+    post:
+      tags: [Account]
+      summary: Set display name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [displayName]
+              properties:
+                displayName:
+                  type: string
+      responses:
+        '200':
+          description: Display name already matches
+        '204':
+          description: Display name updated
+
+  /account/add-device:
+    post:
+      tags: [Account]
+      summary: Add a new device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [uri]
+              properties:
+                uri:
+                  type: string
+      responses:
+        '200':
+          description: Device addition initiated
+
+  /account/{op-id}/confirm-device:
+    post:
+      tags: [Account]
+      summary: Confirm device addition
+      parameters:
+        - name: op-id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device confirmed
+
+  /account/{op-id}/cancel-device:
+    post:
+      tags: [Account]
+      summary: Cancel device addition
+      parameters:
+        - name: op-id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device addition cancelled
+
+  # ════════════════════════════════════════════════════════
+  #  CONTACTS
+  # ════════════════════════════════════════════════════════
+  /contacts:
+    get:
+      tags: [Contacts]
+      summary: List all contacts
+      responses:
+        '200':
+          description: Contact list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContactDetails'
+
+  /presence:
+    get:
+      tags: [Contacts]
+      summary: Get the last known presence status of every subscribed buddy
+      responses:
+        '200':
+          description: Map of buddy URI to presence status
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+
+  /contacts/{contact-id}:
+    get:
+      tags: [Contacts]
+      summary: Get contact details
+      parameters:
+        - name: contact-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contact details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDetails'
+        '404':
+          description: Contact not found
+    put:
+      tags: [Contacts]
+      summary: Add a contact (sends trust request)
+      parameters:
+        - name: contact-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Contact added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDetails'
+        '404':
+          description: Contact not found
+    delete:
+      tags: [Contacts]
+      summary: Remove a contact
+      parameters:
+        - name: contact-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Contact removed
+
+  /contacts/{contact-id}/block:
+    post:
+      tags: [Contacts]
+      summary: Block a contact
+      parameters:
+        - name: contact-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Contact blocked
+
+  /contacts/{contact-uri}/profile/picture:
+    get:
+      tags: [Contacts]
+      summary: Get contact avatar image
+      parameters:
+        - name: contact-uri
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Avatar image file
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: No avatar found
+
+  # ════════════════════════════════════════════════════════
+  #  CONVERSATIONS
+  # ════════════════════════════════════════════════════════
+  /conversations:
+    get:
+      tags: [Conversations]
+      summary: List all conversations
+      responses:
+        '200':
+          description: List of conversation summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IConversationSummary'
+    post:
+      tags: [Conversations]
+      summary: Create a new conversation (1:1)
+      description: Adds a contact and sends a trust request to initiate a conversation.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [members]
+              properties:
+                members:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                  maxItems: 1
+                  description: Exactly one member URI
+      responses:
+        '200':
+          description: Contact details for the new conversation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactDetails'
+        '400':
+          description: Missing members or more than one member
+        '404':
+          description: Member not found
+
+  /conversations/{conversation-id}:
+    get:
+      tags: [Conversations]
+      summary: Get conversation summary
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conversation summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IConversationSummary'
+        '404':
+          description: Conversation not found
+    delete:
+      tags: [Conversations]
+      summary: Delete a conversation
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Conversation deleted
+
+  /conversations/{conversation-id}/infos:
+    get:
+      tags: [Conversations]
+      summary: Get conversation info
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conversation info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationInfos'
+        '404':
+          description: Conversation not found
+    post:
+      tags: [Conversations]
+      summary: Update conversation info
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationInfos'
+      responses:
+        '200':
+          description: Info updated
+        '400':
+          description: Empty info object
+
+  /conversations/{conversation-id}/preferences:
+    get:
+      tags: [Conversations]
+      summary: Get conversation preferences
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conversation preferences
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationPreferences'
+        '404':
+          description: Conversation not found
+    post:
+      tags: [Conversations]
+      summary: Set conversation preferences
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversationPreferences'
+      responses:
+        '204':
+          description: Preferences updated
+        '400':
+          description: Invalid preferences
+
+  /conversations/{conversation-id}/members:
+    get:
+      tags: [Conversations]
+      summary: List conversation members
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of members with roles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IConversationMember'
+        '404':
+          description: Conversation not found
+
+  /conversations/{conversation-id}/messages:
+    get:
+      tags: [Conversations]
+      summary: Get messages
+      description: Loads the default number of recent messages for the conversation.
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '404':
+          description: Conversation not found
+    post:
+      tags: [Conversations]
+      summary: Send a message
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+                  description: JSON-encoded string containing { message, replyTo? }
+      responses:
+        '204':
+          description: Message sent
+        '400':
+          description: Missing message in body
+
+  /conversations/{conversation-id}/edit-message:
+    post:
+      tags: [Conversations]
+      summary: Edit a message
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message:
+                  type: string
+                  description: JSON-encoded string containing { message, messageId }
+      responses:
+        '204':
+          description: Message edited
+        '400':
+          description: Missing message in body
+
+  /conversations/{conversation-id}/add-to-swarm:
+    post:
+      tags: [Conversations]
+      summary: Add members to a swarm group
+      description: |
+        For private (1:1) conversations, creates a new group conversation with existing members plus new ones.
+        For group conversations, adds the members directly.
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [contactUri]
+              properties:
+                contactUri:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Members added
+
+  /conversations/{conversation-id}/remove-from-swarm:
+    post:
+      tags: [Conversations]
+      summary: Remove a member from a swarm group
+      description: Requires admin role. Not allowed on private (1:1) conversations.
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [contactUri]
+              properties:
+                contactUri:
+                  type: string
+      responses:
+        '200':
+          description: Member removed
+        '403':
+          description: Not an admin or conversation is private
+
+  /conversations/{conversation-id}/transfer-message:
+    post:
+      tags: [Conversations]
+      summary: Transfer a message to other conversations
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [messageBody, targetedConversations]
+              properties:
+                messageBody:
+                  type: string
+                targetedConversations:
+                  type: array
+                  items:
+                    type: string
+                comment:
+                  type: string
+      responses:
+        '200':
+          description: Message transferred
+        '400':
+          description: Missing message in body
+
+  /conversations/delete/{conversation-id}/{message-id}:
+    delete:
+      tags: [Conversations]
+      summary: Delete a specific message
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: message-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Message deleted
+
+  /conversations/{conversation-id}/files:
+    get:
+      tags: [Conversations]
+      summary: List all files in a conversation
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of files
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        '500':
+          description: Error getting files
+
+  # ════════════════════════════════════════════════════════
+  #  CONVERSATION REQUESTS
+  # ════════════════════════════════════════════════════════
+  /conversation-requests:
+    get:
+      tags: [ConversationRequests]
+      summary: List all conversation requests
+      responses:
+        '200':
+          description: List of pending requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IConversationRequest'
+
+  /conversation-requests/{conversation-id}:
+    post:
+      tags: [ConversationRequests]
+      summary: Accept a conversation request
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conversation summary after accepting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IConversationSummary'
+        '404':
+          description: Conversation not found
+    delete:
+      tags: [ConversationRequests]
+      summary: Decline a conversation request
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Request declined
+
+  /conversation-requests/{conversation-id}/block:
+    post:
+      tags: [ConversationRequests]
+      summary: Block the requestor of a conversation request
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Requestor blocked
+        '404':
+          description: No such conversation request found
+
+  # ════════════════════════════════════════════════════════
+  #  CALLS
+  # ════════════════════════════════════════════════════════
+  /calls:
+    get:
+      tags: [Calls]
+      summary: List active call IDs
+      responses:
+        '200':
+          description: Array of call IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /calls/{call-id}:
+    get:
+      tags: [Calls]
+      summary: Get call details
+      parameters:
+        - name: call-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Call details
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '404':
+          description: Call not found
+
+  # ════════════════════════════════════════════════════════
+  #  DEFAULT MODERATORS
+  # ════════════════════════════════════════════════════════
+  /default-moderators:
+    get:
+      tags: [DefaultModerators]
+      summary: List default moderators
+      responses:
+        '200':
+          description: List of default moderator contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IContact'
+
+  /default-moderators/{contact-id}:
+    put:
+      tags: [DefaultModerators]
+      summary: Add a default moderator
+      parameters:
+        - name: contact-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Moderator added
+    delete:
+      tags: [DefaultModerators]
+      summary: Remove a default moderator
+      parameters:
+        - name: contact-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Moderator removed
+
+  # ════════════════════════════════════════════════════════
+  #  NAMESERVER
+  # ════════════════════════════════════════════════════════
+  /ns/name/{username}:
+    get:
+      tags: [Nameserver]
+      summary: Lookup a username
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lookup result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LookupResult'
+        '400':
+          description: Invalid username
+        '404':
+          description: Username not found
+    head:
+      tags: [Nameserver]
+      summary: Check username availability
+      description: Returns 200 if the name is taken, 404 if available, 400 if invalid.
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Username is taken
+        '400':
+          description: Invalid username
+        '404':
+          description: Username is available
+
+  /ns/jams/{username}:
+    get:
+      tags: [Nameserver]
+      summary: Search JAMS user
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Search result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LookupResult'
+        '400':
+          description: Invalid username
+        '404':
+          description: Username not found
+
+  /ns/address/{address}:
+    get:
+      tags: [Nameserver]
+      summary: Lookup an address
+      security:
+        - bearerAuth: []
+        - {}
+      parameters:
+        - name: address
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lookup result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LookupResult'
+        '400':
+          description: Invalid address
+        '404':
+          description: Address not found
+
+  # ════════════════════════════════════════════════════════
+  #  LINK PREVIEW
+  # ════════════════════════════════════════════════════════
+  /link-preview:
+    get:
+      tags: [LinkPreview]
+      summary: Get link preview for a URL
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uri
+      responses:
+        '200':
+          description: Link preview data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LinkPreview'
+        '400':
+          description: Invalid URL
+        '404':
+          description: Could not access URL
+
+  # ════════════════════════════════════════════════════════
+  #  DATA TRANSFER
+  # ════════════════════════════════════════════════════════
+  /data/auto-download-limit:
+    get:
+      tags: [DataTransfer]
+      summary: Get auto-download file size limit
+      security: []
+      responses:
+        '200':
+          description: Download limit in MB
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  limit:
+                    type: number
+
+  /data/conference-resolution:
+    get:
+      tags: [DataTransfer]
+      summary: Get conference resolution
+      security: []
+      responses:
+        '200':
+          description: Configured conference resolution
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [resolution]
+                properties:
+                  resolution:
+                    type: string
+                    enum: [720p, 1080p, 1440p]
+
+  /data/transfer-file:
+    post:
+      tags: [DataTransfer]
+      summary: Transfer a file to other conversations
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targetedConversations, conversationId, fileId, fileName]
+              properties:
+                targetedConversations:
+                  type: array
+                  items:
+                    type: string
+                comment:
+                  type: string
+                conversationId:
+                  type: string
+                fileId:
+                  type: string
+                fileName:
+                  type: string
+      responses:
+        '200':
+          description: File transferred
+        '404':
+          description: File not found
+
+  /data/{conversation-id}:
+    post:
+      tags: [DataTransfer]
+      summary: Upload files to a conversation
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                replyTo:
+                  type: string
+      responses:
+        '200':
+          description: Files uploaded
+
+  /data/{conversation-id}/{interaction-id}/{file-id}:
+    get:
+      tags: [DataTransfer]
+      summary: Download a file
+      description: Downloads a file from a conversation. May trigger a daemon download if not cached.
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: interaction-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: file-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+            image/*:
+              schema:
+                type: string
+                format: binary
+            audio/*:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: File not found or download error
+
+  /data/{conversation-id}/{interaction-id}/{file-id}/is-downloaded:
+    get:
+      tags: [DataTransfer]
+      summary: Check if a file is downloaded locally
+      parameters:
+        - name: conversation-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: interaction-id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: file-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Download status
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  # ════════════════════════════════════════════════════════
+  #  CONFIG
+  # ════════════════════════════════════════════════════════
+  /config/languages:
+    get:
+      tags: [Config]
+      summary: List available languages
+      security: []
+      responses:
+        '200':
+          description: Available languages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Language'
+        '500':
+          description: Error reading languages
+
+  /config/languages/{language}:
+    get:
+      tags: [Config]
+      summary: Get translations for a language
+      security: []
+      parameters:
+        - name: language
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Translation key-value map
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '400':
+          description: Language not available
+        '500':
+          description: Error reading language file
+
+  # ════════════════════════════════════════════════════════
+  #  TOKENS
+  # ════════════════════════════════════════════════════════
+  /tokens:
+    post:
+      tags: [Tokens]
+      summary: Create a new API token
+      description: Requires a session JWT. API tokens cannot manage API tokens.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, scopes]
+              properties:
+                name:
+                  type: string
+                  description: Human-readable token name
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - conversations:read
+                      - conversations:write
+                      - contacts:read
+                      - contacts:write
+                      - calls:read
+                      - calls:write
+                      - files:read
+                      - files:write
+                      - account:read
+                      - account:write
+                expiresInSeconds:
+                  type: number
+                  description: Optional token lifetime in seconds. Omit for a token that does not expire.
+      responses:
+        '201':
+          description: Token created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The full token value (only shown once)
+                  info:
+                    $ref: '#/components/schemas/ApiTokenInfo'
+        '400':
+          description: Missing or invalid token name
+        '403':
+          description: API-token credentials cannot manage tokens
+    get:
+      tags: [Tokens]
+      summary: List all API tokens for the current account
+      description: Requires a session JWT. API tokens cannot manage API tokens.
+      responses:
+        '200':
+          description: List of token info (without secret values)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiTokenInfo'
+        '403':
+          description: API-token credentials cannot manage tokens
+
+  /tokens/{token-id}:
+    delete:
+      tags: [Tokens]
+      summary: Revoke an API token
+      description: Requires a session JWT. API tokens cannot manage API tokens.
+      parameters:
+        - name: token-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Token revoked
+        '404':
+          description: Token not found
+        '403':
+          description: API-token credentials cannot manage tokens
+
+  # ════════════════════════════════════════════════════════
+  #  ADMIN
+  # ════════════════════════════════════════════════════════
+  /admin/check:
+    get:
+      tags: [Admin]
+      summary: Check if admin setup is complete
+      security: []
+      responses:
+        '200':
+          description: Setup status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isSetupComplete:
+                    type: boolean
+
+  /admin/admin-wizard-state:
+    get:
+      tags: [Admin]
+      summary: Get last admin wizard state
+      security: []
+      responses:
+        '200':
+          description: Wizard state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lastWizardState:
+                    type: string
+                    enum: [account, ns, jams, complete]
+    post:
+      tags: [Admin]
+      summary: Set admin wizard state
+      description: Requires admin setup to be complete.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [state]
+              properties:
+                state:
+                  type: string
+                  enum: [account, ns, jams, complete]
+      responses:
+        '200':
+          description: Wizard state updated
+
+  /admin/create:
+    post:
+      tags: [Admin]
+      summary: Initial admin account setup
+      description: Creates the admin password. Can only be called when no admin exists yet.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+                  minLength: 1
+      responses:
+        '200':
+          description: Admin account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          description: Invalid password
+
+  /admin/login:
+    post:
+      tags: [Admin]
+      summary: Admin login
+      description: Requires admin setup to be complete. Rate limited.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          description: Missing password
+        '401':
+          description: Incorrect password
+        '429':
+          description: Too many login attempts
+        '500':
+          description: Admin password not found
+
+  /admin/passkey/login/options:
+    post:
+      tags: [Admin]
+      summary: Get admin passkey authentication options
+      description: Requires admin setup and is rate limited.
+      security: []
+      responses:
+        '200':
+          description: WebAuthn authentication options and challenge key
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/WebAuthnOptions'
+                  - type: object
+                    required: [challengeKey]
+                    properties:
+                      challengeKey:
+                        type: string
+        '404':
+          description: No passkeys registered for admin
+        '429':
+          description: Too many login attempts
+
+  /admin/passkey/login/verify:
+    post:
+      tags: [Admin]
+      summary: Verify admin passkey authentication
+      description: Requires admin setup and is rate limited.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasskeyAuthenticationVerification'
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessToken'
+        '400':
+          description: Missing credential or challenge key, or no pending challenge
+        '401':
+          description: Unknown credential or verification failed
+        '429':
+          description: Too many login attempts
+
+  /admin/passkey/available:
+    get:
+      tags: [Admin]
+      summary: Check whether admin passkeys are registered
+      security: []
+      responses:
+        '200':
+          description: Admin passkey availability
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [available]
+                properties:
+                  available:
+                    type: boolean
+
+  /admin/passkey/register/options:
+    post:
+      tags: [Admin]
+      summary: Get admin passkey registration options
+      responses:
+        '200':
+          description: WebAuthn registration options
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebAuthnOptions'
+
+  /admin/passkey/register/verify:
+    post:
+      tags: [Admin]
+      summary: Verify and store an admin passkey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasskeyRegistrationVerification'
+      responses:
+        '200':
+          description: Passkey stored
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [verified]
+                properties:
+                  verified:
+                    type: boolean
+        '400':
+          description: Missing challenge or verification failed
+
+  /admin/passkey/credentials:
+    get:
+      tags: [Admin]
+      summary: List admin passkeys
+      responses:
+        '200':
+          description: Registered admin passkeys
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PasskeyCredential'
+
+  /admin/passkey/credentials/{credential-id}:
+    delete:
+      tags: [Admin]
+      summary: Delete an admin passkey
+      parameters:
+        - name: credential-id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Passkey deleted
+        '404':
+          description: Credential not found
+
+  /admin/config:
+    get:
+      tags: [Admin]
+      summary: Get admin configuration
+      description: Requires admin setup to be complete.
+      security: []
+      responses:
+        '200':
+          description: Admin config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminConfigState'
+        '500':
+          description: Config not found
+    patch:
+      tags: [Admin]
+      summary: Update admin configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminConfigState'
+      responses:
+        '200':
+          description: Config updated
+        '400':
+          description: Invalid config
+
+  /admin/is-token-valid:
+    get:
+      tags: [Admin]
+      summary: Validate admin token
+      description: Returns 200 if the admin JWT is valid.
+      responses:
+        '200':
+          description: Token is valid
+
+  /admin/password:
+    patch:
+      tags: [Admin]
+      summary: Change admin password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [old, new]
+              properties:
+                old:
+                  type: string
+                new:
+                  type: string
+      responses:
+        '200':
+          description: Password changed
+        '400':
+          description: Missing password
+        '401':
+          description: Incorrect old password
+
+  /admin/nameserver:
+    get:
+      tags: [Admin]
+      summary: Get nameserver URL
+      responses:
+        '200':
+          description: Nameserver URL
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: uri
+    post:
+      tags: [Admin]
+      summary: Set nameserver URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nameserver]
+              properties:
+                nameserver:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          description: Nameserver set
+        '400':
+          description: Missing or invalid nameserver URL
+    delete:
+      tags: [Admin]
+      summary: Reset nameserver to default
+      responses:
+        '200':
+          description: Nameserver reset
+
+  /admin/nameserver/username/{username}:
+    head:
+      tags: [Admin]
+      summary: Check whether a username is registered on the nameserver
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Username is already registered
+        '400':
+          description: The nameserver returned an invalid response
+        '404':
+          description: Username is not registered
+        '500':
+          description: The nameserver could not be reached
+
+  /admin/jams-url:
+    get:
+      tags: [Admin]
+      summary: Get JAMS server URL
+      responses:
+        '200':
+          description: JAMS URL
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: uri
+        '204':
+          description: JAMS URL not set
+    post:
+      tags: [Admin]
+      summary: Set JAMS server URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [url]
+              properties:
+                url:
+                  type: string
+                  format: uri
+      responses:
+        '200':
+          description: JAMS URL set
+        '400':
+          description: Missing or invalid URL
+    delete:
+      tags: [Admin]
+      summary: Reset JAMS server URL
+      responses:
+        '200':
+          description: JAMS URL reset, JAMS auth disabled
+
+  /admin/accounts:
+    get:
+      tags: [Admin]
+      summary: List all user accounts
+      responses:
+        '200':
+          description: Account list with storage usage
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountOverview'
+    delete:
+      tags: [Admin]
+      summary: Delete user accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                required: [accountId, username, auth]
+                properties:
+                  accountId:
+                    type: string
+                  username:
+                    type: string
+                  auth:
+                    type: string
+      responses:
+        '200':
+          description: Accounts deleted
+    post:
+      tags: [Admin]
+      summary: Create a local user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [accountId]
+                properties:
+                  accountId:
+                    type: string
+        '400':
+          description: Missing username or password, or password shorter than the minimum length
+        '409':
+          description: Username already exists
+        '500':
+          description: The username could not be registered on the nameserver
+
+  /admin/accounts/{accountId}/password:
+    patch:
+      tags: [Admin]
+      summary: Reset a local account password
+      description: >-
+        Invalidates every session and API token issued for the account and closes its open
+        websockets, so credentials minted under the previous password stop working.
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password]
+              properties:
+                password:
+                  type: string
+                  format: password
+      responses:
+        '204':
+          description: Password reset
+        '400':
+          description: Password shorter than the minimum length, or the account is not a local account
+        '404':
+          description: Account not found
+
+  /admin/oauth/providers:
+    get:
+      tags: [Admin]
+      summary: List OAuth providers with status
+      responses:
+        '200':
+          description: Provider list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminOAuthProvider'
+
+  /admin/oauth/provider/{name}:
+    get:
+      tags: [Admin]
+      summary: Get OAuth provider details
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Provider detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOAuthProviderDetail'
+        '500':
+          description: Provider configuration not found
+    patch:
+      tags: [Admin]
+      summary: Update OAuth provider configuration
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                clientId:
+                  type: string
+                clientSecret:
+                  type: string
+                isActive:
+                  type: boolean
+      responses:
+        '200':
+          description: Provider updated
+        '400':
+          description: Provider does not exist
+
+  /admin/auto-download-limit:
+    post:
+      tags: [Admin]
+      summary: Set auto-download file size limit
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [limit]
+              properties:
+                limit:
+                  type: number
+                  minimum: 0
+                  description: Size limit in MB
+      responses:
+        '200':
+          description: Limit updated
+        '400':
+          description: Invalid limit
+
+  /admin/conference-resolution:
+    post:
+      tags: [Admin]
+      summary: Set conference resolution
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [resolution]
+              properties:
+                resolution:
+                  type: string
+                  enum: [720p, 1080p, 1440p]
+      responses:
+        '200':
+          description: Conference resolution updated
+        '400':
+          description: Invalid conference resolution

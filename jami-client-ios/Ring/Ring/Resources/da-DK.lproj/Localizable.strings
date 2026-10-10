@@ -1,0 +1,154 @@
+﻿ /*
+ *  Copyright (C) 2017-2019 Savoir-faire Linux Inc.
+ *
+ *  Author: Silbino Gonçalves Matado <silbino.gmatado@savoirfairelinux.com>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.homeTabBarTitle" = "Hjem";
+"global.contactRequestsTabBarTitle" = "Invitationer";
+"global.meTabBarTitle" = "Konto";
+"global.ok" = "Ok";
+
+// Scan
+"scan.badQrCode" = "Bad QR code";
+"scan.search" = "Searching…";
+
+// Smartlist
+"smartlist.yesterday" = "I går";
+"smartlist.results" = "Search Result";
+"smartlist.conversations" = "Samtaler";
+"smartlist.searching" = "Søger...";
+"smartlist.noResults" = "Ingen resultater";
+"smartlist.noNetworkConnectivity" = "Ingen netværksforbindelse";
+"smartlist.cellularAccess" = "Kontroller at rettigheder til mobildata er givet i indstillinger";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Velkommen til Ring";
+"welcome.text" = "Ring er en gratis og universel kommunikationsplatform som respekterer sine brugeres frihed og privatliv";
+"welcome.linkDevice" = "Tilknyt denne enhed til en konto";
+"welcome.createAccount" = "Opret en Ring-konto";
+
+//Creation Profile Screen
+"createProfile.skipCreateProfile" = "Skip";
+"createProfile.profileCreated" = "Næste";
+
+//Create Account form
+"createAccount.createAccountFormTitle" = "Opret din Ring-konto";
+"createAccount.chooseStrongPassword" = "Vælg stærkt kodeord som du kan huske til at beskytte din Ring-konto.";
+"createAccount.enterNewUsernamePlaceholder" = "brugernavn";
+"createAccount.newPasswordPlaceholder" = "adgangskode";
+"createAccount.repeatPasswordPlaceholder" = "bekræft kodeord";
+"createAccount.passwordCharactersNumberError" = "Mindst 6 tegn";
+"createAccount.passwordNotMatchingError" = "kodeordene stemmer ikke overens";
+"createAccount.lookingForUsernameAvailability" = "undersøger brugernavnets tilgængelighed";
+"createAccount.invalidUsername" = "ugyldigt brugernavn";
+"createAccount.usernameAlreadyTaken" = "brugernavn er allerede anvendt";
+"createAccount.loading" = "Indlæser";
+"createAccount.waitCreateAccountTitle" = "Tilføjer konto";
+
+//Link To Account form
+"linkToAccount.waitLinkToAccountTitle" = "Konto-tilknytning";
+"linkToAccount.linkButtonTitle" = "Tilknyt enhed";
+"linkToAccount.passwordPlaceholder" = "adgangskode";
+"linkToAccount.pinPlaceholder" = "PIN";
+"linkToAccount.passwordLabel" = "Indtast kodeord";
+"linkToAccount.pinLabel" = "Indtast PIN-kode";
+"linkToAccount.explanationPinMessage" = "For at generere PIN-koden skal du gå til Kontoadministration på den enhed som indeholder kontoen du ønsker at tilknytte. Under enhedsindstillinger vælg \"Tilknyt en anden enhed til denne konto\". Dette vil generere den nødvendige PIN-kode der skal indtastes i denne formular. PIN-koden er kun gyldig i 10 minutter. ";
+
+//Alerts
+"alerts.accountCannotBeFoundTitle" = "Kan ikke finde konto";
+"alerts.accountCannotBeFoundMessage" = "Kontoen kunne ikke findes på Ring-netværket. Sikr dig at den er blevet eksporteret fra en eksisterende enhed og at de angivne login-detaljer er korrekte.";
+"alerts.accountAddedTitle" = "Konto tilføjet";
+"alerts.accountNoNetworkTitle" = "Kan ikke forbinde til netværket";
+"alerts.accountNoNetworkMessage" = "Kunne ikke tilføje konto fordi Ring ikke kunne forbinde til det distribuerede netværk. Kontroller din enheds netværksadgang.";
+"alerts.accountDefaultErrorTitle" = "Ukendt fejl";
+"alerts.accountDefaultErrorMessage" = "Kontoen kunne ikke oprettes.";
+"alerts.profileTakePhoto" = "Tag billede";
+"alerts.profileUploadPhoto" = "Upload foto";
+"alerts.profileCancelPhoto" = "Annuller";
+"alerts.accountLinkedTitle" = "Tilknytter konto";
+"alerts.dbFailedTitle" = "En fejl opstod under start af Ring";
+"alerts.dbFailedMessage" = "Luk venligst applikationen og prøv at starte den igen";
+"alerts.confirmBlockContact" = "Er du sikker på at du vil blokere denne kontakt? Samtalehistorikken med denne bruger vil også blive permanent slettet.";
+"alerts.confirmBlockContactTitle" = "Bloker kontakt";
+"alerts.confirmDeleteConversation" = "Er du sikker på at du vil slette denne samtale permanent?";
+"alerts.confirmDeleteConversationFromContact" = "Er du sikker på at du vil slette samtalen med denne bruger?";
+"alerts.confirmDeleteConversationTitle" = "Slet samtale";
+
+//Actions
+"actions.blockAction" = "Blokér";
+"actions.deleteAction" = "Slet";
+"actions.cancelAction" = "Annuller";
+"alerts.incomingCallAllertTitle" = "Indgående opkald fra";
+"alerts.incomingCallButtonAccept" = "Accepter";
+"alerts.incomingCallButtonIgnore" = "Afvis";
+
+//Calls
+"calls.callItemTitle" = "Ring op";
+"calls.unknown" = "Ukendt";
+"calls.incomingCallInfo" = "vil tale med dig";
+"calls.ringing" = "Ringer";
+"calls.connecting" = "Forbinder";
+"calls.callFinished" = "Opkald afsluttet";
+
+//Account Page
+"accountPage.devicesListHeader" = "Enheder";
+"accountPage.settingsHeader" = "Indstillinger";
+"accountPage.username" = "brugernavn:";
+"accountPage.usernameNotRegistered" = "brugernavn: ikke registreret";
+"accountPage.credentialsHeader" = "Kontodetaljer";
+"accountPage.enableProxy" = "Enable Proxy";
+"accountPage.blockedContacts" = "Blokeringsliste";
+"accountPage.unblockContact" = "UBLOKER";
+"accountPage.proxyAddressAlert" = "Provide proxy address";
+"accountPage.enableProxy" = "Enable Proxy";
+"accountPage.noProxyExplanationLabel" = "Your device won't receive notifications when proxy is disabled";
+"accountPage.saveProxyAddress" = "Gem";
+"accountPage.proxyPaceholder" = "Proxy address";
+"accountPage.enableNotifications" = "Aktivér beskeder";
+"accountPage.proxyDisabledAlertTitle" = "Proxy Server Disabled";
+"accountPage.proxyDisabledAlertBody" = "In order to receive notifications, please enable proxy";
+
+//Link New Device
+"linkDevice.title" = "Tilknyt en ny enhed";
+"linkDevice.passwordError" = "Den adgangskode du har indtastet låser ikke op for denne konto";
+"linkDevice.networkError" = "Der opstod en netværksfejl under eksporteringen";
+"linkDevice.defaultError" = "Der opstod en fejl under eksport";
+"linkDevice.explanationMessage" = "For at afslutte processen skal du starte Ring på den nye enhed og vælge \"Tilknyt denne enhed til en konto\". PIN-koden er gyldig i 10 minutter.";
+"linkDevice.hudMessage" = "Verificerer";
+
+//Contact Page
+"contactPage.startAudioCall" = "Start audio-opkald";
+"contactPage.startVideoCall" = "Start video-opkald";
+"contactPage.sendMessage" = "Send besked";
+"contactPage.clearConversation" = "Ryd chat";
+"contactPage.blockContact" = "Bloker kontakt";
+
+//DataTransfer
+"dataTransfer.readableStatusCreated" = "Initialiserer...";
+"dataTransfer.readableStatusError" = "Fejl";
+"dataTransfer.readableStatusAwaiting" = "Under oprettelse...";
+"dataTransfer.readableStatusRefuse" = "Afvis";
+"dataTransfer.readableStatusOngoing" = "Overfører";
+"dataTransfer.readableStatusCanceled" = "Annulleret";
+"dataTransfer.readableStatusSuccess" = "Afsluttet";
+"dataTransfer.readableStatusAccept" = "Accepter";
+"dataTransfer.readableStatusCancel" = "Annuller";
+

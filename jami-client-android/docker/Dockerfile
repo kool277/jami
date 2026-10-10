@@ -1,0 +1,175 @@
+FROM gradle:jdk25-resolute AS build
+
+ENV LANG=en_US.utf8
+ENV LC_ALL=en_US.utf8
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Script dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    apt-transport-https \
+    ca-certificates \
+    gnupg \
+    software-properties-common \
+    wget
+
+# Jami build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    asciidoc \
+    autoconf \
+    autogen \
+    automake \
+    autopoint \
+    bc \
+    bison \
+    build-essential \
+    bzip2 \
+    cmake \
+    curl \
+    doxygen \
+    gettext \
+    git \
+    lib32stdc++6 \
+    lib32z1 \
+    libpcre2-dev \
+    libtool \
+    locales \
+    m4 \
+    nasm \
+    ninja-build \
+    meson \
+    pkg-config \
+    python-is-python3 \
+    ruby \
+    ruby-dev \
+    ssh \
+    unzip \
+    yasm \
+    zip \
+    && locale-gen $LANG $LC_ALL && update-locale $LANG $LC_ALL
+
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g node-gyp node-addon-api
+ENV NODE_PATH=/usr/lib/node_modules
+
+# Rust toolchain, required to build the yffi (Y-CRDT) contrib package used by
+# the collaborative editing feature. Installed system-wide, and on PATH, so it
+# is reachable by the unprivileged user the build runs as. The version is
+# pinned so that an upstream Rust release cannot silently change the image from
+# one rebuild to the next. The Android targets are added here so that
+# cross-compiling does not need network access at build time.
+ARG RUST_VERSION=1.97.1
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo
+ENV PATH="/usr/local/cargo/bin:$PATH"
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+    | sh -s -- -y --profile minimal --default-toolchain ${RUST_VERSION} && \
+    rustup target add \
+    armv7-linux-androideabi \
+    aarch64-linux-android \
+    i686-linux-android \
+    x86_64-linux-android && \
+    ln -s /usr/local/cargo/bin/cargo /usr/local/bin/cargo && \
+    ln -s /usr/local/cargo/bin/rustc /usr/local/bin/rustc && \
+    ln -s /usr/local/cargo/bin/rustup /usr/local/bin/rustup && \
+    chmod -R go-w /usr/local/rustup /usr/local/cargo
+# Cargo writes its registry cache and lock file under CARGO_HOME, so it cannot
+# stay on the read-only toolchain install above. The build runs as whatever uid
+# the host hands over (cqfd passes the host uid, which has no user in this
+# image), so a chown cannot work either: point CARGO_HOME at a world-writable
+# location instead. The toolchain is still found through RUSTUP_HOME and PATH.
+ENV CARGO_HOME=/tmp/cargo-home
+
+# Node.js toolchain, required to install the dependencies of, bundle, and test
+# the collaborative text editor (app/src/collabeditor) that the Gradle build
+# packages into the application assets. Installed system-wide, and on PATH, so
+# it is reachable by the unprivileged user the build runs as. The distribution
+# packages are deliberately not used: Ubuntu 24.04 ships Node 18, which is too
+# old, as the editor test suite is run through "node --test" with a glob
+# pattern, and glob expansion was only added to the test runner in Node 22. The
+# version is pinned, and the download verified against the checksums published
+# upstream, so that a new Node release cannot silently change the image from one
+# rebuild to the next.
+ARG NODE_VERSION=22.23.2
+ENV PATH="/usr/local/lib/nodejs/node-v${NODE_VERSION}-linux-x64/bin:$PATH"
+RUN NODE_ARCHIVE="node-v${NODE_VERSION}-linux-x64.tar.xz" && \
+    wget -P /tmp https://nodejs.org/dist/v${NODE_VERSION}/${NODE_ARCHIVE} \
+    https://nodejs.org/dist/v${NODE_VERSION}/SHASUMS256.txt && \
+    (cd /tmp && grep " ${NODE_ARCHIVE}\$" SHASUMS256.txt | sha256sum --check --strict -) && \
+    mkdir -p /usr/local/lib/nodejs && \
+    tar xJf /tmp/${NODE_ARCHIVE} -C /usr/local/lib/nodejs && \
+    ln -s /usr/local/lib/nodejs/node-v${NODE_VERSION}-linux-x64/bin/node /usr/local/bin/node && \
+    ln -s /usr/local/lib/nodejs/node-v${NODE_VERSION}-linux-x64/bin/npm /usr/local/bin/npm && \
+    ln -s /usr/local/lib/nodejs/node-v${NODE_VERSION}-linux-x64/bin/npx /usr/local/bin/npx && \
+    rm -f /tmp/${NODE_ARCHIVE} /tmp/SHASUMS256.txt && \
+    node --version && npm --version
+
+# Swig
+RUN wget -O /tmp/swig.tar.gz https://github.com/swig/swig/archive/v4.4.1.tar.gz && \
+    tar xzf  /tmp/swig.tar.gz -C /opt && \
+    cd /opt/swig-4.4.1/ && ./autogen.sh && ./configure && make && make install && \
+    cd .. && rm -rf /opt/swig-4.4.1 /tmp/swig.tar.gz
+
+# Install Fastlane
+RUN gem install fastlane -NV
+
+ARG API_LEVEL="37.0"
+ARG BUILD_TOOLS="37.0.0"
+
+# Install Commandlinetools.
+ENV ANDROID_SDK_ROOT=/opt/android
+ARG ANDROID_CMD="commandlinetools-linux-14742923_latest.zip"
+RUN wget https://dl.google.com/android/repository/${ANDROID_CMD} -P /tmp && \
+    unzip -d $ANDROID_SDK_ROOT /tmp/$ANDROID_CMD && \
+    mkdir -p $ANDROID_SDK_ROOT/cmdline-tools/tools && cd $ANDROID_SDK_ROOT/cmdline-tools && mv NOTICE.txt source.properties bin lib tools/ && \
+    cd $ANDROID_SDK_ROOT/cmdline-tools/tools && ls
+ENV PATH="$PATH:$ANDROID_SDK_ROOT/cmdline-tools/tools:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/${BUILD_TOOLS}"
+
+# Install android SDK libraries, NDK.
+RUN sdkmanager --update
+RUN yes Y | sdkmanager --licenses
+RUN sdkmanager --channel=1 --no_https "platforms;android-${API_LEVEL}" \
+    'extras;android;m2repository' \
+    'extras;google;m2repository' \
+    'ndk;29.0.14206865' \
+    'cmake;4.1.2' \
+    "build-tools;${BUILD_TOOLS}"
+ENV ANDROID_SDK=${ANDROID_SDK_ROOT}
+ENV ANDROID_NDK=${ANDROID_SDK_ROOT}/ndk/29.0.14206865
+
+
+FROM build AS test
+
+# Jami build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libx11-6 libx11-xcb1
+
+# Install Spoon (test manager).
+ENV SPOON_RUNNER_PATH=/spoon-runner.jar
+RUN wget -O /spoon-runner.jar \
+    "https://repo1.maven.org/maven2/com/squareup/spoon/spoon-runner/1.7.1/spoon-runner-1.7.1-jar-with-dependencies.jar"
+
+# Install android SDK libraries for emulation.
+ARG API_LEVEL="37.0"
+ARG TARGET="google_apis_ps16k"
+ARG ARCH="x86_64"
+ARG EMULATOR_PACKAGE="system-images;android-${API_LEVEL};${TARGET};${ARCH}"
+ARG BUILD_TOOLS="37.0.0"
+RUN sdkmanager --update
+RUN yes Y | sdkmanager --licenses
+RUN sdkmanager --channel=1 --no_https "${EMULATOR_PACKAGE}" "emulator" "platform-tools"
+
+# Create emulator.
+ARG EMULATOR_NAME="pixel"
+ARG EMULATOR_DEVICE="pixel_6_pro"
+ENV EMULATOR_NAME=$EMULATOR_NAME
+ENV DEVICE_NAME=$EMULATOR_DEVICE
+RUN echo "no" | avdmanager --verbose create avd --force --name "${EMULATOR_NAME}" --device "${EMULATOR_DEVICE}" --package "${EMULATOR_PACKAGE}"
+
+# Define environment variables.
+ENV JAVA_HOME=/opt/java/openjdk/
+ENV ANDROID_ABI=x86_64
+ENV ANDROID_HOME=/opt/android
+ENV PATH="$PATH:/opt/java/openjdk/bin:$ANDROID_SDK_ROOT/cmdline-tools/tools:$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/${BUILD_TOOLS}"
+
+CMD [ "/bin/bash" ]

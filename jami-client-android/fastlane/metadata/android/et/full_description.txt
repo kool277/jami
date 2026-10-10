@@ -1,0 +1,46 @@
+<b>Jami</b>, GNU pakett, on tarkvara universaalseks ja hajutatud peer-to-peer suhtluseks, mis austab kasutajate vabadust ja privaatsust.
+
+Jami on lihtsaim ja lihtsaim viis inimestega (ja seadmetega) ühenduse loomiseks kiirsõnumi-, heli- ja videokõnede kaudu <b>Interneti</b> ja LAN/WAN-i <b>sisevõrkude</b> kaudu.
+
+Jami on tasuta/tasuta, täielikult krüptitud ja privaatne <b>suhtlusplatvorm</b>.
+
+Jami on <b>avatud lähtekoodiga</b> tarkvara, mis <b>privaatseks on kasutajate privaatsus</b>.
+
+Jamil on professionaalse välimusega disain ja see on saadaval paljudele platvormidele. Erinevalt alternatiividest on Jami <b>kõned otse kasutajate vahel</b>, kuna see ei kasuta kõnede haldamiseks servereid.
+
+See tagab suurima privaatsuse, kuna Jami <b>hajutatud</b> olemus tähendab, et teie kõned toimuvad ainult osalejate vahel.
+
+Üks-ühele ja <b>grupivestlusi</b> Jamiga täiustavad kiirsõnumid, heli- ja videokõned, heli- ja videosõnumite salvestamine ja saatmine, failiedastused, ekraani jagamine ja asukoha jagamine.
+
+Jami võib toimida ka <b>SIP-kliendina</b>.
+
+Saadaval on mitu <b>Jami laiendust</b>: helifilter, automaatne vastus, roheline ekraan, segmentimine, vesimärk ja sosistamise transkriptsioon.
+
+Jami saab hõlpsasti organisatsioonides juurutada <b>JAMS-iga (Jami kontohaldusserver)</b>, mis võimaldab kasutajatel luua ühenduse oma ettevõtte mandaatidega või luua kohalikke kontosid. JAMS võimaldab teil <b>hallata oma</b> Jami kogukonda, kasutades samal ajal ära Jami hajutatud võrguarhitektuuri.
+
+Jami on <b>saadaval</b> GNU/Linuxi, Windowsi, macOS-i, iOS-i, Androidi, Android TV ja veebibrauserite jaoks, muutes Jami koostalitlusvõimeliseks ja platvormideüleseks suhtlusraamistikuks.
+
+<b>Hallake mitut</b> SIP-kontot, Jami-kontot ja JAMS-kontot, kui Jami klient on installitud ühte või mitmesse seadmesse.
+
+Jami on tasuta, piiramatu, privaatne, reklaamivaba, ühilduv, kiire, autonoomne ja anonüümne.
+
+<b>Lisateave:</b>
+Jami: https://jami.net/
+Jami laiendused: https://jami.net/extensions/
+JAMS (Jami kontohaldusserver): https://jami.biz/
+Jami dokumentatsioon: https://docs.jami.net/
+
+<b>Lisateabe saamiseks jälgige meid:</b>
+Mastodon: https://mstdn.io/@Jami
+Videod: https://docs.jami.net/videos/
+
+<b>Oleme hea meelega teist kuulda! Liituge Jami kogukonnaga:</b>
+Anna oma panus: https://jami.net/contribute/
+Foorum: https://forum.jami.net/
+
+Koostage Jamiga <b>IoT-projekte</b>. Kasutage uuesti Jami universaalset sidetehnoloogiat koos selle kaasaskantava raamatukoguga oma valitud süsteemis.
+
+Jami for Android TV testitakse Logitechi kaameratega NVIDIA SHIELD teleris.
+
+Jami on avaldatud <b>GPL-i litsentsi</b> versiooni 3 või uuema all.
+Autoriõigus © Savoir-faire Linux Inc.

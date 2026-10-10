@@ -1,0 +1,554 @@
+/*
+ *  Copyright (C) 2026 - 2026 Savoir-faire Linux Inc.
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+import XCTest
+import Combine
+import RxSwift
+import RxRelay
+@testable import Ring
+
+final class AvatarProviderTests: XCTestCase {
+
+    var injectionBag: InjectionBag!
+    private var cancellables = Set<AnyCancellable>()
+
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        let dBManager = DBManager(conversationHelper: ConversationDataHelper(),
+                                  interactionHepler: InteractionDataHelper(),
+                                  dbConnections: DBContainer())
+        let daemonService = DaemonService(dRingAdaptor: DRingAdapter())
+        let nameService = NameService(withNameRegistrationAdapter: NameRegistrationAdapter())
+        let presenceService = PresenceService(withPresenceAdapter: PresenceAdapter())
+        let videoService = VideoService()
+        let audioService = AudioService()
+        let callService = CallService()
+        let systemService = SystemService(withSystemAdapter: SystemAdapter())
+        let networkService = NetworkService()
+        let accountService: AccountsService = AccountsService(withAccountAdapter: AccountAdapter(), dbManager: dBManager)
+        let contactsService: ContactsService = ContactsService(withContactsAdapter: ContactsAdapter(), dbManager: dBManager)
+        let profileService: ProfilesService =
+            ProfilesService(withProfilesAdapter: ProfilesAdapter())
+        let dataTransferService: DataTransferService =
+            DataTransferService(withDataTransferAdapter: DataTransferAdapter(),
+                                dbManager: dBManager)
+        let conversationsService: ConversationsService =
+            ConversationsService(withConversationsAdapter: ConversationsAdapter(), dbManager: dBManager)
+        let locationSharingService: LocationSharingService =
+            LocationSharingService(dbManager: dBManager)
+        let requestsService: RequestsService =
+            RequestsService(withRequestsAdapter: RequestsAdapter())
+
+        injectionBag = InjectionBag(withDaemonService: daemonService,
+                                    withAccountService: accountService,
+                                    withNameService: nameService,
+                                    withConversationService: conversationsService,
+                                    withContactsService: contactsService,
+                                    withPresenceService: presenceService,
+                                    withNetworkService: networkService,
+                                    withCallService: callService,
+                                    withVideoService: videoService,
+                                    withAudioService: audioService,
+                                    withDataTransferService: dataTransferService,
+                                    withProfileService: profileService,
+                                    withLocationSharingService: locationSharingService,
+                                    withRequestsService: requestsService,
+                                    withSystemService: systemService,
+                                    withPeerSharingService: TestPeerSharingFactory.createService(),
+                                    withCollaborationService: CollaborationService(withCollaborationAdapter: ObjCMockCollaborationAdapter()))
+    }
+
+    override func tearDownWithError() throws {
+        try super.tearDownWithError()
+        cancellables.removeAll()
+        injectionBag = nil
+    }
+
+    // MARK: - Helpers
+
+    func createParticipant(jamiId: String, role: ParticipantRole, registeredName: String,
+                           profileName: String) -> ParticipantInfo {
+        let participant = ParticipantInfo(jamiId: jamiId, role: role, profileService: injectionBag.profileService)
+        participant.registeredName.accept(registeredName)
+        participant.profileName.accept(profileName)
+        return participant
+    }
+
+    func createGroupProvider(swarmInfo: TestableSwarmInfo) -> AvatarProvider {
+        return AvatarProvider.from(swarmInfo: swarmInfo, profileService: injectionBag.profileService, size: .default55)
+    }
+
+    func setParticipants(_ participants: [ParticipantInfo], on swarmInfo: TestableSwarmInfo) {
+        swarmInfo.participants.accept(participants)
+        swarmInfo.participantsAvatars.accept(participants.compactMap { $0.avatarData.value })
+    }
+
+    func createTestImageData(side: CGFloat = 10) -> Data {
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: side, height: side), format: format)
+        return renderer.pngData { ctx in
+            UIColor.red.setFill()
+            ctx.fill(CGRect(x: 0, y: 0, width: side, height: side))
+        }
+    }
+
+    func testDeferredAvatarRemainsUnresolvedUntilFirstResult() {
+        let avatarData = PublishSubject<Data?>()
+        let provider = AvatarProvider(
+            profileService: injectionBag.profileService,
+            size: .call160,
+            avatar: avatarData.asObservable(),
+            displayName: Observable.just("Alice"),
+            isGroup: false,
+            waitForFirstAvatar: true)
+
+        XCTAssertFalse(provider.isAvatarResolved)
+
+        let resolved = expectation(description: "empty avatar result resolves")
+        provider.$isAvatarResolved
+            .filter { $0 }
+            .sink { _ in resolved.fulfill() }
+            .store(in: &cancellables)
+
+        avatarData.onNext(nil)
+
+        wait(for: [resolved], timeout: 1)
+        XCTAssertNil(provider.avatar)
+    }
+
+    func testDeferredAvatarPublishesImageBeforeResolution() {
+        let avatarData = PublishSubject<Data?>()
+        let provider = AvatarProvider(
+            profileService: injectionBag.profileService,
+            size: .call160,
+            avatar: avatarData.asObservable(),
+            displayName: Observable.just("Alice"),
+            isGroup: false,
+            waitForFirstAvatar: true)
+
+        let resolved = expectation(description: "decoded avatar resolves")
+        provider.$isAvatarResolved
+            .filter { $0 }
+            .sink { _ in
+                XCTAssertNotNil(provider.avatar,
+                                "the image must be available before resolution is published")
+                resolved.fulfill()
+            }
+            .store(in: &cancellables)
+
+        avatarData.onNext(createTestImageData())
+
+        wait(for: [resolved], timeout: 1)
+    }
+
+    // MARK: - Display Participant Selection
+
+    func testDisplayParticipants_AdminFirst() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member1 = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                        profileName: profileName2)
+        let member2 = createParticipant(jamiId: jamiId3, role: .member, registeredName: "",
+                                        profileName: profileName3)
+        // Act
+        setParticipants([member1, admin, member2], on: swarmInfo)
+        waitForMainScheduler()
+        // Assert
+        XCTAssertEqual(provider.displayParticipants.count, 3)
+        XCTAssertEqual(provider.displayParticipants[0].jamiId, jamiId1)
+        XCTAssertEqual(provider.overflowCount, 0)
+    }
+
+    func testDisplayParticipants_OverflowWith4() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member1 = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                        profileName: profileName2)
+        let member2 = createParticipant(jamiId: jamiId3, role: .member, registeredName: "",
+                                        profileName: profileName3)
+        let member3 = createParticipant(jamiId: jamiId4, role: .member, registeredName: "",
+                                        profileName: profileName4)
+        // Act
+        setParticipants([admin, member1, member2, member3], on: swarmInfo)
+        waitForMainScheduler()
+        // Assert
+        XCTAssertEqual(provider.displayParticipants.count, 2)
+        XCTAssertEqual(provider.overflowCount, 2)
+        XCTAssertEqual(provider.displayParticipants[0].jamiId, jamiId1)
+    }
+
+    func testDisplayParticipants_ExcludesBannedAndLeft() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                       profileName: profileName2)
+        let banned = createParticipant(jamiId: jamiId3, role: .banned, registeredName: "",
+                                       profileName: profileName3)
+        let left = createParticipant(jamiId: jamiId4, role: .left, registeredName: "",
+                                     profileName: profileName4)
+        // Act
+        setParticipants([admin, member, banned, left], on: swarmInfo)
+        waitForMainScheduler()
+        // Assert
+        let displayedIds = Set(provider.displayParticipants.map { $0.jamiId })
+        XCTAssertTrue(displayedIds.contains(jamiId1))
+        XCTAssertTrue(displayedIds.contains(jamiId2))
+        XCTAssertFalse(displayedIds.contains(jamiId3))
+        XCTAssertFalse(displayedIds.contains(jamiId4))
+        XCTAssertEqual(provider.overflowCount, 0)
+    }
+
+    // MARK: - Snapshot Lifecycle
+
+    func testSnapshotCreated_AfterParticipantsSet() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                       profileName: profileName2)
+        // Act
+        setParticipants([admin, member], on: swarmInfo)
+        waitForMainScheduler()
+        // Assert
+        XCTAssertNotNil(provider.groupAvatarSnapshot)
+        let expectedSize = Constants.AvatarSize.default55.points
+        XCTAssertEqual(provider.groupAvatarSnapshot?.size.width, expectedSize)
+        XCTAssertEqual(provider.groupAvatarSnapshot?.size.height, expectedSize)
+    }
+
+    func testGuardSkipsRedundantUpdate() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                       profileName: profileName2)
+        setParticipants([admin, member], on: swarmInfo)
+        waitForMainScheduler()
+        let firstSnapshot = provider.groupAvatarSnapshot
+        XCTAssertNotNil(firstSnapshot)
+        let participantsBefore = provider.displayParticipants.map { $0.jamiId }
+        let overflowBefore = provider.overflowCount
+        // Act — fire participantsAvatars without changing participants
+        swarmInfo.participantsAvatars.accept([])
+        waitForMainScheduler()
+        // Assert — guard blocked because visible IDs and overflow unchanged
+        XCTAssertEqual(provider.displayParticipants.map { $0.jamiId }, participantsBefore)
+        XCTAssertEqual(provider.overflowCount, overflowBefore)
+        XCTAssertTrue(provider.groupAvatarSnapshot === firstSnapshot)
+    }
+
+    // MARK: - Reactive Updates
+
+    func testSnapshotUpdates_OnNameChange() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                       profileName: profileName2)
+        setParticipants([admin, member], on: swarmInfo)
+        waitForMainScheduler()
+        let initialSnapshot = provider.groupAvatarSnapshot
+        XCTAssertNotNil(initialSnapshot)
+
+        let snapshotChanged = expectation(description: "snapshot updated after name change")
+        var cancellable: AnyCancellable?
+        cancellable = provider.$groupAvatarSnapshot
+            .dropFirst()
+            .sink { newSnapshot in
+                if newSnapshot !== initialSnapshot {
+                    snapshotChanged.fulfill()
+                    cancellable?.cancel()
+                }
+            }
+        // Act — drive through the production derivation chain
+        member.profileName.accept(profileName3)
+        // Assert
+        wait(for: [snapshotChanged], timeout: 1)
+    }
+
+    func testSnapshotUpdates_OnAvatarDataChange() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                       profileName: profileName2)
+        setParticipants([admin, member], on: swarmInfo)
+        waitForMainScheduler()
+        let initialSnapshot = provider.groupAvatarSnapshot
+        XCTAssertNotNil(initialSnapshot)
+
+        let snapshotChanged = expectation(description: "snapshot updated after avatar data change")
+        var cancellable: AnyCancellable?
+        cancellable = provider.$groupAvatarSnapshot
+            .dropFirst()
+            .sink { newSnapshot in
+                if newSnapshot !== initialSnapshot {
+                    snapshotChanged.fulfill()
+                    cancellable?.cancel()
+                }
+            }
+        // Act
+        member.avatarData.accept(createTestImageData())
+        // Assert
+        wait(for: [snapshotChanged], timeout: 1)
+    }
+
+    func testSnapshotUpdates_WhenParticipantJoins() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                       profileName: profileName2)
+        setParticipants([admin, member], on: swarmInfo)
+        waitForMainScheduler()
+        XCTAssertEqual(provider.displayParticipants.count, 2)
+        let initialSnapshot = provider.groupAvatarSnapshot
+        XCTAssertNotNil(initialSnapshot)
+        // Act — new member joins
+        let newMember = createParticipant(jamiId: jamiId3, role: .member, registeredName: "",
+                                          profileName: profileName3)
+        setParticipants([admin, member, newMember], on: swarmInfo)
+        waitForMainScheduler()
+        // Assert
+        XCTAssertEqual(provider.displayParticipants.count, 3)
+        XCTAssertFalse(provider.groupAvatarSnapshot === initialSnapshot)
+    }
+
+    func testSnapshotUpdates_WhenParticipantLeaves() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member1 = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                        profileName: profileName2)
+        let member2 = createParticipant(jamiId: jamiId3, role: .member, registeredName: "",
+                                        profileName: profileName3)
+        setParticipants([admin, member1, member2], on: swarmInfo)
+        waitForMainScheduler()
+        XCTAssertEqual(provider.displayParticipants.count, 3)
+        let initialSnapshot = provider.groupAvatarSnapshot
+        XCTAssertNotNil(initialSnapshot)
+        // Act — member leaves
+        setParticipants([admin, member1], on: swarmInfo)
+        waitForMainScheduler()
+        // Assert
+        XCTAssertEqual(provider.displayParticipants.count, 2)
+        XCTAssertFalse(provider.groupAvatarSnapshot === initialSnapshot)
+    }
+
+    func testSnapshotCreated_SingleParticipant() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        // Act
+        setParticipants([admin], on: swarmInfo)
+        waitForMainScheduler()
+        // Assert
+        XCTAssertEqual(provider.displayParticipants.count, 1)
+        XCTAssertNotNil(provider.groupAvatarSnapshot)
+        XCTAssertEqual(provider.overflowCount, 0)
+    }
+
+    func testSnapshotShowsAvatar_WhenDataExistsBeforeSubscription() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let admin = createParticipant(jamiId: jamiId1, role: .admin, registeredName: registeredName1,
+                                      profileName: profileName1)
+        let member = createParticipant(jamiId: jamiId2, role: .member, registeredName: registeredName2,
+                                       profileName: profileName2)
+        // Set avatar data BEFORE adding participants to the swarm
+        member.avatarData.accept(createTestImageData())
+        // Act
+        setParticipants([admin, member], on: swarmInfo)
+        // Assert — wait for avatar decode and snapshot re-render with decoded avatar
+        let snapshotWithAvatar = expectation(description: "snapshot rendered with decoded avatar")
+        var cancellable: AnyCancellable?
+        cancellable = provider.$groupAvatarSnapshot
+            .compactMap { $0 }
+            .sink { _ in
+                if member.provider.avatar != nil {
+                    snapshotWithAvatar.fulfill()
+                    cancellable?.cancel()
+                }
+            }
+        wait(for: [snapshotWithAvatar], timeout: 1)
+    }
+
+    // MARK: - Custom Avatar & Empty Group
+
+    func testHasCustomAvatar_SetWhenSwarmHasAvatarData() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        XCTAssertFalse(provider.hasCustomAvatar)
+        // Act
+        swarmInfo.avatarData.accept(createTestImageData())
+        waitForMainScheduler()
+        // Assert
+        XCTAssertTrue(provider.hasCustomAvatar)
+        // Act — remove custom avatar
+        swarmInfo.avatarData.accept(nil)
+        waitForMainScheduler()
+        // Assert
+        XCTAssertFalse(provider.hasCustomAvatar)
+    }
+
+    func testSnapshotCreated_WhenAllParticipantsBanned() {
+        // Arrange
+        let swarmInfo = TestableSwarmInfo(participants: [], containsSearchQuery: false, hasParticipantWithRegisteredName: false)
+        let provider = createGroupProvider(swarmInfo: swarmInfo)
+        let banned1 = createParticipant(jamiId: jamiId1, role: .banned, registeredName: registeredName1,
+                                        profileName: profileName1)
+        let banned2 = createParticipant(jamiId: jamiId2, role: .banned, registeredName: registeredName2,
+                                        profileName: profileName2)
+        // Act
+        setParticipants([banned1, banned2], on: swarmInfo)
+        waitForMainScheduler()
+        // Assert — all filtered out, empty group icon rendered
+        XCTAssertTrue(provider.displayParticipants.isEmpty)
+        XCTAssertEqual(provider.overflowCount, 0)
+        XCTAssertNotNil(provider.groupAvatarSnapshot)
+    }
+}
+
+extension AvatarProviderTests {
+    // MARK: - Expanded Avatar Lifecycle
+
+    private var sharpSourceSide: CGFloat { 800 }
+
+    private func createExpandableProvider(avatar: Observable<Data?>,
+                                          supportsExpansion: Bool = true) -> AvatarProvider {
+        AvatarProvider(
+            profileService: injectionBag.profileService,
+            size: .conversationInfo120,
+            avatar: avatar,
+            displayName: Observable.just(profileName1),
+            isGroup: false,
+            supportsExpansion: supportsExpansion)
+    }
+
+    private func waitForAvatar(on provider: AvatarProvider) {
+        let decoded = expectation(description: "avatar decoded")
+        provider.$avatar
+            .compactMap { $0 }
+            .first()
+            .sink { _ in decoded.fulfill() }
+            .store(in: &cancellables)
+        wait(for: [decoded], timeout: 2)
+    }
+
+    private func waitForExpandedAvatar(on provider: AvatarProvider) {
+        let decoded = expectation(description: "expanded avatar decoded")
+        provider.$expandedAvatar
+            .compactMap { $0 }
+            .first()
+            .sink { _ in decoded.fulfill() }
+            .store(in: &cancellables)
+        wait(for: [decoded], timeout: 2)
+    }
+
+    func testExpandedAvatarNotLoadedWhenExpansionUnsupported() {
+        // Arrange
+        let avatarData = PublishSubject<Data?>()
+        let provider = createExpandableProvider(
+            avatar: avatarData.asObservable(),
+            supportsExpansion: false
+        )
+        avatarData.onNext(createTestImageData(side: sharpSourceSide))
+        waitForAvatar(on: provider)
+        // Assert
+        XCTAssertFalse(provider.canExpand)
+        // Act
+        provider.loadExpandedAvatar(maxPixels: sharpSourceSide)
+        // Assert
+        XCTAssertNil(provider.expandedAvatar)
+    }
+
+    func testReleaseExpandedAvatarAllowsReload() {
+        // Arrange
+        let avatarData = PublishSubject<Data?>()
+        let provider = createExpandableProvider(avatar: avatarData.asObservable())
+        avatarData.onNext(createTestImageData(side: sharpSourceSide))
+        waitForAvatar(on: provider)
+        XCTAssertTrue(provider.canExpand)
+        let collapsedSide = provider.avatar?.size.width ?? 0
+        // Act
+        provider.loadExpandedAvatar(maxPixels: sharpSourceSide)
+        waitForExpandedAvatar(on: provider)
+        // Assert
+        XCTAssertGreaterThan(provider.expandedAvatar?.size.width ?? 0, collapsedSide)
+        // Act — screen removed
+        provider.releaseExpandedAvatar()
+        // Assert
+        XCTAssertNil(provider.expandedAvatar)
+        XCTAssertTrue(provider.canExpand)
+        // Act — screen presented again and expanded at the same size
+        provider.loadExpandedAvatar(maxPixels: sharpSourceSide)
+        waitForExpandedAvatar(on: provider)
+        // Assert
+        XCTAssertNotNil(provider.expandedAvatar)
+    }
+
+    func testExpandedAvatarClearedWhenAvatarDataChanges() {
+        // Arrange
+        let avatarData = PublishSubject<Data?>()
+        let provider = createExpandableProvider(avatar: avatarData.asObservable())
+        avatarData.onNext(createTestImageData(side: sharpSourceSide))
+        waitForAvatar(on: provider)
+        provider.loadExpandedAvatar(maxPixels: sharpSourceSide)
+        waitForExpandedAvatar(on: provider)
+        let firstAvatar = provider.avatar
+        let replaced = expectation(description: "avatar replaced")
+        provider.$avatar
+            .compactMap { $0 }
+            .filter { $0 !== firstAvatar }
+            .first()
+            .sink { _ in replaced.fulfill() }
+            .store(in: &cancellables)
+        // Act
+        avatarData.onNext(createTestImageData(side: sharpSourceSide - 100))
+        wait(for: [replaced], timeout: 2)
+        // Assert
+        XCTAssertNil(provider.expandedAvatar)
+        XCTAssertTrue(provider.canExpand)
+    }
+}

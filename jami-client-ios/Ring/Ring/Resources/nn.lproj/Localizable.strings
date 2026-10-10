@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "Kontoinnstillingar";
+"global.username" = "Brukarnamn";
+"global.recommended" = "Tilrådd";
+"global.password" = "Passord";
+"global.registerAUsername" = "Registrer brukarnamn";
+"global.enterPassword" = "Skriv inn passord";
+"global.enterUsername" = "Skriv inn brukarnamn";
+"global.cancel" = "Avbryt";
+"global.blockContact" = "Sperra kontakt";
+"global.removeAccount" = "Ta bort kontoen";
+"global.incomingCall" = "Innkomande samtale";
+"global.ok" = "OK, det er rett.";
+"global.close" = "Lukk";
+"global.share" = "Deling";
+"global.forward" = "Send vidare";
+"global.save" = "Ta vare på";
+"global.resend" = "Send om att";
+"global.preview" = "Førehandsvisning";
+"global.accept" = "Godta";
+"global.block" = "Blokker";
+"global.decline" = "Ikkje godta";
+"global.name" = "Namn";
+"global.copy" = "Kopier";
+"global.reply" = "Svar";
+"global.search" = "Søkjer...";
+"global.supportJami" = "Støtt Jami-prosjektet";
+"global.deleteMessage" = "Ta bort meldinga";
+"global.deleteFile" = "Slett fil frå eining";
+"global.editMessage" = "Redigera melding";
+"global.editing" = "Redigering";
+"global.create" = "Skapa";
+"global.edit" = "Redigera";
+"global.remove" = "Ta bort";
+"global.call" = "Ring";
+"global.video" = "Video";
+"global.time" = "Tid";
+"global.editPassword" = "Endra passord";
+"global.confirmPassword" = "Godkjenn passord";
+"global.confirm" = "Stadfest";
+"global.cameraDisabled" = "Tilgjenge til kameraet er avslått. Slå det på i \"einingsinnstillingar\" for å bruka denne funksjonen";
+"global.confirm" = "Stadfest";
+"global.connect" = "Kopla til";
+"global.leave" = "Gå bort";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "Namn";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "Beskriving";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Forkast";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "Dåleg QR-kode";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "Leiter etter kontakt...";
+"swarmcreation.addDescription" = "Legg til skildring";
+// Swarm
+"swarm.muteConversation" = "Stilna samtale";
+"swarm.leaveConversation" = "Forlat samtale";
+"swarm.removeConversation" = "Ta vekk samtal";
+"swarm.removeContact" = "Ta bort kontakt";
+"swarm.restartConversation" = "Start samtalen på nytt";
+"swarm.conversationEnded" = "Samtalen er avslutta";
+"swarm.chooseColor" = "Samtalefarge";
+"swarm.typeOfSwarm" = "Samtaletype";
+"swarm.identifier" = "Identifikator";
+"swarm.conversationId" = "Samtale ID";
+"swarm.settings" = "Innstillingar";
+"swarm.members" = "Medlemmar";
+"swarm.contactHeader" = "Kontakt";
+"swarm.showContactQRCode" = "Vis QR-kode for konkakten";
+"swarm.shareContactInfo" = "Del kontaktinformasjon";
+"swarm.accessibilityContactQRCode" = "Vis QR-kode for konkakten";
+"swarm.accessibilityContactQRCodeHint" = "Opnar ein skjerm med QR-koden til kontakten";
+"swarm.accessibilityContactShareHint" = "Opnar delingsval for kontaktinformasjon";
+"swarm.accessibilityColorPicker" = "Fargeveljar for samtale";
+"swarm.conversationHeader" = "Samtale";
+"swarm.shareContactMessage" = "Du kan leggja til denne kontakten, %1@, på den større Jami plattforma: https://jami.net";
+"swarm.oneToOne" = "Privat";
+"swarm.adminInvitesOnly" = "Privat gruppe (avgrensa innbydningar)";
+"swarm.invitesOnly" = "Privat gruppe";
+"swarm.publicChat" = "offentlege grupperingar";
+"swarm.others" = "Andre";
+"swarm.member" = "Medlem";
+"swarm.invited" = "Innbydde";
+"swarm.admin" = "Administrator";
+"swarm.blocked" = "Blokkerte";
+"swarm.unknown" = "Ukenne";
+"swarm.left" = "Forlét";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "Inviter medlemmer";
+"swarm.inviteSelectedMembers" = "Inviter valde kontaktar";
+"swarm.inviteMembersSelected" = "Vald";
+"swarm.inviteMembersNotSelected" = "Ikkje vald";
+"swarm.confirmLeaveConversation" = "Vil du slutta av denne samtala?";
+"swarm.Leave" = "Gå bort";
+"swarm.newGroup" = "Lag ei ny gruppe";
+"swarm.namePlaceholder" = "Gruppenamn";
+"swarm.explanationText" = "Medlemmar kan bli innbydde når som helst etter at gruppa har blitt skipa.";
+"swarm.customizeProfile" = "Tilpass gruppeprofilen";
+"swarm.changePicture" = "Endre gruppebilete";
+"swarm.customize" = "Tilpass gruppa";
+"swarm.selectContacts" = "Velg kontakt";
+
+// Contact Picker
+"contactPicker.calls" = "Samtalar";
+"contactPicker.contacts" = "Kontakt";
+
+// Smartlist
+"smartlist.yesterday" = "I går";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "Samtal";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "Ingen samtalar samsvarar med søket.";
+"smartlist.newContact" = "Ny kontakt";
+"smartlist.newGroup" = "Ny gruppe";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "Innbydingar motteke";
+"smartlist.noResults" = "Ingen resultat";
+"smartlist.noConversation" = "Ingen samtal";
+"smartlist.searchBarPlaceholder" = "Skriv inn namn …";
+"smartlist.searchBar" = "Søk etter";
+"smartlist.noNetworkConnectivity" = "Ingen nettverksanslutning";
+"smartlist.cellularAccess" = "Sørg for at mobilen har fått tilgjenge i innstillingane.";
+"smartlist.accountsTitle" = "Rekontering";
+"smartlist.addAccountButton" = "+ Legg til konto";
+"smartlist.noNumber" = "Velde kontakt har ikkje eit nummer";
+"smartlist.selectOneNumber" = "Velg ein av tallane";
+"smartlist.invitations" = "Invitasjonar";
+"smartlist.aboutJami" = "Om Jami";
+"smartlist.inviteFriends" = "By inn vener";
+"smartlist.disableDonation" = "Ikkje no";
+"smartlist.donationExplanation" = "Dersom du likar å bruka Jami og trur på saka vår, har du lyst til å donera?";
+"smartlist.inSynchronization" = "Synkroniserer …";
+
+// Conversation
+"conversation.addToContactsButton" = "Legg til i kontaktar";
+"conversation.sendInvitationButton" = "Send invitasjon";
+"conversation.addToContactsLabel" = "Legg til kontakt?";
+"conversation.notContactLabel" = "%@ er ikkje i kontaktlista";
+"conversation.messagePlaceholder" = "Skriv til";
+"conversation.imageSaved" = "Lagra";
+"conversation.errorSavingImage" = "Kunne ikkje lagre biletet";
+"conversation.errorSavingImageMessage" = "Det oppstod ein feil under lagring av biletet i biletbiblioteket.";
+"conversation.photoAccessRequiredMessage" = "Jami treng tilgang til biletbiblioteket ditt for å lagre bilete. Du kan slå dette på i Innstillingar.";
+"conversation.receivedRequest" = "%@ sende deg ein samtaleinvitasjon.";
+"conversation.incomingRequest" = "sende deg ein samtaleinvitasjon.";
+"conversation.requestMessage" = "Hei,\nvil du bli med i samtalen?";
+"conversation.sendRequest" = "Send dei ein invitasjon for å kunne snakke saman.";
+"conversation.sendRequestTitle" = "Send samtaleinvitasjon";
+"conversation.synchronizationTitle" = "Du har godteke samtaleinvitasjonen.";
+"conversation.syncingTitle" = "Synkroniserer samtale";
+"conversation.synchronizationMessage" = "Ventar på at %@ skal kople til for å synkronisere samtalen …";
+"conversation.inReplyTo" = "I svar på";
+"conversation.repliedTo" = "%@ svarte %@";
+"conversation.yourself" = "Du er det";
+"conversation.edited" = "Redigert";
+"conversation.deletedMessage" = "%@ sletta ei melding";
+"conversation.contactBlocked" = "Kontakt blokkert";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "%@ skriv";
+"conversation.typingIndicatorTwoUsers" = "%1@ og %2@ skriv";
+"conversation.typingIndicatorOtherUsers" = "%1@, %2@ og %3@ annan skriv";
+"conversation.typingIndicatorOthersUsers" = "%1@, %2@ og %3@ andre skriv";
+"conversation.lastMessageDeleted" = "(sletta melding)";
+
+// Invitations
+"invitations.noInvitations" = "Ingen invitasjonar";
+"invitations.accepted" = "Godkjent";
+"invitations.declined" = "Ikkje godteke";
+"invitations.blocked" = "Blokkerte";
+"invitations.list" = "Invitasjonar motteke";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Del fritt og privat med Jami";
+"welcome.text" = "Jami er ein fri og universell kommunikasjonsplattform som behåller privatlivet og frita til brukarane.";
+"welcome.haveAccount" = "Eg har allereie ein konto";
+"welcome.linkDevice" = "Import frå ein annan enhet";
+"welcome.linkBackup" = "Import frå backup";
+"welcome.createAccount" = "Skapa Jami-konto";
+"welcome.connectToJAMS" = "Kople til ein administrasjonstenar";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "Skip";
+"createProfile.profileCreated" = "Neste";
+"createProfile.title" = "Tilpass profilen din";
+"createProfile.enterNameLabel" = "Skriv inn eit visningsnamn";
+"createProfile.enterNamePlaceholder" = "Skriv inn namn";
+"createProfile.subtitle" = "Profilen din blir berre delt med kontaktane dine. Profilen kan endrast når som helst.";
+"createProfile.createProfilePicture" = "Lag profilbilete";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "Kom til Jami";
+"createAccount.lookingForUsernameAvailability" = "Sjekkar tilgjenget til brukarnamnet …";
+"createAccount.invalidUsername" = "Ugyldig brukarnamn. Skriv inn rett brukarnamn.";
+"createAccount.usernameAlreadyTaken" = "Nøvn som er tekne";
+"createAccount.usernameValid" = "Brukarnamnet er tilgjengeleg.";
+"createAccount.UsernameNotRegisteredTitle" = "Netverksfeil";
+"createAccount.UsernameNotRegisteredMessage" = "Konto vart oppretta men brukernavn vart ikkje registrert";
+"createAccount.timeoutTitle" = "Konto opprett";
+"createAccount.timeoutMessage" = "Registrering av brukarnamnet pågår. Vent litt …";
+"createAccount.sipConfigure" = "Konfigurer eksisterande SIP-konto";
+"createAccount.creatingAccount" = "Opprettar konto";
+"createAccount.nameExplanation" = "Du kan velja ein brukernavn for å hjelpa andre til å finne deg på Jami.";
+"createAccount.newAccount" = "Ny konto";
+"createAccount.encryptionEnabled" = "Passordvern er slått på";
+"createAccount.encrypt" = "Passordvern";
+"createAccount.customize" = "Tilpassa";
+"createAccount.encryptTitle" = "Passordvern kontoen";
+"createAccount.encryptExplanation" = "Ein Jami-konto blir oppretta og lagra lokalt på denne eininga, likt eit arkiv som inneheld nyklane til kontoen din. Tilgjenget til arkivet kan, heilt valfritt, bli verna med eit passord.";
+
+// Link To Account form
+"linkToAccount.importAccount" = "Importer konto";
+"linkToAccount.showQrCode" = "QR-kode";
+"linkToAccount.showPinCode" = "Autentiseringskode";
+"linkToAccount.actionRequired" = "Handling kravd.\nStadfest kontoen på kjeldeeininga.";
+"linkToAccount.allSet" = "Kontoen blei importert.";
+"linkToAccount.goToAccounts" = "Gå til importert konto";
+"linkToAccount.exportInstructions" = "Start eksporteringa på kjeldeeininga.";
+"linkToAccount.exportInstructionsPath" = "Vel Konto → Kontoinnstillingar → Kople til ny eining.";
+"linkToAccount.scanQrCode" = "Når du er klar, skann QR-koden.";
+"linkToAccount.enterProvidedCode" = "Når du er klar, skriv inn autentiseringskoden.";
+"linkToAccount.accountLockedWithPassword" = "Kontoen er passordverna. Skriv inn kontopassordet for å halde fram.";
+"linkToAccount.exit" = "Avslutt";
+"linkToAccount.shareMessage" = "Koden din er: %@";
+"linkToAccount.alertTile" = "Vil du stoppe tilkoplinga av kontoen?";
+"linkToAccount.alertMessage" = "Viss du stoppar, vert operasjonen for kontoimport avbroten.";
+
+// Import from Archive
+"importFromArchive.explanation" = "Importar Jami-kontoen frå lokal arkivfil.";
+"importFromArchive.passwordExplanation" = "Dersom kontoen er passordverna, fyll ut følgjande felt.";
+"importFromArchive.title" = "Importer frå arkiv";
+"importFromArchive.buttonTitle" = "Import";
+"importFromArchive.selectArchiveButton" = "Velg arkivfil";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "Logg inn";
+"linkToAccountManager.title" = "Konto på administrasjonstenar";
+"linkToAccountManager.accountManagerPlaceholder" = "URL for administrasjonstenaren";
+"linkToAccountManager.accountManagerLabel" = "Skriv inn URL-en for administrasjonstenaren";
+"linkToAccountManager.jamsExplanation" = "Skriv inn URL-en for administrasjonstenaren";
+"linkToAccountManager.enterCredentials" = "Skriv inn påloggingsinformasjon for administrasjonstenaren";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "Kontofeil";
+"alerts.accountCannotBeFoundMessage" = "Kan ikkje finna kontoen på Jami-nettverket. Forsikra deg om at han vart eksportert i Jami frå ei eksisterande eining, og at oppgitt påloggingsinformasjon er rett.";
+"alerts.accountAddedTitle" = "La til konto";
+"alerts.accountNoNetworkTitle" = "Netverksfeil";
+"alerts.accountNoNetworkMessage" = "Det oppstod ein tilkoplingsfeil under tillegging av Jami-kontoen til det distribuerte nettverket. Prøv igjen. Viss problemet held fram, kontakt systemadministratoren din.";
+"alerts.accountDefaultErrorTitle" = "Kontofeil";
+"alerts.accountDefaultErrorMessage" = "Det oppstod ein feil under oppretting av kontoen.";
+"alerts.profileTakePhoto" = "Ta eit bilete";
+"alerts.profileUploadPhoto" = "Last opp bilete";
+"alerts.accountLinkedTitle" = "Liningkonto";
+"alerts.dbFailedTitle" = "Det oppstod ein feil ved oppstart av Jami";
+"alerts.dbFailedMessage" = "Vennligst lukk søknaden og prøv å opna den igjen";
+"alerts.confirmBlockContact" = "Vil du blokkere denne kontakten? Samtaleloggen med denne kontakten blir òg sletta for godt.";
+"alerts.confirmDeleteConversation" = "Vil du fjerne denne samtalen for godt?";
+"alerts.confirmLeaveConversation" = "Vil du slutta av denne samtala?";
+"alerts.confirmRemoveOneToOneConversation" = "Vil du fjerne denne samtalen? Den eksisterande loggen blir sletta. Ein ny samtale kan startast viss du ikkje har andre samtalar med denne kontakten.";
+"alerts.confimRemoveContact" = "Vil du fjerne denne kontakten? Den eksisterande loggen blir sletta.";
+"alerts.confirmDeleteConversationFromContact" = "Ynskjer du å sletta samtala med denne kontakten?";
+"alerts.confirmDeleteConversationTitle" = "Slett samtale";
+"alerts.noMediaPermissionsTitle" = "Medieavgjevd tillating";
+"alerts.noLibraryPermissionsTitle" = "Tilgang til fotoboska er ikkje tilgjeve";
+"alerts.noLocationPermissionsTitle" = "Tilgang til ein plass som ikkje er gjeven";
+"alerts.errorWrongCredentials" = "Det oppstod ein feil under tilkopling til administrasjonstenaren. Prøv igjen. Viss problemet held fram, kontakt systemadministratoren din.";
+"alerts.recordVideoMessage" = "Ta opp videomelding";
+"alerts.recordAudioMessage" = "Ta opp lydmelding";
+"alerts.uploadFile" = "Senda fil";
+"alerts.uploadPhoto" = "Open gallery";
+"alerts.sendPhoto" = "Send bilete";
+"alerts.locationServiceIsDisabled" = "Slå på «Stadtenester» for å la «Jami» finne plasseringa til eininga.";
+"alerts.locationSharing" = "De deler plasseringa mi";
+"alerts.alreadylocationSharing" = "Aller deling av plassering med denne brukaren";
+"alerts.locationSharingDurationTitle" = "Kor lenge skal det vera å dele lokaliseringen?";
+"alerts.locationSharingDuration10min" = "10 min";
+"alerts.locationSharingDuration1hour" = "1 time";
+"alerts.mapInformation" = "Kartinformasjon";
+"alerts.openStreetMapCopyright" = "© Medarbeidarane i OpenStreetMap";
+"alerts.openStreetMapCopyrightMoreInfo" = "Lær meir";
+
+// Actions
+"actions.deleteAction" = "Ta bort";
+"actions.backAction" = "Attende";
+"actions.doneAction" = "Gjort";
+"actions.goToSettings" = "Gå til Innstillingar";
+"actions.stopLocationSharing" = "Slutta å dela";
+
+// Calls
+"calls.ringing" = "Ringing ringing...";
+"calls.connecting" = "Kjøp saman...";
+"calls.callFinished" = "Ringing ferdig";
+"calls.currentCallWith" = "Ring med ";
+"calls.maximize" = "Maksimalgjøre";
+"calls.minimize" = "Minimer det";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "Set moderator";
+"calls.removeModerator" = "Unset moderator";
+"calls.muteAudio" = "Stum mikrofon";
+"calls.unmuteAudio" = "Opphev demping av mikrofon";
+"calls.raiseHand" = "Rekk opp handa";
+"calls.lowerHand" = "Nedre hand";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "Recording";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "Ein samtale er i gang. Vil du bli med i samtalen? Du kan òg bli med seinare frå samtalen.";
+"calls.activeCallInConversation" = "Ein samtale er på gang. Vil du bli med?";
+"calls.acceptWithAudio" = "Godta med ljod";
+"calls.acceptWithVideo" = "Godta med video";
+
+// Account Page
+"accountPage.devicesListHeader" = "Enhet";
+"accountPage.settingsHeader" = "Innstillingar";
+"accountPage.notificationsHeader" = "Meddelegheiningar";
+"accountPage.blockedContacts" = "Bloka kontakt";
+"accountPage.unblockContact" = "Avbløka";
+"accountPage.proxyAddressAlert" = "Gjev ut proxy-adress";
+"accountPage.noProxyExplanationLabel" = "Kan ikkje ta imot varsel når proxyen er slått av.";
+"accountPage.proxyPaceholder" = "Adressen til representant";
+"accountPage.useProxyList" = "Bruk proxyliste";
+"accountPage.proxyListURL" = "URL for proxyliste";
+"accountPage.proxyExplanation" = "Varsel blir rua gjennom ein proxy. Du kan bruke standardproxyen, skrive inn ei eiga proxyadresse, eller oppgi ei URL med ei liste over proxyar.";
+"accountPage.proxyHeader" = "Styrkemann";
+"accountPage.currentProxy" = "Noverande proxy";
+"accountPage.enableNotifications" = "Legg til bruk meldingar";
+"accountPage.proxyDisabledAlertTitle" = "Proxy server funksjonshemma";
+"accountPage.proxyDisabledAlertBody" = "For å motta meldingar, bed du aktivera proxy";
+"accountPage.removeDeviceTitle" = "Fjern eining";
+"accountPage.revokeDeviceMessage" = "Vil du fjerne denne eininga? Denne handlinga kan ikkje angrast.";
+"accountPage.revokeDeviceButton" = "Avkalling";
+"accountPage.revokeDevicePlaceholder" = "Skriv inn kontopassord";
+"accountPage.deviceRevoked" = "Avkalling av utstyret fullført";
+"accountPage.deviceRevocationProgress" = "Fjernar …";
+"accountPage.deviceRevocationSuccess" = "Eininga er fjerna";
+"accountPage.deviceRevocationTryAgain" = "Prøv igjen";
+"accountPage.deviceRevocationWrongPassword" = "Feil passord";
+"accountPage.deviceRevocationUnknownDevice" = "Ukjende enhet";
+"accountPage.deviceRevocationError" = "Feil med å avkalla tilsett";
+"accountPage.linkDeviceTitle" = "Legg ein annan enhet";
+"accountPage.other" = "Andre";
+"accountPage.removeAccountMessage" = "Dersom kontoen ikkje har ein backup eller lagt til ei anna eining, blir konten og det registrerte brukernamnet UGJENKALLELEG TAPT.";
+"accountPage.inviteFriends" = "By inn vener";
+"accountPage.contactMeOnJamiTitle" = "Kontakt meg på Jami!";
+"accountPage.contactMeOnJamiContant" = "Kontakt meg med «%s» på den distribuerte kommunikasjonsplattforma Jami: https://jami.net";
+"accountPage.passwordPlaceholder" = "Skriv inn kontopassord";
+"accountPage.usernamePlaceholder" = "Skriv inn ynskinga";
+"accountPage.registerNameErrorMessage" = "Brukarnamnet er ikkje tilgjengeleg.";
+"accountPage.usernameRegistering" = "Registrering";
+"accountPage.usernameRegisterAction" = "Registrer";
+"accountPage.usernameRegistrationFailedTitle" = "Registreringa mislukkast";
+"accountPage.usernameRegistrationFailed" = "Kontroller kontopassordet.";
+"accountPage.createPassword" = "Set passord";
+"accountPage.changePassword" = "Endra passord";
+"accountPage.currentPasswordPlaceholder" = "Skriv inn gjeldende passord";
+"accountPage.newPasswordPlaceholder" = "Skriv inn nytt passord";
+"accountPage.newPasswordConfirmPlaceholder" = "Bekreft nytt passord";
+"accountPage.changePasswordError" = "Feil passord";
+"accountPage.enableBoothMode" = "Aktive brukstilstand";
+"accountPage.disableBoothMode" = "Deaktivera standstill";
+"accountPage.disableBoothModeExplanation" = "Oppgi kontopassordet";
+"accountPage.boothModeExplanation" = "I stand-modus blir samtalshistoria ikkje lagd og funksjonaliteten til jami er begrenset av å gjera utgående samtal. Når du aktiverer stand-modus blir alle samtalene dine fjerna.";
+"accountPage.noBoothMode" = "For å slå på kioskmodus må du passordverne kontoen først.";
+"accountPage.boothModeAlertMessage" = "Etter at du har slått på kioskmodus, blir alle samtalane fjerna.";
+"accountPage.peerDiscovery" = "Legg til lag for lokal peer-oppdaging";
+"accountPage.peerDiscoveryExplanation" = "Knyt deg til andre DHT-knodar som annonserer på nettverket vårt";
+"accountPage.autoRegistration" = "Autoregistrering etter utløpet";
+"accountPage.connectivityHeader" = "Konektivitet";
+"accountPage.turnEnabled" = "Legg til TURN";
+"accountPage.turnServer" = "Adress til TURN";
+"accountPage.turnUsername" = "Brukarnamn TURN";
+"accountPage.turnPassword" = "Passord til TURN";
+"accountPage.turnRealm" = "DER er det ikkje";
+"accountPage.upnpEnabled" = "Bruk UPnP";
+"accountPage.stunEnabled" = "Bruk STUN";
+"accountPage.stunServer" = "Adressen til STUN";
+"accountPage.publicAddressHeader" = "Openbar adresse";
+"accountPage.allowIPAutoRewrite" = "Tillat automatisk omskriving av IP";
+"accountPage.publishedSameAsLocal" = "Publisert som lokal";
+"accountPage.publishedAddress" = "Adress";
+"accountPage.publishedPort" = "Port";
+"accountPage.security" = "Tryggleik";
+"accountPage.enableSRTP" = "Legg til lag at SDES-nøkkelveksling";
+"accountPage.encryptNegotiation" = "Kryptering av forhandlingar (TLS)";
+"accountPage.registerNameExplanation" = "Registrer eit brukarnamn for å gjere det enklare for andre å finne og nå deg på Jami.";
+"accountPage.profileHeader" = "Profil";
+"accountPage.profileNameNotSelected" = "Namn ikkje vald";
+"accountPage.accountHeader" = "Konto";
+"accountPage.profileName" = "Profilnamn";
+"accountPage.profileNamePlaceholder" = "Skriv inn profilnamn";
+"accountPage.editProfile" = "Rediger profil";
+"accountPage.manageAccount" = "Ta styr på kontoen";
+"accountPage.encryptAccount" = "Passord";
+"accountPage.passwordExplanation" = "Kontoen din på Jami er berre registrert på denne eininga, likt eit arkiv som inneheld nyklane til kontoen din. Tilgjenge til dette arkivet kan ein verna med eit passord.";
+"accountPage.passwordsDoNotMatch" = "Passorda er ikkje like.";
+"accountPage.passwordCreated" = "Passord er sett";
+"accountPage.passwordUpdated" = "Oppdaterte passord";
+"accountPage.linkedDevices" = "Kopplande utstyr";
+"accountPage.unlink" = "Kople frå";
+"accountPage.generatingPin" = "Genererer PIN-kode …";
+"accountPage.passwordForPin" = "Kontoen er passordverna. Skriv inn passordet for å generere ein PIN-kode.";
+"accountPage.pinExplanationTitle" = "På ei anna eining";
+"accountPage.pinExplanationMessage" = "Installer og start Jami. Vel «Importer frå ei anna eining», og skann QR-koden. Alternativt kan du skriva inn PIN-koden manuelt.";
+"accountPage.pinError" = "Det oppstod ein feil under genereringa av PIN-koden.";
+"accountPage.notificationTitle" = "Meddelegheiningar";
+"accountPage.notificationError" = "Varsel for Jami er slått av. Slå det på i einingsinnstillingane for å bruke denne funksjonen.";
+"accountPage.callsFromUnknownContacts" = "Tillat anrop frå ukjende kontaktar.";
+"accountPage.accountSettingsExplanation" = "Desse innstillingane gjeld berre for denne kontoen.";
+"accountPage.appSettings" = "Appinnstillingar";
+"accountPage.appSettingsExplanation" = "Desse innstillingane gjeld for heile applikasjonen.";
+"accountPage.connectivityAndConfiguration" = "Tilkopling og konfigurasjonar";
+"accountPage.sipExpirationTime" = "Registreringstidspunktet (sekunder)";
+"accountPage.tlsVerifyServerCertificates" = "Verifisere TLS-serversertifikat";
+"accountPage.tlsVerifyClientCertificates" = "Verifiser TLS-sertifikat frå klientar";
+"accountPage.tlsRequireTlsCertificate" = "Krev eit sertifikat for innkomande TLS-tilkoplingar";
+"accountPage.tlsDisableSecureDlgCheck" = "Deaktivera trygg dialogkontroll for innkommende TLS-data";
+"accountPage.editSipExpirationTime" = "Utløpstid";
+"accountPage.selectSipExpirationTime" = "Set tid (i sekund) for utløp av registrering";
+"accountPage.invalidSipExpirationTime" = "Skriv inn ein verdi mellom 60 og 604800 sekund";
+"accountPage.invalidPort" = "Skriv inn ein verdi mellom 0 og 65535";
+"accountPage.invalidAddress" = "Skriv inn ei gyldig adresse";
+"accountPage.thisDevice" = "Denne einheten";
+"accountPage.otherDevices" = "Andre knytte enheter";
+"accountPage.accountIdentity" = "Kontoidentitet";
+"accountPage.bootstrap" = "Bootstrap";
+"accountPage.dhtConfiguration" = "OpenDHT-konfigurasjon";
+"accountPage.nameServer" = "Namnsserver";
+"accountPage.chats" = "Chattar";
+"accountPage.typingIndicator" = "Typegjennomføringsindikator";
+"accountPage.typingIndicatorExplanation" = "Angje når meldingar vert skrivne.";
+
+// Backup Account
+"backupAccount.explanation" = "Denne Jami-kontoen finst berre på denne eininga. Kontoen går tapt viss eininga blir mista eller applikasjonen blir avinstallert. Det er tilrådd å ta ein tryggleikskopi av denne kontoen.";
+"backupAccount.title" = "Baksekonto";
+"backupAccount.creating" = "Lagar tryggleikskopi";
+"backupAccount.archiveName" = "Vel eit namn på arkivet.";
+"backupAccount.archiveNamePlaceholder" = "Arkivnamn";
+"backupAccount.passwordRequest" = "Skriv inn kontopassordet.";
+"backupAccount.backupButton" = "Tryggleikskopi";
+"backupAccount.documentPickerButton" = "Opne plasseringa for tryggleikskopien";
+"backupAccount.exportSuccess" = "Tryggleikskopi oppretta";
+"backupAccount.errorWrongLocation" = "Den valde filstien er ugyldig. Vel ei anna plassering.";
+"backupAccount.errorAccessDenied" = "Tilgang til den valde plasseringa vart nekta.";
+"backupAccount.errorFailed" = "Det oppstod ein feil under eksporteringa av kontoen.";
+
+// Account
+"account.sipServer" = "Server";
+"account.port" = "Port";
+"account.proxyServer" = "Styrkemann";
+"account.createSipAccount" = "Set opp SIP-konto";
+"account.sipAccount" = "SIP-konto";
+"account.configure" = "Set opp";
+"account.advancedFeatures" = "Avanserte funksjonar";
+"account.serverLabel" = "Skriv inn adressen";
+"account.portLabel" = "Skriv inn portnummer";
+"account.accountStatus" = "Kontostatus";
+"account.enableAccount" = "Aktive konto";
+"account.statusOnline" = "På nett";
+"account.statusOffline" = "Offline";
+"account.statusConnecting" = "Kopplande";
+"account.statusUnknown" = "Ukenne";
+"account.statusConnectionerror" = "Fell på tilkobling";
+"account.needMigration" = "Kontoen krev migrering.";
+"account.me" = "Eg er berre ein";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "Ingen blokkade kontakt";
+
+// Link New Device
+"linkDevice.title" = "Link nytt utstyr";
+"linkDevice.networkError" = "Det oppstod ein nettverksfeil under eksporteringa av kontoen.";
+"linkDevice.errorWrongPassword" = "Det oppstod ein autentiseringsfeil under tilkopling av eininga. Sjekk legitimasjonen og prøv igjen.";
+"linkDevice.errorNetwork" = "Det oppstod ein nettverksfeil under tilkopling av kontoen. Stadfest sambandet ditt og prøv igjen.";
+"linkDevice.errorTimeout" = "Operasjonen fekk tidsavbrot. Prøv igjen.";
+"linkDevice.errorCode" = "Det oppstod ein feil under genereringa av koden. Prøv igjen.";
+"linkDevice.errorWrongData" = "Det oppstod ein feil under eksport av kontoen. Prøv igjen.";
+"linkDevice.initialInfo" = "Start ein ny konto på den nye eininga.";
+"linkDevice.infoAddAccount" = "Vel Legg til konto → Kople til frå ei anna eining.";
+"linkDevice.infoQRCode" = "Når du er klar, skann QR-koden.";
+"linkDevice.infoCode" = "Når du er klar, skriv inn koden og trykk Kople til.";
+"linkDevice.connecting" = "Koplar til den nye eininga di …";
+"linkDevice.authenticationInfo" = "Ny eining funnen på følgjande IP-adresse. Er det deg? Trykk Stadfest for å halde fram med eksporteringa av kontoen.";
+"linkDevice.newDeviceIP" = "Den nye eininga si IP-adresse: %1@";
+"linkDevice.code" = "kode";
+"linkDevice.wrongEntry" = "Ukjend ny einingsidentifikator. Følg instruksjonane ovanfor.";
+"linkDevice.exportInProgress" = "Eksporteringa av kontoen til den nye eininga er i gang. Stadfest importeringa på den nye eininga.";
+"linkDevice.completed" = "Kontoen vart importert på den nye eininga.";
+
+// Contact Page
+"contactPage.startAudioCall" = "Start lydsamtale";
+"contactPage.startVideoCall" = "Start video samtal";
+"contactPage.send" = "Send inn";
+"contactPage.leaveConversation" = "Lat samtalen vera";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "Eg startar...";
+"dataTransfer.readableStatusError" = "Feil";
+"dataTransfer.readableStatusAwaiting" = "Eg venta på...";
+"dataTransfer.readableStatusOngoing" = "Overføring";
+"dataTransfer.readableStatusCanceled" = "Avbrutt";
+"dataTransfer.sendingFailed" = "Det oppstod ein feil under sendinga.";
+"dataTransfer.readableStatusSuccess" = "Finneleg";
+"dataTransfer.recordInBackgroundWarning" = "Å ta opp video medan du brukar fleire appar samtidig kan gi videoar med lågare kvalitet. For best resultat bør du ta opp når du ikkje brukar fleire appar samtidig.";
+
+// Notifications
+"notifications.missedCall" = "Miska ring";
+"notifications.newFile" = "Ny arkiv";
+"notifications.locationSharingStarted" = "Innkomne plassering deling byrja";
+"notifications.locationSharingStopped" = "Inkommande plassering delt opp";
+"dataTransfer.readableStatusDecline" = "Ikkje godta";
+"dataTransfer.readableStatusAccept" = "Ta imot";
+"dataTransfer.infoMessage" = "Trykk for å starte opptak";
+"dataTransfer.sendMessage" = "Send inn";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "Innbyding motteke";
+"generatedMessage.swarmCreated" = "Samtale oppretta";
+"generatedMessage.invitationReceived" = "%@ vart invitert til samtalen.";
+"generatedMessage.invitationAccepted" = "%@ har blitt med i samtalen.";
+"generatedMessage.youJoined" = "Du blei med i samtalen.";
+"generatedMessage.contactBlocked" = "%@ vart blokkert frå samtalen.";
+"generatedMessage.contactUnblocked" = "%@ vart avblokkert frå samtalen.";
+"generatedMessage.outgoingCall" = "Utgående samtale";
+"generatedMessage.missedOutgoingCall" = "Miska utgående samtale";
+"generatedMessage.missedIncomingCall" = "Miska innkomne samtal";
+"generatedMessage.liveLocationSharing" = "Live lokasjon deling";
+"generatedMessage.contactLeftConversation" = "%@ har forlate samtalen.";
+"generatedMessage.nonSwarmInvitationReceived" = "Du sende ein invitasjon.";
+"generatedMessage.nonSwarmInvitationAccepted" = "Invitasjonen din vart godteken.";
+
+// General Settings
+"generalSettings.videoSettings" = "Videoinnstillingar";
+"generalSettings.videoAcceleration" = "Legg videoaksellasjon til";
+"generalSettings.fileTransfer" = "File overføring";
+"generalSettings.locationSharing" = "Støddsdeileg";
+"generalSettings.automaticAcceptIncomingFiles" = "Ta automatisk imot innkommende filer";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "(MB, 0 = ubegrensa)";
+"generalSettings.limitLocationSharingDuration" = "Begrens tidsla for deling av plasseringar";
+"generalSettings.locationSharingDuration" = "Varighet av posisjonshandel";
+"generalSettings.donationCampaign" = "Donasjonskampanje";
+"generalSettings.enableDonationCampaign" = "Aktiver donasjonskampanje";
+
+// Log View
+"logView.title" = "Diagnostik";
+"logView.description" = "Åpne innstillingar på diagnostisk logg";
+"logView.startLogging" = "Start logging";
+"logView.stopLogging" = "Sluta å logga";
+"logView.saveError" = "Det oppstod ein feil under lagringa av fila.";
+"logView.shareError" = "Det oppstod ein feil under deling av fila.";
+
+// Migrate Account
+"migrateAccount.title" = "Migrasjon til konto";
+"migrateAccount.migrateButton" = "Migrera konto";
+"migrateAccount.explanation" = "Kontomigrering er kravd.";
+"migrateAccount.passwordExplanation" = "Skriv inn kontopassordet for å halde fram med kontomigreringa.";
+"migrateAccount.error" = "Det oppstod ein feil under migreringa av kontoen. Prøv igjen eller slett kontoen.";
+"migrateAccount.migrating" = "Migrerer …";
+"migrateAccount.migrateAnother" = "Flytta til ein annan konto";
+
+// About Jami
+"aboutJami.declaration1" = "Jami, ein GNU-pakke, er programvare for universell og distribuert node-til-node-kommunikasjon som respekterer fridommen og personvernet til brukarane. Besøk";
+"aboutJami.declaration2" = "for å lære meir.";
+"aboutJami.noWarranty1" = "Dette programmet kjem utan nokon som helst garanti. Sjå";
+"aboutJami.noWarranty2" = "versjon 3 eller nyare for detaljar.";
+"aboutJami.contribute" = "Bidra til";
+"aboutJami.feedback" = "Tilbakemelding";
+"aboutJami.developers" = "Utviklarar";
+"aboutJami.media" = "Media";
+"aboutJami.communityManagement" = "Fellesskapsadministrasjon";
+"aboutJami.specialThanks" = "Særleg takk til";
+"aboutJami.info" = "Dette er ei liste over personar som har gjort ei betydeleg investering av tid, med nyttige resultat, i Jami. Slike bidragsytarar som ønskjer å bli lagde til lista bør kontakte oss.";
+"aboutJami.header" = "Me ynskjer å takka dei som har medverka saman med oss, som har arbeidd over mange år for å gjera programvara til kva ho er.";
+
+// Accessibility
+"accessibility.close" = "Nær";
+"accessibility.smartListSwitchAccounts" = "Byta konto";
+"accessibility.smartListConnectedAs" = "Den noverande kontoen er %@";
+"accessibility.smartListAddAccount" = "Legg til konto";
+"accessibility.aboutJamiTitle" = "Om Jami";
+"accessibility.welcomeToJamiTitle" = "Velkommen til Jami";
+"accessibility.createAccountVerifyUsernamePrompt" = "Skriv inn brukarnamn for å sjekke om det er ledig.";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "Profilbilde";
+"accessibility.profilePicturePickerHint" = "Dobbeltrykk for å ta eit bilete eller velje eit bilete frå biblioteket";
+"accessibility.swarmPicturePicker" = "Gruppebilete";
+"accessibility.accountSummaryQrCode" = "QR-kode";
+"accessibility.accountSummaryQrCodeHint" = "Dobbeltrykk for å sjå QR-koden til kontoen";
+"accessibility.accountSummaryEditProfileHint" = "Dobbeltrykk for å redigere profilen";
+"accessibility.accountSummaryEditSettingsButton" = "Innstillingar";
+"accessibility.conversationStartVoiceCall" = "Start lydsamtale med %@";
+"accessibility.conversationStartVideoCall" = "Start videosamtale med %@";
+"accessibility.conversationComposeMessage" = "Skriv ei melding";
+"accessibility.conversationShareMedia" = "Del media";
+"accessibility.conversationCameraHint" = "Dobbeltrykk for å opne kameraet";
+"accessibility.audioPlayerPlay" = "Spelar";
+"accessibility.audioPlayerPause" = "Pause";
+"accessibility.conversationRowUnreadCount" = "%@ ulesne meldingar.";
+"accessibility.conversationRowBlocked" = "Samtale blokkert";
+"accessibility.conversationRowSyncing" = "Synkronisering pågår";
+"accessibility.conversationRowLastMessage" = "Siste melding klokka %@";
+"accessibility.userPresenceOnline" = "På nett";
+"accessibility.userPresenceAvailable" = "Tilgjengeleg";
+"accessibility.pendingRequestsRowPlural" = "Invitasjonar mottekne: %@ ventande invitasjonar";
+"accessibility.pendingRequestsRowSingular" = "Invitasjon motteken: %@ ventande invitasjon";
+"accessibility.pendingRequestsRowHint" = "Dobbeltrykk for å sjå over og svare på invitasjonar du har motteke";
+"accessibility.pendingRequestsListBlockUser" = "Blokker avsendaren av invitasjonen";
+"accessibility.pendingRequestsListRejectInvitation" = "Ikkje godta innbydinga";
+"accessibility.pendingRequestsListAcceptInvitation" = "Godta invitasjon";
+"accessibility.messageBubbleDeleted" = "Meldinga vart sletta";
+"accessibility.messageBubbleEdited" = "Redigert";
+"accessibility.messageBubbleRead" = "Lese";
+"accessibility.messageBubbleUnread" = "Ikkje lese";
+"accessibility.textNotAvailable" = "Tom tekstmelding motteken %@. Denne vart kanskje ikkje sendt rett.";
+"accessibility.fileTransferNoName" = "Fil motteken %@, namn ikkje tilgjengeleg";
+"accessibility.inReply" = "Som svar på melding";
+"accessibility.text.receivedOn" = "%1@, melding motteken %2@";
+"accessibility.text.sentOn" = "%1@, melding sendt %2@";
+"accessibility.fileTransfer.receivedOn" = "Fil: %1@ , motteken %2@";
+"accessibility.fileTransfer.sentOn" = "Fil: %1@, sendt %2@";
+"accessibility.call.lasted" = "Varte %@";
+"accessibility.calls.default.toggleAudio" = "Døyva mikrofon";
+"accessibility.calls.default.toggleVideo" = "Start kamera";
+"accessibility.calls.default.pauseCall" = "Pause ring";
+"accessibility.calls.default.endCall" = "Avslutt samtale";
+"accessibility.calls.default.addParticipant" = "Legg til deltakar";
+"accessibility.calls.default.switchCamera" = "Byta kamera";
+"accessibility.calls.default.toggleSpeaker" = "Skru på høgtalar";
+"accessibility.calls.default.openConversation" = "Åpen samtale";
+"accessibility.calls.default.showDialpad" = "Vis nummertastatur";
+"accessibility.calls.default.raiseHand" = "Rekk opp handa";
+
+"accessibility.calls.alter.toggleAudio" = "Opphev demping av mikrofon";
+"accessibility.calls.alter.toggleVideo" = "Stopp kamera";
+"accessibility.calls.alter.pauseCall" = "Fortsett samtala";
+"accessibility.calls.alter.endCall" = "Avslutt samtale";
+"accessibility.calls.alter.addParticipant" = "Legg til deltakar";
+"accessibility.calls.alter.switchCamera" = "Byta kamera";
+"accessibility.calls.alter.toggleSpeaker" = "Skri av høgtalar";
+"accessibility.calls.alter.openConversation" = "Åpen samtale";
+"accessibility.calls.alter.showDialpad" = "Vis nummertastatur";
+"accessibility.calls.alter.raiseHand" = "Nedre hand";
+"accessibility.conference.minimize" = "Minimer det";
+"accessibility.conference.maximize" = "Maksimalgjøre";
+"accessibility.conference.setModerator" = "Set moderator";
+"accessibility.conference.unsetModerator" = "Unset moderator";
+"accessibility.conference.muteAudio" = "Døyv lyd";
+"accessibility.conference.unmuteAudio" = "Skru på lyd";
+"accessibility.conference.endCall" = "Avslutt samtale";
+"accessibility.conference.lowerHand" = "Nedre hand";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "Hande løypt";
+"accessibility.conference.moderator" = "Moderatør";
+"accessibility.conference.recording" = "Recording";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "QR-kode for token";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "Sterk rosa";
+"swarmColors.purple" = "Purpur";
+"swarmColors.violet" = "Fiolett";
+"swarmColors.indigoBlue" = "Indigoblå";
+"swarmColors.skyBlue" = "Himmelblå";
+"swarmColors.cyan" = "Cyan";
+"swarmColors.teal" = "Blågrøn";
+"swarmColors.green" = "Grøn";
+"swarmColors.limeGreen" = "Limegrøn";
+"swarmColors.mediumGray" = "Middels grå";
+"swarmColors.yellowGreen" = "Gulgrøn";
+"swarmColors.amber" = "Ravgul";
+"swarmColors.brightOrange" = "Klar oransje";
+"swarmColors.brown" = "Brun";
+"swarmColors.steelBlue" = "Ståblå";
+
+// Share extension
+"shareExtension.noAccount.title" = "Fann ikkje kontoen";
+"shareExtension.noAccount.description" = "For å halde fram, opprett ein konto i hovudapplikasjonen.";
+"shareExtension.unsupportedType.title" = "Innhald som ikkje er støtta";
+"shareExtension.unsupportedType.description" = "Deling av det valde innhaldet er for tida ikkje støtta.";
+"shareExtension.sending" = "Sender …";
+"shareExtension.noSearchResults" = "Ingen samtalar samsvarar med søket ditt";
+"shareExtension.tryDifferentFilter" = "Prøv eit anna filter";
+"shareExtension.sendToConversation" = "Send til %d samtale";
+"shareExtension.sendToConversationsPlural" = "Send til %d samtalar";
+"shareExtension.selectAccountTitle" = "Vel konto";
+"shareExtension.searchConversations" = "Søk i samtalar";
+"shareExtension.accessibilitySelectConversation" = "Dobbeltrykk for å velje denne samtalen";
+"shareExtension.accessibilitySelectedAccount" = "Vald konto: %@. Dobbeltrykk for å byte konto.";
+"shareExtension.accessibilitySendButton" = "Dobbeltrykk for å sende til valde samtalar";
+"shareExtension.accessibilitySelectAccount" = "Dobbeltrykk for å velje denne kontoen";
+
+// Peer Services
+"peerServices.title" = "Delte tenester";
+"peerServices.refresh" = "Oppdater tenester";
+"peerServices.empty" = "Ingen delte tenester tilgjengeleg";
+"peerServices.errorOffline" = "Kontakten er fråkopla";
+"peerServices.errorUnreachable" = "Kontakten er ikkje tilgjengeleg";
+"peerServices.errorTimeout" = "Tidsavbrot for førespurnaden";
+"peerServices.errorUnknown" = "Klarte ikkje å henta tenestene";
+"peerServices.done" = "Gjort";
+"peerServices.notSupported" = "Ikkje støtta";
+"peerServices.open" = "Åpen";
+
+// Collaborative documents
+"collab.documents" = "Dokumentar";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "Skapa";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "Link";
+"collab.linkHint" = "Adress";
+"collab.linkAdd" = "Legg til";
+"collab.linkRemove" = "Ta bort";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = "Feit";
+"collab.italic" = "Kursiv";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "Gjennomstreking";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "Centrum";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "Undo";
+"collab.redo" = "Redo";
+"collab.remove" = "Ta bort";
+"collab.open" = "Åpen";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "Ta bort";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";

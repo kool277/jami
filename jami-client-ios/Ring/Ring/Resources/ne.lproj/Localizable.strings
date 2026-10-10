@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "खाता सेटिंग्स";
+"global.username" = "प्रयोगकर्ता नाम";
+"global.recommended" = "सिफारिस गरिएको";
+"global.password" = "पासवर्ड";
+"global.registerAUsername" = "प्रयोगकर्ता नाम दर्ता गर्नुहोस्";
+"global.enterPassword" = "पासवर्ड प्रविष्ट गर्नुहोस्";
+"global.enterUsername" = "Enter username";
+"global.cancel" = "रद्द गर्नुहोस्";
+"global.blockContact" = "सम्पर्कको अवरोध";
+"global.removeAccount" = "खाता हटाउनु";
+"global.incomingCall" = "आगमन कल";
+"global.ok" = "ठीक छ";
+"global.close" = "नजिक";
+"global.share" = "साझेदारी";
+"global.forward" = "अगाडि";
+"global.save" = "बचत गर्नुहोस्";
+"global.resend" = "पुनः पठाउनु";
+"global.preview" = "पूर्वावलोकन";
+"global.accept" = "स्वीकार गर्नुहोस्";
+"global.block" = "ब्लक";
+"global.decline" = "घट्दो";
+"global.name" = "नाम";
+"global.copy" = "प्रतिलिपि";
+"global.reply" = "उत्तर";
+"global.search" = "खोज्दै...";
+"global.supportJami" = "Support Jami project";
+"global.deleteMessage" = "सन्देश हटाउने";
+"global.deleteFile" = "Delete file from device";
+"global.editMessage" = "सन्देश सम्पादन गर्नुहोस्";
+"global.editing" = "Editing";
+"global.create" = "सिर्जना गर्नुहोस्";
+"global.edit" = "सम्पादन";
+"global.remove" = "हटाउनु";
+"global.call" = "फोन गर्नुस्";
+"global.video" = "भिडियो";
+"global.time" = "Time";
+"global.editPassword" = "Edit password";
+"global.confirmPassword" = "पासवर्ड पुष्टि गर्नुहोस्";
+"global.confirm" = "पुष्टि गर्नुहोस्";
+"global.cameraDisabled" = "Camera access is disabled. Enable it in device settings in order to use this feature.";
+"global.confirm" = "पुष्टि गर्नुहोस्";
+"global.connect" = "जोड्नुहोस्";
+"global.leave" = "छोड्नु";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "नाम";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "विवरण";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Discard";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "खराब QR कोड";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "Search for contact…";
+"swarmcreation.addDescription" = "Add description";
+// Swarm
+"swarm.muteConversation" = "मौन कुराकानी";
+"swarm.leaveConversation" = "कुराकानी छोड्नुहोस्";
+"swarm.removeConversation" = "वार्तालाप हटाउनुहोस्";
+"swarm.removeContact" = "सम्पर्क हटाउनु";
+"swarm.restartConversation" = "Restart conversation";
+"swarm.conversationEnded" = "Conversation ended";
+"swarm.chooseColor" = "वार्तालापको रंग";
+"swarm.typeOfSwarm" = "Conversation type";
+"swarm.identifier" = "पहिचानकर्ता";
+"swarm.conversationId" = "Conversation ID";
+"swarm.settings" = "सेटिंग्स";
+"swarm.members" = "सदस्यहरू";
+"swarm.contactHeader" = "Contact";
+"swarm.showContactQRCode" = "Show contact QR code";
+"swarm.shareContactInfo" = "Share contact information";
+"swarm.accessibilityContactQRCode" = "Show contact QR code";
+"swarm.accessibilityContactQRCodeHint" = "Opens a screen with contact's QR code";
+"swarm.accessibilityContactShareHint" = "Opens sharing options for contact information";
+"swarm.accessibilityColorPicker" = "Conversation color picker";
+"swarm.conversationHeader" = "वार्तालाप";
+"swarm.shareContactMessage" = "You can add this contact, %1@, on the Jami distributed communication platform: https://jami.net";
+"swarm.oneToOne" = "निजी";
+"swarm.adminInvitesOnly" = "निजी समूह (प्रतिबन्धित निमन्त्रणा)";
+"swarm.invitesOnly" = "निजी समूह";
+"swarm.publicChat" = "सार्वजनिक समूह";
+"swarm.others" = "अन्य";
+"swarm.member" = "सदस्य";
+"swarm.invited" = "आमन्त्रित";
+"swarm.admin" = "प्रशासक";
+"swarm.blocked" = "Blocked";
+"swarm.unknown" = "अज्ञात";
+"swarm.left" = "Left";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "Invite members";
+"swarm.inviteSelectedMembers" = "Invite selected contacts";
+"swarm.inviteMembersSelected" = "Selected";
+"swarm.inviteMembersNotSelected" = "Not selected";
+"swarm.confirmLeaveConversation" = "Do you want to leave this conversation?";
+"swarm.Leave" = "छोड्नु";
+"swarm.newGroup" = "Create new group";
+"swarm.namePlaceholder" = "Group name";
+"swarm.explanationText" = "Members can be invited at any time after the group has been created.";
+"swarm.customizeProfile" = "Customize group profile";
+"swarm.changePicture" = "Change group picture";
+"swarm.customize" = "Customize group";
+"swarm.selectContacts" = "सम्पर्कहरू चयन गर्नुहोस्";
+
+// Contact Picker
+"contactPicker.calls" = "फोन";
+"contactPicker.contacts" = "सम्पर्कहरू";
+
+// Smartlist
+"smartlist.yesterday" = "हिजो";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "वार्तालाप";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "No conversations match the search.";
+"smartlist.newContact" = "New contact";
+"smartlist.newGroup" = "New group";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "Invitations received";
+"smartlist.noResults" = "कुनै परिणामहरू";
+"smartlist.noConversation" = "कुनै कुराकानी छैन";
+"smartlist.searchBarPlaceholder" = "Enter name…";
+"smartlist.searchBar" = "खोज";
+"smartlist.noNetworkConnectivity" = "नेटवर्क जडान छैन";
+"smartlist.cellularAccess" = "Ensure cellular access is granted in the settings.";
+"smartlist.accountsTitle" = "लेखा";
+"smartlist.addAccountButton" = "+ Add account";
+"smartlist.noNumber" = "चयनित सम्पर्कमा कुनै नम्बर छैन";
+"smartlist.selectOneNumber" = "एउटा नम्बर चयन गर्नुहोस्";
+"smartlist.invitations" = "निमन्त्रणाहरू";
+"smartlist.aboutJami" = "जमीको बारेमा";
+"smartlist.inviteFriends" = "Invite friends";
+"smartlist.disableDonation" = "अहिले होइन";
+"smartlist.donationExplanation" = "If you enjoy using Jami and believe in our mission, do you want to make a donation?";
+"smartlist.inSynchronization" = "Syncing…";
+
+// Conversation
+"conversation.addToContactsButton" = "Add to Contacts";
+"conversation.sendInvitationButton" = "Send Invitation";
+"conversation.addToContactsLabel" = "सम्पर्कमा थप्न?";
+"conversation.notContactLabel" = "%@ is not in the contact list";
+"conversation.messagePlaceholder" = "Write to";
+"conversation.imageSaved" = "Saved";
+"conversation.errorSavingImage" = "Could not save image";
+"conversation.errorSavingImageMessage" = "An error occurred while saving the image to the photo library.";
+"conversation.photoAccessRequiredMessage" = "Jami needs access to your photo library to save images. You can enable this in Settings.";
+"conversation.receivedRequest" = "%@ sent you a conversation invitation.";
+"conversation.incomingRequest" = "sent you a conversation invitation.";
+"conversation.requestMessage" = "Hello,\nDo you want to join the conversation?";
+"conversation.sendRequest" = "Send them an invitation to be able converse.";
+"conversation.sendRequestTitle" = "Send conversation invitation";
+"conversation.synchronizationTitle" = "You have accepted the conversation invitation.";
+"conversation.syncingTitle" = "Syncing conversation";
+"conversation.synchronizationMessage" = "Waiting for %@ to connect to synchronize the conversation…";
+"conversation.inReplyTo" = "जवाफमा";
+"conversation.repliedTo" = "%@ replied to %@";
+"conversation.yourself" = "तिमी";
+"conversation.edited" = "सम्पादन";
+"conversation.deletedMessage" = "%@ deleted a message";
+"conversation.contactBlocked" = "Contact blocked";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "%@ is typing";
+"conversation.typingIndicatorTwoUsers" = "%1@ and %2@ are typing";
+"conversation.typingIndicatorOtherUsers" = "%1@, %2@ and %3@ other are typing";
+"conversation.typingIndicatorOthersUsers" = "%1@, %2@ and %3@ others are typing";
+"conversation.lastMessageDeleted" = "(deleted message)";
+
+// Invitations
+"invitations.noInvitations" = "निमन्त्रणा छैन";
+"invitations.accepted" = "स्वीकार गरियो";
+"invitations.declined" = "Declined";
+"invitations.blocked" = "Blocked";
+"invitations.list" = "Invitations received";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Share, freely and privately with Jami";
+"welcome.text" = "जामी एक स्वतन्त्र र सार्वभौमिक संचार प्लेटफर्म हो जसले प्रयोगकर्ताहरूको गोपनीयता र स्वतन्त्रतालाई सुरक्षित गर्दछ";
+"welcome.haveAccount" = "मेरो खाता छ";
+"welcome.linkDevice" = "अर्को उपकरणबाट आयात";
+"welcome.linkBackup" = "अभिलेख प्रतिस्थापनबाट आयात";
+"welcome.createAccount" = "Jami खाता सिर्जना गर्नुहोस्";
+"welcome.connectToJAMS" = "Connect to a management server";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "स्किप";
+"createProfile.profileCreated" = "अर्को";
+"createProfile.title" = "Personalize your profile";
+"createProfile.enterNameLabel" = "प्रदर्शन नाम प्रविष्ट गर्नुहोस्";
+"createProfile.enterNamePlaceholder" = "नाम प्रविष्ट गर्नुहोस्";
+"createProfile.subtitle" = "Your profile is only shared with your contacts. The profile can be changed at any time.";
+"createProfile.createProfilePicture" = "Create profile picture";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "जामीमा सामेल हुनुहोस्";
+"createAccount.lookingForUsernameAvailability" = "Checking username availability…";
+"createAccount.invalidUsername" = "Invalid username. Please enter the correct username.";
+"createAccount.usernameAlreadyTaken" = "प्रयोगकर्ता नाम पहिले नै लिइएको";
+"createAccount.usernameValid" = "The username is available.";
+"createAccount.UsernameNotRegisteredTitle" = "नेटवर्क त्रुटि";
+"createAccount.UsernameNotRegisteredMessage" = "खाता सिर्जना गरिएको थियो तर प्रयोगकर्ता नाम दर्ता गरिएको थिएन";
+"createAccount.timeoutTitle" = "खाता सिर्जना";
+"createAccount.timeoutMessage" = "Username registration is in progress. Please wait…";
+"createAccount.sipConfigure" = "Configure existing SIP account";
+"createAccount.creatingAccount" = "Creating account";
+"createAccount.nameExplanation" = "तपाईं आफ्नो प्रयोगकर्ता नाम चयन गर्न सक्नुहुन्छ ताकि अन्य व्यक्तिहरूले तपाईंलाई ज्यामीमा सजिलै भेट्न र पुग्न मद्दत गर्न सक्दछन्।";
+"createAccount.newAccount" = "New account";
+"createAccount.encryptionEnabled" = "Password protection enabled";
+"createAccount.encrypt" = "Password protect";
+"createAccount.customize" = "अनुकूलन";
+"createAccount.encryptTitle" = "Password protect account";
+"createAccount.encryptExplanation" = "A Jami account is created and stored locally only on this device as an archive containing its account keys. Access to the archive can optionally be protected with a password.";
+
+// Link To Account form
+"linkToAccount.importAccount" = "Import account";
+"linkToAccount.showQrCode" = "QR कोड";
+"linkToAccount.showPinCode" = "Authentication code";
+"linkToAccount.actionRequired" = "Action required.\nPlease confirm account on the source device.";
+"linkToAccount.allSet" = "The account was imported successfully.";
+"linkToAccount.goToAccounts" = "Go to imported account";
+"linkToAccount.exportInstructions" = "On the source device, initiate the exportation.";
+"linkToAccount.exportInstructionsPath" = "Select Account → Account Settings → Link new device.";
+"linkToAccount.scanQrCode" = "When ready, scan the QR code.";
+"linkToAccount.enterProvidedCode" = "When ready, enter the authentication code.";
+"linkToAccount.accountLockedWithPassword" = "The account is password protected. To continue, enter the account password.";
+"linkToAccount.exit" = "Exit";
+"linkToAccount.shareMessage" = "Your code is: %@";
+"linkToAccount.alertTile" = "Do you want to stop linking the account?";
+"linkToAccount.alertMessage" = "Stopping will cancel the import account operation.";
+
+// Import from Archive
+"importFromArchive.explanation" = "स्थानीय अभिलेख फाइलबाट जामी खाता आयात गर्नुहोस्।";
+"importFromArchive.passwordExplanation" = "If the account is password protected, please fill the following field.";
+"importFromArchive.title" = "Import from archive";
+"importFromArchive.buttonTitle" = "आयात";
+"importFromArchive.selectArchiveButton" = "अभिलेख फाइल चयन गर्नुहोस्";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "Sign in";
+"linkToAccountManager.title" = "Management server account";
+"linkToAccountManager.accountManagerPlaceholder" = "Management server URL";
+"linkToAccountManager.accountManagerLabel" = "Enter the management server URL";
+"linkToAccountManager.jamsExplanation" = "Enter the management server URL";
+"linkToAccountManager.enterCredentials" = "Enter the management server credentials";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "Account error";
+"alerts.accountCannotBeFoundMessage" = "Unable to find account on the Jami network. Make sure it was exported on Jami from an existing device, and that provided credentials are correct.";
+"alerts.accountAddedTitle" = "Account added";
+"alerts.accountNoNetworkTitle" = "नेटवर्क त्रुटि";
+"alerts.accountNoNetworkMessage" = "A connectivity error occurred while adding Jami account to the distributed network. Please try again. If the problem persists, contact your system administrator.";
+"alerts.accountDefaultErrorTitle" = "Account error";
+"alerts.accountDefaultErrorMessage" = "An error occurred while creating the account.";
+"alerts.profileTakePhoto" = "फोटो खिच्नुस्";
+"alerts.profileUploadPhoto" = "फोटो अपलोड गर्नुहोस्";
+"alerts.accountLinkedTitle" = "लिङ्क खाता";
+"alerts.dbFailedTitle" = "An error happened when launching Jami";
+"alerts.dbFailedMessage" = "कृपया आवेदन बन्द गर्नुहोस् र फेरि खोल्न प्रयास गर्नुहोस्";
+"alerts.confirmBlockContact" = "Do you want to block this contact? The conversation history with this contact will also be deleted permanently.";
+"alerts.confirmDeleteConversation" = "Do you want to remove this conversation permanently?";
+"alerts.confirmLeaveConversation" = "Do you want to leave this conversation?";
+"alerts.confirmRemoveOneToOneConversation" = "Do you want to remove this conversation? The existing history will be deleted. A new conversation may be started if you do not have other conversations with this contact.";
+"alerts.confimRemoveContact" = "Do you want to remove this contact? The existing history will be deleted.";
+"alerts.confirmDeleteConversationFromContact" = "Do you want to delete the conversation with this contact?";
+"alerts.confirmDeleteConversationTitle" = "Delete conversation";
+"alerts.noMediaPermissionsTitle" = "मिडिया अनुमति नदिएको";
+"alerts.noLibraryPermissionsTitle" = "फोटो लाइब्रेरीमा पहुँच प्रदान गरिएको छैन";
+"alerts.noLocationPermissionsTitle" = "स्थानमा पहुँच प्रदान गरिएको छैन";
+"alerts.errorWrongCredentials" = "An error occurred while connecting to the management server. Please try again. If the problem persists, contact your system administrator.";
+"alerts.recordVideoMessage" = "Record video message";
+"alerts.recordAudioMessage" = "Record audio message";
+"alerts.uploadFile" = "फाइलहरू पठाउनुहोस्";
+"alerts.uploadPhoto" = "खुला ग्यालरी";
+"alerts.sendPhoto" = "Send photo";
+"alerts.locationServiceIsDisabled" = "Turn on “Location Services” to allow “Jami” to determine device location.";
+"alerts.locationSharing" = "मेरो स्थान साझा गर्नुहोस्";
+"alerts.alreadylocationSharing" = "यो प्रयोगकर्तासँग स्थान साझा गर्नु";
+"alerts.locationSharingDurationTitle" = "स्थान साझेदारी कति लामो हुनुपर्छ?";
+"alerts.locationSharingDuration10min" = "१० मिनेट";
+"alerts.locationSharingDuration1hour" = "१ घण्टा";
+"alerts.mapInformation" = "नक्सा जानकारी";
+"alerts.openStreetMapCopyright" = "© OpenStreetMap योगदानकर्ताहरू";
+"alerts.openStreetMapCopyrightMoreInfo" = "थप जानकारी";
+
+// Actions
+"actions.deleteAction" = "हटाउनु";
+"actions.backAction" = "पछाडि";
+"actions.doneAction" = "सम्पन्न";
+"actions.goToSettings" = "सेटिङमा जानुहोस्";
+"actions.stopLocationSharing" = "साझा गर्न बन्द गर्नुहोस्";
+
+// Calls
+"calls.ringing" = "बजिरहेको छ...";
+"calls.connecting" = "जोड्ने...";
+"calls.callFinished" = "कल समाप्त";
+"calls.currentCallWith" = "फोन गर्नुस् ";
+"calls.maximize" = "अधिकतम";
+"calls.minimize" = "कम्तिमा";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "मोडरेटर सेट गर्नुहोस्";
+"calls.removeModerator" = "अनसेट मोडरेटर";
+"calls.muteAudio" = "गहिरो माइक्रोफोन";
+"calls.unmuteAudio" = "Unmute microphone";
+"calls.raiseHand" = "हात उठाउनुहोस्";
+"calls.lowerHand" = "तलको हात";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "Recording";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "A call is in progress. Do you want to join the call? You can also join the call later from the conversation.";
+"calls.activeCallInConversation" = "एउटा कल चलिरहेको छ. के तपाईं कलमा सामेल हुन चाहनुहुन्छ?";
+"calls.acceptWithAudio" = "Accept with audio";
+"calls.acceptWithVideo" = "Accept with video";
+
+// Account Page
+"accountPage.devicesListHeader" = "उपकरणहरू";
+"accountPage.settingsHeader" = "सेटिंग्स";
+"accountPage.notificationsHeader" = "सूचनाहरू";
+"accountPage.blockedContacts" = "सम्पर्कहरू रोकिने";
+"accountPage.unblockContact" = "अनब्लक";
+"accountPage.proxyAddressAlert" = "प्रोक्सी ठेगाना प्रदान गर्नुहोस्";
+"accountPage.noProxyExplanationLabel" = "Unable to receive notifications when proxy is disabled.";
+"accountPage.proxyPaceholder" = "प्रोक्सी ठेगाना";
+"accountPage.useProxyList" = "Use proxy list";
+"accountPage.proxyListURL" = "Proxy list URL";
+"accountPage.proxyExplanation" = "Notifications are routed through a proxy. You can either use the default proxy, enter a custom proxy address, or provide a URL with a list of proxies.";
+"accountPage.proxyHeader" = "प्रोक्सी";
+"accountPage.currentProxy" = "Current proxy";
+"accountPage.enableNotifications" = "सूचनाहरू सक्षम पार्न";
+"accountPage.proxyDisabledAlertTitle" = "प्रोक्सी सर्भर अक्षम";
+"accountPage.proxyDisabledAlertBody" = "सूचनाहरू प्राप्त गर्न, कृपया प्रोक्सी सक्षम गर्नुहोस्";
+"accountPage.removeDeviceTitle" = "Remove device";
+"accountPage.revokeDeviceMessage" = "Do you want to remove this device? This action cannot be undone.";
+"accountPage.revokeDeviceButton" = "रद्द";
+"accountPage.revokeDevicePlaceholder" = "खाता पासवर्ड प्रविष्ट गर्नुहोस्";
+"accountPage.deviceRevoked" = "उपकरण रद्द पूरा";
+"accountPage.deviceRevocationProgress" = "Removing…";
+"accountPage.deviceRevocationSuccess" = "Device removed";
+"accountPage.deviceRevocationTryAgain" = "फेरि प्रयास गर्नुहोस्";
+"accountPage.deviceRevocationWrongPassword" = "गलत पासवर्ड";
+"accountPage.deviceRevocationUnknownDevice" = "अज्ञात उपकरण";
+"accountPage.deviceRevocationError" = "उपकरण रद्द त्रुटि";
+"accountPage.linkDeviceTitle" = "अर्को यन्त्र जोड्नुहोस्";
+"accountPage.other" = "अन्य";
+"accountPage.removeAccountMessage" = "If the account has not been backed up or added to another device, the account and registered username will be IRREVOCABLY LOST.";
+"accountPage.inviteFriends" = "Invite friends";
+"accountPage.contactMeOnJamiTitle" = "मलाई Jami मा सम्पर्क!";
+"accountPage.contactMeOnJamiContant" = "Contact me using “%s” on the Jami distributed communication platform: https://jami.net";
+"accountPage.passwordPlaceholder" = "खाता पासवर्ड प्रविष्ट गर्नुहोस्";
+"accountPage.usernamePlaceholder" = "इच्छित प्रयोगकर्ता नाम प्रविष्ट गर्नुहोस्";
+"accountPage.registerNameErrorMessage" = "The username is unavailable.";
+"accountPage.usernameRegistering" = "दर्ता";
+"accountPage.usernameRegisterAction" = "दर्ता";
+"accountPage.usernameRegistrationFailedTitle" = "Registration failed";
+"accountPage.usernameRegistrationFailed" = "Please check the account password.";
+"accountPage.createPassword" = "Set password";
+"accountPage.changePassword" = "पासवर्ड परिवर्तन गर्नुहोस्";
+"accountPage.currentPasswordPlaceholder" = "हालको पासवर्ड प्रविष्ट गर्नुहोस्";
+"accountPage.newPasswordPlaceholder" = "नयाँ पासवर्ड प्रविष्ट गर्नुहोस्";
+"accountPage.newPasswordConfirmPlaceholder" = "नयाँ पासवर्ड पुष्टि गर्नुहोस्";
+"accountPage.changePasswordError" = "गलत पासवर्ड";
+"accountPage.enableBoothMode" = "बुथ मोड सक्षम गर्नुहोस्";
+"accountPage.disableBoothMode" = "बुथ मोड अक्षम गर्नुहोस्";
+"accountPage.disableBoothModeExplanation" = "Please provide the account password";
+"accountPage.boothModeExplanation" = "बूथ मोडमा वार्तालाप इतिहास बचत गरिएको छैन र जमी कार्यक्षमता बाहिर जाने कलहरू गरेर सीमित छ। जब तपाईं बूथ मोड सक्षम गर्नुहुन्छ सबै तपाईंको कुराकानीहरू हटाइनेछ।";
+"accountPage.noBoothMode" = "To enable Booth mode, password protect the account first.";
+"accountPage.boothModeAlertMessage" = "After enabling booth mode, all the conversations will be removed.";
+"accountPage.peerDiscovery" = "स्थानीय समकक्ष खोज सक्षम गर्नुहोस्";
+"accountPage.peerDiscoveryExplanation" = "हाम्रो स्थानीय नेटवर्कमा विज्ञापन गर्ने अन्य DHT नोडहरूमा जडान गर्नुहोस्";
+"accountPage.autoRegistration" = "म्याद सकिएपछि स्वतः दर्ता";
+"accountPage.connectivityHeader" = "कनेक्टिविटी";
+"accountPage.turnEnabled" = "TURN सक्षम गर्नुहोस्";
+"accountPage.turnServer" = "टर्न ठेगाना";
+"accountPage.turnUsername" = "प्रयोगकर्ता नाम TURN";
+"accountPage.turnPassword" = "टर्न पासवर्ड";
+"accountPage.turnRealm" = "टर्न क्षेत्र";
+"accountPage.upnpEnabled" = "UPnP प्रयोग गर्नुहोस्";
+"accountPage.stunEnabled" = "STUN प्रयोग गर्नुहोस्";
+"accountPage.stunServer" = "स्टन ठेगाना";
+"accountPage.publicAddressHeader" = "सार्वजनिक सम्बोधन";
+"accountPage.allowIPAutoRewrite" = "Allow IP auto rewrite";
+"accountPage.publishedSameAsLocal" = "स्थानीय रूपमा प्रकाशित";
+"accountPage.publishedAddress" = "ठेगाना";
+"accountPage.publishedPort" = "पोर्ट";
+"accountPage.security" = "सुरक्षा";
+"accountPage.enableSRTP" = "SDES कुञ्जी आदान प्रदान गर्न सक्षम गर्नुहोस्";
+"accountPage.encryptNegotiation" = "एन्क्रिप्टेड वार्ता (TLS)";
+"accountPage.registerNameExplanation" = "Register a username to help others more easily find and reach you on Jami.";
+"accountPage.profileHeader" = "प्रोफाइल";
+"accountPage.profileNameNotSelected" = "Name not selected";
+"accountPage.accountHeader" = "खाता";
+"accountPage.profileName" = "Profile name";
+"accountPage.profileNamePlaceholder" = "Enter profile name";
+"accountPage.editProfile" = "Edit Profile";
+"accountPage.manageAccount" = "खाता व्यवस्थापन";
+"accountPage.encryptAccount" = "पासवर्ड";
+"accountPage.passwordExplanation" = "Your Jami account is registered only on this device as an archive containing the keys of your account. Access to this archive can be protected with a password.";
+"accountPage.passwordsDoNotMatch" = "Passwords do not match.";
+"accountPage.passwordCreated" = "Password set";
+"accountPage.passwordUpdated" = "Password updated";
+"accountPage.linkedDevices" = "जोडिएका यन्त्रहरू";
+"accountPage.unlink" = "Unlink";
+"accountPage.generatingPin" = "Generating PIN code…";
+"accountPage.passwordForPin" = "The account is password protected. Enter the password to generate a PIN code.";
+"accountPage.pinExplanationTitle" = "On another device";
+"accountPage.pinExplanationMessage" = "Install and launch Jami. Select “Import from another device,” and scan the QR code. Alternatively, enter the PIN code manually.";
+"accountPage.pinError" = "An error occurred while generating the PIN code.";
+"accountPage.notificationTitle" = "सूचनाहरू";
+"accountPage.notificationError" = "Notifications for Jami are disabled. Enable it in device settings in order to use this feature.";
+"accountPage.callsFromUnknownContacts" = "Allow calls from unknown contacts.";
+"accountPage.accountSettingsExplanation" = "These settings will only apply to this account.";
+"accountPage.appSettings" = "App settings";
+"accountPage.appSettingsExplanation" = "These settings will apply to the entire application.";
+"accountPage.connectivityAndConfiguration" = "Connectivity and configurations";
+"accountPage.sipExpirationTime" = "दर्ता समाप्ति समय (सेकेन्ड)";
+"accountPage.tlsVerifyServerCertificates" = "सर्भर TLS प्रमाणपत्रहरू प्रमाणित गर्नुहोस्";
+"accountPage.tlsVerifyClientCertificates" = "Verify client TLS certificates";
+"accountPage.tlsRequireTlsCertificate" = "Require a certificate for incoming TLS connections";
+"accountPage.tlsDisableSecureDlgCheck" = "TLS डाटाको लागि सुरक्षित संवाद जाँच अक्षम गर्नुहोस्";
+"accountPage.editSipExpirationTime" = "Expiration time";
+"accountPage.selectSipExpirationTime" = "Set time (in seconds) for registration expiration";
+"accountPage.invalidSipExpirationTime" = "Enter a value between 60 and 604800 seconds";
+"accountPage.invalidPort" = "Enter a value between 0 and 65535";
+"accountPage.invalidAddress" = "Enter a valid address";
+"accountPage.thisDevice" = "यो यन्त्र";
+"accountPage.otherDevices" = "अन्य जोडिएका यन्त्रहरू";
+"accountPage.accountIdentity" = "Account identity";
+"accountPage.bootstrap" = "बुटस्ट्रेप";
+"accountPage.dhtConfiguration" = "OpenDHT कन्फिगरेसन";
+"accountPage.nameServer" = "नाम सर्भर";
+"accountPage.chats" = "Chats";
+"accountPage.typingIndicator" = "टाइपिंग सूचक";
+"accountPage.typingIndicatorExplanation" = "Indicate when messages are being typed.";
+
+// Backup Account
+"backupAccount.explanation" = "This Jami account exists only on this device. The account will be lost if this device is lost or if the application is uninstalled. It is recommended to make a backup of this account.";
+"backupAccount.title" = "ब्याकअप खाता";
+"backupAccount.creating" = "Creating backup";
+"backupAccount.archiveName" = "Select a name for the archive.";
+"backupAccount.archiveNamePlaceholder" = "Archive name";
+"backupAccount.passwordRequest" = "Enter the account password.";
+"backupAccount.backupButton" = "Backup";
+"backupAccount.documentPickerButton" = "Open backup location";
+"backupAccount.exportSuccess" = "Backup created";
+"backupAccount.errorWrongLocation" = "The selected file path is invalid. Please choose a different location.";
+"backupAccount.errorAccessDenied" = "Access to the selected location was denied.";
+"backupAccount.errorFailed" = "An error occurred while exporting the account.";
+
+// Account
+"account.sipServer" = "सर्भर";
+"account.port" = "पोर्ट";
+"account.proxyServer" = "प्रोक्सी";
+"account.createSipAccount" = "Configure SIP Account";
+"account.sipAccount" = "SIP Account";
+"account.configure" = "Configure";
+"account.advancedFeatures" = "Advanced Features";
+"account.serverLabel" = "ठेगाना प्रविष्ट गर्नुहोस्";
+"account.portLabel" = "पोर्ट नम्बर प्रविष्ट गर्नुहोस्";
+"account.accountStatus" = "खाताको स्थिति";
+"account.enableAccount" = "खाता सक्षम गर्नुहोस्";
+"account.statusOnline" = "अनलाइन";
+"account.statusOffline" = "अफलाइन";
+"account.statusConnecting" = "जडान";
+"account.statusUnknown" = "अज्ञात";
+"account.statusConnectionerror" = "जडान त्रुटि";
+"account.needMigration" = "Account requires migration.";
+"account.me" = "म";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "कुनै सम्पर्कहरू रोकिने छैन";
+
+// Link New Device
+"linkDevice.title" = "नयाँ यन्त्रलाई लिंक गर्नुहोस्";
+"linkDevice.networkError" = "A network error occurred while exporting the account.";
+"linkDevice.errorWrongPassword" = "An authentication error occurred while linking the device. Please check credentials and try again.";
+"linkDevice.errorNetwork" = "A network error occurred while linking the account. Please verify your connection and try again.";
+"linkDevice.errorTimeout" = "The operation timed out. Please try again.";
+"linkDevice.errorCode" = "An error occurred while generating the code. Please try again.";
+"linkDevice.errorWrongData" = "An error occurred while exporting the account. Please try again.";
+"linkDevice.initialInfo" = "On the new device, initiate a new account.";
+"linkDevice.infoAddAccount" = "Select Add Account → Connect from another device.";
+"linkDevice.infoQRCode" = "When ready, scan the QR code.";
+"linkDevice.infoCode" = "When ready, enter the code and tap Connect.";
+"linkDevice.connecting" = "Connecting to your new device…";
+"linkDevice.authenticationInfo" = "New device found at the following IP address. Is that you? To continue the export account operation, tap Confirm.";
+"linkDevice.newDeviceIP" = "New device IP address: %1@";
+"linkDevice.code" = "code";
+"linkDevice.wrongEntry" = "Unrecognized new device identifier. Please follow the instructions above.";
+"linkDevice.exportInProgress" = "The export account operation to the new device is in progress. Please confirm import on the new device.";
+"linkDevice.completed" = "The account was imported successfully on the new device.";
+
+// Contact Page
+"contactPage.startAudioCall" = "अडियो कल सुरु गर्नुहोस्";
+"contactPage.startVideoCall" = "भिडियो कल सुरु गर्नुहोस्";
+"contactPage.send" = "पठाउनुहोस्";
+"contactPage.leaveConversation" = "कुराकानी छोड्नुहोस्";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "सुरुवात गर्दै...";
+"dataTransfer.readableStatusError" = "त्रुटि";
+"dataTransfer.readableStatusAwaiting" = "प्रतीक्षा गर्दै...";
+"dataTransfer.readableStatusOngoing" = "स्थानान्तरण";
+"dataTransfer.readableStatusCanceled" = "रद्द गरियो";
+"dataTransfer.sendingFailed" = "An error occurred while sending.";
+"dataTransfer.readableStatusSuccess" = "पूर्ण";
+"dataTransfer.recordInBackgroundWarning" = "Recording video while multitasking with multiple apps may result in lower quality videos. For best results, record when not multitasking";
+
+// Notifications
+"notifications.missedCall" = "फोन हरायो";
+"notifications.newFile" = "नयाँ फाइल";
+"notifications.locationSharingStarted" = "स्थान साझेदारी सुरु भयो";
+"notifications.locationSharingStopped" = "आगमन स्थान साझेदारी रोकियो";
+"dataTransfer.readableStatusDecline" = "घट्दो";
+"dataTransfer.readableStatusAccept" = "स्वीकार गर्नुहोस्";
+"dataTransfer.infoMessage" = "Tap to start recording";
+"dataTransfer.sendMessage" = "पठाउनुहोस्";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "निमन्त्रणा प्राप्त";
+"generatedMessage.swarmCreated" = "Conversation created";
+"generatedMessage.invitationReceived" = "%@ was invited to join the conversation.";
+"generatedMessage.invitationAccepted" = "%@ has joined the conversation.";
+"generatedMessage.youJoined" = "You joined the conversation.";
+"generatedMessage.contactBlocked" = "%@ was blocked from the conversation.";
+"generatedMessage.contactUnblocked" = "%@ was unblocked from the conversation.";
+"generatedMessage.outgoingCall" = "आउटगोइंग कल";
+"generatedMessage.missedOutgoingCall" = "अपाङ्गित प्रस्थान कल";
+"generatedMessage.missedIncomingCall" = "अनुपस्थित आगमन कल";
+"generatedMessage.liveLocationSharing" = "प्रत्यक्ष स्थान साझेदारी";
+"generatedMessage.contactLeftConversation" = "%@ has left the conversation.";
+"generatedMessage.nonSwarmInvitationReceived" = "You sent an invitation.";
+"generatedMessage.nonSwarmInvitationAccepted" = "Your invitation was accepted.";
+
+// General Settings
+"generalSettings.videoSettings" = "Video settings";
+"generalSettings.videoAcceleration" = "भिडियो गति सक्षम गर्नुहोस्";
+"generalSettings.fileTransfer" = "फाइल स्थानान्तरण";
+"generalSettings.locationSharing" = "स्थान साझा";
+"generalSettings.automaticAcceptIncomingFiles" = "स्वचालित रूपमा आगमन फाइलहरू स्वीकार";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "(MB, 0 = unlimited)";
+"generalSettings.limitLocationSharingDuration" = "स्थान साझेदारीको अवधि सीमित गर्नुहोस्";
+"generalSettings.locationSharingDuration" = "स्थिति शेयर अवधि";
+"generalSettings.donationCampaign" = "Donation campaign";
+"generalSettings.enableDonationCampaign" = "Enable donation campaign";
+
+// Log View
+"logView.title" = "निदान";
+"logView.description" = "खुला डायग्नोस्टिक लॉग सेटिंग्स";
+"logView.startLogging" = "Start logging";
+"logView.stopLogging" = "लकडाउन बन्द गर्नुहोस्";
+"logView.saveError" = "An error occurred while saving the file.";
+"logView.shareError" = "An error occurred while sharing the file.";
+
+// Migrate Account
+"migrateAccount.title" = "खाता माइग्रेसन";
+"migrateAccount.migrateButton" = "पलायन खाता";
+"migrateAccount.explanation" = "Account migration required.";
+"migrateAccount.passwordExplanation" = "To continue with the account migration, enter the account password.";
+"migrateAccount.error" = "An error occurred while migrating the account. Retry or delete the account.";
+"migrateAccount.migrating" = "Migrating…";
+"migrateAccount.migrateAnother" = "अर्को खातामा माइग्रेट गर्नुहोस्";
+
+// About Jami
+"aboutJami.declaration1" = "Jami, a GNU package, is software for universal and distributed peer-to-peer communication that respects the freedom and privacy of its users. Visit";
+"aboutJami.declaration2" = "to learn more.";
+"aboutJami.noWarranty1" = "This program comes with absolutely no warranty. See the";
+"aboutJami.noWarranty2" = "version 3 or later for details.";
+"aboutJami.contribute" = "योगदान";
+"aboutJami.feedback" = "प्रतिक्रिया";
+"aboutJami.developers" = "Developers";
+"aboutJami.media" = "मिडिया";
+"aboutJami.communityManagement" = "Community Management";
+"aboutJami.specialThanks" = "Special thanks to";
+"aboutJami.info" = "This is a list of people who have made a significant investment of time, with useful results, into Jami. Any such contributors who want to be added to the list should contact us.";
+"aboutJami.header" = "We would like to thank our contributors, whose efforts over many years have made this software what it is.";
+
+// Accessibility
+"accessibility.close" = "नजिक";
+"accessibility.smartListSwitchAccounts" = "Switch account";
+"accessibility.smartListConnectedAs" = "The current account is %@";
+"accessibility.smartListAddAccount" = "खाता थप्नुहोस्";
+"accessibility.aboutJamiTitle" = "जमीको बारेमा";
+"accessibility.welcomeToJamiTitle" = "जामीमा स्वागत छ";
+"accessibility.createAccountVerifyUsernamePrompt" = "Enter username to check availability.";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "प्रोफाइल चित्र";
+"accessibility.profilePicturePickerHint" = "Double-tap to take a picture or select a picture from the library";
+"accessibility.swarmPicturePicker" = "Group picture";
+"accessibility.accountSummaryQrCode" = "QR कोड";
+"accessibility.accountSummaryQrCodeHint" = "Double-tap to view the account QR code";
+"accessibility.accountSummaryEditProfileHint" = "Double-tap to edit the profile";
+"accessibility.accountSummaryEditSettingsButton" = "सेटिंग्स";
+"accessibility.conversationStartVoiceCall" = "Start audio call with %@";
+"accessibility.conversationStartVideoCall" = "Start video call with %@";
+"accessibility.conversationComposeMessage" = "Compose a message";
+"accessibility.conversationShareMedia" = "Share media";
+"accessibility.conversationCameraHint" = "Double-tap to open camera";
+"accessibility.audioPlayerPlay" = "खेल";
+"accessibility.audioPlayerPause" = "विराम";
+"accessibility.conversationRowUnreadCount" = "%@ unread messages.";
+"accessibility.conversationRowBlocked" = "Conversation blocked";
+"accessibility.conversationRowSyncing" = "Synchronization in progress";
+"accessibility.conversationRowLastMessage" = "Last message at %@";
+"accessibility.userPresenceOnline" = "अनलाइन";
+"accessibility.userPresenceAvailable" = "Available";
+"accessibility.pendingRequestsRowPlural" = "Invitations received: %@ pending invitations";
+"accessibility.pendingRequestsRowSingular" = "Invitation received: %@ pending invitation";
+"accessibility.pendingRequestsRowHint" = "Double-tap to review and reply to invitations you received";
+"accessibility.pendingRequestsListBlockUser" = "Block invitation sender";
+"accessibility.pendingRequestsListRejectInvitation" = "Decline invitation";
+"accessibility.pendingRequestsListAcceptInvitation" = "Accept invitation";
+"accessibility.messageBubbleDeleted" = "Message deleted";
+"accessibility.messageBubbleEdited" = "सम्पादन";
+"accessibility.messageBubbleRead" = "Read";
+"accessibility.messageBubbleUnread" = "Unread";
+"accessibility.textNotAvailable" = "Empty text message received on %@. This might not have been sent correctly.";
+"accessibility.fileTransferNoName" = "File received on %@, name not available";
+"accessibility.inReply" = "In reply to message";
+"accessibility.text.receivedOn" = "%1@, message received on %2@";
+"accessibility.text.sentOn" = "%1@, message sent on %2@";
+"accessibility.fileTransfer.receivedOn" = "File: %1@ , received on %2@";
+"accessibility.fileTransfer.sentOn" = "File: %1@, sent on %2@";
+"accessibility.call.lasted" = "Lasted %@";
+"accessibility.calls.default.toggleAudio" = "गहिरो माइक्रोफोन";
+"accessibility.calls.default.toggleVideo" = "Start camera";
+"accessibility.calls.default.pauseCall" = "विरामको लागि कल";
+"accessibility.calls.default.endCall" = "कल समाप्त पार्नुहोस्";
+"accessibility.calls.default.addParticipant" = "सहभागी थप";
+"accessibility.calls.default.switchCamera" = "Switch camera";
+"accessibility.calls.default.toggleSpeaker" = "Turn on speaker";
+"accessibility.calls.default.openConversation" = "खुला कुराकानी";
+"accessibility.calls.default.showDialpad" = "Show dialpad";
+"accessibility.calls.default.raiseHand" = "हात उठाउनुहोस्";
+
+"accessibility.calls.alter.toggleAudio" = "Unmute microphone";
+"accessibility.calls.alter.toggleVideo" = "क्यामेरा रोक्नुहोस्";
+"accessibility.calls.alter.pauseCall" = "पुनः कल";
+"accessibility.calls.alter.endCall" = "कल समाप्त पार्नुहोस्";
+"accessibility.calls.alter.addParticipant" = "सहभागी थप";
+"accessibility.calls.alter.switchCamera" = "Switch camera";
+"accessibility.calls.alter.toggleSpeaker" = "Turn off speaker";
+"accessibility.calls.alter.openConversation" = "खुला कुराकानी";
+"accessibility.calls.alter.showDialpad" = "Show dialpad";
+"accessibility.calls.alter.raiseHand" = "तलको हात";
+"accessibility.conference.minimize" = "कम्तिमा";
+"accessibility.conference.maximize" = "अधिकतम";
+"accessibility.conference.setModerator" = "मोडरेटर सेट गर्नुहोस्";
+"accessibility.conference.unsetModerator" = "अनसेट मोडरेटर";
+"accessibility.conference.muteAudio" = "अडियो बन्द";
+"accessibility.conference.unmuteAudio" = "अनमोल अडियो";
+"accessibility.conference.endCall" = "कल समाप्त पार्नुहोस्";
+"accessibility.conference.lowerHand" = "तलको हात";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "हात उठाएर";
+"accessibility.conference.moderator" = "संयोजक";
+"accessibility.conference.recording" = "Recording";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "Token QR code";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "Vibrant pink";
+"swarmColors.purple" = "Purple";
+"swarmColors.violet" = "Violet";
+"swarmColors.indigoBlue" = "Indigo blue";
+"swarmColors.skyBlue" = "Sky blue";
+"swarmColors.cyan" = "Cyan";
+"swarmColors.teal" = "Teal";
+"swarmColors.green" = "Green";
+"swarmColors.limeGreen" = "Lime green";
+"swarmColors.mediumGray" = "Medium gray";
+"swarmColors.yellowGreen" = "Yellow-green";
+"swarmColors.amber" = "Amber";
+"swarmColors.brightOrange" = "Bright orange";
+"swarmColors.brown" = "Brown";
+"swarmColors.steelBlue" = "Steel blue";
+
+// Share extension
+"shareExtension.noAccount.title" = "Account not found";
+"shareExtension.noAccount.description" = "To continue, create an account in the main application.";
+"shareExtension.unsupportedType.title" = "Unsupported content";
+"shareExtension.unsupportedType.description" = "The sharing of the selected content is currently unsupported.";
+"shareExtension.sending" = "Sending…";
+"shareExtension.noSearchResults" = "No conversations match your search";
+"shareExtension.tryDifferentFilter" = "Try a different filter";
+"shareExtension.sendToConversation" = "Send to %d conversation";
+"shareExtension.sendToConversationsPlural" = "Send to %d conversations";
+"shareExtension.selectAccountTitle" = "Select account";
+"shareExtension.searchConversations" = "Search conversations";
+"shareExtension.accessibilitySelectConversation" = "Double-tap to select this conversation";
+"shareExtension.accessibilitySelectedAccount" = "Selected account: %@. Double-tap to change account.";
+"shareExtension.accessibilitySendButton" = "Double-tap to send to selected conversations";
+"shareExtension.accessibilitySelectAccount" = "Double-tap to select this account";
+
+// Peer Services
+"peerServices.title" = "Shared Services";
+"peerServices.refresh" = "Refresh services";
+"peerServices.empty" = "No shared services available";
+"peerServices.errorOffline" = "Contact is offline";
+"peerServices.errorUnreachable" = "Contact is unreachable";
+"peerServices.errorTimeout" = "Request timed out";
+"peerServices.errorUnknown" = "Could not retrieve services";
+"peerServices.done" = "सम्पन्न";
+"peerServices.notSupported" = "Not supported";
+"peerServices.open" = "खुला";
+
+// Collaborative documents
+"collab.documents" = "कागजातहरू";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "सिर्जना गर्नुहोस्";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "लिंक";
+"collab.linkHint" = "ठेगाना";
+"collab.linkAdd" = "थप्नुहोस्";
+"collab.linkRemove" = "हटाउनु";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = "बाक्लो";
+"collab.italic" = "तेर्सो";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "स्ट्राइकथ्रू";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "केन्द्र";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "Undo";
+"collab.redo" = "Redo";
+"collab.remove" = "हटाउनु";
+"collab.open" = "खुला";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "हटाउनु";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";

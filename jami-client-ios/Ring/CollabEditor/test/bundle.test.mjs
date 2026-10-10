@@ -1,0 +1,898 @@
+/*
+ *  Copyright (C) 2004-2026 Savoir-faire Linux Inc.
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ */
+
+/*
+ * Loads the bundle the application ships, in a DOM, and drives it the way the
+ * Swift side does.
+ *
+ * The editor lives behind a WKWebView, where a mistake shows up as a blank
+ * page and a line in the log. This runs the same file against the same
+ * interface so that a bundle that cannot start is a failed build rather than a
+ * blank screen.
+ */
+
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { readFileSync, existsSync } from 'node:fs'
+import { dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { JSDOM } from 'jsdom'
+import * as Y from 'yjs'
+import Delta from 'quill-delta'
+
+import { quillToJami } from '../src/jamiformat.js'
+
+const here = dirname(fileURLToPath(import.meta.url))
+const bundle = resolve(here, '../build/collab/editor.js')
+const page = resolve(here, '../build/collab/editor.html')
+const pageURL = 'jami-collab://editor/editor.html'
+
+/** Stands in for the Swift side of the bridge. */
+function makeHost() {
+    let announce
+    const host = {
+        updates: [],
+        awareness: [],
+        selections: [],
+        logs: [],
+        ready: false,
+        // Resolves when the page says it is ready, which is what the
+        // application waits for before it asks the daemon for the document.
+        started: new Promise((resolve) => { announce = resolve }),
+        onReady() { this.ready = true; announce() },
+        onUpdate(base64) { this.updates.push(base64) },
+        onAwareness(state) { this.awareness.push(state) },
+        onSelection(json) { this.selections.push(json) },
+        onLog(message) { this.logs.push(message) },
+    }
+    return host
+}
+
+function launch() {
+    // The page the application loads, not a stand-in for it: an editor that
+    // builds itself into an element the shipped HTML does not have is exactly
+    // the kind of blank screen this is here to catch.
+    //
+    // It is loaded from the scheme the application serves it from, because the
+    // editor asks the page where it is to know where its images are.
+    const dom = new JSDOM(readFileSync(page, 'utf8'), {
+        url: 'jami-collab://editor/editor.html',
+        pretendToBeVisual: true,
+        runScripts: 'outside-only',
+        // The bundle derives attachment URLs from the custom-scheme page URL.
+        // jsdom otherwise uses about:blank, which cannot resolve /attachment/.
+        url: pageURL,
+    })
+    // The editor measures the text to place carets. There is no layout here,
+    // so measuring answers zero rather than throwing, and the parts of the
+    // editor that are being tested run.
+    const zero = () => ({ top: 0, bottom: 0, left: 0, right: 0, width: 0, height: 0 })
+    dom.window.Range.prototype.getBoundingClientRect = zero
+    dom.window.Range.prototype.getClientRects = () => []
+    dom.window.Element.prototype.getBoundingClientRect = zero
+
+    const host = makeHost()
+    dom.window.JamiBridge = host
+    // Nothing here starts the editor: the page does that itself, and an editor
+    // waiting to be started is an editor the application waits for for ever.
+    dom.window.eval(readFileSync(bundle, 'utf8'))
+    // The page boots when the document is parsed, so this waits for the same
+    // signal the application waits for rather than assuming it has happened.
+    return withTimeout(
+        host.started.then(() => ({ dom, host, editor: dom.window.JamiEditor })), host)
+}
+
+/** Fails with the page's own log rather than a bare timeout. */
+function withTimeout(promise, host) {
+    let timer
+    const expiry = new Promise((_, reject) => {
+        timer = setTimeout(
+            () => reject(new Error('the editor never reported ready: '
+                + (host.logs.join('\n') || 'it said nothing'))), 5000)
+    })
+    return Promise.race([promise, expiry]).finally(() => clearTimeout(timer))
+}
+
+const built = existsSync(bundle) && existsSync(page)
+const options = built ? {} : { skip: 'run "npm run build" first' }
+
+test('the editor starts itself and says so', options, async () => {
+    // The application shows a spinner until this arrives, and asks the daemon
+    // for the document only then. Were the page waiting to be started instead,
+    // each side would be waiting for the other.
+    const { host } = await launch()
+    assert.equal(host.ready, true, host.logs.join('\n'))
+    assert.deepEqual(host.logs, [])
+})
+
+test('the bundle exposes the interface the application calls', options, async () => {
+    const { host, editor } = await launch()
+    assert.equal(host.ready, true, host.logs.join('\n'))
+    for (const name of ['applyUpdate', 'applyAwareness', 'removeCursor', 'toggle',
+                        'setHeader', 'setList', 'setAlign', 'setLink', 'clearFormat',
+                        'setFont', 'setSize', 'fonts',
+                        'undo', 'redo', 'insertImage', 'setImageWidth', 'setEditable',
+                        'exportAs', 'showVersion', 'leaveVersion']) {
+        assert.equal(typeof editor[name], 'function', `missing ${name}`)
+    }
+    assert.deepEqual(host.logs, [])
+})
+
+test('a document sent by a peer is displayed', options, async () => {
+    const { host, editor } = await launch()
+
+    // What another replica would put on the wire.
+    const peer = new Y.Doc()
+    peer.getText('content').applyDelta(quillToJami(new Delta([
+        { insert: 'Title' },
+        { insert: '\n', attributes: { header: 1 } },
+        { insert: 'A ' },
+        { insert: 'strong', attributes: { bold: true } },
+        { insert: ' word.\n' },
+    ]), Delta).ops)
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+
+    assert.equal(editor.exportAs('txt').text, 'Title\nA strong word.\n')
+    const html = editor.exportAs('html').text
+    assert.match(html, /<h1>Title<\/h1>/)
+    assert.match(html, /<strong>strong<\/strong>/)
+    assert.deepEqual(host.logs, [])
+})
+
+test('a local edit is sent out as an update a peer can apply', options, async () => {
+    const { host, editor } = await launch()
+
+    const peer = new Y.Doc()
+    peer.getText('content').applyDelta([{ insert: 'Report' }])
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+    host.updates.length = 0
+
+    // An edit only the editor can make: it inserts an embed and formats it,
+    // which is the whole path from a toolbar tap to bytes on the wire.
+    editor.insertImage('att-1', 800, 600)
+    editor.setImageWidth(320)
+
+    assert.ok(host.updates.length > 0, 'nothing was sent')
+    for (const update of host.updates) {
+        Y.applyUpdate(peer, Buffer.from(update, 'base64'))
+    }
+
+    // What the peer now holds is what the editor shows.
+    assert.deepEqual(peer.getText('content').toDelta(), [
+        { insert: { image: { id: 'att-1', width: 800, height: 600 } },
+          attributes: { w: 320 } },
+        { insert: 'Report' },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('an awareness state from a peer is accepted and one from nowhere is not',
+     options, async () => {
+    const { host, editor } = await launch()
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(new Y.Doc())).toString('base64'))
+
+    editor.applyAwareness('peer1', 1, '{"p":0,"a":0}', 'Alice', '#e53935')
+    editor.applyAwareness('peer1', 1, 'not json at all', 'Alice', '#e53935')
+    editor.removeCursor('peer1', 1)
+
+    // A malformed state is another client's problem, and must not become this
+    // client's crash.
+    assert.deepEqual(host.logs, [])
+})
+
+/* ------------------------------------------------------- resizing an image */
+
+const decode = (base64) => new Uint8Array(Buffer.from(base64, 'base64'))
+
+const rect = (left, width) => ({
+    left, width, right: left + width, top: 0, bottom: 120, height: 120,
+})
+
+/** A pointer event carrying the one thing the editor reads from it. */
+function fire(dom, target, type, clientX) {
+    const event = new dom.window.Event(type, { bubbles: true, cancelable: true })
+    event.clientX = clientX
+    target.dispatchEvent(event)
+}
+
+/** A two-finger gesture, spread apart along the x axis. */
+function pinch(dom, target, type, gap) {
+    const event = new dom.window.Event(type, { bubbles: true, cancelable: true })
+    event.touches = [
+        { clientX: 100 - gap / 2, clientY: 60 },
+        { clientX: 100 + gap / 2, clientY: 60 },
+    ]
+    target.dispatchEvent(event)
+}
+
+function drag(dom, handle, from, to) {
+    fire(dom, handle, 'pointerdown', from)
+    fire(dom, dom.window.document, 'pointermove', to)
+    fire(dom, dom.window.document, 'pointerup', to)
+}
+
+test('dragging an image handle resizes it for everyone', options, async () => {
+    const { dom, host, editor } = await launch()
+
+    const peer = new Y.Doc()
+    editor.insertImage('att-1', 800, 600)
+    for (const update of host.updates) Y.applyUpdate(peer, decode(update))
+    host.updates.length = 0
+
+    const image = dom.window.document.querySelector('img')
+    assert.ok(image, 'no image was inserted')
+    // There is no layout here, so the image is told how wide it starts.
+    image.getBoundingClientRect = () => rect(0, 200)
+
+    const handle = dom.window.document.querySelector('.jami-image-handle-br')
+    assert.ok(handle, 'no resize handle')
+
+    drag(dom, handle, 100, 160)
+
+    // Moved 60 to the right, so 60 wider -- and said once, on release, not
+    // once per pixel.
+    assert.equal(image.getAttribute('width'), '260')
+    assert.equal(host.updates.length, 1, 'a message per pixel moved')
+
+    for (const update of host.updates) Y.applyUpdate(peer, decode(update))
+    assert.deepEqual(peer.getText('content').toDelta(), [
+        { insert: { image: { id: 'att-1', width: 800, height: 600 } },
+          attributes: { w: 260 } },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('a peer writing during a drag does not send the width elsewhere', options, async () => {
+    const { dom, host, editor } = await launch()
+
+    const peer = new Y.Doc()
+    editor.insertImage('att-1', 800, 600)
+    for (const update of host.updates) Y.applyUpdate(peer, decode(update))
+    host.updates.length = 0
+
+    const image = dom.window.document.querySelector('img')
+    image.getBoundingClientRect = () => rect(0, 200)
+    const handle = dom.window.document.querySelector('.jami-image-handle-br')
+
+    fire(dom, handle, 'pointerdown', 100)
+    fire(dom, dom.window.document, 'pointermove', 160)
+
+    // The other side writes above the image while the finger is still down,
+    // which pushes the image further along the document.
+    peer.getText('content').insert(0, 'hello')
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+
+    fire(dom, dom.window.document, 'pointerup', 160)
+
+    // The width belongs to the image, wherever it has ended up -- not to
+    // whatever now sits where it used to be.
+    for (const update of host.updates) Y.applyUpdate(peer, decode(update))
+    assert.deepEqual(peer.getText('content').toDelta(), [
+        { insert: 'hello' },
+        { insert: { image: { id: 'att-1', width: 800, height: 600 } },
+          attributes: { w: 260 } },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('an abandoned drag leaves the document as it was', options, async () => {
+    const { dom, host, editor } = await launch()
+    editor.insertImage('att-1', 800, 600)
+    editor.setImageWidth(200)
+    host.updates.length = 0
+
+    const image = dom.window.document.querySelector('img')
+    image.getBoundingClientRect = () => rect(0, 200)
+    const handle = dom.window.document.querySelector('.jami-image-handle-br')
+
+    fire(dom, handle, 'pointerdown', 100)
+    fire(dom, dom.window.document, 'pointermove', 300)
+    // The grab is taken away: no release will ever come.
+    fire(dom, dom.window.document, 'pointercancel', 300)
+
+    // A width only this replica knows about is silent divergence.
+    assert.equal(image.getAttribute('width'), '200')
+    assert.deepEqual(host.updates, [])
+    assert.deepEqual(host.logs, [])
+})
+
+/* ------------------------------------------------------ looking at the past */
+
+test('a past checkpoint is shown, and leaving it comes back', options, async () => {
+    const { dom, host, editor } = await launch()
+    const text = () => dom.window.document.querySelector('.ql-editor').textContent.trim()
+
+    // What the daemon answers for an old checkpoint: the whole document as it
+    // stood then, replayed into a throwaway replica.
+    const past = new Y.Doc()
+    past.getText('content').insert(0, 'written by a peer')
+    const atCheckpoint = Buffer.from(Y.encodeStateAsUpdate(past)).toString('base64')
+
+    // Meanwhile the live document has moved on.
+    const live = new Y.Doc()
+    live.getText('content').insert(0, 'written by a peer, and then some more')
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(live)).toString('base64'))
+    assert.equal(text(), 'written by a peer, and then some more')
+
+    host.updates.length = 0
+    editor.showVersion(atCheckpoint)
+    assert.equal(text(), 'written by a peer',
+        'the past checkpoint is not what is shown')
+    // Looking at the past says nothing to anyone.
+    assert.deepEqual(host.updates, [])
+
+    editor.leaveVersion()
+    assert.equal(text(), 'written by a peer, and then some more',
+        'leaving the past does not come back to the present')
+    assert.deepEqual(host.updates, [])
+    assert.deepEqual(host.logs, [])
+})
+
+test('a peer typing does not take away the version being read', options, async () => {
+    const { dom, host, editor } = await launch()
+    const text = () => dom.window.document.querySelector('.ql-editor').textContent.trim()
+
+    const live = new Y.Doc()
+    live.getText('content').insert(0, 'first')
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(live)).toString('base64'))
+
+    const past = new Y.Doc()
+    past.getText('content').insert(0, 'as it was')
+    editor.showVersion(Buffer.from(Y.encodeStateAsUpdate(past)).toString('base64'))
+    assert.equal(text(), 'as it was')
+
+    // Someone else is still typing while this user reads the past.
+    live.getText('content').insert(5, ' and more')
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(live)).toString('base64'))
+
+    assert.equal(text(), 'as it was', 'the version being read was taken away')
+
+    // And the document kept up all along.
+    editor.leaveVersion()
+    assert.equal(text(), 'first and more')
+    assert.deepEqual(host.logs, [])
+})
+
+test('a version can be restored, and everyone gets it', options, async () => {
+    const { dom, host, editor } = await launch()
+    const text = () => dom.window.document.querySelector('.ql-editor').textContent.trim()
+
+    const peer = new Y.Doc()
+    peer.getText('content').applyDelta([{ insert: 'a mistake' }])
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+
+    const past = new Y.Doc()
+    past.getText('content').applyDelta([
+        { insert: 'what it said', attributes: { b: true } },
+    ])
+    editor.showVersion(Buffer.from(Y.encodeStateAsUpdate(past)).toString('base64'))
+    host.updates.length = 0
+
+    assert.equal(editor.restoreVersion(), true, 'the restore was not owned up to')
+
+    assert.equal(text(), 'what it said', 'the document was not restored')
+    assert.ok(host.updates.length > 0, 'the restore was never sent')
+    for (const update of host.updates) Y.applyUpdate(peer, decode(update))
+    // Restoring is an edit like any other: it reaches the others, formatting
+    // and all, and can itself be taken back by restoring a later version.
+    assert.deepEqual(peer.getText('content').toDelta(), [
+        { insert: 'what it said', attributes: { b: true } },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('a restore that changes nothing says so', options, async () => {
+    const { host, editor } = await launch()
+
+    const peer = new Y.Doc()
+    peer.getText('content').applyDelta([{ insert: 'unchanged' }])
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+
+    // The version being read is the document as it stands. Restoring it is not
+    // a failure, but nothing happens either, and the application has to be able
+    // to tell the two apart before it tells the user the document was restored.
+    editor.showVersion(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+    host.updates.length = 0
+
+    assert.equal(editor.restoreVersion(), false)
+    assert.equal(host.updates.length, 0, 'a restore of nothing was sent')
+    assert.deepEqual(host.logs, [])
+})
+
+test('a restore with no version being read is refused', options, async () => {
+    const { host, editor } = await launch()
+
+    assert.equal(editor.restoreVersion(), false)
+    assert.deepEqual(host.logs, [])
+})
+
+/** What the editor looks like when it is editable and when it is not. */
+function editability(dom, editor) {
+    const read = () =>
+        dom.window.document.querySelector('.ql-editor').getAttribute('contenteditable')
+    editor.setEditable(false)
+    const no = read()
+    editor.setEditable(true)
+    const yes = read()
+    assert.notEqual(no, yes, 'editable and not are not told apart')
+    return { read, yes, no }
+}
+
+test('leaving a version does not hand out the right to edit', options, async () => {
+    const { dom, host, editor } = await launch()
+    const { read, no } = editability(dom, editor)
+
+    // A document this user may read and not write: a version of it is
+    // something to look at, and looking at one must not be a way in.
+    editor.setEditable(false)
+
+    const past = new Y.Doc()
+    past.getText('content').insert(0, 'as it was')
+    editor.showVersion(Buffer.from(Y.encodeStateAsUpdate(past)).toString('base64'))
+    editor.leaveVersion()
+
+    assert.equal(read(), no, 'reading a version made the document editable')
+    assert.deepEqual(host.logs, [])
+})
+
+test('a version cannot be restored into a document that may not be edited',
+     options, async () => {
+    const { host, editor } = await launch()
+
+    const peer = new Y.Doc()
+    peer.getText('content').applyDelta([{ insert: 'as it stands' }])
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+    editor.setEditable(false)
+
+    const past = new Y.Doc()
+    past.getText('content').insert(0, 'as it was')
+    editor.showVersion(Buffer.from(Y.encodeStateAsUpdate(past)).toString('base64'))
+    host.updates.length = 0
+
+    // Quill refuses the edit either way; what matters is that the refusal is
+    // owned up to, rather than reported as a restore that never happened.
+    assert.equal(editor.restoreVersion(), false)
+    assert.deepEqual(host.updates, [])
+    assert.deepEqual(host.logs, [])
+})
+
+test('being told the document may be edited again brings it back', options, async () => {
+    const { dom, host, editor } = await launch()
+    const { read, yes, no } = editability(dom, editor)
+
+    // Said while a version is being read, it takes effect on the way out and
+    // not before: what is on screen is the past, and the past is read.
+    editor.setEditable(false)
+    const past = new Y.Doc()
+    past.getText('content').insert(0, 'as it was')
+    editor.showVersion(Buffer.from(Y.encodeStateAsUpdate(past)).toString('base64'))
+    editor.setEditable(true)
+    assert.equal(read(), no, 'the version being read became editable')
+
+    editor.leaveVersion()
+    assert.equal(read(), yes, 'the document did not become editable again')
+    assert.deepEqual(host.logs, [])
+})
+
+test('an image can be resized by pinching it', options, async () => {
+    const { dom, host, editor } = await launch()
+
+    const peer = new Y.Doc()
+    editor.insertImage('att-1', 800, 600)
+    for (const update of host.updates) Y.applyUpdate(peer, decode(update))
+    host.updates.length = 0
+
+    const image = dom.window.document.querySelector('img')
+    // There is no layout here, so the picture is told where it is.
+    image.getBoundingClientRect = () => rect(40, 120)
+
+    const root = dom.window.document.querySelector('.ql-editor')
+    pinch(dom, root, 'touchstart', 60)
+    pinch(dom, root, 'touchmove', 120)
+    pinch(dom, root, 'touchend', 120)
+
+    // Fingers twice as far apart, picture twice as wide -- said once, at the
+    // end, not once per finger movement.
+    assert.equal(image.getAttribute('width'), '240')
+    assert.equal(host.updates.length, 1, 'a message per finger movement')
+
+    for (const update of host.updates) Y.applyUpdate(peer, decode(update))
+    assert.deepEqual(peer.getText('content').toDelta(), [
+        { insert: { image: { id: 'att-1', width: 800, height: 600 } },
+          attributes: { w: 240 } },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('a peer writing during a pinch does not send the width elsewhere',
+    options, async () => {
+    const { dom, host, editor } = await launch()
+
+    const peer = new Y.Doc()
+    editor.insertImage('att-1', 800, 600)
+    for (const update of host.updates) Y.applyUpdate(peer, decode(update))
+    host.updates.length = 0
+
+    const image = dom.window.document.querySelector('img')
+    image.getBoundingClientRect = () => rect(40, 120)
+
+    const root = dom.window.document.querySelector('.ql-editor')
+    pinch(dom, root, 'touchstart', 60)
+    pinch(dom, root, 'touchmove', 120)
+
+    // The fingers are still down when someone else writes above the picture.
+    peer.getText('content').insert(0, 'hello')
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+
+    pinch(dom, root, 'touchend', 120)
+
+    // The width belongs to the picture, wherever the picture has been pushed.
+    for (const update of host.updates) Y.applyUpdate(peer, decode(update))
+    assert.deepEqual(peer.getText('content').toDelta(), [
+        { insert: 'hello' },
+        { insert: { image: { id: 'att-1', width: 800, height: 600 } },
+          attributes: { w: 240 } },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('a pinch away from any image is left alone', options, async () => {
+    const { dom, host, editor } = await launch()
+    editor.insertImage('att-1', 800, 600)
+    host.updates.length = 0
+
+    const image = dom.window.document.querySelector('img')
+    image.getBoundingClientRect = () => rect(400, 120)
+
+    const root = dom.window.document.querySelector('.ql-editor')
+    pinch(dom, root, 'touchstart', 60)
+    pinch(dom, root, 'touchmove', 200)
+    pinch(dom, root, 'touchend', 200)
+
+    // Pinching the page is not pinching the picture.
+    assert.equal(image.getAttribute('width'), null)
+    assert.deepEqual(host.updates, [])
+    assert.deepEqual(host.logs, [])
+})
+
+test('an image is asked for again once its bytes arrive', options, async () => {
+    const { dom, host, editor } = await launch()
+
+    // A peer's picture: the reference reaches this replica with the text,
+    // the bytes follow, so the first fetch of it fails.
+    const peer = new Y.Doc()
+    peer.getText('content').applyDelta([
+        { insert: { image: { id: 'att-1', width: 800, height: 600 } } },
+    ])
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+    host.updates.length = 0
+
+    const image = dom.window.document.querySelector('img')
+    const before = image.getAttribute('src')
+    assert.match(before, /att-1/)
+
+    editor.attachmentArrived('att-1')
+
+    // A source the page has not fetched yet, or the broken picture stays
+    // broken until the document is closed and opened again.
+    assert.notEqual(image.getAttribute('src'), before)
+    assert.match(image.getAttribute('src'), /att-1/)
+    // The document says nothing about where an image is read from: asking
+    // for it again is not an edit, and must not be sent to anyone.
+    assert.deepEqual(host.updates, [])
+    assert.deepEqual(peer.getText('content').toDelta(), [
+        { insert: { image: { id: 'att-1', width: 800, height: 600 } } },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('the bytes of another image leave a picture alone', options, async () => {
+    const { dom, host, editor } = await launch()
+    editor.insertImage('att-1', 800, 600)
+    host.updates.length = 0
+
+    const image = dom.window.document.querySelector('img')
+    const before = image.getAttribute('src')
+
+    editor.attachmentArrived('att-2')
+
+    assert.equal(image.getAttribute('src'), before)
+    assert.deepEqual(host.updates, [])
+    assert.deepEqual(host.logs, [])
+})
+
+test('an address a peer wrote is not the one that is exported', options, async () => {
+    const { dom, host, editor } = await launch()
+
+    for (const href of ['javascript:alert(1)', 'JaVaScRiPt:alert(2)',
+                        'data:text/html,<script>x</script>', 'vbscript:msgbox']) {
+        // Written straight into the document, the way a replica that does not
+        // run this code would: our own writer refuses these schemes, so going
+        // through it would be testing what we send rather than what we accept.
+        const peer = new Y.Doc()
+        peer.getText('content').applyDelta([
+            { insert: 'click', attributes: { link: href } },
+        ])
+        editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+
+        // The editor is what refuses it, when it builds the line; the export
+        // reads the document back from there, so the address it writes out is
+        // the one that was displayed, never the one that was sent.
+        assert.equal(dom.window.document.querySelector('.ql-editor a')
+                     .getAttribute('href'), 'about:blank')
+        for (const format of ['html', 'md']) {
+            assert.doesNotMatch(editor.exportAs(format, 'T', []).text,
+                                /javascript:|vbscript:|data:text/i, format)
+        }
+    }
+    assert.deepEqual(host.logs, [])
+})
+
+/* ----------------------------------------------------------- font and size */
+
+/** Gives the editor what a peer holds, as an update on the wire. */
+function receive(editor, ops) {
+    const peer = new Y.Doc()
+    peer.getText('content').applyDelta(ops)
+    editor.applyUpdate(Buffer.from(Y.encodeStateAsUpdate(peer)).toString('base64'))
+    return peer
+}
+
+/** What a peer that received everything the editor sent holds. */
+function relayed(host, peer) {
+    for (const update of host.updates) Y.applyUpdate(peer, Buffer.from(update, 'base64'))
+    return peer.getText('content').toDelta()
+}
+
+/**
+ * Selects characters of the first line the way a finger does, through the
+ * page's selection, and waits for the editor to take it as its own.
+ */
+async function select(dom, index, length = 0) {
+    const document = dom.window.document
+    const root = document.querySelector('.ql-editor')
+    const locate = (at) => {
+        const walker = document.createTreeWalker(root, dom.window.NodeFilter.SHOW_TEXT)
+        let seen = 0
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+            if (at <= seen + node.data.length) return [node, at - seen]
+            seen += node.data.length
+        }
+        assert.fail('no such characters')
+    }
+    root.focus()
+    dom.window.getSelection().setBaseAndExtent(...locate(index), ...locate(index + length))
+    document.dispatchEvent(new dom.window.Event('selectionchange'))
+    await new Promise((resolve) => setTimeout(resolve, 10))
+}
+
+const lastSelection = (host) => JSON.parse(host.selections[host.selections.length - 1])
+
+test('the fonts offered are the ones the other clients ship', options, async () => {
+    const { host, editor } = await launch()
+    const fonts = JSON.parse(editor.fonts())
+    assert.equal(fonts.length, 4)
+    assert.deepEqual(fonts[0], { id: 'sans-serif', family: 'Sans Serif' })
+    assert.ok(fonts.some((font) => font.id === 'cursive'))
+    assert.deepEqual(host.logs, [])
+})
+
+test('the page draws each font in a font of the platform', options, async () => {
+    const { dom, host } = await launch()
+    const sheets = [...dom.window.document.querySelectorAll('style')]
+        .map((style) => style.textContent).join('\n')
+    assert.match(sheets, /\[data-font="serif"\][^}]*font-family: serif;/)
+    assert.doesNotMatch(sheets, /@font-face/)
+    assert.deepEqual(host.logs, [])
+})
+
+test('a font and a size go to the selection, and travel', options, async () => {
+    const { dom, host, editor } = await launch()
+    const peer = receive(editor, [{ insert: 'one two three' }])
+    host.updates.length = 0
+
+    await select(dom, 4, 3)
+    editor.setFont('serif')
+    editor.setSize(18)
+
+    assert.deepEqual(relayed(host, peer), [
+        { insert: 'one ' },
+        { insert: 'two', attributes: { font: 'serif', size: 18 } },
+        { insert: ' three' },
+    ])
+    const { formats } = lastSelection(host)
+    assert.equal(formats.font, 'serif')
+    assert.equal(formats.size, 18)
+    const span = dom.window.document.querySelector('.ql-editor [data-font]')
+    assert.equal(span.getAttribute('data-font'), 'serif')
+    assert.equal(span.style.fontSize, '18pt')
+    assert.deepEqual(host.logs, [])
+})
+
+test('with nothing selected, the word under the caret takes the font', options, async () => {
+    const { dom, host, editor } = await launch()
+    const peer = receive(editor, [{ insert: 'one two three' }])
+    host.updates.length = 0
+
+    await select(dom, 5)
+    editor.setFont('monospace')
+    editor.setSize(24)
+
+    assert.deepEqual(relayed(host, peer), [
+        { insert: 'one ' },
+        { insert: 'two', attributes: { font: 'monospace', size: 24 } },
+        { insert: ' three' },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('at the edge of a word, the font is kept for what is typed next', options, async () => {
+    const { dom, host, editor } = await launch()
+    receive(editor, [{ insert: 'one two' }])
+    host.updates.length = 0
+
+    await select(dom, 3)
+    editor.setFont('cursive')
+
+    // Nothing written is changed; the choice waits for the next character.
+    assert.deepEqual(host.updates, [])
+    assert.equal(lastSelection(host).formats.font, 'cursive')
+    assert.deepEqual(host.logs, [])
+})
+
+test('a font this client does not ship cannot be chosen', options, async () => {
+    const { dom, host, editor } = await launch()
+    receive(editor, [{ insert: 'one', attributes: { size: 30 } }, { insert: ' two' }])
+    host.updates.length = 0
+
+    await select(dom, 0, 3)
+    for (const id of ['some-new-font', 'Liberation Sans', '../x']) editor.setFont(id)
+    for (const size of [0.5, 401, NaN, -5, undefined, 'abc']) editor.setSize(size)
+
+    assert.deepEqual(host.updates, [])
+    assert.deepEqual(host.logs, [])
+})
+
+test('the default font and the base size remove the attributes', options, async () => {
+    const { dom, host, editor } = await launch()
+    const peer = receive(editor, [{ insert: 'word', attributes: { font: 'monospace', size: 30, b: true } }])
+    host.updates.length = 0
+
+    await select(dom, 0, 4)
+    assert.equal(lastSelection(host).formats.size, 30)
+    editor.setFont('')
+    editor.setSize(0)
+
+    assert.deepEqual(relayed(host, peer), [{ insert: 'word', attributes: { b: true } }])
+    assert.deepEqual(host.logs, [])
+})
+
+test('the selection says the size of text with none of its own', options, async () => {
+    const { dom, host, editor } = await launch()
+    // The stylesheet is not loaded here, so the base size it sets is set inline.
+    dom.window.document.querySelector('.ql-editor').style.fontSize = '16px'
+    receive(editor, [{ insert: 'plain ' }, { insert: 'sized', attributes: { size: 30 } }])
+
+    await select(dom, 0, 5)
+    assert.equal(lastSelection(host).formats.size, 0)
+    assert.equal(lastSelection(host).defaultSize, 12)
+
+    await select(dom, 6, 5)
+    assert.equal(lastSelection(host).formats.size, 30)
+    assert.equal(lastSelection(host).defaultSize, 12)
+    assert.deepEqual(host.logs, [])
+})
+
+test('clearing the formatting clears the font and the size', options, async () => {
+    const { dom, host, editor } = await launch()
+    const peer = receive(editor, [{ insert: 'word', attributes: { font: 'monospace', size: 30, i: true } }])
+    host.updates.length = 0
+
+    await select(dom, 0, 4)
+    editor.clearFormat()
+
+    assert.deepEqual(relayed(host, peer), [{ insert: 'word' }])
+    assert.deepEqual(host.logs, [])
+})
+
+test('a font a newer client chose survives an edit made here', options, async () => {
+    const { dom, host, editor } = await launch()
+    const peer = receive(editor, [
+        { insert: 'new', attributes: { font: 'some-new-font' } },
+        { insert: ' old' },
+    ])
+    host.updates.length = 0
+
+    await select(dom, 4, 3)
+    editor.toggle('bold')
+
+    assert.deepEqual(relayed(host, peer), [
+        { insert: 'new', attributes: { font: 'some-new-font' } },
+        { insert: ' ' },
+        { insert: 'old', attributes: { b: true } },
+    ])
+    await select(dom, 0, 3)
+    assert.equal(lastSelection(host).formats.font, 'some-new-font')
+    assert.deepEqual(host.logs, [])
+})
+
+test('an attribute this client does not know survives an edit made here', options, async () => {
+    const { dom, host, editor } = await launch()
+    const peer = receive(editor, [
+        { insert: 'red', attributes: { color: '#ff0000' } },
+        { insert: ' plain' },
+    ])
+    host.updates.length = 0
+
+    await select(dom, 4, 5)
+    editor.toggle('bold')
+
+    assert.deepEqual(relayed(host, peer), [
+        { insert: 'red', attributes: { color: '#ff0000' } },
+        { insert: ' ' },
+        { insert: 'plain', attributes: { b: true } },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('pasted text keeps only a font the document can name', options, async () => {
+    const { dom, host, editor } = await launch()
+    const peer = receive(editor, [{ insert: 'x' }])
+    host.updates.length = 0
+
+    await select(dom, 1)
+    const paste = new dom.window.Event('paste', { bubbles: true, cancelable: true })
+    const html = '<span style="font-family: monospace; font-size: 16px">a</span>'
+        + '<span style="font-size: large">b</span>'
+        + '<span data-font="gelasio" style="font-size: 9pt">c</span>'
+    paste.clipboardData = {
+        getData: (type) => (type === 'text/html' ? html : 'abc'),
+        files: [],
+    }
+    dom.window.document.querySelector('.ql-editor').dispatchEvent(paste)
+
+    assert.deepEqual(relayed(host, peer), [
+        { insert: 'x' },
+        { insert: 'a', attributes: { font: 'monospace' } },
+        { insert: 'b' },
+        { insert: 'c', attributes: { size: 9 } },
+    ])
+    assert.deepEqual(host.logs, [])
+})
+
+test('a font and a size are exported as the clients draw them', options, async () => {
+    const { host, editor } = await launch()
+    receive(editor, [
+        { insert: 'a', attributes: { font: 'serif', size: 14 } },
+        { insert: 'b', attributes: { font: 'some-new-font' } },
+    ])
+    const html = editor.exportAs('html', 'T', []).text
+    assert.match(html, /<span style="font-family: serif; font-size: 14pt">a<\/span>/)
+    // An id no font is offered under has no family to name.
+    assert.match(html, />b</)
+    assert.doesNotMatch(html, /some-new-font/)
+    assert.deepEqual(host.logs, [])
+})
+
+test('a paragraph style is chosen, not toggled', options, async () => {
+    const { dom, host, editor } = await launch()
+    const peer = receive(editor, [{ insert: 'Title' }])
+    host.updates.length = 0
+
+    await select(dom, 2)
+    editor.setHeader(1)
+    editor.setHeader(1)
+    assert.deepEqual(relayed(host, peer), [{ insert: 'Title', attributes: { header: 1 } }])
+    editor.setHeader(3)
+    for (const level of [NaN, -1, 4, 1.5, undefined, 'abc']) editor.setHeader(level)
+    assert.equal(lastSelection(host).formats.header, 3)
+    editor.setHeader(0)
+    assert.deepEqual(relayed(host, peer), [{ insert: 'Title' }])
+    assert.deepEqual(host.logs, [])
+})

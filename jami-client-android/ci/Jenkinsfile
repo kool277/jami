@@ -1,0 +1,170 @@
+/*
+ * Copyright (C) 2022-2024 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation; either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+
+pipeline {
+    agent {
+        node {
+            label 'jami-buildmachine-04.mtl.sfl'
+        }
+    }
+
+    triggers {
+        gerrit customUrl: '',
+        gerritProjects: [
+            [branches: [[compareType: 'PLAIN', pattern: 'master']],
+             compareType: 'PLAIN',
+             disableStrictForbiddenFileVerification: false,
+             pattern: 'jami-client-android']],
+        triggerOnEvents: [
+            commentAddedContains('!build'),
+            patchsetCreated(excludeDrafts: true)
+            ]
+    }
+
+    options {
+        ansiColor('xterm')
+    }
+
+    parameters {
+        string(name: 'GERRIT_REFSPEC',
+            defaultValue: 'refs/heads/master',
+            description: 'The Gerrit refspec to fetch.')
+    }
+
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                // Wipe workspace and fetch jami-daemon
+                checkout changelog: true, poll: false,
+                    scm: [$class: 'GitSCM',
+                        branches: [[name: 'FETCH_HEAD']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [
+                            [$class: 'CloneOption', noTags: true, reference: '', shallow: true],
+                            [$class: 'WipeWorkspace']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[refspec: '${GERRIT_REFSPEC}', url: 'https://${JAMI_GERRIT_URL}/jami-client-android']]]
+            }
+        }
+
+        stage('Init repository') {
+            steps {
+                script {
+                    sh """
+                        git rev-parse HEAD
+                        git submodule update --init --recursive
+                    """
+                }
+            }
+        }
+
+        stage('Install pre-fetched tarballs') {
+            environment {
+                RING_CONTRIB_TARBALLS = '/opt/ring-contrib'
+                RING_EXTRATOOLS_TARBALLS = '/opt/ring-extras-tools'
+            }
+            steps {
+                script {
+                    def daemonDir = pwd() + '/daemon'
+                    def contribDir = daemonDir + '/contrib/tarballs'
+                    if (fileExists(RING_EXTRATOOLS_TARBALLS)) {
+                        sh "cp ${RING_EXTRATOOLS_TARBALLS}/* ${daemonDir}/extras/tools/ || echo 'No extras-tools tarballs cache'"
+                    }
+                    if (fileExists(RING_CONTRIB_TARBALLS)) {
+                        dir(contribDir) {
+                            sh 'pwd -P'
+                            sh "cp ${RING_CONTRIB_TARBALLS}/* ${daemonDir}/contrib/tarballs/ || echo 'No contribs tarballs cache'"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build and test client') {
+            environment {
+                ANDROID_ABI = "x86_64"
+                BATCH_MODE = '1'
+            }
+            agent {
+                dockerfile {
+                    reuseNode true
+                    dir 'ci'
+                    filename '../docker/Dockerfile'
+                    args "-u root --privileged -v ${pwd()}/:/jami-client-android -w /jami-client-android"
+                    additionalBuildArgs '--build-arg HOST_UID=1001 --build-arg HOST_GID=1001 --build-arg ANDROID_ABI=x86_64 --build-arg BATCH_MODE=1'
+                }
+            }
+            steps {
+                script {
+                    sh 'su jenkins -c "cd /jami-client-android && ./compile.sh --test"'
+                    sh 'cd /jami-client-android/ci && ./start_emu_headless.sh'
+
+                    boolean errorOccurred = false
+                    try{
+                        sh 'su jenkins -c "cd /jami-client-android/ci && ./jami_test.sh"'
+                    } catch (Exception e) {
+                        errorOccurred = true
+                    }
+
+                    /*try {
+                        sh 'cd /jami-client-android/ci && ./download_screenshots.sh'
+                    } catch (Exception e) {
+                        echo "Failed to download screenshots: ${e.getMessage()}"
+                    }*/
+
+                    // Archive tests output and save it as Jenkins artifact
+                    sh 'cd /jami-client-android/ci/spoon-output && zip -r ../ui-test-output.zip *'
+                    archiveArtifacts artifacts: 'ci/ui-test-output.zip', allowEmptyArchive: false
+
+                    // Publish HTML report (directly visible in Jenkins UI)
+                    publishHTML (target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'ci/spoon-output',
+                        reportFiles: 'index.html',
+                        reportName: "Jami UI Test Report"
+                    ])
+
+                    // Mark the build as failed if there was an error
+                    if (errorOccurred) {
+                        error("Pipeline failed due to errors in the test execution.")
+                    }
+                }
+            }
+        }
+
+        stage('Update pre-fetched tarballs directory') {
+            environment {
+                RING_CONTRIB_TARBALLS = '/opt/ring-contrib'
+                RING_EXTRATOOLS_TARBALLS = '/opt/ring-extras-tools'
+            }
+            steps {
+                script {
+                    def daemonDir = pwd() + '/daemon'
+                    if (fileExists(RING_CONTRIB_TARBALLS)) {
+                        sh "rsync -u ${daemonDir}/contrib/tarballs/* ${RING_CONTRIB_TARBALLS}/ || echo 'contribs tarballs cache backup failed'"
+                    }
+                    if (fileExists(RING_EXTRATOOLS_TARBALLS)) {
+                        sh "rsync -u ${daemonDir}/extras/tools/*.tar.* ${RING_EXTRATOOLS_TARBALLS}/ || echo 'extras-tools tarballs cache backup failed'"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "アカウント設定";
+"global.username" = "利用者名";
+"global.recommended" = "推奨";
+"global.password" = "暗証語";
+"global.registerAUsername" = "ユーザー名を登録";
+"global.enterPassword" = "暗証語を入力してください";
+"global.enterUsername" = "ユーザー名を入力";
+"global.cancel" = "キャンセル";
+"global.blockContact" = "連絡先をブロック";
+"global.removeAccount" = "アカウントを削除";
+"global.incomingCall" = "着信";
+"global.ok" = "わかった";
+"global.close" = "閉じる";
+"global.share" = "共有";
+"global.forward" = "前へ";
+"global.save" = "保存";
+"global.resend" = "送信する";
+"global.preview" = "プレビュー";
+"global.accept" = "受け入れ";
+"global.block" = "ブロック";
+"global.decline" = "辞退";
+"global.name" = "名前";
+"global.copy" = "コピー";
+"global.reply" = "返信";
+"global.search" = "検索中…";
+"global.supportJami" = "Jamiプロジェクトを支援する";
+"global.deleteMessage" = "メッセージを削除";
+"global.deleteFile" = "デバイスからファイルを削除";
+"global.editMessage" = "メッセージ編集";
+"global.editing" = "編集中";
+"global.create" = "作成";
+"global.edit" = "編集";
+"global.remove" = "削除";
+"global.call" = "通話";
+"global.video" = "動画";
+"global.time" = "時刻";
+"global.editPassword" = "パスワードを編集";
+"global.confirmPassword" = "暗証語の再入力";
+"global.confirm" = "確認";
+"global.cameraDisabled" = "カメラへのアクセスが無効になっています。この機能を使用するには、デバイスの設定で有効にしてください。";
+"global.confirm" = "確認";
+"global.connect" = "接続";
+"global.leave" = "出て行こう";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "名前";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "記述";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Discard";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "誤ったQRコード";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "連絡先を検索…";
+"swarmcreation.addDescription" = "説明を追加";
+// Swarm
+"swarm.muteConversation" = "会話をミュートする";
+"swarm.leaveConversation" = "話しをやめましょう";
+"swarm.removeConversation" = "会話を削除";
+"swarm.removeContact" = "連絡先を削除";
+"swarm.restartConversation" = "会話を再開";
+"swarm.conversationEnded" = "会話が終了しました";
+"swarm.chooseColor" = "会話の色";
+"swarm.typeOfSwarm" = "会話の種類";
+"swarm.identifier" = "識別子";
+"swarm.conversationId" = "会話ID";
+"swarm.settings" = "設定";
+"swarm.members" = "要員";
+"swarm.contactHeader" = "連絡先";
+"swarm.showContactQRCode" = "連絡先のQRコードを表示";
+"swarm.shareContactInfo" = "連絡先情報を共有";
+"swarm.accessibilityContactQRCode" = "連絡先のQRコードを表示";
+"swarm.accessibilityContactQRCodeHint" = "連絡先のQRコードの画面を開きます";
+"swarm.accessibilityContactShareHint" = "連絡先情報の共有オプションを開きます";
+"swarm.accessibilityColorPicker" = "会話の色の選択";
+"swarm.conversationHeader" = "話し合い";
+"swarm.shareContactMessage" = "Jami分散型コミュニケーションプラットフォームでこの連絡先 %1@ を追加できます: https://jami.net";
+"swarm.oneToOne" = "プライベート";
+"swarm.adminInvitesOnly" = "プライベートグループ (限定招待)";
+"swarm.invitesOnly" = "プライベートグループ";
+"swarm.publicChat" = "パブリックグループ";
+"swarm.others" = "他者";
+"swarm.member" = "メンバー";
+"swarm.invited" = "招待された";
+"swarm.admin" = "管理者";
+"swarm.blocked" = "ブロック済み";
+"swarm.unknown" = "不明";
+"swarm.left" = "退出しました";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "メンバーを招待";
+"swarm.inviteSelectedMembers" = "選択した連絡先を招待";
+"swarm.inviteMembersSelected" = "選択済み";
+"swarm.inviteMembersNotSelected" = "未選択";
+"swarm.confirmLeaveConversation" = "この会話から退出しますか？";
+"swarm.Leave" = "出て行こう";
+"swarm.newGroup" = "新規グループを作成";
+"swarm.namePlaceholder" = "グループ名";
+"swarm.explanationText" = "メンバーはグループ作成後、いつでも招待できます。";
+"swarm.customizeProfile" = "グループプロフィールをカスタマイズ";
+"swarm.changePicture" = "グループの画像を変更";
+"swarm.customize" = "グループをカスタマイズ";
+"swarm.selectContacts" = "連絡先を選択";
+
+// Contact Picker
+"contactPicker.calls" = "通話";
+"contactPicker.contacts" = "連絡先";
+
+// Smartlist
+"smartlist.yesterday" = "昨日";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "会話";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "検索に一致する会話はありません。";
+"smartlist.newContact" = "新しい連絡先";
+"smartlist.newGroup" = "新しいグループ";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "招待を受信しました";
+"smartlist.noResults" = "検索結果はありません";
+"smartlist.noConversation" = "会話はありません";
+"smartlist.searchBarPlaceholder" = "名前を入力…";
+"smartlist.searchBar" = "検索";
+"smartlist.noNetworkConnectivity" = "ネットワーク接続がありません";
+"smartlist.cellularAccess" = "設定でモバイルデータ通信へのアクセスが許可されていることを確認してください。";
+"smartlist.accountsTitle" = "アカウント";
+"smartlist.addAccountButton" = "+ アカウントを追加";
+"smartlist.noNumber" = "この連絡先には番号が登録されていません";
+"smartlist.selectOneNumber" = "番号のうちの1つを選択";
+"smartlist.invitations" = "招待";
+"smartlist.aboutJami" = "Jamiについて";
+"smartlist.inviteFriends" = "友達を招待";
+"smartlist.disableDonation" = "後で";
+"smartlist.donationExplanation" = "Jami の使用を楽しみ、私たちのミッションに共感していただけるなら、寄付をしませんか？";
+"smartlist.inSynchronization" = "同期中…";
+
+// Conversation
+"conversation.addToContactsButton" = "連絡先に追加";
+"conversation.sendInvitationButton" = "招待を送信";
+"conversation.addToContactsLabel" = "連絡先を追加しますか？";
+"conversation.notContactLabel" = "%@ は連絡先リストにありません";
+"conversation.messagePlaceholder" = "メッセージを書く";
+"conversation.imageSaved" = "保存しました";
+"conversation.errorSavingImage" = "画像を保存できませんでした";
+"conversation.errorSavingImageMessage" = "画像をフォトライブラリに保存中にエラーが発生しました。";
+"conversation.photoAccessRequiredMessage" = "画像を保存するには、Jamiがフォトライブラリにアクセスする必要があります。設定で有効にできます。";
+"conversation.receivedRequest" = "%@ さんが会話の招待を送信しました。";
+"conversation.incomingRequest" = "さんが会話の招待を送信しました。";
+"conversation.requestMessage" = "こんにちは、\n会話に参加しますか？";
+"conversation.sendRequest" = "会話できるように招待を送信してください。";
+"conversation.sendRequestTitle" = "会話の招待を送信";
+"conversation.synchronizationTitle" = "会話の招待を承認しました。";
+"conversation.syncingTitle" = "会話を同期中";
+"conversation.synchronizationMessage" = "会話を同期するために %@ の接続を待っています…";
+"conversation.inReplyTo" = "メッセージへの返信";
+"conversation.repliedTo" = "%@ さんが %@ に返信しました";
+"conversation.yourself" = "自分";
+"conversation.edited" = "編集";
+"conversation.deletedMessage" = "%@ さんがメッセージを削除しました";
+"conversation.contactBlocked" = "連絡先をブロックしました";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "%@ さんが入力中";
+"conversation.typingIndicatorTwoUsers" = "%1@ さんと %2@ さんが入力中";
+"conversation.typingIndicatorOtherUsers" = "%1@ さん、%2@ さん、他 %3@ 人が入力中";
+"conversation.typingIndicatorOthersUsers" = "%1@ さん、%2@ さん、他 %3@ 人が入力中";
+"conversation.lastMessageDeleted" = "(削除されたメッセージ)";
+
+// Invitations
+"invitations.noInvitations" = "招待はありません";
+"invitations.accepted" = "受諾済み";
+"invitations.declined" = "拒否しました";
+"invitations.blocked" = "ブロック済み";
+"invitations.list" = "招待を受信しました";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Jamiで自由に、プライベートに共有しましょう";
+"welcome.text" = "Jamiは世界中の利用者と繋がることができる自由ソフトウェアであり，利用者の自由と私事権とを尊重しています。";
+"welcome.haveAccount" = "すでにアカウントを持っている";
+"welcome.linkDevice" = "他のデバイスから輸入する";
+"welcome.linkBackup" = "アーカイブバックアップからインポート";
+"welcome.createAccount" = "Jamiアカウントを作成する";
+"welcome.connectToJAMS" = "管理サーバーに接続";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "スキップ";
+"createProfile.profileCreated" = "次へ";
+"createProfile.title" = "プロフィールをパーソナライズ";
+"createProfile.enterNameLabel" = "表示名を入力";
+"createProfile.enterNamePlaceholder" = "名前を入力";
+"createProfile.subtitle" = "プロフィールは連絡先とのみ共有されます。プロフィールはいつでも変更できます。";
+"createProfile.createProfilePicture" = "プロフィール写真を作成";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "Jamiに登録";
+"createAccount.lookingForUsernameAvailability" = "ユーザー名の利用可否を確認中…";
+"createAccount.invalidUsername" = "無効なユーザー名です。正しいユーザー名を入力してください。";
+"createAccount.usernameAlreadyTaken" = "すでに取得されているユーザー名です";
+"createAccount.usernameValid" = "このユーザー名は利用可能です。";
+"createAccount.UsernameNotRegisteredTitle" = "ネットワークエラー";
+"createAccount.UsernameNotRegisteredMessage" = "アカウントは作成されましたが、ユーザー名がまだ登録されていません";
+"createAccount.timeoutTitle" = "アカウントを作成しました";
+"createAccount.timeoutMessage" = "ユーザー名を登録中です。お待ちください…";
+"createAccount.sipConfigure" = "既存の SIP アカウントを設定";
+"createAccount.creatingAccount" = "アカウントを作成中";
+"createAccount.nameExplanation" = "ユーザ名を選択して,他のユーザがJamiで簡単にあなたを見つけ,あなたのところに届けるようにします.";
+"createAccount.newAccount" = "新規アカウント";
+"createAccount.encryptionEnabled" = "パスワード保護が有効です";
+"createAccount.encrypt" = "パスワードで保護";
+"createAccount.customize" = "調整する";
+"createAccount.encryptTitle" = "アカウントをパスワードで保護";
+"createAccount.encryptExplanation" = "Jamiアカウントは、アカウントキーを含むアーカイブとして、このデバイスにローカルにのみ作成・保存されます。アーカイブへのアクセスは、必要に応じてパスワードで保護できます。";
+
+// Link To Account form
+"linkToAccount.importAccount" = "アカウントをインポート";
+"linkToAccount.showQrCode" = "QRコード";
+"linkToAccount.showPinCode" = "認証コード";
+"linkToAccount.actionRequired" = "操作が必要です。\n元のデバイスでアカウントを確認してください。";
+"linkToAccount.allSet" = "アカウントが正常にインポートされました。";
+"linkToAccount.goToAccounts" = "インポートしたアカウントへ移動";
+"linkToAccount.exportInstructions" = "元のデバイスでエクスポートを開始してください。";
+"linkToAccount.exportInstructionsPath" = "アカウント → アカウント設定 → 新しいデバイスをリンク を選択してください。";
+"linkToAccount.scanQrCode" = "準備ができたら、QRコードをスキャンしてください。";
+"linkToAccount.enterProvidedCode" = "準備ができたら、認証コードを入力してください。";
+"linkToAccount.accountLockedWithPassword" = "アカウントはパスワードで保護されています。続行するには、アカウントのパスワードを入力してください。";
+"linkToAccount.exit" = "終了";
+"linkToAccount.shareMessage" = "あなたのコード: %@";
+"linkToAccount.alertTile" = "アカウントのリンクを停止しますか？";
+"linkToAccount.alertMessage" = "停止すると、アカウントのインポート操作がキャンセルされます。";
+
+// Import from Archive
+"importFromArchive.explanation" = "ローカルアーカイブからJamiアカウントをインポート";
+"importFromArchive.passwordExplanation" = "アカウントがパスワードで保護されている場合は、次のフィールドに入力してください。";
+"importFromArchive.title" = "アーカイブからインポート";
+"importFromArchive.buttonTitle" = "輸入";
+"importFromArchive.selectArchiveButton" = "アーカイブファイルを選択";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "サインイン";
+"linkToAccountManager.title" = "管理サーバーアカウント";
+"linkToAccountManager.accountManagerPlaceholder" = "管理サーバーの URL";
+"linkToAccountManager.accountManagerLabel" = "管理サーバーの URL を入力してください";
+"linkToAccountManager.jamsExplanation" = "管理サーバーの URL を入力してください";
+"linkToAccountManager.enterCredentials" = "管理サーバーの認証情報を入力";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "アカウントエラー";
+"alerts.accountCannotBeFoundMessage" = "Jamiネットワークでアカウントが見つかりませんでした。既存のデバイスからJamiでエクスポートされていること、および入力した認証情報が正しいことを確認してください。";
+"alerts.accountAddedTitle" = "アカウントが追加されました";
+"alerts.accountNoNetworkTitle" = "ネットワークエラー";
+"alerts.accountNoNetworkMessage" = "Jamiアカウントを分散ネットワークに追加中に接続エラーが発生しました。もう一度お試しください。問題が解決しない場合は、システム管理者にお問い合わせください。";
+"alerts.accountDefaultErrorTitle" = "アカウントエラー";
+"alerts.accountDefaultErrorMessage" = "アカウントの作成中にエラーが発生しました。";
+"alerts.profileTakePhoto" = "撮影";
+"alerts.profileUploadPhoto" = "写真のアップロード";
+"alerts.accountLinkedTitle" = "アカウントをリンクしています";
+"alerts.dbFailedTitle" = "Jamiの起動中にエラーが発生しました";
+"alerts.dbFailedMessage" = "アプリケーションを終了し、起動し直してください";
+"alerts.confirmBlockContact" = "この連絡先をブロックしますか？この連絡先との会話履歴も完全に削除されます。";
+"alerts.confirmDeleteConversation" = "この会話を完全に削除しますか？";
+"alerts.confirmLeaveConversation" = "この会話から退出しますか？";
+"alerts.confirmRemoveOneToOneConversation" = "この会話を削除しますか？既存の履歴は削除されます。この連絡先と他の会話がない場合は、新しい会話が開始されることがあります。";
+"alerts.confimRemoveContact" = "この連絡先を削除しますか？既存の履歴は削除されます。";
+"alerts.confirmDeleteConversationFromContact" = "この連絡先との会話を削除しますか？";
+"alerts.confirmDeleteConversationTitle" = "会話を削除";
+"alerts.noMediaPermissionsTitle" = "メディア許可が認められていない";
+"alerts.noLibraryPermissionsTitle" = "フォトライブラリへのアクセスが許可されていない";
+"alerts.noLocationPermissionsTitle" = "場所へのアクセスが認められていない";
+"alerts.errorWrongCredentials" = "管理サーバーへの接続中にエラーが発生しました。もう一度お試しください。問題が解決しない場合は、システム管理者にお問い合わせください。";
+"alerts.recordVideoMessage" = "ビデオメッセージを録画";
+"alerts.recordAudioMessage" = "音声メッセージを録音";
+"alerts.uploadFile" = "ファイルの送信";
+"alerts.uploadPhoto" = "ギャラリーを開く";
+"alerts.sendPhoto" = "写真を送信";
+"alerts.locationServiceIsDisabled" = "「Jami」がデバイスの位置情報を取得できるように、「位置情報サービス」をオンにしてください。";
+"alerts.locationSharing" = "私の位置をシェア";
+"alerts.alreadylocationSharing" = "このユーザーと既に位置情報を共有済みです";
+"alerts.locationSharingDurationTitle" = "いつまで位置情報を共有しますか？";
+"alerts.locationSharingDuration10min" = "10分";
+"alerts.locationSharingDuration1hour" = "1時間";
+"alerts.mapInformation" = "地図情報";
+"alerts.openStreetMapCopyright" = "© OpenStreetMapの貢献者";
+"alerts.openStreetMapCopyrightMoreInfo" = "詳細情報";
+
+// Actions
+"actions.deleteAction" = "削除";
+"actions.backAction" = "戻る";
+"actions.doneAction" = "完了";
+"actions.goToSettings" = "設定へ移動";
+"actions.stopLocationSharing" = "共有を停止";
+
+// Calls
+"calls.ringing" = "鳴ってる";
+"calls.connecting" = "接続中…";
+"calls.callFinished" = "呼び出し終了";
+"calls.currentCallWith" = "連絡する";
+"calls.maximize" = "最大化";
+"calls.minimize" = "最小化";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "調停者を設定";
+"calls.removeModerator" = "調停者を取り消し";
+"calls.muteAudio" = "マイクをミュート";
+"calls.unmuteAudio" = "マイクのミュートを解除";
+"calls.raiseHand" = "手を挙げる";
+"calls.lowerHand" = "手を下げる";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "記録中";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "通話が進行中です。通話に参加しますか？後で会話から通話に参加することもできます。";
+"calls.activeCallInConversation" = "連絡が進んでいる. 連絡に参加したいですか?";
+"calls.acceptWithAudio" = "音声で承諾";
+"calls.acceptWithVideo" = "ビデオで承諾";
+
+// Account Page
+"accountPage.devicesListHeader" = "デバイス";
+"accountPage.settingsHeader" = "設定";
+"accountPage.notificationsHeader" = "通知";
+"accountPage.blockedContacts" = "着信拒否した連絡先";
+"accountPage.unblockContact" = "ブロック解除";
+"accountPage.proxyAddressAlert" = "代理アドレスを入力する";
+"accountPage.noProxyExplanationLabel" = "プロキシが無効の場合、通知を受信できません。";
+"accountPage.proxyPaceholder" = "プロキシアドレス";
+"accountPage.useProxyList" = "プロキシリストを使用";
+"accountPage.proxyListURL" = "プロキシリストの URL";
+"accountPage.proxyExplanation" = "通知はプロキシ経由でルーティングされます。デフォルトのプロキシを使用するか、カスタムのプロキシアドレスを入力するか、プロキシのリストを含むURLを指定できます。";
+"accountPage.proxyHeader" = "プロキシ";
+"accountPage.currentProxy" = "現在のプロキシ";
+"accountPage.enableNotifications" = "通知を有効にする";
+"accountPage.proxyDisabledAlertTitle" = "プロキシサーバーが無効";
+"accountPage.proxyDisabledAlertBody" = "通知を有効にするため、プロキシを有効にしてください。";
+"accountPage.removeDeviceTitle" = "デバイスを削除";
+"accountPage.revokeDeviceMessage" = "このデバイスを削除しますか？この操作は元に戻せません。";
+"accountPage.revokeDeviceButton" = "破棄";
+"accountPage.revokeDevicePlaceholder" = "アカウントのパスワードを入力";
+"accountPage.deviceRevoked" = "デバイスの無効化が完了しました";
+"accountPage.deviceRevocationProgress" = "削除中…";
+"accountPage.deviceRevocationSuccess" = "デバイスを削除しました";
+"accountPage.deviceRevocationTryAgain" = "もう一度やり直す";
+"accountPage.deviceRevocationWrongPassword" = "パスワードが一致しません";
+"accountPage.deviceRevocationUnknownDevice" = "未知のデバイス";
+"accountPage.deviceRevocationError" = "端末無効化エラー";
+"accountPage.linkDeviceTitle" = "別のデバイスをリンク";
+"accountPage.other" = "その他";
+"accountPage.removeAccountMessage" = "アカウントがバックアップされていない、または別のデバイスに追加されていない場合、アカウントと登録済みのユーザー名は取り返しのつかない形で失われます。";
+"accountPage.inviteFriends" = "友達を招待";
+"accountPage.contactMeOnJamiTitle" = "ジャミに連絡する!";
+"accountPage.contactMeOnJamiContant" = "Jami分散型コミュニケーションプラットフォームで「%s」を使って私に連絡してください: https://jami.net";
+"accountPage.passwordPlaceholder" = "アカウントのパスワードを入力";
+"accountPage.usernamePlaceholder" = "必要なユーザー名を入力する";
+"accountPage.registerNameErrorMessage" = "このユーザー名は利用できません。";
+"accountPage.usernameRegistering" = "登録";
+"accountPage.usernameRegisterAction" = "登録";
+"accountPage.usernameRegistrationFailedTitle" = "登録に失敗しました";
+"accountPage.usernameRegistrationFailed" = "アカウントのパスワードを確認してください。";
+"accountPage.createPassword" = "パスワードを設定";
+"accountPage.changePassword" = "パスワードを変更";
+"accountPage.currentPasswordPlaceholder" = "現在のパスワードを入力";
+"accountPage.newPasswordPlaceholder" = "新しいパスワードを入力";
+"accountPage.newPasswordConfirmPlaceholder" = "新しいパスワードを確認する";
+"accountPage.changePasswordError" = "パスワードが一致しません";
+"accountPage.enableBoothMode" = "ブースモードを有効にする";
+"accountPage.disableBoothMode" = "ブースモードを無効にする";
+"accountPage.disableBoothModeExplanation" = "アカウントのパスワードを入力してください";
+"accountPage.boothModeExplanation" = "ブルースモードでは会話履歴が保存されず,Jami機能は出かけ通話によって制限されます.ブルースモードを有効にすると,すべての会話が削除されます.";
+"accountPage.noBoothMode" = "ブースモードを有効にするには、先にアカウントをパスワードで保護してください。";
+"accountPage.boothModeAlertMessage" = "ブースモードを有効にすると、すべての会話が削除されます。";
+"accountPage.peerDiscovery" = "ローカルピアの探索を有効化";
+"accountPage.peerDiscoveryExplanation" = "ローカルネットワーク上の他のDHTノードに接続します";
+"accountPage.autoRegistration" = "期限切れ後自動登録";
+"accountPage.connectivityHeader" = "接続性";
+"accountPage.turnEnabled" = "ターンを有効にする";
+"accountPage.turnServer" = "TURNアドレス";
+"accountPage.turnUsername" = "TURNの利用者名";
+"accountPage.turnPassword" = "TURNの暗証語";
+"accountPage.turnRealm" = "TURNレルム";
+"accountPage.upnpEnabled" = "UPnPを使用";
+"accountPage.stunEnabled" = "STUNを使用";
+"accountPage.stunServer" = "STUNアドレス";
+"accountPage.publicAddressHeader" = "公衆の演説";
+"accountPage.allowIPAutoRewrite" = "IPの自動書き換えを許可";
+"accountPage.publishedSameAsLocal" = "ローカルと同じものを発行";
+"accountPage.publishedAddress" = "アドレス";
+"accountPage.publishedPort" = "ポート番号";
+"accountPage.security" = "セキュリティ";
+"accountPage.enableSRTP" = "SDES 鍵交換";
+"accountPage.encryptNegotiation" = "negotiationを暗号化 (TLS)";
+"accountPage.registerNameExplanation" = "他の人がJamiであなたをより簡単に見つけて連絡できるように、ユーザー名を登録してください。";
+"accountPage.profileHeader" = "プロフィール";
+"accountPage.profileNameNotSelected" = "名前が選択されていません";
+"accountPage.accountHeader" = "アカウント";
+"accountPage.profileName" = "プロフィール名";
+"accountPage.profileNamePlaceholder" = "プロフィール名を入力";
+"accountPage.editProfile" = "プロフィールを編集";
+"accountPage.manageAccount" = "アカウント管理";
+"accountPage.encryptAccount" = "暗証語";
+"accountPage.passwordExplanation" = "あなたの Jami アカウントは、アカウントの鍵を含むアーカイブとしてこのデバイスにのみ登録されています。このアーカイブへのアクセスはパスワードで保護できます。";
+"accountPage.passwordsDoNotMatch" = "パスワードが一致しません。";
+"accountPage.passwordCreated" = "パスワードを設定しました";
+"accountPage.passwordUpdated" = "パスワードを更新しました";
+"accountPage.linkedDevices" = "リンクされたデバイス";
+"accountPage.unlink" = "リンク解除";
+"accountPage.generatingPin" = "PINコードを生成中…";
+"accountPage.passwordForPin" = "アカウントはパスワードで保護されています。PINコードを生成するには、パスワードを入力してください。";
+"accountPage.pinExplanationTitle" = "別のデバイスで";
+"accountPage.pinExplanationMessage" = "Jamiをインストールして起動します。「別のデバイスからインポート」を選択し、QRコードをスキャンしてください。または、PINコードを手動で入力してください。";
+"accountPage.pinError" = "PINコードの生成中にエラーが発生しました。";
+"accountPage.notificationTitle" = "通知";
+"accountPage.notificationError" = "Jamiの通知が無効になっています。この機能を使用するには、デバイスの設定で有効にしてください。";
+"accountPage.callsFromUnknownContacts" = "不明な連絡先からの通話を許可します。";
+"accountPage.accountSettingsExplanation" = "これらの設定はこのアカウントにのみ適用されます。";
+"accountPage.appSettings" = "アプリ設定";
+"accountPage.appSettingsExplanation" = "これらの設定はアプリケーション全体に適用されます。";
+"accountPage.connectivityAndConfiguration" = "接続と構成";
+"accountPage.sipExpirationTime" = "登録期限 (秒)";
+"accountPage.tlsVerifyServerCertificates" = "サーバー TLS 証明書を検証する";
+"accountPage.tlsVerifyClientCertificates" = "クライアントTLS証明書を検証";
+"accountPage.tlsRequireTlsCertificate" = "受信TLS接続は証明書が必要です";
+"accountPage.tlsDisableSecureDlgCheck" = "入力 TLS データに対するセキュア・ダイアログチェックを無効にする";
+"accountPage.editSipExpirationTime" = "有効期限";
+"accountPage.selectSipExpirationTime" = "登録の有効期限の時間（秒）を設定";
+"accountPage.invalidSipExpirationTime" = "60〜604800秒の値を入力してください";
+"accountPage.invalidPort" = "0〜65535の値を入力してください";
+"accountPage.invalidAddress" = "有効なアドレスを入力してください";
+"accountPage.thisDevice" = "この機器";
+"accountPage.otherDevices" = "接続された他の装置";
+"accountPage.accountIdentity" = "アカウントの識別情報";
+"accountPage.bootstrap" = "ブートストラップ";
+"accountPage.dhtConfiguration" = "OpenDHT設定";
+"accountPage.nameServer" = "ネームサーバー";
+"accountPage.chats" = "チャット";
+"accountPage.typingIndicator" = "タイプインジケーター";
+"accountPage.typingIndicatorExplanation" = "メッセージの入力中であることを表示します。";
+
+// Backup Account
+"backupAccount.explanation" = "このJamiアカウントはこのデバイスにのみ存在します。このデバイスを紛失したり、アプリケーションをアンインストールしたりすると、アカウントは失われます。このアカウントのバックアップを作成することをおすすめします。";
+"backupAccount.title" = "アカウントをバックアップ";
+"backupAccount.creating" = "バックアップを作成中";
+"backupAccount.archiveName" = "アーカイブの名前を選択してください。";
+"backupAccount.archiveNamePlaceholder" = "アーカイブ名";
+"backupAccount.passwordRequest" = "アカウントのパスワードを入力してください。";
+"backupAccount.backupButton" = "バックアップ";
+"backupAccount.documentPickerButton" = "バックアップの場所を開く";
+"backupAccount.exportSuccess" = "バックアップを作成しました";
+"backupAccount.errorWrongLocation" = "選択したファイルパスが無効です。別の場所を選択してください。";
+"backupAccount.errorAccessDenied" = "選択した場所へのアクセスが拒否されました。";
+"backupAccount.errorFailed" = "アカウントのエクスポート中にエラーが発生しました。";
+
+// Account
+"account.sipServer" = "サーバー";
+"account.port" = "ポート番号";
+"account.proxyServer" = "プロキシ";
+"account.createSipAccount" = "SIPアカウントを設定";
+"account.sipAccount" = "SIPアカウント";
+"account.configure" = "設定";
+"account.advancedFeatures" = "詳細機能";
+"account.serverLabel" = "アドレス入力";
+"account.portLabel" = "ポート番号を入力する";
+"account.accountStatus" = "口座の状態";
+"account.enableAccount" = "アカウントを有効化";
+"account.statusOnline" = "オンライン";
+"account.statusOffline" = "オフライン";
+"account.statusConnecting" = "接続中";
+"account.statusUnknown" = "不明";
+"account.statusConnectionerror" = "接続エラー";
+"account.needMigration" = "アカウントの移行が必要です。";
+"account.me" = "自分";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "ブロックした連絡先はありません";
+
+// Link New Device
+"linkDevice.title" = "新しいデバイスを連結する";
+"linkDevice.networkError" = "アカウントのエクスポート中にネットワークエラーが発生しました。";
+"linkDevice.errorWrongPassword" = "デバイスのリンク中に認証エラーが発生しました。認証情報を確認して、もう一度お試しください。";
+"linkDevice.errorNetwork" = "アカウントのリンク中にネットワークエラーが発生しました。接続を確認して、もう一度お試しください。";
+"linkDevice.errorTimeout" = "操作がタイムアウトしました。もう一度お試しください。";
+"linkDevice.errorCode" = "コードの生成中にエラーが発生しました。もう一度お試しください。";
+"linkDevice.errorWrongData" = "アカウントのエクスポート中にエラーが発生しました。もう一度お試しください。";
+"linkDevice.initialInfo" = "新しいデバイスで、新しいアカウントを開始してください。";
+"linkDevice.infoAddAccount" = "アカウントを追加 → 別のデバイスから接続 を選択してください。";
+"linkDevice.infoQRCode" = "準備ができたら、QRコードをスキャンしてください。";
+"linkDevice.infoCode" = "準備ができたら、コードを入力して「接続」をタップしてください。";
+"linkDevice.connecting" = "新しいデバイスに接続中…";
+"linkDevice.authenticationInfo" = "次のIPアドレスで新しいデバイスが見つかりました。これはあなたですか？アカウントのエクスポート操作を続行するには、「確認」をタップしてください。";
+"linkDevice.newDeviceIP" = "新しいデバイスのIPアドレス: %1@";
+"linkDevice.code" = "コード";
+"linkDevice.wrongEntry" = "認識できない新しいデバイス識別子です。上記の手順に従ってください。";
+"linkDevice.exportInProgress" = "新しいデバイスへのアカウントのエクスポート操作が進行中です。新しいデバイスでインポートを確認してください。";
+"linkDevice.completed" = "新しいデバイスでアカウントが正常にインポートされました。";
+
+// Contact Page
+"contactPage.startAudioCall" = "音声通話を開始";
+"contactPage.startVideoCall" = "ビデオ通話を開始";
+"contactPage.send" = "送信";
+"contactPage.leaveConversation" = "話しをやめましょう";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "初期化中…";
+"dataTransfer.readableStatusError" = "エラー";
+"dataTransfer.readableStatusAwaiting" = "待ってる";
+"dataTransfer.readableStatusOngoing" = "転送中";
+"dataTransfer.readableStatusCanceled" = "キャンセルしました";
+"dataTransfer.sendingFailed" = "送信中にエラーが発生しました。";
+"dataTransfer.readableStatusSuccess" = "完了";
+"dataTransfer.recordInBackgroundWarning" = "複数のアプリでマルチタスク中にビデオを録画すると、ビデオの品質が低下する場合があります。最良の結果を得るには、マルチタスクをしていないときに録画してください";
+
+// Notifications
+"notifications.missedCall" = "欠電話";
+"notifications.newFile" = "新しいファイル";
+"notifications.locationSharingStarted" = "位置共有開始";
+"notifications.locationSharingStopped" = "到着する場所共有停止";
+"dataTransfer.readableStatusDecline" = "辞退";
+"dataTransfer.readableStatusAccept" = "受け入れ";
+"dataTransfer.infoMessage" = "タップして録音を開始";
+"dataTransfer.sendMessage" = "送信";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "招待を受信しました";
+"generatedMessage.swarmCreated" = "会話が作成されました";
+"generatedMessage.invitationReceived" = "%@ さんが会話に招待されました。";
+"generatedMessage.invitationAccepted" = "%@ さんが会話に参加しました。";
+"generatedMessage.youJoined" = "会話に参加しました。";
+"generatedMessage.contactBlocked" = "%@ さんが会話からブロックされました。";
+"generatedMessage.contactUnblocked" = "%@ さんが会話のブロックを解除されました。";
+"generatedMessage.outgoingCall" = "発信";
+"generatedMessage.missedOutgoingCall" = "不在発信";
+"generatedMessage.missedIncomingCall" = "不在着信";
+"generatedMessage.liveLocationSharing" = "リアルタイムでの位置共有";
+"generatedMessage.contactLeftConversation" = "%@ さんが会話から退出しました。";
+"generatedMessage.nonSwarmInvitationReceived" = "招待を送信しました。";
+"generatedMessage.nonSwarmInvitationAccepted" = "招待が承認されました。";
+
+// General Settings
+"generalSettings.videoSettings" = "ビデオ設定";
+"generalSettings.videoAcceleration" = "ビデオ加速を有効にする";
+"generalSettings.fileTransfer" = "ファイル転送";
+"generalSettings.locationSharing" = "場所共有";
+"generalSettings.automaticAcceptIncomingFiles" = "ファイルの受信を自動的に許可";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "（MB、0 = 無制限）";
+"generalSettings.limitLocationSharingDuration" = "場所共有の期間を制限する";
+"generalSettings.locationSharingDuration" = "ポジションシェア期間";
+"generalSettings.donationCampaign" = "寄付キャンペーン";
+"generalSettings.enableDonationCampaign" = "寄付キャンペーンを有効にする";
+
+// Log View
+"logView.title" = "診断";
+"logView.description" = "診断記録設定を開く";
+"logView.startLogging" = "ログ記録を開始";
+"logView.stopLogging" = "記録を終了する";
+"logView.saveError" = "ファイルの保存中にエラーが発生しました。";
+"logView.shareError" = "ファイルの共有中にエラーが発生しました。";
+
+// Migrate Account
+"migrateAccount.title" = "アカウントの移行";
+"migrateAccount.migrateButton" = "アカウントを移行";
+"migrateAccount.explanation" = "アカウントの移行が必要です。";
+"migrateAccount.passwordExplanation" = "アカウントの移行を続行するには、アカウントのパスワードを入力してください。";
+"migrateAccount.error" = "アカウントの移行中にエラーが発生しました。再試行するか、アカウントを削除してください。";
+"migrateAccount.migrating" = "移行中…";
+"migrateAccount.migrateAnother" = "別のアカウントに移行";
+
+// About Jami
+"aboutJami.declaration1" = "GNUパッケージであるJamiは、ユーザーの自由とプライバシーを尊重する、普遍的で分散型のピアツーピア通信ソフトウェアです。詳しくは";
+"aboutJami.declaration2" = "をご覧ください。";
+"aboutJami.noWarranty1" = "このプログラムには一切の保証がありません。詳細は";
+"aboutJami.noWarranty2" = "バージョン3以降をご覧ください。";
+"aboutJami.contribute" = "開発に協力";
+"aboutJami.feedback" = "フィードバック";
+"aboutJami.developers" = "開発者";
+"aboutJami.media" = "メディア";
+"aboutJami.communityManagement" = "コミュニティ管理";
+"aboutJami.specialThanks" = "特別な感謝を";
+"aboutJami.info" = "これは、Jami に有用な成果をもたらし、多大な時間を投資した人々の一覧です。一覧に追加されることを希望する貢献者は、私たちにご連絡ください。";
+"aboutJami.header" = "長年にわたる努力でこのソフトウェアを現在の姿にしてくれた貢献者の皆さんに感謝します。";
+
+// Accessibility
+"accessibility.close" = "閉じる";
+"accessibility.smartListSwitchAccounts" = "アカウントを切り替え";
+"accessibility.smartListConnectedAs" = "現在のアカウントは %@ です";
+"accessibility.smartListAddAccount" = "アカウントを追加";
+"accessibility.aboutJamiTitle" = "Jamiについて";
+"accessibility.welcomeToJamiTitle" = "Jamiへようこそ";
+"accessibility.createAccountVerifyUsernamePrompt" = "利用可否を確認するためにユーザー名を入力してください。";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "プロフィール画像";
+"accessibility.profilePicturePickerHint" = "ダブルタップして写真を撮るか、ライブラリから写真を選択してください";
+"accessibility.swarmPicturePicker" = "グループの画像";
+"accessibility.accountSummaryQrCode" = "QRコード";
+"accessibility.accountSummaryQrCodeHint" = "ダブルタップしてアカウントのQRコードを表示";
+"accessibility.accountSummaryEditProfileHint" = "ダブルタップしてプロフィールを編集";
+"accessibility.accountSummaryEditSettingsButton" = "設定";
+"accessibility.conversationStartVoiceCall" = "%@ さんと音声通話を開始";
+"accessibility.conversationStartVideoCall" = "%@ さんとビデオ通話を開始";
+"accessibility.conversationComposeMessage" = "メッセージを作成";
+"accessibility.conversationShareMedia" = "メディアを共有";
+"accessibility.conversationCameraHint" = "ダブルタップしてカメラを開く";
+"accessibility.audioPlayerPlay" = "再生";
+"accessibility.audioPlayerPause" = "一時停止";
+"accessibility.conversationRowUnreadCount" = "未読メッセージ %@ 件。";
+"accessibility.conversationRowBlocked" = "会話がブロックされています";
+"accessibility.conversationRowSyncing" = "同期中";
+"accessibility.conversationRowLastMessage" = "最後のメッセージ %@";
+"accessibility.userPresenceOnline" = "オンライン";
+"accessibility.userPresenceAvailable" = "利用可能";
+"accessibility.pendingRequestsRowPlural" = "受信した招待: 保留中の招待 %@ 件";
+"accessibility.pendingRequestsRowSingular" = "受信した招待: 保留中の招待 %@ 件";
+"accessibility.pendingRequestsRowHint" = "ダブルタップして受信した招待を確認し、返信します";
+"accessibility.pendingRequestsListBlockUser" = "招待の送信者をブロック";
+"accessibility.pendingRequestsListRejectInvitation" = "招待を辞退";
+"accessibility.pendingRequestsListAcceptInvitation" = "招待を承諾";
+"accessibility.messageBubbleDeleted" = "メッセージが削除されました";
+"accessibility.messageBubbleEdited" = "編集";
+"accessibility.messageBubbleRead" = "既読";
+"accessibility.messageBubbleUnread" = "未読";
+"accessibility.textNotAvailable" = "%@ に空のテキストメッセージを受信しました。正しく送信されなかった可能性があります。";
+"accessibility.fileTransferNoName" = "%@ にファイルを受信、名前は利用できません";
+"accessibility.inReply" = "メッセージへの返信";
+"accessibility.text.receivedOn" = "%1@、%2@ にメッセージを受信";
+"accessibility.text.sentOn" = "%1@、%2@ にメッセージを送信";
+"accessibility.fileTransfer.receivedOn" = "ファイル: %1@、%2@ に受信";
+"accessibility.fileTransfer.sentOn" = "ファイル: %1@、%2@ に送信";
+"accessibility.call.lasted" = "通話時間 %@";
+"accessibility.calls.default.toggleAudio" = "マイクをミュート";
+"accessibility.calls.default.toggleVideo" = "カメラを開始";
+"accessibility.calls.default.pauseCall" = "通話を一時停止";
+"accessibility.calls.default.endCall" = "通話を終了";
+"accessibility.calls.default.addParticipant" = "参加者を追加";
+"accessibility.calls.default.switchCamera" = "カメラを切り替え";
+"accessibility.calls.default.toggleSpeaker" = "スピーカーをオン";
+"accessibility.calls.default.openConversation" = "会話を開く";
+"accessibility.calls.default.showDialpad" = "ダイヤルパッドを表示";
+"accessibility.calls.default.raiseHand" = "手を挙げる";
+
+"accessibility.calls.alter.toggleAudio" = "マイクのミュートを解除";
+"accessibility.calls.alter.toggleVideo" = "カメラを止める";
+"accessibility.calls.alter.pauseCall" = "通話を再開";
+"accessibility.calls.alter.endCall" = "通話を終了";
+"accessibility.calls.alter.addParticipant" = "参加者を追加";
+"accessibility.calls.alter.switchCamera" = "カメラを切り替え";
+"accessibility.calls.alter.toggleSpeaker" = "スピーカーをオフ";
+"accessibility.calls.alter.openConversation" = "会話を開く";
+"accessibility.calls.alter.showDialpad" = "ダイヤルパッドを表示";
+"accessibility.calls.alter.raiseHand" = "手を下げる";
+"accessibility.conference.minimize" = "最小化";
+"accessibility.conference.maximize" = "最大化";
+"accessibility.conference.setModerator" = "調停者を設定";
+"accessibility.conference.unsetModerator" = "調停者を取り消し";
+"accessibility.conference.muteAudio" = "音声を消音する";
+"accessibility.conference.unmuteAudio" = "音声無音";
+"accessibility.conference.endCall" = "通話を終了";
+"accessibility.conference.lowerHand" = "手を下げる";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "挙手";
+"accessibility.conference.moderator" = "モデレータ";
+"accessibility.conference.recording" = "記録中";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "トークンQRコード";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "ビビッドピンク";
+"swarmColors.purple" = "紫";
+"swarmColors.violet" = "すみれ色";
+"swarmColors.indigoBlue" = "藍色";
+"swarmColors.skyBlue" = "スカイブルー";
+"swarmColors.cyan" = "シアン";
+"swarmColors.teal" = "ティール";
+"swarmColors.green" = "緑";
+"swarmColors.limeGreen" = "ライムグリーン";
+"swarmColors.mediumGray" = "ミディアムグレー";
+"swarmColors.yellowGreen" = "黄緑";
+"swarmColors.amber" = "琥珀色";
+"swarmColors.brightOrange" = "ブライトオレンジ";
+"swarmColors.brown" = "茶色";
+"swarmColors.steelBlue" = "スチールブルー";
+
+// Share extension
+"shareExtension.noAccount.title" = "アカウントが見つかりません";
+"shareExtension.noAccount.description" = "続行するには、メインアプリケーションでアカウントを作成してください。";
+"shareExtension.unsupportedType.title" = "サポートされていないコンテンツ";
+"shareExtension.unsupportedType.description" = "選択したコンテンツの共有は現在サポートされていません。";
+"shareExtension.sending" = "送信中…";
+"shareExtension.noSearchResults" = "検索に一致する会話はありません";
+"shareExtension.tryDifferentFilter" = "別のフィルターをお試しください";
+"shareExtension.sendToConversation" = "%d 件の会話に送信";
+"shareExtension.sendToConversationsPlural" = "%d 件の会話に送信";
+"shareExtension.selectAccountTitle" = "アカウントを選択";
+"shareExtension.searchConversations" = "会話を検索";
+"shareExtension.accessibilitySelectConversation" = "ダブルタップしてこの会話を選択";
+"shareExtension.accessibilitySelectedAccount" = "選択したアカウント: %@。ダブルタップしてアカウントを変更します。";
+"shareExtension.accessibilitySendButton" = "ダブルタップして選択した会話に送信";
+"shareExtension.accessibilitySelectAccount" = "ダブルタップしてこのアカウントを選択";
+
+// Peer Services
+"peerServices.title" = "共有サービス";
+"peerServices.refresh" = "サービスを更新";
+"peerServices.empty" = "利用可能な共有サービスはありません";
+"peerServices.errorOffline" = "連絡先はオフラインです";
+"peerServices.errorUnreachable" = "連絡先に到達できません";
+"peerServices.errorTimeout" = "リクエストがタイムアウトしました";
+"peerServices.errorUnknown" = "サービスを取得できませんでした";
+"peerServices.done" = "完了";
+"peerServices.notSupported" = "サポートされていません";
+"peerServices.open" = "開く";
+
+// Collaborative documents
+"collab.documents" = "文書";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "作成";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "リンク";
+"collab.linkHint" = "アドレス";
+"collab.linkAdd" = "追加";
+"collab.linkRemove" = "削除";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = "太字";
+"collab.italic" = "斜体";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "取り消し線";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "中央";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "取り消し";
+"collab.redo" = "やり直し";
+"collab.remove" = "削除";
+"collab.open" = "開く";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "削除";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";

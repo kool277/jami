@@ -1,0 +1,1006 @@
+/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+import UIKit
+import RxSwift
+import RxCocoa
+import SwiftyBeaver
+import SwiftUI
+
+enum MessageSequencing {
+    case singleMessage
+    case firstOfSequence
+    case lastOfSequence
+    case middleOfSequence
+    case unknown
+}
+
+enum GeneratedMessageType: String {
+    case receivedContactRequest = "Contact request received"
+    case contactAdded = "Contact added"
+    case missedIncomingCall = "Missed incoming call"
+    case missedOutgoingCall = "Missed outgoing call"
+    case incomingCall = "Incoming call"
+    case outgoingCall = "Outgoing call"
+}
+
+// swiftlint:disable type_body_length
+// swiftlint:disable file_length
+class ConversationViewModel: Stateable, ViewModel, ObservableObject, Identifiable {
+
+    @Published var name: String = "" {
+        didSet {
+            if conversation != nil {
+                updateName()
+            }
+        }
+    }
+    @Published var nameWithSuffix: String = ""
+    @Published var lastMessage: String = ""
+    @Published var lastMessageDate: String = ""
+    @Published var unreadMessages: Int = 0
+    @Published var presence: PresenceStatus = .offline
+    @Published var navUserName: String = ""
+    @Published var isBlocked: Bool = false
+    @Published var hasPeerSharing: Bool = false
+    @Published var navBarContentWidth: CGFloat = 0
+
+    /// Logger
+    private let log = SwiftyBeaver.self
+
+    // Services
+    private let conversationsService: ConversationsService
+    private let accountService: AccountsService
+    private let nameService: NameService
+    private let contactsService: ContactsService
+    private let presenceService: PresenceService
+    private let profileService: ProfilesService
+    private let callService: CallService
+    private let locationSharingService: LocationSharingService
+    private let peerSharingService: PeerSharingService
+    private let collaborationService: CollaborationService
+    let dataTransferService: DataTransferService
+
+    let injectionBag: InjectionBag
+
+    internal let disposeBag = DisposeBag()
+
+    private var conversationBindingsDisposeBag = DisposeBag()
+    private var messageUnreadCount = 0
+    private var documentUnreadCount = 0
+
+    func closeAllPlayers() {
+        self.swiftUIModel.transferHelper.closeAllPlayers()
+    }
+
+    let showIncomingLocationSharing = BehaviorRelay<Bool>(value: false)
+    let showOutgoingLocationSharing = BehaviorRelay<Bool>(value: false)
+    let updateNavigationBar = BehaviorRelay<Bool>(value: false)
+
+    private let stateSubject = PublishSubject<State>()
+    lazy var state: Observable<State> = {
+        return self.stateSubject.asObservable()
+    }()
+
+    var isAccountSip: Bool = false
+
+    var displayName = BehaviorRelay<String?>(value: nil)
+    var userName = BehaviorRelay<String>(value: "")
+    lazy var bestName: Observable<String> = {
+        return Observable
+            .combineLatest(userName.asObservable(),
+                           displayName.asObservable(),
+                           resultSelector: {(userName, displayname) in
+                            guard let displayname = displayname, !displayname.isEmpty else {
+                                return userName }
+                            return displayname
+                           })
+    }()
+
+    var profileImageData = BehaviorRelay<Data?>(value: nil)
+
+    var contactPresence = BehaviorRelay<PresenceStatus>(value: .offline)
+    var swarmInfo: SwarmInfoProtocol?
+
+    lazy var avatarProvider: AvatarProvider = {
+        if let conversation = self.conversation {
+            return AvatarProvider(
+                profileService: self.injectionBag.profileService,
+                size: Constants.AvatarSize.default55,
+                avatar: self.profileImageData.asObservable(),
+                displayName: self.bestName.asObservable(),
+                isGroup: !conversation.isCoredialog()
+            )
+        } else {
+            return AvatarProvider(
+                profileService: self.injectionBag.profileService,
+                size: Constants.AvatarSize.default55,
+                avatar: self.profileImageData.asObservable(),
+                displayName: self.bestName.asObservable(),
+                isGroup: false
+            )
+        }
+    }()
+
+    lazy var navBarAvatarProvider: AvatarProvider = {
+        if let conversation = self.conversation {
+            return AvatarProvider(
+                profileService: self.injectionBag.profileService,
+                size: Constants.AvatarSize.conversation30,
+                avatar: self.profileImageData.asObservable(),
+                displayName: self.bestName.asObservable(),
+                isGroup: !conversation.isCoredialog()
+            )
+        } else {
+            return AvatarProvider(
+                profileService: self.injectionBag.profileService,
+                size: Constants.AvatarSize.conversation30,
+                avatar: self.profileImageData.asObservable(),
+                displayName: self.bestName.asObservable(),
+                isGroup: false
+            )
+        }
+    }()
+
+    required init(with injectionBag: InjectionBag) {
+        self.injectionBag = injectionBag
+        self.accountService = injectionBag.accountService
+        self.conversationsService = injectionBag.conversationsService
+        self.nameService = injectionBag.nameService
+        self.contactsService = injectionBag.contactsService
+        self.presenceService = injectionBag.presenceService
+        self.profileService = injectionBag.profileService
+        self.dataTransferService = injectionBag.dataTransferService
+        self.callService = injectionBag.callService
+        self.locationSharingService = injectionBag.locationSharingService
+        self.peerSharingService = injectionBag.peerSharingService
+        self.collaborationService = injectionBag.collaborationService
+        let transferHelper = TransferHelper(injectionBag: injectionBag)
+
+        swiftUIModel = MessagesListVM(injectionBag: self.injectionBag,
+                                      transferHelper: transferHelper)
+        swiftUIModel.actionHandler.forwardMessage = { [weak self] message, conversations in
+            self?.shareMessage(message: message, with: conversations)
+        }
+        swiftUIModel.subscribeBestName(bestName: self.bestName)
+        self.bestName
+            .share()
+            .asObservable()
+            .observe(on: MainScheduler.instance)
+            .startWith((self.displayName.value?.isEmpty ?? true) ? self.userName.value : self.displayName.value!)
+            .subscribe(onNext: { [weak self] bestName in
+                let name = bestName.replacingOccurrences(of: "\0", with: "")
+                guard !name.isEmpty else { return }
+                self?.name = name
+                self?.swiftUIModel.name = name
+            })
+            .disposed(by: self.disposeBag)
+
+        self.lastMessageObservable
+            .share()
+            .asObservable()
+            .observe(on: MainScheduler.instance)
+            .startWith(swiftUIModel.lastMessage.value)
+            .subscribe(onNext: { [weak self] mesage in
+                self?.lastMessage = mesage
+            })
+            .disposed(by: self.disposeBag)
+
+        self.lastMessageDateObservable
+            .share()
+            .asObservable()
+            .observe(on: MainScheduler.instance)
+            .startWith(swiftUIModel.lastMessageDate.value)
+            .subscribe(onNext: { [weak self] mesageDate in
+                self?.lastMessageDate = mesageDate
+            })
+            .disposed(by: self.disposeBag)
+        self.conversationCreated
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] update in
+                guard let self = self, update else { return }
+                if self.conversation != nil {
+                    self.swiftUIModel.conversation = self.conversation
+                }
+            } onError: { _ in
+            }
+            .disposed(by: self.disposeBag)
+
+        self.userName.asObservable()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] name in
+                self?.navUserName = name
+            })
+            .disposed(by: self.disposeBag)
+    }
+
+    private func setConversation(_ conversation: ConversationModel) {
+        self.conversation = conversation
+    }
+
+    convenience init(with injectionBag: InjectionBag, conversation: ConversationModel, user: JamiSearchViewModel.JamsUserSearchModel) {
+        self.init(with: injectionBag)
+        self.userName.accept(user.username)
+        self.displayName.accept(user.firstName + " " + user.lastName)
+        self.profileImageData.accept(user.profilePicture)
+        if self.accountService.getAccount(fromAccountId: conversation.accountId)?.jamiId != user.jamiId,
+           let uri = JamiURI(schema: .ring, infoHash: user.jamiId).uriString {
+            let alias = (user.firstName + " " + user.lastName).simplified()
+            let profile = Profile(uri: uri,
+                                  alias: alias.isEmpty ? nil : alias,
+                                  photo: user.profilePicture?.base64EncodedString(),
+                                  type: ProfileType.ring.rawValue)
+            self.swiftUIModel.temporaryPeerProfile = profile.isEmpty ? nil : profile
+        }
+        self.setConversation(conversation) // required to trigger the didSet
+    }
+
+    var swiftUIModel: MessagesListVM
+
+    var lastMessageObservable: Observable <String> {
+        return swiftUIModel.lastMessage.asObservable()
+    }
+
+    var lastMessageDateObservable: Observable <String> {
+        return swiftUIModel.lastMessageDate.asObservable()
+    }
+
+    func cleanMessages() {
+        self.swiftUIModel.cleanMessages()
+    }
+
+    var conversation: ConversationModel! {
+        didSet {
+            conversationBindingsDisposeBag = DisposeBag()
+            swarmInfo = nil
+            messageUnreadCount = 0
+            documentUnreadCount = 0
+
+            self.subscribeUnreadMessages()
+            self.subscribeUnreadDocuments()
+            self.swiftUIModel.conversation = conversation
+
+            guard let account = self.accountService.getAccount(fromAccountId: self.conversation.accountId) else { return }
+            if account.type == AccountType.sip {
+                self.userName.accept(self.conversation.hash)
+                self.isAccountSip = true
+                if let participantId = conversation.getParticipants().first?.jamiId,
+                   let uri = ProfilesService.profileUriString(
+                    for: JamiURI(schema: .sip, infoHash: participantId)
+                   ) {
+                    self.subscribeNonSwarmProfiles(uri: uri,
+                                                   accountId: self.conversation.accountId)
+                }
+                return
+            }
+            self.updateBlockedStatus()
+            self.setupPresence()
+            self.updateName()
+
+            if self.shouldCreateSwarmInfo() {
+                self.createSwarmInfo()
+            } else {
+                let filterParicipants = conversation.getParticipants()
+                if let participantId = filterParicipants.first?.jamiId,
+                   let contact = self.contactsService.contact(withHash: participantId) {
+                    if let uri = JamiURI(schema: .ring, infoHash: participantId).uriString {
+                        self.subscribeNonSwarmProfiles(uri: uri,
+                                                       accountId: self.conversation.accountId)
+                    }
+                    if let contactUserName = contact.userName {
+                        self.userName.accept(contactUserName)
+                    } else if self.userName.value.isEmpty {
+                        self.userName.accept(filterParicipants.first?.jamiId ?? "")
+                        self.subscribeUserServiceLookupStatus()
+                        self.nameService.lookupAddress(withAccount: self.conversation.accountId, nameserver: "", address: filterParicipants.first?.jamiId ?? "")
+                    }
+                } else {
+                    self.userName.accept(filterParicipants.first?.jamiId ?? "")
+                    self.subscribeUserServiceLookupStatus()
+                    self.nameService.lookupAddress(withAccount: self.conversation.accountId, nameserver: "", address: filterParicipants.first?.jamiId ?? "")
+                }
+                /*
+                 By default, a conversation is created as non-swarm. Upon receiving the conversationReady
+                 notification, we need to verify whether it is a swarm or not
+                 */
+                subscribeConversationReady()
+            }
+            subscribeConversationSynchronization()
+            subscribeLocationEvents()
+            setupPeerSharingAvailability()
+        }
+    }
+
+    private func subscribeConversationSynchronization() {
+        self.conversation?.synchronizing
+            .subscribe { [weak self] synchronizing in
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+                    self.swiftUIModel.isSyncing = synchronizing
+                }
+            } onError: { _ in
+            }
+            .disposed(by: conversationBindingsDisposeBag)
+    }
+
+    private func subscribeConversationReady() {
+        self.conversationsService.conversationReady
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] conversationId in
+                guard let self = self else { return }
+                /*
+                 Check if the conversation, originally created as non-swarm,
+                 becomes a swarm after an update. If so, update the relevant information.
+                 */
+                if conversationId == self.conversation.id {
+                    if self.shouldCreateSwarmInfo() {
+                        self.createSwarmInfo()
+                    } else if let swarmInfo = self.swarmInfo,
+                              self.avatarProvider.isGroup != !self.conversation.isCoredialog() {
+                        // Conversation type changed after update -- rebuild providers
+                        self.avatarProvider = AvatarProvider.from(
+                            swarmInfo: swarmInfo,
+                            profileService: self.injectionBag.profileService,
+                            size: .default55
+                        )
+                        self.navBarAvatarProvider = AvatarProvider.from(
+                            swarmInfo: swarmInfo,
+                            profileService: self.injectionBag.profileService,
+                            size: .conversation30
+                        )
+                        self.objectWillChange.send()
+                    }
+                }
+            } onError: { _ in
+            }
+            .disposed(by: conversationBindingsDisposeBag)
+    }
+
+    func shouldCreateSwarmInfo() -> Bool {
+        return self.conversation.isSwarm() && self.swarmInfo == nil && !self.conversation.id.isEmpty
+    }
+
+    func createSwarmInfo() {
+        let newSwarmInfo = SwarmInfo(injectionBag: self.injectionBag, conversation: self.conversation)
+        self.swarmInfo = newSwarmInfo
+        newSwarmInfo.finalAvatarData.share()
+            .subscribe { [weak self] image in
+                if let image = image {
+                    self?.profileImageData.accept(image)
+                }
+            } onError: { _ in
+            }
+            .disposed(by: conversationBindingsDisposeBag)
+        newSwarmInfo.finalTitle.share()
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] name in
+                self?.displayName.accept(name)
+            } onError: { _ in
+            }
+            .disposed(by: conversationBindingsDisposeBag)
+        newSwarmInfo.participantsString.share()
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] name in
+                self?.userName.accept(name)
+            } onError: { _ in
+            }
+            .disposed(by: conversationBindingsDisposeBag)
+        newSwarmInfo.conversationEnded
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] isEnded in
+                self?.swiftUIModel.isConversationEnded = isEnded
+            } onError: { _ in
+            }
+            .disposed(by: conversationBindingsDisposeBag)
+        self.avatarProvider = AvatarProvider.from(
+            swarmInfo: newSwarmInfo,
+            profileService: self.injectionBag.profileService,
+            size: .default55
+        )
+        self.navBarAvatarProvider = AvatarProvider.from(
+            swarmInfo: newSwarmInfo,
+            profileService: self.injectionBag.profileService,
+            size: .conversation30
+        )
+        DispatchQueue.main.async {
+            self.objectWillChange.send()
+        }
+    }
+
+    private func subscribeNonSwarmProfiles(uri: String, accountId: String) {
+        self.profileService
+            .getProfile(uri: uri, accountId: accountId)
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .subscribe {[weak self] profile in
+                guard let self = self else { return }
+                self.displayName.accept((profile.alias ?? "").simplified())
+                self.profileImageData.accept(profile.photo?.toImageData())
+            } onError: { _ in
+            }
+            .disposed(by: conversationBindingsDisposeBag)
+    }
+
+    // Add the matches method to handle filtering logic
+    func matches(_ searchQuery: String) -> Bool {
+        let isSelfConversation = self.model().isOnlyLocalParticipant()
+        if isSelfConversation {
+            let localJamiId = self.model().getLocalParticipants()?.jamiId ?? ""
+            let registeredName = self.accountService.currentAccount?.registeredName ?? ""
+            return localJamiId.containsCaseInsensitive(string: searchQuery) ||
+                (!registeredName.isEmpty && registeredName.containsCaseInsensitive(string: searchQuery))
+        }
+
+        if self.model().isSwarm() {
+            guard let swarmInfo = self.swarmInfo else { return false }
+            return swarmInfo.contains(searchQuery: searchQuery)
+        } else {
+            let normalizedQuery = searchQuery.normalized()
+            var displayNameContainsText = false
+            if let displayName = self.displayName.value {
+                displayNameContainsText = displayName.normalized().containsCaseInsensitive(string: normalizedQuery)
+            }
+            var participantHashContainsText = false
+            if let hash = self.model().getParticipants().first?.jamiId {
+                participantHashContainsText = hash.normalized().containsCaseInsensitive(string: normalizedQuery)
+            }
+            return self.userName.value.normalized().containsCaseInsensitive(string: normalizedQuery) ||
+                displayNameContainsText || participantHashContainsText
+        }
+    }
+
+    func editMessage(content: String, messageId: String) {
+        guard let conversation = self.conversation else { return }
+        self.conversationsService.editSwarmMessage(conversationId: conversation.id, accountId: conversation.accountId, message: content, parentId: messageId)
+    }
+
+    func setIsComposingMsg(isComposing: Bool) {
+        if let conversationx = conversation {
+            guard let uri = conversationx.getConversationURI() else { return }
+            conversationsService.setIsComposingMsg(
+                to: uri,
+                from: conversation.accountId,
+                isComposing: isComposing
+            )
+        }
+    }
+
+    func joinActiveCall(call: ActiveCall, withVideo: Bool) {
+        let callURI = call.constructURI()
+        if withVideo {
+            stateSubject.onNext(ConversationState.startCall(contactRingId: callURI, userName: ""))
+        } else {
+            stateSubject.onNext(ConversationState.startAudioCall(contactRingId: callURI, userName: ""))
+        }
+    }
+
+    func startCall() {
+        guard let uri = callService.outgoingCallURI(for: conversation) else { return }
+        let name = getContactNameForCall()
+        self.closeAllPlayers()
+        self.stateSubject.onNext(ConversationState.startCall(contactRingId: uri, userName: name))
+    }
+
+    func startAudioCall() {
+        guard let uri = callService.outgoingCallURI(for: conversation) else { return }
+        let name = getContactNameForCall()
+        self.closeAllPlayers()
+        self.stateSubject.onNext(ConversationState.startAudioCall(contactRingId: uri, userName: name))
+    }
+
+    private func getContactNameForCall() -> String {
+        guard self.conversation.isDialog() else { return "" }
+
+        if let displayName = self.displayName.value, !displayName.isEmpty {
+            return displayName
+        }
+        return self.userName.value
+    }
+
+    func sendMessage(withContent content: String, parentId: String = "", contactURI: String? = nil, conversationModel: ConversationModel? = nil) {
+        let conversation = conversationModel ?? self.conversation
+        guard let conversation = conversation else { return }
+        if !conversation.isSwarm() {
+            /// send not swarm message
+            guard let participantJamiId = conversation.getParticipants().first?.jamiId,
+                  let account = self.accountService.currentAccount else { return }
+            // if in call send sip msg
+            if let call = self.callService.call(participantId: participantJamiId, accountId: conversation.accountId) {
+                self.callService.sendInCallMessage(callId: call, message: content, accountId: account)
+                return
+            }
+            self.conversationsService
+                .sendNonSwarmMessage(withContent: content,
+                                     from: account,
+                                     jamiId: participantJamiId)
+                .subscribe(onCompleted: { [weak self] in
+                    self?.log.debug("Message sent")
+                })
+                .disposed(by: self.disposeBag)
+            return
+        }
+        if conversation.id.isEmpty {
+            return
+        }
+        /// send swarm message
+        self.conversationsService.sendSwarmMessage(conversationId: conversation.id, accountId: conversation.accountId, message: content, parentId: parentId)
+    }
+
+    func setMessagesAsRead() {
+        guard let account = self.accountService.currentAccount,
+              let ringId = AccountModelHelper(withAccount: account).ringId else { return }
+        self.conversationsService
+            .setMessagesAsRead(forConversation: self.conversation,
+                               accountId: account.id,
+                               accountURI: ringId)
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+            .subscribe()
+            .disposed(by: self.disposeBag)
+    }
+
+    func messageDisplayed() {
+        if let message = self.swiftUIModel.messagesModels.first, message.message.incoming {
+            self.setMessagesAsRead()
+        }
+    }
+
+    func showContactInfo() {
+        if self.swiftUIModel.isTemporary {
+            return
+        }
+        self.closeAllPlayers()
+        if conversation.isSwarm() {
+            if let swarmInfo = self.swarmInfo {
+                self.stateSubject.onNext(ConversationState.presentSwarmInfo(swarmInfo: swarmInfo))
+            }
+        } else {
+            self.stateSubject.onNext(ConversationState.contactDetail(conversationViewModel: self.conversation))
+        }
+    }
+
+    func makePeerSharingViewModel() -> PeerSharingViewModel? {
+        guard conversation.isCoredialog(),
+              let jamiId = conversation.getParticipants().first?.jamiId else { return nil }
+        return PeerSharingViewModel(
+            accountId: conversation.accountId,
+            peerId: jamiId,
+            peerSharingService: peerSharingService
+        )
+    }
+
+    func recordVideoFile() {
+        closeAllPlayers()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.stateSubject.onNext(ConversationState.recordFile(conversation: self.conversation, audioOnly: false))
+        }
+    }
+
+    func recordAudioFile() {
+        closeAllPlayers()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.stateSubject.onNext(ConversationState.recordFile(conversation: self.conversation, audioOnly: true))
+        }
+    }
+
+    func haveCurrentCall() -> Bool {
+        if !self.conversation.isDialog() {
+            return false
+        }
+        guard let jamiId = self.conversation.getParticipants().first?.jamiId else { return false }
+        return self.callService.call(participantId: jamiId, accountId: self.conversation.accountId) != nil
+    }
+
+    lazy var showCallButton: Observable<Bool> = {
+        return self.callService.callsUpdated
+            .observe(on: MainScheduler.instance)
+            .map { [weak self] _ in
+                guard let self = self else { return false }
+                return self.haveCurrentCall()
+            }
+            .startWith(false)
+            .distinctUntilChanged()
+    }()
+
+    let currentCallId = BehaviorRelay<String>(value: "")
+
+    deinit {
+        self.closeAllPlayers()
+    }
+
+    var myContactsLocation = BehaviorSubject<CLLocationCoordinate2D?>(value: nil)
+    let shouldDismiss = BehaviorRelay<Bool>(value: false)
+
+    var conversationCreated = BehaviorRelay(value: true)
+
+    func updateBlockedStatus() {
+        let blocked = isConversationForBlockedContact()
+        self.swiftUIModel.updateBlockedStatus(blocked: blocked)
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.isBlocked = blocked
+        }
+        self.updateNavigationBar.accept(true)
+    }
+
+    private func updateName() {
+        let isSelfConversation = conversation?.getParticipants().isEmpty ?? false
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.nameWithSuffix = isSelfConversation ? self.name.withYourselfSuffix() : self.name
+        }
+    }
+
+    func isConversationForBlockedContact() -> Bool {
+        if !self.conversation.isDialog() {
+            return false
+        }
+
+        guard let jamiId = self.conversation.getParticipants().first?.jamiId else { return false }
+        guard let contact = self.contactsService.contact(withHash: jamiId) else { return false }
+        return contact.banned
+    }
+}
+
+// MARK: Conversation didSet functions
+extension ConversationViewModel {
+
+    private func setupPresence() {
+        if !self.conversation.isCoredialog() {
+            return
+        }
+
+        guard let jamiId = self.conversation.getParticipants().first?.jamiId else { return }
+        if let contact = self.contactsService.contact(withHash: jamiId) {
+            // Exit if the contact is banned
+            guard !contact.banned else { return }
+
+            // Subscribe to presence updates for the contact
+            subscribePresence(contactId: jamiId)
+        } else if self.isCoreConversationWith(jamiId: jamiId) {
+            // If contact is not available and it's a core conversation, subscribe to the contact added event
+            subscribeToContactAdded()
+        }
+    }
+
+    private func subscribePresence(contactId: String) {
+        if let contactPresence = self.presenceService.getSubscriptionsForContact(contactId: contactId) {
+            self.contactPresence = contactPresence
+            self.contactPresence
+                .observe(on: MainScheduler.instance)
+                .subscribe(
+                    onNext: { [weak self] presence in
+                        self?.presence = presence
+                    },
+                    onError: { error in
+                        print("Error observing presence updates: \(error)")
+                    }
+                )
+                .disposed(by: conversationBindingsDisposeBag)
+        }
+    }
+
+    private func subscribeToContactAdded() {
+        self.contactsService.sharedResponseStream
+            .filter { [weak self] event in
+                guard let self = self else { return false }
+                return event.eventType == .contactAdded &&
+                    event.getEventInput(.conversationId) == self.conversation.id
+            }
+            .take(1)
+            .subscribe(onNext: { [weak self] event in
+                guard let self = self,
+                      let peerUri: String = event.getEventInput(.peerUri),
+                      self.isCoreConversationWith(jamiId: peerUri) else { return }
+                self.setupPresence()
+            })
+            .disposed(by: conversationBindingsDisposeBag)
+    }
+
+    private func subscribeUnreadMessages() {
+        messageUnreadCount = conversation.unreadMessagesCount
+        updateUnreadCount()
+        self.conversation.numberOfUnreadMessages
+            .observe(on: MainScheduler.instance)
+            .subscribe { [weak self] unreadMessages in
+                guard let self = self else { return }
+                self.messageUnreadCount = unreadMessages
+                self.updateUnreadCount()
+            } onError: { _ in
+            }
+            .disposed(by: conversationBindingsDisposeBag)
+    }
+
+    private func subscribeUnreadDocuments() {
+        collaborationService
+            .unreadDocumentCount(forAccount: conversation.accountId,
+                                 conversationId: conversation.id)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] count in
+                guard let self = self else { return }
+                self.documentUnreadCount = count
+                self.updateUnreadCount()
+            })
+            .disposed(by: conversationBindingsDisposeBag)
+    }
+
+    private func updateUnreadCount() {
+        unreadMessages = messageUnreadCount + documentUnreadCount
+    }
+
+    private func subscribeUserServiceLookupStatus() {
+        let contact = self.contactsService.contact(withHash: self.conversation.getParticipants().first?.jamiId ?? "")
+
+        // Return an observer for the username lookup
+        self.nameService
+            .usernameLookupStatus
+            .filter({ [weak self] lookupNameResponse in
+                return lookupNameResponse.requestedName != nil &&
+                    (lookupNameResponse.requestedName == self?.conversation.getParticipants().first?.jamiId ||
+                        lookupNameResponse.requestedName == self?.conversation.getParticipants().first?.jamiId)
+            })
+            .subscribe(onNext: { [weak self] lookupNameResponse in
+                if let name = lookupNameResponse.name, !name.isEmpty {
+                    self?.userName.accept(name)
+                    contact?.userName = name
+                } else if let address = lookupNameResponse.requestedName {
+                    self?.userName.accept(address)
+                }
+            })
+            .disposed(by: conversationBindingsDisposeBag)
+    }
+}
+
+// MARK: Location sharing
+extension ConversationViewModel {
+
+    func isAlreadySharingLocation() -> Bool {
+        guard let jamiId = self.conversation.getParticipants().first?.jamiId else { return true }
+        let accountId = self.conversation.accountId
+        return self.locationSharingService.isAlreadySharing(accountId: accountId,
+                                                            contactUri: jamiId)
+    }
+
+    func isAlreadySharingMyLocation() -> Bool {
+        guard let jamiId = self.conversation.getParticipants().first?.jamiId else { return true }
+        let accountId = self.conversation.accountId
+        return self.locationSharingService.isAlreadySharingMyLocation(accountId: accountId,
+                                                                      contactUri: jamiId)
+    }
+
+    func startSendingLocation(duration: TimeInterval? = nil) {
+        guard let account = self.accountService.currentAccount,
+              let jamiId = self.conversation.getParticipants().first?.jamiId else { return }
+        self.locationSharingService.startSharingLocation(from: account.id,
+                                                         to: jamiId,
+                                                         duration: duration)
+    }
+
+    func stopSendingLocation() {
+        guard let account = self.accountService.currentAccount,
+              let jamiId = self.conversation.getParticipants().first?.jamiId else { return }
+        self.locationSharingService.stopSharingLocation(accountId: account.id,
+                                                        contactUri: jamiId)
+    }
+
+    func model() -> ConversationModel {
+        return self.conversation
+    }
+
+    func subscribeLocationEvents() {
+        self.locationSharingService
+            .peerUriAndLocationReceived
+            .subscribe(onNext: { [weak self] tuple in
+                guard let self = self else { return }
+                if tuple.1 != nil &&
+                    self.isAlreadySharingLocation() {
+                    self.showIncomingLocationSharing.accept(true)
+                } else {
+                    self.showIncomingLocationSharing.accept(false)
+                }
+            })
+            .disposed(by: conversationBindingsDisposeBag)
+
+        self.locationSharingService.currentLocation
+            .subscribe(onNext: { [weak self] myCurrentLocation in
+                guard let self = self else { return }
+                if myCurrentLocation != nil &&
+                    self.isAlreadySharingMyLocation() {
+                    self.showOutgoingLocationSharing.accept(true)
+                } else {
+                    self.showOutgoingLocationSharing.accept(false)
+                }
+            })
+            .disposed(by: conversationBindingsDisposeBag)
+    }
+
+    private func setupPeerSharingAvailability() {
+        guard let currentConversation = conversation else { return }
+        setHasPeerSharing(false, for: currentConversation)
+        guard conversation.isCoredialog(),
+              !isBlocked,
+              let peerId = conversation.getParticipants().first?.jamiId else { return }
+
+        let accountId = conversation.accountId
+
+        peerSharingService.observePeerServices(accountId: accountId, peerId: peerId)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] result in
+                self?.applyPeerSharingResult(accountId: accountId, peerId: peerId, result: result)
+            })
+            .disposed(by: conversationBindingsDisposeBag)
+
+        peerSharingService.queryPeerServices(accountId: accountId, peerId: peerId)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] result in
+                self?.applyPeerSharingResult(accountId: accountId, peerId: peerId, result: result)
+            })
+            .disposed(by: conversationBindingsDisposeBag)
+    }
+
+    private func applyPeerSharingResult(accountId: String, peerId: String, result: PeerServicesResult) {
+        guard conversation.accountId == accountId,
+              conversation.isCoredialog(),
+              conversation.getParticipants().first?.jamiId == peerId else { return }
+        setHasPeerSharing(result.hasExposedServices, for: conversation)
+    }
+
+    private func setHasPeerSharing(_ value: Bool, for conversation: ConversationModel) {
+        let update = { [weak self, weak conversation] in
+            guard let self = self,
+                  let conversation = conversation,
+                  self.conversation == conversation else { return }
+            self.hasPeerSharing = value
+        }
+
+        if Thread.isMainThread {
+            update()
+        } else {
+            DispatchQueue.main.async(execute: update)
+        }
+    }
+
+}
+
+// MARK: share message
+extension ConversationViewModel {
+
+    private func changeConversationIfNeeded(items: [String]) {
+        guard let accountId = self.accountService.currentAccount?.id else { return }
+        if items.contains(where: { $0 == self.conversation.id }) { return } // if items contains the current conversation, we do not need to change it
+        guard let selectedConversationId = items.first else { return }
+        self.stateSubject.onNext(ConversationState.openConversationForConversationId(conversationId: selectedConversationId, accountId: accountId, shouldOpenSmarList: true, withAnimation: true))
+    }
+
+    private func shareMessage(message: MessageContentVM, with conversationId: String, fileURL: URL?, fileName: String) {
+        guard let accountId = self.accountService.currentAccount?.id else { return }
+        let conversationModel = self.conversationsService.getConversationForId(conversationId: conversationId, accountId: accountId) ?? self.conversation
+        if message.type != .fileTransfer {
+            self.sendMessage(withContent: message.content, conversationModel: conversationModel)
+            return
+        }
+        if let url = fileURL, let conversationModel = conversationModel {
+            let content = message.content
+            self.conversationsService.readMessages(of: conversationModel) { [weak self] messages in
+                let alreadyShared = messages.contains(where: { $0.content == content })
+                DispatchQueue.main.async {
+                    guard let self = self else { return }
+                    if alreadyShared {
+                        self.sendFile(filePath: url.path, displayName: fileName, conversationModel: conversationModel)
+                    } else if let data = FileManager.default.contents(atPath: url.path) {
+                        self.sendAndSaveFile(displayName: fileName, imageData: data,
+                                             conversationModel: conversationModel)
+                    }
+                }
+            }
+            return
+        }
+    }
+
+    func shareMessage(message: MessageContentVM, with selectedConversations: [String]) {
+        // to send file we need to have file url or image
+        let url = message.url
+        var fileName = message.content
+        if message.content.contains("\n") {
+            guard let substring = message.content.split(separator: "\n").first else { return }
+            fileName = String(substring)
+        }
+        selectedConversations.forEach { [ weak self, weak message ] item in
+            guard let self = self, let message = message else { return }
+            self.shareMessage(message: message, with: item, fileURL: url, fileName: fileName)
+        }
+        self.changeConversationIfNeeded(items: selectedConversations)
+    }
+
+    func slectContactsToShareMessage(message: MessageContentVM) {
+        guard message.message.type == .text || message.message.type == .fileTransfer else { return }
+        self.stateSubject.onNext(ConversationState.showContactPicker(callID: "", contactSelectedCB: nil, conversationSelectedCB: { [weak self] selectedItems in
+            guard let self = self, let selectedItems = selectedItems else { return }
+            self.shareMessage(message: message, with: selectedItems)
+        }))
+    }
+
+    /**
+     Starts a collaborative document and opens it.
+
+     - parameter failed: called when no document was started, the daemon having
+     refused or the call itself having failed.
+     */
+    func createCollabDocument(named name: String, failed: @escaping () -> Void) {
+        guard let conversation = self.conversation else { return }
+        self.injectionBag.collaborationService
+            .createDocument(accountId: conversation.accountId,
+                            conversationId: conversation.id,
+                            name: name)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] document in
+                guard let self = self else { return }
+                self.stateSubject.onNext(
+                    ConversationState.openCollabDocument(accountId: conversation.accountId,
+                                                         conversationId: conversation.id,
+                                                         documentId: document.id,
+                                                         name: document.name))
+            }, onFailure: { _ in
+                failed()
+            })
+            .disposed(by: self.disposeBag)
+    }
+
+    func openCollabDocument(documentId: String, name: String) {
+        guard let conversation = self.conversation else { return }
+        self.stateSubject.onNext(
+            ConversationState.openCollabDocument(accountId: conversation.accountId,
+                                                 conversationId: conversation.id,
+                                                 documentId: documentId,
+                                                 name: name))
+    }
+}
+
+// MARK: file transfer
+extension ConversationViewModel {
+
+    func sendFile(filePath: String, displayName: String, localIdentifier: String? = nil, conversationModel: ConversationModel? = nil) {
+        guard let conversation = (conversationModel ?? self.conversation) else { return }
+        self.dataTransferService.sendFile(conversation: conversation, filePath: filePath, displayName: displayName, localIdentifier: localIdentifier)
+    }
+
+    func sendAndSaveFile(displayName: String, imageData: Data, conversationModel: ConversationModel? = nil) {
+        guard let conversation = (conversationModel ?? self.conversation) else { return }
+        self.dataTransferService.sendAndSaveFile(displayName: displayName, conversation: conversation, imageData: imageData)
+    }
+}
+
+extension ConversationViewModel: Equatable {
+    static func == (lhs: ConversationViewModel, rhs: ConversationViewModel) -> Bool {
+        lhs.conversation == rhs.conversation
+    }
+}
+
+extension ConversationViewModel {
+    func isCoreConversationWith(jamiId: String) -> Bool {
+        guard conversation.isCoredialog(),
+              let participantJamiId = conversation.getParticipants().first?.jamiId else {
+            return false
+        }
+        return participantJamiId == jamiId
+    }
+
+}
+
+// swiftlint:enable type_body_length
+// swiftlint:enable file_length

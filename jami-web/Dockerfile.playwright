@@ -1,0 +1,46 @@
+# Playwright E2E tests – lightweight image, does NOT require jami-daemon.
+# Uses a mock API server instead of the real backend.
+#
+# Build & run:
+#   docker build -f Dockerfile.playwright -t jami-web-playwright .
+#   docker run --rm jami-web-playwright
+#
+FROM mcr.microsoft.com/playwright:v1.62.1-noble
+
+WORKDIR /app
+
+# Copy only what's needed for client + common + mock server + tests
+COPY package.json ./
+COPY common/ common/
+COPY client/ client/
+# .dockerignore excludes .env* from the build context, so set this directly instead of copying the file
+ENV VITE_API_URL=http://localhost:5002
+
+# Create a minimal server package.json so npm workspaces doesn't fail.
+# The mock server is used instead of the real server dependencies.
+RUN mkdir -p server && echo '{"name":"jami-web-server","version":"1.0.0","private":true}' > server/package.json
+RUN mkdir -p daemon/bin/nodejs && echo '{"name":"jamid","version":"1.0.0","private":true}' > daemon/bin/nodejs/package.json
+
+# The mock server serves real translations from here; without them the UI renders raw i18n keys
+COPY server/locale/ server/locale/
+
+# npm 10 crashes while resolving this synthetic workspace; the Playwright
+# image provides npm 11. The repository package.json remains the source of
+# truth for the Playwright version.
+RUN npm install --ignore-scripts --no-audit --no-fund 2>&1
+# Build common workspace (client depends on it)
+RUN npm run build --workspace=common 2>&1
+
+# tsx runs the mock server; install it now so it isn't fetched at runtime
+RUN npm install -g tsx@4.23.1
+
+# Install Playwright browsers (before copying tests so test edits don't bust this layer)
+RUN npx --no-install playwright install --with-deps chromium
+
+# Copy test infrastructure
+COPY playwright.config.ts ./
+COPY playwright.production.config.ts ./
+COPY tests/ tests/
+
+# Run tests (chromium only in CI for speed)
+CMD ["npx", "--no-install", "playwright", "test", "--project=chromium"]

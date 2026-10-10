@@ -1,0 +1,277 @@
+/*
+ *  Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+import RxSwift
+import SwiftyBeaver
+import CryptoKit
+
+@objc protocol ProfilesAdapterDelegate {
+    func profileReceived(contact uri: String, withAccountId accountId: String, path: String)
+}
+
+private struct ProfileKey: Hashable {
+    let accountId: String
+    let uri: String
+}
+
+class ProfilesService {
+
+    private let log = SwiftyBeaver.self
+    private let profilesAdapter: ProfilesAdapter
+
+    private let profilesLock = NSLock()
+    private var profiles: ThreadSafeDictionary<ProfileKey, ReplaySubject<Profile>>
+    var accountProfiles: ThreadSafeDictionary<String, ReplaySubject<Profile>>
+
+    private let avatarsCache = NSCache<NSString, UIImage>()
+
+    private let profileStore: ProfileStore
+
+    // Shared scheduler for profile resolution so we don't allocate a new
+    // background queue on every resolution request.
+    private let resolutionScheduler = ConcurrentDispatchQueueScheduler(qos: .background)
+
+    let disposeBag = DisposeBag()
+
+    init(withProfilesAdapter adapter: ProfilesAdapter,
+         profileStore: ProfileStore = ProfileStore()) {
+        self.profiles = ThreadSafeDictionary(lock: profilesLock)
+        self.accountProfiles = ThreadSafeDictionary(lock: profilesLock)
+        self.profilesAdapter = adapter
+        self.profileStore = profileStore
+        avatarsCache.totalCostLimit = 8 * 1024 * 1024
+    }
+
+    static func profileUriString(for uri: JamiURI) -> String? {
+        guard uri.schema == .sip else { return uri.uriString }
+        guard let peerHash = uri.hash else { return nil }
+        return JamiURI(schema: .sip, infoHash: peerHash).uriString
+    }
+
+    func profileReceived(contact uri: String, withAccountId accountId: String, path: String) {
+        guard let uriString = JamiURI(schema: URIType.ring, infoHash: uri).uriString else { return }
+        removePeerProfiles(uri: uriString, accountId: accountId)
+        self.triggerProfileSignal(uri: uriString, accountId: accountId)
+    }
+
+    func sipPeerNameReceived(_ alias: String, uri: String, accountId: String) {
+        let uri = normalizedURI(uri)
+        let profile = Profile(uri: uri, alias: alias, photo: nil, type: ProfileType.sip.rawValue)
+        guard profileStore.saveSipPeerProfile(profile, accountId: accountId) else { return }
+        triggerProfileSignal(uri: uri, accountId: accountId)
+    }
+
+    func invitationAccepted(_ profile: Profile, accountId: String) {
+        profileStore.save(profile, accountId: accountId, source: .invitation)
+        triggerProfileSignal(uri: profile.uri, accountId: accountId)
+    }
+
+    func invitationSent(_ profile: Profile, accountId: String) {
+        var profile = profile
+        profile.uri = normalizedURI(profile.uri)
+        guard !profile.isEmpty,
+              profileStore.save(profile, accountId: accountId, source: .jamsSearch) else { return }
+        triggerProfileSignal(uri: profile.uri, accountId: accountId)
+    }
+
+    func peerDiscarded(uri: String, accountId: String) {
+        removePeerProfiles(uri: uri, accountId: accountId)
+        triggerProfileSignal(uri: uri, accountId: accountId)
+    }
+
+    func conversationDeleted(uri: String, accountId: String) {
+        let uri = normalizedURI(uri)
+        profileStore.removeManagedProfiles(uri: uri, accountId: accountId)
+        triggerProfileSignal(uri: uri, accountId: accountId)
+    }
+
+    func accountContactsCleared(accountId: String) {
+        profileStore.removeAllManagedProfiles(accountId: accountId)
+    }
+
+    private func triggerProfileSignal(uri: String, accountId: String) {
+        let uri = normalizedURI(uri)
+        let key = ProfileKey(accountId: accountId, uri: uri)
+        guard let profileObservable = self.profiles[key] else {
+            return
+        }
+        Observable.deferred { [weak self] () -> Observable<Profile> in
+            guard let self else { return .just(Profile.empty) }
+            return .just(self.resolveProfile(for: key))
+        }
+        .subscribe(on: self.resolutionScheduler)
+        .subscribe(onNext: { profile in
+            profileObservable.onNext(profile)
+        })
+        .disposed(by: self.disposeBag)
+    }
+
+    func getProfile(uri: String, accountId: String) -> Observable<Profile> {
+        let uri = normalizedURI(uri)
+        let (subject, inserted) = profiles.getOrInsert(key: ProfileKey(accountId: accountId, uri: uri)) {
+            ReplaySubject<Profile>.create(bufferSize: 1)
+        }
+        if inserted {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.triggerProfileSignal(uri: uri, accountId: accountId)
+            }
+        }
+        return subject.asObservable().share()
+    }
+
+    func hasStoredProfile(uri: String, accountId: String) -> Bool {
+        profileStore.hasProfile(uri: normalizedURI(uri), accountId: accountId)
+    }
+
+    private func resolveProfile(for key: ProfileKey) -> Profile {
+        resolveStoredProfile(for: key) ?? Profile.empty
+    }
+
+    private func resolveStoredProfile(for key: ProfileKey) -> Profile? {
+        let customProfile = profileStore.profile(uri: key.uri, accountId: key.accountId, source: .custom)
+        let peerProfile = profileStore.profile(uri: key.uri, accountId: key.accountId, source: .contact)
+            ?? profileStore.legacyContactProfile(uri: key.uri, accountId: key.accountId)
+            ?? profileStore.profile(uri: key.uri, accountId: key.accountId, source: .jamsSearch)
+            ?? invitationProfile(for: key)
+        return peerProfile?.merging(preferring: customProfile) ?? customProfile
+    }
+
+    private func invitationProfile(for key: ProfileKey) -> Profile? {
+        profileStore.profile(uri: key.uri, accountId: key.accountId, source: .invitation)
+    }
+
+    private func removePeerProfiles(uri: String, accountId: String) {
+        let uri = normalizedURI(uri)
+        profileStore.remove(uri: uri, accountId: accountId, source: .jamsSearch)
+        profileStore.remove(uri: uri, accountId: accountId, source: .invitation)
+    }
+
+    private func normalizedURI(_ uri: String) -> String {
+        JamiURI(from: uri).uriString ?? uri
+    }
+
+    func getOriginalProfile(uri: String, accountId: String) -> Profile? {
+        let uri = normalizedURI(uri)
+        return profileStore.profile(uri: uri, accountId: accountId, source: .contact)
+            ?? profileStore.legacyContactProfile(uri: uri, accountId: accountId)
+    }
+
+    func getCustomProfile(uri: String, accountId: String) -> Profile? {
+        profileStore.profile(uri: normalizedURI(uri), accountId: accountId, source: .custom)
+    }
+
+    @discardableResult
+    func updateCustomProfile(uri: String,
+                             accountId: String,
+                             alias: String?,
+                             photo: String?) -> Bool {
+        let uri = normalizedURI(uri)
+        let type = ProfileType(uri: uri)
+        let profile = Profile(uri: uri, alias: alias, photo: photo, type: type.rawValue)
+        let saved: Bool
+        if profile.isEmpty {
+            profileStore.remove(uri: uri, accountId: accountId, source: .custom)
+            saved = true
+        } else {
+            saved = profileStore.save(profile, accountId: accountId, source: .custom)
+        }
+        if saved {
+            triggerProfileSignal(uri: uri, accountId: accountId)
+        }
+        return saved
+    }
+}
+
+// MARK: account profile
+extension ProfilesService {
+    func getAccountProfile(accountId: String) -> Observable<Profile> {
+        let (subject, inserted) = accountProfiles.getOrInsert(key: accountId) {
+            ReplaySubject<Profile>.create(bufferSize: 1)
+        }
+        if inserted {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                self?.triggerAccountProfileSignal(accountId: accountId)
+            }
+        }
+        return subject.asObservable().share()
+    }
+
+    private func triggerAccountProfileSignal(accountId: String) {
+        guard let profileObservable = self.accountProfiles[accountId] else {
+            return
+        }
+        Observable.deferred { [weak self] () -> Observable<Profile> in
+            guard let self else { return .just(Profile.empty) }
+            return .just(self.profileStore.accountProfile(accountId: accountId) ?? Profile.empty)
+        }
+        .subscribe(on: self.resolutionScheduler)
+        .subscribe(onNext: { profile in
+            profileObservable.onNext(profile)
+        })
+        .disposed(by: self.disposeBag)
+    }
+
+    /// The account's own vCard, as sent with an outgoing trust request.
+    /// Nil when the user never set a name or a picture.
+    func accountVCardPayload(accountId: String) -> Data? {
+        guard let profile = profileStore.accountProfile(accountId: accountId),
+              !profile.isEmpty else { return nil }
+        return try? VCardUtils.dataWithImageAndUUID(from: profile)
+    }
+
+    func accountProfileUpdated(accountId: String) {
+        self.triggerAccountProfileSignal(accountId: accountId)
+    }
+
+    func updateAccountProfile(accountId: String, alias: String?, photo: String?, accountURI: String) {
+        let type = ProfileType(uri: accountURI)
+        let profile = Profile(uri: accountURI, alias: alias, photo: photo, type: type.rawValue)
+        if self.profileStore.saveAccountProfile(profile, accountId: accountId) {
+            self.triggerAccountProfileSignal(accountId: accountId)
+        }
+    }
+
+    func key(for data: Data, size: CGFloat) -> String {
+        let digest = SHA256.hash(data: data)
+        let hex = digest.compactMap { String(format: "%02x", $0) }.joined()
+        return "\(hex)|\(Int(size))"
+    }
+
+    subscript(_ key: String) -> UIImage? {
+        get { avatarsCache.object(forKey: key as NSString) }
+        set {
+            if let img = newValue {
+                let cost = Int(img.size.width * img.size.height * img.scale * img.scale * 4)
+                avatarsCache.setObject(img, forKey: key as NSString, cost: cost)
+            } else { avatarsCache.removeObject(forKey: key as NSString) }
+        }
+    }
+
+    func getAvatarFor(_ data: Data, size: CGFloat) -> UIImage? {
+        let key = key(for: data, size: size)
+        if let cached = self[key] {
+            return cached
+        }
+        let image: UIImage? = data.convertToImage(size: size)
+        if let image = image,
+           size == Constants.defaultAvatarSize * 2 {
+            self[key] = image
+        }
+        return image
+    }
+}

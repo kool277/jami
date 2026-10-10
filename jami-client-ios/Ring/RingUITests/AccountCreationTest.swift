@@ -1,0 +1,205 @@
+/*
+ * Copyright (C) 2024-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+import XCTest
+
+final class AccountCreationTest: JamiBaseNoAccountUITest {
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+
+        if let serverAddress = ProcessInfo.processInfo.environment["TEST_SERVER_ADDRESS"] {
+            app.launchEnvironment["SERVER_ADDRESS"] = serverAddress
+        } else {
+            app.launchEnvironment["SERVER_ADDRESS"] = "https://ns-test.jami.net"
+        }
+
+        // Launch fresh app state for each UI test to avoid cross-test leakage.
+        app.terminate()
+        app.launch()
+    }
+
+    func openWelcomeViewFromConversation() {
+        let welcomeWindow = app.images[AccessibilityIdentifiers.welcomeWindow]
+        if welcomeWindow.exists && welcomeWindow.isHittable {
+            return
+        }
+
+        let conversationWindow = app.otherElements[SmartListAccessibilityIdentifiers.conversationView]
+        if !conversationWindow.exists {
+            return
+        }
+        let accountsButton = app.navigationBars.buttons[SmartListAccessibilityIdentifiers.openAccountsButton]
+        XCTAssertTrue(accountsButton.waitForExistence(timeout: 5), "openAccountsButton did not appear in time")
+        accountsButton.tap()
+
+        // Try to find the add account button by identifier first
+        let addAccount = app.buttons[SmartListAccessibilityIdentifiers.addAccountButton]
+
+        if addAccount.waitForExistence(timeout: 5) {
+            addAccount.tap()
+        } else {
+            // Fallback to finding by exact label if identifier doesn't work
+            let addAccountByLabel = app.buttons[L10n.Smartlist.addAccountButton]
+            if addAccountByLabel.waitForExistence(timeout: 3) {
+                addAccountByLabel.tap()
+            } else {
+                // Try by accessibility label
+                let addAccountByAccessibilityLabel = app.buttons[L10n.Accessibility.smartListAddAccount]
+                if addAccountByAccessibilityLabel.waitForExistence(timeout: 3) {
+                    addAccountByAccessibilityLabel.tap()
+                } else {
+                    XCTFail("addAccount button did not appear in time")
+                }
+            }
+        }
+    }
+
+    func openAccountCreation() {
+        openWelcomeViewFromConversation()
+
+        // In logged-in flow, tapping "Add account" can open create account directly.
+        let createAccountWindow = app.staticTexts[AccessibilityIdentifiers.createAccountTitle]
+        if createAccountWindow.waitForExistence(timeout: 3) {
+            return
+        }
+
+        let joinJamiButton = app.buttons[AccessibilityIdentifiers.joinJamiButton]
+        tapWhenReady(joinJamiButton)
+
+        waitForElementToAppear(createAccountWindow)
+    }
+
+    func closeAccountCreationView() {
+        let cancelButton = app.buttons[AccessibilityIdentifiers.cancelCreatingAccount]
+        if !cancelButton.exists {
+            return
+        }
+        cancelButton.tap()
+        let createAccountWindow = app.otherElements[AccessibilityIdentifiers.createAccountView]
+        waitForElementToDisappear(createAccountWindow)
+    }
+
+    func getRandomName() -> String {
+        let randomInt = Int.random(in: 1...100000)
+
+        let nameToRegister = "test\(randomInt)"
+        return nameToRegister
+    }
+
+    func enterName(_ name: String) {
+        let usernameField = app.textFields[AccessibilityIdentifiers.usernameTextField]
+        usernameField.tap()
+
+        // Directly insert the not registered name into the text field
+        usernameField.typeText(name)
+    }
+
+    func testCancelJoinJami() {
+        openAccountCreation()
+
+        // Verify the state of the "Cancel" button
+        let cancelButton = app.buttons[AccessibilityIdentifiers.cancelCreatingAccount]
+        XCTAssertTrue(cancelButton.isEnabled, "Cancel button is disabled")
+        cancelButton.tap()
+
+        // Verify that account creation view dismissed
+        let createAccountWindow = app.otherElements[AccessibilityIdentifiers.createAccountView]
+        waitForElementToDisappear(createAccountWindow)
+
+        // Verify that welcome view is presented
+        let welcomeWindow = app.images[AccessibilityIdentifiers.welcomeWindow]
+        waitForElementToAppear(welcomeWindow)
+    }
+
+    func testJoinTitle() {
+        openAccountCreation()
+        let title = app.staticTexts[AccessibilityIdentifiers.createAccountTitle]
+        let expectedText = L10n.CreateAccount.newAccount
+
+        // Check the title of the navigation bar
+        XCTAssertEqual(title.label, expectedText, "Navigation title is not correct")
+        closeAccountCreationView()
+    }
+
+    func testValidNameShowsValidMessageAndEnablesJoin() {
+        openAccountCreation()
+
+        let nameToRegister = getRandomName()
+        enterName(nameToRegister)
+
+        // Random name is available: valid message shown and Join enabled.
+        let label = app.staticTexts[AccessibilityIdentifiers.createAccountErrorLabel]
+        waitForLabel(label, toEqual: L10n.CreateAccount.usernameValid)
+
+        let joinButton = app.buttons[AccessibilityIdentifiers.joinButton]
+        XCTAssertTrue(joinButton.isEnabled, "The Join button is not enabled")
+        closeAccountCreationView()
+    }
+
+    func testJoinButtonEnabledOnEmptyName() {
+        openAccountCreation()
+        // Verify the state of the "Join" button
+        let joinButton = app.buttons[AccessibilityIdentifiers.joinButton]
+        XCTAssertTrue(joinButton.isEnabled, "The Join button is not enabled")
+        closeAccountCreationView()
+    }
+
+    func testStateOnAlreadyRegisteredName() {
+        openAccountCreation()
+
+        // 1 register name
+        let name = getRandomName()
+        enterName(name)
+
+        let validLabel = app.staticTexts[AccessibilityIdentifiers.createAccountErrorLabel]
+        waitForLabel(validLabel, toEqual: L10n.CreateAccount.usernameValid)
+
+        let joinButton = app.buttons[AccessibilityIdentifiers.joinButton]
+        joinButton.tap()
+
+        let conversationWindow = app.otherElements[SmartListAccessibilityIdentifiers.conversationView]
+        handleNotificationAlertIfPresent()
+        waitForElementToAppear(conversationWindow)
+
+        // try to create account with registered name
+        openAccountCreation()
+
+        enterName(name)
+
+        // Verify the error text
+        let label = app.staticTexts[AccessibilityIdentifiers.createAccountErrorLabel]
+        waitForLabel(label, toEqual: L10n.CreateAccount.usernameAlreadyTaken)
+
+        // Verify the state of the "Join" button
+        let secondJoinButton = app.buttons[AccessibilityIdentifiers.joinButton]
+        XCTAssertFalse(secondJoinButton.isEnabled, "The Join button is enabled")
+        closeAccountCreationView()
+    }
+
+    func handleNotificationAlertIfPresent() {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let allowButton = springboard.buttons["Allow"]
+        let okButton = springboard.buttons["OK"]
+
+        if allowButton.waitForExistence(timeout: 5) {
+            allowButton.tap()
+        } else if okButton.waitForExistence(timeout: 5) {
+            okButton.tap()
+        }
+    }
+}

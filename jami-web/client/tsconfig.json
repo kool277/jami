@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es2025",
+    "lib": ["DOM", "DOM.Iterable", "ES2025"],
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "useDefineForClassFields": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["react", "react-dom", "react-transition-group", "node", "vite/client", "vite-plugin-svgr/client"],
+    "resolveJsonModule": false,
+    "allowJs": false,
+    "noEmit": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "tsBuildInfoFile": ".tsbuild/tsconfig.tsbuildinfo"
+  },
+  "include": ["src"],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "../common"
+    }
+  ]
+}

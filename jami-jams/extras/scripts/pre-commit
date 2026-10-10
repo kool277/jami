@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+shopt -s globstar # enable the '**' globstar pattern
+
+cd jams-react-client
+npm run format
+cd ..
+
+google-java-format -i -a --skip-reflowing-long-strings **/*.java

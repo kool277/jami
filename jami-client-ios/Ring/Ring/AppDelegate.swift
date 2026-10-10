@@ -1,0 +1,723 @@
+/*
+ * Copyright (C) 2017-2026 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+import UIKit
+import SwiftyBeaver
+import RxSwift
+import PushKit
+import ContactsUI
+import os
+
+// swiftlint:disable identifier_name type_body_length
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    var window: UIWindow?
+    let dBManager = DBManager(conversationHelper: ConversationDataHelper(),
+                              interactionHepler: InteractionDataHelper(),
+                              dbConnections: DBContainer())
+    private let daemonService = DaemonService(dRingAdaptor: DRingAdapter())
+    private let nameService = NameService(withNameRegistrationAdapter: NameRegistrationAdapter())
+    private let presenceService = PresenceService(withPresenceAdapter: PresenceAdapter())
+    private let videoService = VideoService(videoAdapter: VideoAdapter())
+    private let audioService = AudioService(audioAdapter: AudioAdapter())
+    private let callService = CallService(callsAdapter: CallsAdapter())
+    private let callKitService = CallKitService()
+    private var callsManager: CallsManager?
+    private let systemService = SystemService(withSystemAdapter: SystemAdapter())
+    private let networkService = NetworkService()
+    private let peerSharingService = PeerSharingService(withPeerServicesAdapter: PeerServicesAdapter())
+    private let collaborationService = CollaborationService(withCollaborationAdapter: CollaborationAdapter())
+    private var conversationManager: ConversationsManager?
+    private var interactionsManager: GeneratedInteractionsManager?
+    internal lazy var accountService: AccountsService = {
+        AccountsService(withAccountAdapter: AccountAdapter(), dbManager: self.dBManager)
+    }()
+    private lazy var contactsService: ContactsService = {
+        ContactsService(withContactsAdapter: ContactsAdapter(), dbManager: self.dBManager)
+    }()
+    private lazy var profileService: ProfilesService = {
+        ProfilesService(withProfilesAdapter: ProfilesAdapter())
+    }()
+    private lazy var dataTransferService: DataTransferService = {
+        DataTransferService(withDataTransferAdapter: DataTransferAdapter(),
+                            dbManager: self.dBManager)
+    }()
+    private lazy var conversationsService: ConversationsService = {
+        ConversationsService(withConversationsAdapter: ConversationsAdapter(), dbManager: self.dBManager)
+    }()
+    private lazy var locationSharingService: LocationSharingService = {
+        LocationSharingService(dbManager: self.dBManager)
+    }()
+    private lazy var requestsService: RequestsService = {
+        RequestsService(withRequestsAdapter: RequestsAdapter())
+    }()
+
+    private static let voipPushQueue = DispatchQueue(label: "com.savoirfairelinux.ring.voipPush")
+    private let voipRegistry = PKPushRegistry(queue: AppDelegate.voipPushQueue)
+    /*
+     When the app is in the background, but the call screen is present, notifications
+     should be handled by Jami.app and not by the notification extension.
+     */
+    private var presentingCallScreen = false
+
+    lazy var injectionBag: InjectionBag = {
+        return InjectionBag(withDaemonService: self.daemonService,
+                            withAccountService: self.accountService,
+                            withNameService: self.nameService,
+                            withConversationService: self.conversationsService,
+                            withContactsService: self.contactsService,
+                            withPresenceService: self.presenceService,
+                            withNetworkService: self.networkService,
+                            withCallService: self.callService,
+                            withVideoService: self.videoService,
+                            withAudioService: self.audioService,
+                            withDataTransferService: self.dataTransferService,
+                            withProfileService: self.profileService,
+                            withLocationSharingService: self.locationSharingService,
+                            withRequestsService: self.requestsService,
+                            withSystemService: self.systemService,
+                            withPeerSharingService: self.peerSharingService,
+                            withCollaborationService: self.collaborationService)
+    }()
+    private lazy var appCoordinator: AppCoordinator = {
+        return AppCoordinator(injectionBag: self.injectionBag)
+    }()
+
+    // MARK: - Public Interface for SceneDelegate
+    var rootViewController: UIViewController {
+        return appCoordinator.rootViewController
+    }
+
+    func startAppCoordinator() {
+        appCoordinator.start()
+    }
+
+    private let log = SwiftyBeaver.self
+
+    private let disposeBag = DisposeBag()
+
+    private let center = CFNotificationCenterGetDarwinNotifyCenter()
+    private static let shouldHandleNotification = NSNotification.Name("com.savoirfairelinux.jami.shouldHandleNotification")
+    private let backgrounTaskQueue = DispatchQueue(label: "backgrounTaskQueue")
+
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        let sceneConfig = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+        sceneConfig.delegateClass = SceneDelegate.self
+        return sceneConfig
+    }
+
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+    }
+
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        // ignore sigpipe
+        typealias SigHandler = @convention(c) (Int32) -> Void
+        let SIG_IGN = unsafeBitCast(OpaquePointer(bitPattern: 1), to: SigHandler.self)
+        signal(SIGPIPE, SIG_IGN)
+
+        // swiftlint:enable nesting
+        UserDefaults.standard.setValue(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        if UserDefaults.standard.value(forKey: automaticDownloadFilesKey) == nil {
+            UserDefaults.standard.set(true, forKey: automaticDownloadFilesKey)
+        }
+        UserDefaults.standard.setValue(true, forKey: "usingGroupConatiner")
+        UNUserNotificationCenter.current().delegate = self
+        // initialize log format
+        let console = ConsoleDestination()
+        console.format = "$Dyyyy-MM-dd HH:mm:ss.SSS$d $C$L$c: $M"
+        #if DEBUG
+        log.addDestination(console)
+        #else
+        log.removeAllDestinations()
+        #endif
+
+        self.voipRegistry.delegate = self
+        self.voipRegistry.desiredPushTypes = Set([PKPushType.voIP])
+
+        PreferenceManager.registerDonationsDefaults()
+
+        self.addListenerForNotification()
+
+        let callsManager = CallsManager(callService: self.callService,
+                                        videoService: self.videoService,
+                                        audioService: self.audioService,
+                                        callKit: self.callKitService,
+                                        accountsService: self.accountService,
+                                        contactsService: self.contactsService,
+                                        nameService: self.nameService)
+        self.callsManager = callsManager
+        self.injectionBag.callsManager = callsManager
+
+        self.conversationManager = ConversationsManager(with: self.conversationsService,
+                                                        accountsService: self.accountService,
+                                                        nameService: self.nameService,
+                                                        dataTransferService: self.dataTransferService,
+                                                        callService: self.callService,
+                                                        callsManager: callsManager,
+                                                        locationSharingService: self.locationSharingService, contactsService: self.contactsService,
+                                                        requestsService: self.requestsService, profileService: self.profileService,
+                                                        presenceService: self.presenceService)
+
+        // starts the daemon
+        self.startDaemon()
+
+        #if DEBUG
+        self.setUpTestDataIfNeed()
+        #endif
+
+        // requests permission to use the camera
+        // will enumerate and add devices once permission has been granted
+        self.videoService.setupInputs()
+
+        // Observe connectivity changes and reconnect DHT. The first path
+        // evaluation is not a change: the daemon has just registered with that
+        // very network, so reporting it would re-register the account and drop
+        // every DHT operation in flight.
+        self.networkService.connectivityChangedObservable
+            .subscribe(onNext: { _ in
+                self.daemonService.connectivityChanged()
+            })
+            .disposed(by: self.disposeBag)
+
+        // start monitoring for network changes
+        self.networkService.monitorNetworkType()
+
+        self.interactionsManager = GeneratedInteractionsManager(accountService: self.accountService,
+                                                                requestsService: self.requestsService,
+                                                                conversationService: self.conversationsService,
+                                                                callService: self.callService)
+
+        // load accounts during splashscreen
+        // and ask the AppCoordinator to handle the first screen once loading is finished
+
+        prepareAccounts()
+        NotificationCenter.default.addObserver(self, selector: #selector(registerNotifications),
+                                               name: NSNotification.Name(rawValue: NotificationName.enablePushNotifications.rawValue),
+                                               object: nil)
+        // Unregister from VOIP notifications when all accounts have notifications disabled.
+        NotificationCenter.default.addObserver(self, selector: #selector(unregisterNotifications),
+                                               name: NSNotification.Name(rawValue: NotificationName.disablePushNotifications.rawValue),
+                                               object: nil)
+
+        self.clearBadgeNumber()
+        if let path = self.certificatePath() {
+            setenv("CA_ROOT_FILE", path, 1)
+        }
+        return true
+    }
+
+    func addListenerForNotification() {
+        NotificationCenter.default.addObserver(self, selector: #selector(handleNotification),
+                                               name: AppDelegate.shouldHandleNotification,
+                                               object: nil)
+        CFNotificationCenterAddObserver(self.center,
+                                        nil, { (_, _, _, _, _) in
+                                            // emit signal so notification could be handeled by daemon
+                                            NotificationCenter.default.post(name: AppDelegate.shouldHandleNotification, object: nil, userInfo: nil)
+                                        },
+                                        Constants.notificationReceived,
+                                        nil,
+                                        .deliverImmediately)
+    }
+
+    func certificatePath() -> String? {
+        let fileName = "cacert"
+        let filExtension = "pem"
+        guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return nil }
+        let certPath = documentsURL.appendingPathComponent(fileName).appendingPathExtension(filExtension)
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: certPath.path) {
+            return certPath.path
+        }
+        guard let certSource = Bundle.main.url(forResource: fileName, withExtension: filExtension) else {
+            return nil
+        }
+        do {
+            try fileManager.copyItem(at: certSource, to: certPath)
+            return certPath.path
+        } catch {
+            return nil
+        }
+    }
+
+    func prepareAccounts() {
+        self.accountService
+            .needMigrateCurrentAccount
+            .subscribe(onNext: { account in
+                DispatchQueue.main.async {
+                    self.appCoordinator.migrateAccount(accountId: account)
+                }
+            })
+            .disposed(by: self.disposeBag)
+        self.accountService.initialAccountsLoading()
+            .subscribe(onCompleted: {
+                DispatchQueue.main.async {
+                    self.appCoordinator.initialLoadingCompleted()
+                }
+                // set selected account if exists
+                if !self.accountService.hasAccounts() {
+                    // Set default download transfer limit to 20MB.
+                    let userDefaults = UserDefaults.standard
+                    if userDefaults.object(forKey: acceptTransferLimitKey) == nil {
+                        userDefaults.set(20, forKey: acceptTransferLimitKey)
+                    }
+                    if userDefaults.object(forKey: hardareAccelerationKey) == nil {
+                        self.videoService.setHardwareAccelerated(withState: true)
+                        UserDefaults.standard.set(true, forKey: hardareAccelerationKey)
+                    }
+                    if userDefaults.object(forKey: limitLocationSharingDurationKey) == nil {
+                        UserDefaults.standard.set(true, forKey: limitLocationSharingDurationKey)
+                    }
+                    if userDefaults.object(forKey: locationSharingDurationKey) == nil {
+                        UserDefaults.standard.set(15, forKey: locationSharingDurationKey)
+                    }
+                    return
+                }
+                if self.accountService.hasAccountWithProxyEnabled() {
+                    self.registerNotifications()
+                } else {
+                    self.unregisterNotifications()
+                }
+
+                let sharedDefaults = UserDefaults(suiteName: Constants.appGroupIdentifier)
+                let standardDefaults = UserDefaults.standard
+
+                if let selectedAccountID = sharedDefaults?.string(forKey: Constants.selectedAccountID),
+                   let account = self.accountService.getAccount(fromAccountId: selectedAccountID) {
+                    self.accountService.currentAccount = account
+                } else if let selectedAccountID = standardDefaults.string(forKey: Constants.selectedAccountID),
+                          let account = self.accountService.getAccount(fromAccountId: selectedAccountID) {
+                    self.accountService.currentAccount = account
+                    sharedDefaults?.set(account.id, forKey: Constants.selectedAccountID)
+                }
+
+                guard let currentAccount = self.accountService.currentAccount else {
+                    self.log.error("Unable to get current account!")
+                    return
+                }
+                DispatchQueue.global(qos: .background).async {[weak self] in
+                    guard let self = self else { return }
+                    self.reloadDataFor(account: currentAccount)
+                }
+            }, onError: { _ in
+                self.appCoordinator.showInitialLoading()
+                let time = DispatchTime.now() + 1
+                DispatchQueue.main.asyncAfter(deadline: time) {
+                    self.appCoordinator.showDatabaseError()
+                }
+            })
+            .disposed(by: self.disposeBag)
+
+        self.accountService.currentWillChange
+            .subscribe(onNext: { account in
+                guard let currentAccount = account else { return }
+                self.conversationsService.clearConversationsData(accountId: currentAccount.id)
+                self.presenceService.subscribeBuddies(withAccount: currentAccount.id, withContacts: self.contactsService.contacts.value, subscribe: false)
+            })
+            .disposed(by: self.disposeBag)
+
+        self.accountService.currentAccountChanged
+            .subscribe(onNext: { account in
+                guard let currentAccount = account else { return }
+                self.reloadDataFor(account: currentAccount)
+            })
+            .disposed(by: self.disposeBag)
+    }
+
+    func updateCallScreenState(presenting: Bool) {
+        self.presentingCallScreen = presenting
+    }
+
+    func reloadDataFor(account: AccountModel) {
+        self.requestsService.loadRequests(withAccount: account.id, accountURI: account.jamiId)
+        self.conversationManager?
+            .prepareConversationsForAccount(accountId: account.id, accountURI: account.jamiId)
+        self.contactsService.loadContacts(withAccount: account)
+        self.presenceService.subscribeBuddies(withAccount: account.id, withContacts: self.contactsService.contacts.value, subscribe: true)
+    }
+
+    // MARK: - Scene Lifecycle Methods
+
+    func sceneDidEnterBackground() {
+        self.peerSharingService.closeAllTunnels()
+        guard let account = self.accountService.currentAccount else { return }
+        self.presenceService.subscribeBuddies(withAccount: account.id, withContacts: self.contactsService.contacts.value, subscribe: false)
+    }
+
+    func sceneWillEnterForeground() {
+        self.updateNotificationAvailability()
+        guard let account = self.accountService.currentAccount else { return }
+        self.presenceService.subscribeBuddies(withAccount: account.id, withContacts: self.contactsService.contacts.value, subscribe: true)
+    }
+
+    func sceneDidBecomeActive() {
+        self.clearBadgeNumber()
+        guard let account = self.accountService.currentAccount else { return }
+        self.presenceService.subscribeBuddies(withAccount: account.id, withContacts: self.contactsService.contacts.value, subscribe: true)
+    }
+
+    func sceneWillResignActive() {
+        guard let account = self.accountService.currentAccount else { return }
+        self.presenceService.subscribeBuddies(withAccount: account.id, withContacts: self.contactsService.contacts.value, subscribe: false)
+    }
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        self.callsManager?.endAllCallsOnTermination()
+        #if DEBUG
+        self.cleanTestDataIfNeed()
+        #endif
+        /*
+         Leave the process instead of stopping the daemon.
+
+         The system only gives the app a few seconds to return from
+         applicationWillTerminate(_:). Stopping the daemon runs
+         Manager::finish(), which shuts UPnP down, unregisters the accounts,
+         tears the SIP and ICE stacks down and joins the DHT thread pools.
+         Every one of those steps waits on the network, so once connectivity
+         has been lost — typically while the device was asleep — they only
+         return when their own timeouts expire, long past the deadline: the
+         main thread stays blocked and the watchdog kills the app
+         (0x8BADF00D). Manager::finish() also rewrites dring.yml in place, so
+         being killed while it runs can truncate the account configuration.
+
+         Moving the shutdown to another thread is not an option: the daemon
+         registers the thread that initialized it and pjsip rejects calls
+         coming from any other one.
+
+         Skipping it loses nothing. Account settings are written as they
+         change, conversations live in git and SQLite storage that tolerates
+         an abrupt exit, and the system reclaims sockets, memory and file
+         descriptors when the process dies. _exit is used rather than
+         returning so that the C++ static destructors do not run while the
+         daemon threads are still alive.
+         */
+        _exit(EXIT_SUCCESS)
+    }
+
+    // MARK: - Ring Daemon
+    private func startDaemon() {
+        do {
+            try self.daemonService.startDaemon()
+        } catch StartDaemonError.initializationFailure {
+            log.error("Daemon failed to initialize.")
+        } catch StartDaemonError.startFailure {
+            log.error("Daemon failed to start.")
+        } catch StartDaemonError.daemonAlreadyRunning {
+            log.error("Daemon already running.")
+        } catch {
+            log.error("Unknown error in Daemon start.")
+        }
+    }
+
+    func updateNotificationAvailability() {
+        let enabled = LocalNotificationsHelper.isEnabled()
+        let currentSettings = UNUserNotificationCenter.current()
+        currentSettings.getNotificationSettings(completionHandler: { settings in
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                break
+            case .denied:
+                if enabled { LocalNotificationsHelper.setNotification(enable: false) }
+            case .authorized:
+                if !enabled { LocalNotificationsHelper.setNotification(enable: true) }
+            case .provisional:
+                if !enabled { LocalNotificationsHelper.setNotification(enable: true) }
+            case .ephemeral:
+                if enabled { LocalNotificationsHelper.setNotification(enable: false) }
+            @unknown default:
+                break
+            }
+        })
+    }
+
+    @objc
+    private func handleNotification() {
+        DispatchQueue.main.async {[weak self] in
+            guard let self = self else { return }
+            // If the app is running in the background and there are no waiting calls, the extension should handle the notification.
+            if UIApplication.shared.applicationState == .background && !self.presentingCallScreen && !(self.callsManager?.hasActiveCalls() ?? false) {
+                return
+            }
+            // emit signal that app is active for notification extension
+            CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(), CFNotificationName(Constants.notificationAppIsActive), nil, nil, true)
+
+            guard let userDefaults = UserDefaults(suiteName: Constants.appGroupIdentifier),
+                  let notificationData = userDefaults.object(forKey: Constants.notificationData) as? [[String: String]] else {
+                return
+            }
+            userDefaults.set([[String: String]](), forKey: Constants.notificationData)
+            for data in notificationData {
+                self.accountService.pushNotificationReceived(data: data)
+            }
+        }
+    }
+
+    @objc
+    private func registerNotifications() {
+        self.requestNotificationAuthorization()
+        DispatchQueue.main.async {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+        self.voipRegistry.desiredPushTypes = Set([PKPushType.voIP])
+    }
+
+    @objc
+    private func unregisterNotifications() {
+        DispatchQueue.main.async {
+            UIApplication.shared.unregisterForRemoteNotifications()
+        }
+        self.voipRegistry.desiredPushTypes = nil
+        self.accountService.setPushNotificationToken(token: "")
+    }
+
+    private func requestNotificationAuthorization() {
+        let application = UIApplication.shared
+        DispatchQueue.main.async {
+            UNUserNotificationCenter.current().delegate = application.delegate as? UNUserNotificationCenterDelegate
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(options: authOptions, completionHandler: { (enable, _) in
+                if enable {
+                    LocalNotificationsHelper.setNotification(enable: true)
+                } else {
+                    LocalNotificationsHelper.setNotification(enable: false)
+                }
+            })
+        }
+    }
+
+    private func clearBadgeNumber() {
+        if let userDefaults = UserDefaults(suiteName: Constants.appGroupIdentifier) {
+            userDefaults.set(0, forKey: Constants.notificationsCount)
+        }
+
+        UIApplication.shared.applicationIconBadgeNumber = 0
+        let center = UNUserNotificationCenter.current()
+        center.removeAllDeliveredNotifications()
+        center.removeAllPendingNotificationRequests()
+    }
+
+}
+
+// MARK: notification actions
+extension AppDelegate {
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let data = response.notification.request.content.userInfo
+        let actionIdentifier = response.actionIdentifier
+        self.handleNotificationActions(data: data, actionIdentifier: actionIdentifier)
+        completionHandler()
+    }
+
+    func handleNotificationActions(data: [AnyHashable: Any], actionIdentifier: String) {
+        guard let accountId = data[Constants.NotificationUserInfoKeys.accountID.rawValue] as? String,
+              let account = self.accountService.getAccount(fromAccountId: accountId) else { return }
+
+        self.accountService.updateCurrentAccount(account: account)
+
+        if isCallNotification(data: data) {
+            handleCallNotification(data: data, account: account, actionIdentifier: actionIdentifier)
+        } else {
+            handleConversationNotification(data: data, accountId: accountId)
+        }
+    }
+
+    private func isCallNotification(data: [AnyHashable: Any]) -> Bool {
+        return data[Constants.NotificationUserInfoKeys.callURI.rawValue] != nil
+    }
+
+    private func isCallAction(_ actionIdentifier: String) -> Bool {
+        return actionIdentifier == Constants.NotificationAction.acceptVideo.rawValue ||
+            actionIdentifier == Constants.NotificationAction.acceptAudio.rawValue
+    }
+
+    private func handleCallNotification(data: [AnyHashable: Any], account: AccountModel, actionIdentifier: String) {
+        guard let conversationId = data[Constants.NotificationUserInfoKeys.conversationID.rawValue] as? String else { return }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+            guard let self = self else { return }
+
+            self.callService.updateActiveCalls(conversationId: conversationId, account: account)
+
+            if self.isCallAction(actionIdentifier) {
+                self.handleCallAction(actionIdentifier: actionIdentifier, data: data)
+            } else {
+                self.handleConversationNotification(data: data, accountId: account.id)
+            }
+        }
+    }
+
+    private func handleCallAction(actionIdentifier: String, data: [AnyHashable: Any]) {
+        guard let callURI = data[Constants.NotificationUserInfoKeys.callURI.rawValue] as? String else { return }
+
+        let isAudioOnly = actionIdentifier == Constants.NotificationAction.acceptAudio.rawValue
+        self.appCoordinator.joinCall(callURI: callURI, isAudioOnly: isAudioOnly)
+    }
+
+    private func handleConversationNotification(data: [AnyHashable: Any], accountId: String) {
+        if let conversationId = data[Constants.NotificationUserInfoKeys.conversationID.rawValue] as? String {
+            self.appCoordinator.openConversation(conversationId: conversationId, accountId: accountId)
+        } else if let participantID = data[Constants.NotificationUserInfoKeys.participantID.rawValue] as? String {
+            self.appCoordinator.openConversation(participantID: participantID, accountId: accountId)
+        }
+    }
+
+    func findContactAndStartCall(hash: String, isVideo: Bool) {
+        if callsManager?.hasActiveCalls() == true {
+            return
+        }
+        // if saved Jami hash
+        if hash.isSHA1() {
+            let contactUri = JamiURI(schema: URIType.ring, infoHash: hash)
+            self.findAccountAndStartCall(uri: contactUri, isVideo: isVideo, type: AccountType.ring)
+            return
+        }
+        // if saved Jami registered name
+        self.nameService.usernameLookupStatus
+            .observe(on: MainScheduler.instance)
+            .filter({ usernameLookupStatus in
+                usernameLookupStatus.name == hash
+            })
+            .take(1)
+            .subscribe(onNext: { usernameLookupStatus in
+                if usernameLookupStatus.state == .found {
+                    guard let address = usernameLookupStatus.address else { return }
+                    let contactUri = JamiURI(schema: URIType.ring, infoHash: address)
+                    self.findAccountAndStartCall(uri: contactUri, isVideo: isVideo, type: AccountType.ring)
+                } else {
+                    // if saved SIP contact
+                    let contactUri = JamiURI(schema: URIType.sip, infoHash: hash)
+                    self.findAccountAndStartCall(uri: contactUri, isVideo: isVideo, type: AccountType.sip)
+                }
+            })
+            .disposed(by: self.disposeBag)
+        self.nameService.lookupName(withAccount: "", nameserver: "", name: hash)
+    }
+
+    func findAccountAndStartCall(uri: JamiURI, isVideo: Bool, type: AccountType) {
+        guard let currentAccount = self.accountService.currentAccount,
+              let hash = uri.hash, !hash.isEmpty else { return }
+        let matching = self.accountService.accounts.filter { $0.type == type }
+        let ordered = matching.filter { $0 == currentAccount } + matching.filter { $0 != currentAccount }
+        guard let account = ordered.first(where: { self.knowsPeer(hash: hash, type: type, account: $0) })
+                ?? ordered.first else { return }
+        if account != currentAccount {
+            self.accountService.currentAccount = account
+        }
+        self.appCoordinator.startCall(participant: hash, name: "", isVideo: isVideo)
+    }
+
+    private func knowsPeer(hash: String, type: AccountType, account: AccountModel) -> Bool {
+        guard type == AccountType.sip else {
+            return self.contactsService.isContact(hash: hash, accountId: account.id)
+        }
+        guard let uriString = ProfilesService
+                .profileUriString(for: JamiURI(schema: URIType.sip, infoHash: hash)) else { return false }
+        return self.profileService.hasStoredProfile(uri: uriString, accountId: account.id)
+    }
+}
+
+// MARK: user notifications
+extension AppDelegate {
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken
+                        deviceToken: Data) {
+        let deviceTokenString = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+        print(deviceTokenString)
+        if let bundleIdentifier = Bundle.main.bundleIdentifier {
+            self.accountService.setPushNotificationTopic(topic: bundleIdentifier)
+        }
+        self.accountService.setPushNotificationToken(token: deviceTokenString)
+    }
+
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        // A low-priority push can launch the app with accounts active. Release
+        // them unless a call or post-call sync still needs them.
+        guard application.applicationState != .background else {
+            self.conversationManager?.updateBackgroundState()
+            completionHandler(.noData)
+            return
+        }
+        var dictionary = [String: String]()
+        for key in userInfo.keys {
+            if let value = userInfo[key] {
+                let keyString = String(describing: key)
+                let valueString = String(describing: value)
+                dictionary[keyString] = valueString
+            }
+        }
+        self.accountService.pushNotificationReceived(data: dictionary)
+        completionHandler(.newData)
+    }
+}
+
+private let pushKitLogger = Logger(subsystem: Constants.appIdentifier, category: "PushKit")
+
+// MARK: PKPushRegistryDelegate
+extension AppDelegate: PKPushRegistryDelegate {
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+    }
+
+    @available(iOS 26.4, *)
+    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingVoIPPushWith payload: PKPushPayload, metadata: PKVoIPPushMetadata, withCompletionHandler completion: @escaping () -> Void) {
+        pushKitLogger.notice("VoIP push delivered mustReport: \(metadata.mustReport, privacy: .public)")
+        guard metadata.mustReport else {
+            completion()
+            return
+        }
+        reportIncomingCallPush(payload: payload, completion: completion)
+    }
+
+    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+        pushKitLogger.notice("VoIP push delivered (pre-iOS 26.4 API)")
+        reportIncomingCallPush(payload: payload, completion: completion)
+    }
+
+    private func reportIncomingCallPush(payload: PKPushPayload, completion: @escaping () -> Void) {
+        DispatchQueue.main.async { self.updateCallScreenState(presenting: true) }
+        let data = payload.dictionaryPayload
+        let peerId: String = data["peerId"] as? String ?? ""
+        let hasVideo = data["hasVideo"] as? String ?? "true"
+        let displayName = data["displayName"] as? String ?? ""
+        let accountId = data["accountId"] as? String ?? ""
+
+        callKitService.previewPendingCall(peerId: peerId,
+                                          accountId: accountId,
+                                          displayName: displayName,
+                                          hasVideo: hasVideo.boolValue) { error in
+            if let error = error as NSError? {
+                pushKitLogger.notice("CallKit report failed domain: \(error.domain, privacy: .public) code: \(error.code, privacy: .public)")
+            } else {
+                pushKitLogger.notice("CallKit report succeeded")
+            }
+            if error != nil {
+                self.updateCallScreenState(presenting: false)
+            }
+            completion()
+            var dictionary = [String: String]()
+            for (key, value) in data {
+                dictionary[String(describing: key)] = String(describing: value)
+            }
+            self.callService.emitPendingCallPreview(pushNotificationPayload: dictionary)
+        }
+    }
+}

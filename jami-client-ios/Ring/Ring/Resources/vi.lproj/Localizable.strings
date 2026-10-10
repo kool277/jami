@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "Cài đặt tài khoản";
+"global.username" = "Username";
+"global.recommended" = "Ưu tiên";
+"global.password" = "Mật khẩu";
+"global.registerAUsername" = "Đăng ký tên người dùng";
+"global.enterPassword" = "Nhập mật khẩu";
+"global.enterUsername" = "Nhập tên người dùng";
+"global.cancel" = "Hủy bỏ";
+"global.blockContact" = "Chặn liên hệ";
+"global.removeAccount" = "Xóa tài khoản";
+"global.incomingCall" = "Tiếp tục gọi";
+"global.ok" = "Được rồi";
+"global.close" = "Gần";
+"global.share" = "Chia sẻ";
+"global.forward" = "Tiếp tục";
+"global.save" = "- Cứu";
+"global.resend" = "Đưa lại";
+"global.preview" = "Xem trước";
+"global.accept" = "Chấp nhận";
+"global.block" = "Blok";
+"global.decline" = "Sự suy giảm";
+"global.name" = "Tên";
+"global.copy" = "Tải";
+"global.reply" = "Trả lời";
+"global.search" = "Tìm kiếm...";
+"global.supportJami" = "Hỗ trợ dự án Jami";
+"global.deleteMessage" = "Xóa thông báo";
+"global.deleteFile" = "Xóa tệp khỏi thiết bị";
+"global.editMessage" = "chỉnh sửa thông điệp";
+"global.editing" = "Đang chỉnh sửa";
+"global.create" = "Tạo";
+"global.edit" = "Đổi chỉnh";
+"global.remove" = "Tắt";
+"global.call" = "Gọi";
+"global.video" = "Video";
+"global.time" = "Thời gian";
+"global.editPassword" = "Chỉnh sửa mật khẩu";
+"global.confirmPassword" = "Tiếp tục xác nhận mật khẩu";
+"global.confirm" = "Đảm nhận";
+"global.cameraDisabled" = "Quyền truy cập máy ảnh đã bị tắt. Bật quyền này trong cài đặt thiết bị để sử dụng tính năng này.";
+"global.confirm" = "Đảm nhận";
+"global.connect" = "Kết nối";
+"global.leave" = "Đi đi";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "Tên";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "Mô tả";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Discard";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "Mã QR xấu";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "Tìm kiếm liên hệ…";
+"swarmcreation.addDescription" = "Thêm mô tả";
+// Swarm
+"swarm.muteConversation" = "Cuộc trò chuyện câm lặng";
+"swarm.leaveConversation" = "Để lại cuộc trò chuyện";
+"swarm.removeConversation" = "Tháo cuộc trò chuyện";
+"swarm.removeContact" = "Xóa liên lạc";
+"swarm.restartConversation" = "Khởi động lại cuộc trò chuyện";
+"swarm.conversationEnded" = "Cuộc trò chuyện đã kết thúc";
+"swarm.chooseColor" = "Màu hội thoại";
+"swarm.typeOfSwarm" = "Loại hội thoại";
+"swarm.identifier" = "Định dạng";
+"swarm.conversationId" = "ID cuộc trò chuyện";
+"swarm.settings" = "Cài đặt";
+"swarm.members" = "Các thành viên";
+"swarm.contactHeader" = "Liên hệ";
+"swarm.showContactQRCode" = "Hiển thị mã QR liên hệ";
+"swarm.shareContactInfo" = "Chia sẻ thông tin liên hệ";
+"swarm.accessibilityContactQRCode" = "";
+"swarm.accessibilityContactQRCodeHint" = "Mở màn hình có mã QR của liên hệ";
+"swarm.accessibilityContactShareHint" = "Mở các tùy chọn chia sẻ thông tin liên hệ";
+"swarm.accessibilityColorPicker" = "Bộ chọn màu cuộc trò chuyện";
+"swarm.conversationHeader" = "Cuộc trò chuyện";
+"swarm.shareContactMessage" = "Bạn có thể thêm liên hệ này, %1@, trên nền tảng giao tiếp phân tán Jami: https://jami.net";
+"swarm.oneToOne" = "Tự riêng";
+"swarm.adminInvitesOnly" = "Nhóm tư nhân (được mời giới hạn)";
+"swarm.invitesOnly" = "Nhóm tư nhân";
+"swarm.publicChat" = "Nhóm công cộng";
+"swarm.others" = "Những người khác";
+"swarm.member" = "Thành viên";
+"swarm.invited" = "Được mời";
+"swarm.admin" = "Trình quản lý";
+"swarm.blocked" = "Đã chặn";
+"swarm.unknown" = "Không biết";
+"swarm.left" = "Đã rời đi";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "Mời các thành viên";
+"swarm.inviteSelectedMembers" = "Mời các liên hệ đã chọn";
+"swarm.inviteMembersSelected" = "Đã chọn";
+"swarm.inviteMembersNotSelected" = "Chưa chọn";
+"swarm.confirmLeaveConversation" = "Bạn có muốn rời khỏi cuộc trò chuyện này không?";
+"swarm.Leave" = "Đi đi";
+"swarm.newGroup" = "Tạo nhóm mới";
+"swarm.namePlaceholder" = "Tên nhóm";
+"swarm.explanationText" = "Thành viên có thể được mời bất cứ lúc nào sau khi nhóm được tạo.";
+"swarm.customizeProfile" = "Tùy chỉnh hồ sơ nhóm";
+"swarm.changePicture" = "Thay đổi ảnh nhóm";
+"swarm.customize" = "Tùy chỉnh nhóm";
+"swarm.selectContacts" = "Chọn liên hệ";
+
+// Contact Picker
+"contactPicker.calls" = "Cuộc gọi";
+"contactPicker.contacts" = "Danh bạ";
+
+// Smartlist
+"smartlist.yesterday" = "Hôm qua";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "Các cuộc trò chuyện";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "Không có cuộc trò chuyện nào khớp với tìm kiếm.";
+"smartlist.newContact" = "Liên hệ mới";
+"smartlist.newGroup" = "Nhóm mới";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "Lời mời nhận được";
+"smartlist.noResults" = "Không có kết quả";
+"smartlist.noConversation" = "Không có cuộc trò chuyện";
+"smartlist.searchBarPlaceholder" = "Nhập tên…";
+"smartlist.searchBar" = "Tìm kiếm";
+"smartlist.noNetworkConnectivity" = "Không có kết nối mạng";
+"smartlist.cellularAccess" = "Đảm bảo quyền truy cập dữ liệu di động được cấp trong cài đặt.";
+"smartlist.accountsTitle" = "Tài khoản";
+"smartlist.addAccountButton" = "+ Thêm tài khoản";
+"smartlist.noNumber" = "Liên hệ được chọn không có số";
+"smartlist.selectOneNumber" = "Chọn một trong số";
+"smartlist.invitations" = "Thỉnh cầu";
+"smartlist.aboutJami" = "Về Jami";
+"smartlist.inviteFriends" = "Mời bạn bè";
+"smartlist.disableDonation" = "Lúc khác";
+"smartlist.donationExplanation" = "Nếu bạn thích sử dụng Jami và tin vào sứ mệnh của chúng tôi, bạn có muốn quyên góp không?";
+"smartlist.inSynchronization" = "Đang đồng bộ…";
+
+// Conversation
+"conversation.addToContactsButton" = "Thêm vào danh bạ";
+"conversation.sendInvitationButton" = "Gửi lời mời";
+"conversation.addToContactsLabel" = "Thêm vào danh bạ?";
+"conversation.notContactLabel" = "%@ không có trong danh sách liên hệ";
+"conversation.messagePlaceholder" = "Viết cho";
+"conversation.imageSaved" = "Đã lưu";
+"conversation.errorSavingImage" = "Không thể lưu hình ảnh";
+"conversation.errorSavingImageMessage" = "Đã xảy ra lỗi khi lưu hình ảnh vào thư viện ảnh.";
+"conversation.photoAccessRequiredMessage" = "Jami cần quyền truy cập vào thư viện ảnh của bạn để lưu hình ảnh. Bạn có thể bật quyền này trong Cài đặt.";
+"conversation.receivedRequest" = "%@ đã gửi cho bạn lời mời trò chuyện.";
+"conversation.incomingRequest" = "đã gửi cho bạn lời mời trò chuyện.";
+"conversation.requestMessage" = "Xin chào,\nBạn có muốn tham gia cuộc trò chuyện không?";
+"conversation.sendRequest" = "Gửi cho họ lời mời để có thể trò chuyện.";
+"conversation.sendRequestTitle" = "Gửi lời mời trò chuyện";
+"conversation.synchronizationTitle" = "Bạn đã chấp nhận lời mời trò chuyện.";
+"conversation.syncingTitle" = "Đang đồng bộ cuộc trò chuyện";
+"conversation.synchronizationMessage" = "Đang chờ %@ kết nối để đồng bộ cuộc trò chuyện…";
+"conversation.inReplyTo" = "Trả lời";
+"conversation.repliedTo" = "%@ đã trả lời %@";
+"conversation.yourself" = "Bạn";
+"conversation.edited" = "Được biên tập";
+"conversation.deletedMessage" = "%@ đã xóa một tin nhắn";
+"conversation.contactBlocked" = "Đã chặn liên hệ";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "%@ đang nhập";
+"conversation.typingIndicatorTwoUsers" = "%1@ và %2@ đang nhập";
+"conversation.typingIndicatorOtherUsers" = "%1@, %2@ và %3@ người khác đang nhập";
+"conversation.typingIndicatorOthersUsers" = "%1@, %2@ và %3@ người khác đang nhập";
+"conversation.lastMessageDeleted" = "(tin nhắn đã xóa)";
+
+// Invitations
+"invitations.noInvitations" = "Không có lời mời";
+"invitations.accepted" = "Được chấp nhận";
+"invitations.declined" = "Đã từ chối";
+"invitations.blocked" = "Đã chặn";
+"invitations.list" = "Lời mời nhận được";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Chia sẻ tự do và riêng tư với Jami";
+"welcome.text" = "Jami là một nền tảng truyền thông miễn phí và phổ biến bảo vệ quyền riêng tư và tự do của người dùng";
+"welcome.haveAccount" = "Tôi đã có tài khoản";
+"welcome.linkDevice" = "Nhập khẩu từ thiết bị khác";
+"welcome.linkBackup" = "Nhập từ sao lưu lưu lưu";
+"welcome.createAccount" = "Tạo tài khoản Jami";
+"welcome.connectToJAMS" = "Kết nối đến máy chủ quản lý";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "Tháo";
+"createProfile.profileCreated" = "Tiếp theo";
+"createProfile.title" = "Cá nhân hóa hồ sơ của bạn";
+"createProfile.enterNameLabel" = "Nhập tên hiển thị";
+"createProfile.enterNamePlaceholder" = "Nhập tên";
+"createProfile.subtitle" = "Hồ sơ của bạn chỉ được chia sẻ với các liên hệ của bạn. Hồ sơ có thể được thay đổi bất cứ lúc nào.";
+"createProfile.createProfilePicture" = "Tạo ảnh hồ sơ";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "Tham gia Jami";
+"createAccount.lookingForUsernameAvailability" = "Đang kiểm tra tính khả dụng của tên người dùng…";
+"createAccount.invalidUsername" = "Tên người dùng không hợp lệ. Vui lòng nhập đúng tên người dùng.";
+"createAccount.usernameAlreadyTaken" = "Tên người dùng đã được lấy";
+"createAccount.usernameValid" = "Tên người dùng này khả dụng.";
+"createAccount.UsernameNotRegisteredTitle" = "Hầm mạng";
+"createAccount.UsernameNotRegisteredMessage" = "Tài khoản đã được tạo nhưng tên người dùng đã không được đăng ký";
+"createAccount.timeoutTitle" = "Tài khoản được tạo ra";
+"createAccount.timeoutMessage" = "Đang đăng ký tên người dùng. Vui lòng chờ…";
+"createAccount.sipConfigure" = "Cấu hình tài khoản SIP đã có";
+"createAccount.creatingAccount" = "Đang tạo tài khoản";
+"createAccount.nameExplanation" = "Bạn có thể chọn một tên người dùng để giúp người khác dễ dàng tìm và tiếp cận bạn trên Jami.";
+"createAccount.newAccount" = "Tài khoản mới";
+"createAccount.encryptionEnabled" = "Đã bật bảo vệ bằng mật khẩu";
+"createAccount.encrypt" = "Bảo vệ bằng mật khẩu";
+"createAccount.customize" = "Cải tạo";
+"createAccount.encryptTitle" = "Bảo vệ tài khoản bằng mật khẩu";
+"createAccount.encryptExplanation" = "Tài khoản Jami được tạo và lưu trữ cục bộ chỉ trên thiết bị này dưới dạng một kho lưu trữ chứa các khóa tài khoản của nó. Quyền truy cập vào kho lưu trữ có thể được bảo vệ tùy chọn bằng mật khẩu.";
+
+// Link To Account form
+"linkToAccount.importAccount" = "Nhập tài khoản";
+"linkToAccount.showQrCode" = "Mã QR";
+"linkToAccount.showPinCode" = "Mã xác thực";
+"linkToAccount.actionRequired" = "Cần thực hiện hành động.\nVui lòng xác nhận tài khoản trên thiết bị nguồn.";
+"linkToAccount.allSet" = "Tài khoản đã được nhập thành công.";
+"linkToAccount.goToAccounts" = "Đi đến tài khoản đã nhập";
+"linkToAccount.exportInstructions" = "Trên thiết bị nguồn, bắt đầu việc xuất.";
+"linkToAccount.exportInstructionsPath" = "Chọn Tài khoản → Cài đặt tài khoản → Liên kết thiết bị mới.";
+"linkToAccount.scanQrCode" = "Khi sẵn sàng, hãy quét mã QR.";
+"linkToAccount.enterProvidedCode" = "Khi sẵn sàng, hãy nhập mã xác thực.";
+"linkToAccount.accountLockedWithPassword" = "Tài khoản được bảo vệ bằng mật khẩu. Để tiếp tục, hãy nhập mật khẩu tài khoản.";
+"linkToAccount.exit" = "Thoát";
+"linkToAccount.shareMessage" = "Mã của bạn là: %@";
+"linkToAccount.alertTile" = "Bạn có muốn dừng liên kết tài khoản không?";
+"linkToAccount.alertMessage" = "Việc dừng sẽ hủy thao tác nhập tài khoản.";
+
+// Import from Archive
+"importFromArchive.explanation" = "Nhập vào tài khoản Jami từ tệp lưu trữ địa phương.";
+"importFromArchive.passwordExplanation" = "Nếu tài khoản được bảo vệ bằng mật khẩu, vui lòng điền vào trường sau.";
+"importFromArchive.title" = "Nhập từ kho lưu trữ";
+"importFromArchive.buttonTitle" = "Nhập khẩu";
+"importFromArchive.selectArchiveButton" = "Chọn tệp lưu trữ";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "Đăng nhập";
+"linkToAccountManager.title" = "Tài khoản máy chủ quản lý";
+"linkToAccountManager.accountManagerPlaceholder" = "Quản lý URL máy chủ";
+"linkToAccountManager.accountManagerLabel" = "Nhập URL máy chủ quản lý";
+"linkToAccountManager.jamsExplanation" = "Nhập URL máy chủ quản lý";
+"linkToAccountManager.enterCredentials" = "Nhập thông tin đăng nhập máy chủ quản lý";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "Lỗi tài khoản";
+"alerts.accountCannotBeFoundMessage" = "Không tìm thấy tài khoản trên mạng lưới Jami. Hãy chắc chắn rằng tài khoản đã được xuất sang Jami từ thiết bị hiện có và thông tin đăng nhập được cung cấp là chính xác.";
+"alerts.accountAddedTitle" = "Đã thêm tài khoản";
+"alerts.accountNoNetworkTitle" = "Hầm mạng";
+"alerts.accountNoNetworkMessage" = "Đã xảy ra lỗi kết nối khi thêm tài khoản Jami vào mạng phân tán. Vui lòng thử lại. Nếu sự cố vẫn tiếp diễn, hãy liên hệ với quản trị viên hệ thống của bạn.";
+"alerts.accountDefaultErrorTitle" = "Lỗi tài khoản";
+"alerts.accountDefaultErrorMessage" = "Xảy ra lỗi khi tạo tài khoản.";
+"alerts.profileTakePhoto" = "Tạo ảnh";
+"alerts.profileUploadPhoto" = "Lên ảnh";
+"alerts.accountLinkedTitle" = "Tài khoản liên kết";
+"alerts.dbFailedTitle" = "Đã xảy ra lỗi khi khởi chạy Jami";
+"alerts.dbFailedMessage" = "Vui lòng đóng đơn và cố gắng mở lại";
+"alerts.confirmBlockContact" = "Bạn có muốn chặn liên hệ này không? Lịch sử trò chuyện với liên hệ này cũng sẽ bị xóa vĩnh viễn.";
+"alerts.confirmDeleteConversation" = "Bạn có muốn xóa vĩnh viễn cuộc trò chuyện này không?";
+"alerts.confirmLeaveConversation" = "Bạn có muốn rời khỏi cuộc trò chuyện này không?";
+"alerts.confirmRemoveOneToOneConversation" = "Bạn có muốn xóa cuộc trò chuyện này không? Lịch sử hiện có sẽ bị xóa. Một cuộc trò chuyện mới có thể được bắt đầu nếu bạn không có cuộc trò chuyện nào khác với liên hệ này.";
+"alerts.confimRemoveContact" = "Bạn có muốn xóa liên hệ này không? Lịch sử hiện có sẽ bị xóa.";
+"alerts.confirmDeleteConversationFromContact" = "Bạn có muốn xóa cuộc trò chuyện với liên hệ này không?";
+"alerts.confirmDeleteConversationTitle" = "Xóa cuộc trò chuyện";
+"alerts.noMediaPermissionsTitle" = "Phán phép truyền thông không được cấp";
+"alerts.noLibraryPermissionsTitle" = "Phiên bản truy cập thư viện ảnh không được cấp";
+"alerts.noLocationPermissionsTitle" = "Phiên bản không được cấp";
+"alerts.errorWrongCredentials" = "Đã xảy ra lỗi khi kết nối với máy chủ quản lý. Vui lòng thử lại. Nếu sự cố vẫn tiếp diễn, hãy liên hệ với quản trị viên hệ thống của bạn.";
+"alerts.recordVideoMessage" = "Ghi tin nhắn video";
+"alerts.recordAudioMessage" = "Ghi tin nhắn âm thanh";
+"alerts.uploadFile" = "Gửi tập tin";
+"alerts.uploadPhoto" = "Mở thư viện";
+"alerts.sendPhoto" = "Gửi ảnh";
+"alerts.locationServiceIsDisabled" = "Bật “Dịch vụ định vị” để cho phép “Jami” xác định vị trí thiết bị.";
+"alerts.locationSharing" = "Chia sẻ vị trí của tôi";
+"alerts.alreadylocationSharing" = "Đã chia sẻ vị trí với người dùng này";
+"alerts.locationSharingDurationTitle" = "Việc chia sẻ địa điểm sẽ kéo dài bao lâu?";
+"alerts.locationSharingDuration10min" = "10 phút";
+"alerts.locationSharingDuration1hour" = "1 giờ";
+"alerts.mapInformation" = "Thông tin bản đồ";
+"alerts.openStreetMapCopyright" = "© Những người đóng góp OpenStreetMap";
+"alerts.openStreetMapCopyrightMoreInfo" = "Tìm hiểu thêm";
+
+// Actions
+"actions.deleteAction" = "Xóa";
+"actions.backAction" = "Trở lại";
+"actions.doneAction" = "Được làm";
+"actions.goToSettings" = "Đi đến Settings";
+"actions.stopLocationSharing" = "Ngừng chia sẻ";
+
+// Calls
+"calls.ringing" = "- Anh nghe thấy...";
+"calls.connecting" = "Kết nối...";
+"calls.callFinished" = "Tiếp tục cuộc gọi";
+"calls.currentCallWith" = "Gọi với ";
+"calls.maximize" = "Tăng tối đa";
+"calls.minimize" = "Giảm thiểu";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "Set moderator";
+"calls.removeModerator" = "Moderator không cài đặt";
+"calls.muteAudio" = "Tắt tiếng micrô";
+"calls.unmuteAudio" = "Bật tiếng micrô";
+"calls.raiseHand" = "Giơ tay";
+"calls.lowerHand" = "Tay dưới";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "Recording";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "Một cuộc gọi đang diễn ra. Bạn có muốn tham gia cuộc gọi không? Bạn cũng có thể tham gia cuộc gọi sau từ cuộc trò chuyện.";
+"calls.activeCallInConversation" = "Có cuộc gọi đang diễn ra, anh có muốn tham gia cuộc gọi không?";
+"calls.acceptWithAudio" = "Chấp nhận bằng âm thanh";
+"calls.acceptWithVideo" = "Chấp nhận bằng video";
+
+// Account Page
+"accountPage.devicesListHeader" = "Thiết bị";
+"accountPage.settingsHeader" = "Cài đặt";
+"accountPage.notificationsHeader" = "Thông báo";
+"accountPage.blockedContacts" = "Các liên lạc bị chặn";
+"accountPage.unblockContact" = "Tháo khóa";
+"accountPage.proxyAddressAlert" = "Cung cấp địa chỉ đại diện";
+"accountPage.noProxyExplanationLabel" = "Không thể nhận thông báo khi proxy bị tắt.";
+"accountPage.proxyPaceholder" = "Địa chỉ đại diện";
+"accountPage.useProxyList" = "Sử dụng danh sách proxy";
+"accountPage.proxyListURL" = "URL danh sách proxy";
+"accountPage.proxyExplanation" = "Thông báo được định tuyến qua một proxy. Bạn có thể sử dụng proxy mặc định, nhập địa chỉ proxy tùy chỉnh hoặc cung cấp một URL với danh sách proxy.";
+"accountPage.proxyHeader" = "Tín hiệu";
+"accountPage.currentProxy" = "Proxy hiện tại";
+"accountPage.enableNotifications" = "Khả năng thông báo";
+"accountPage.proxyDisabledAlertTitle" = "Proxy Server bị vô hiệu hóa";
+"accountPage.proxyDisabledAlertBody" = "Để nhận thông báo, xin vui lòng bật proxy";
+"accountPage.removeDeviceTitle" = "Gỡ bỏ thiết bị";
+"accountPage.revokeDeviceMessage" = "Bạn có muốn xóa thiết bị này không? Hành động này không thể hoàn tác.";
+"accountPage.revokeDeviceButton" = "Tháo lại";
+"accountPage.revokeDevicePlaceholder" = "Nhập mật khẩu tài khoản";
+"accountPage.deviceRevoked" = "Việc hủy bỏ thiết bị đã hoàn thành";
+"accountPage.deviceRevocationProgress" = "Đang xóa…";
+"accountPage.deviceRevocationSuccess" = "Đã xóa thiết bị";
+"accountPage.deviceRevocationTryAgain" = "Hãy thử lại.";
+"accountPage.deviceRevocationWrongPassword" = "Mật khẩu không đúng";
+"accountPage.deviceRevocationUnknownDevice" = "Thiết bị không rõ";
+"accountPage.deviceRevocationError" = "Trận lỗi hủy thiết bị";
+"accountPage.linkDeviceTitle" = "Kết nối một thiết bị khác";
+"accountPage.other" = "Các loại khác";
+"accountPage.removeAccountMessage" = "Nếu tài khoản chưa được sao lưu hoặc thêm vào thiết bị khác, tài khoản và tên người dùng đã đăng ký sẽ BỊ MẤT VĨNH VIỄN.";
+"accountPage.inviteFriends" = "Mời bạn bè";
+"accountPage.contactMeOnJamiTitle" = "Liên hệ với tôi về Jami!";
+"accountPage.contactMeOnJamiContant" = "Liên hệ với tôi bằng “%s” trên nền tảng giao tiếp phân tán Jami: https://jami.net";
+"accountPage.passwordPlaceholder" = "Nhập mật khẩu tài khoản";
+"accountPage.usernamePlaceholder" = "Nhập tên người dùng mong muốn";
+"accountPage.registerNameErrorMessage" = "Tên người dùng không khả dụng.";
+"accountPage.usernameRegistering" = "Đăng ký";
+"accountPage.usernameRegisterAction" = "Register";
+"accountPage.usernameRegistrationFailedTitle" = "Đăng ký thất bại";
+"accountPage.usernameRegistrationFailed" = "Vui lòng kiểm tra mật khẩu tài khoản.";
+"accountPage.createPassword" = "Đặt mật khẩu";
+"accountPage.changePassword" = "Thay đổi mật khẩu";
+"accountPage.currentPasswordPlaceholder" = "Nhập mật khẩu hiện tại";
+"accountPage.newPasswordPlaceholder" = "Nhập mật khẩu mới";
+"accountPage.newPasswordConfirmPlaceholder" = "Xác nhận mật khẩu mới";
+"accountPage.changePasswordError" = "Mật khẩu không đúng";
+"accountPage.enableBoothMode" = "Khả năng chế độ Booth";
+"accountPage.disableBoothMode" = "Thiết lập chế độ Booth";
+"accountPage.disableBoothModeExplanation" = "Vui lòng cung cấp mật khẩu tài khoản";
+"accountPage.boothModeExplanation" = "Trong chế độ booth lịch sử cuộc trò chuyện không được lưu và chức năng jami bị hạn chế bằng cách thực hiện cuộc gọi ra ngoài. Khi bạn bật chế độ booth tất cả các cuộc trò chuyện của bạn sẽ bị xóa.";
+"accountPage.noBoothMode" = "Để bật chế độ buồng, trước tiên hãy bảo vệ tài khoản bằng mật khẩu.";
+"accountPage.boothModeAlertMessage" = "Sau khi bật chế độ buồng, tất cả các cuộc trò chuyện sẽ bị xóa.";
+"accountPage.peerDiscovery" = "Khả năng phát hiện đồng nghiệp địa phương";
+"accountPage.peerDiscoveryExplanation" = "Kết nối với các nút DHT khác quảng cáo trên mạng lưới địa phương của chúng tôi";
+"accountPage.autoRegistration" = "Đăng ký tự động sau khi hết hạn";
+"accountPage.connectivityHeader" = "Kết nối";
+"accountPage.turnEnabled" = "Khả năng TURN";
+"accountPage.turnServer" = "Địa chỉ TURN";
+"accountPage.turnUsername" = "Tên người dùng TURN";
+"accountPage.turnPassword" = "Mật khẩu TURN";
+"accountPage.turnRealm" = "Vị trí của TURN";
+"accountPage.upnpEnabled" = "Sử dụng UPnP";
+"accountPage.stunEnabled" = "Dùng STUN";
+"accountPage.stunServer" = "Địa chỉ STUN";
+"accountPage.publicAddressHeader" = "Khối với công chúng";
+"accountPage.allowIPAutoRewrite" = "Cho phép tự động ghi lại IP";
+"accountPage.publishedSameAsLocal" = "Xuất bản cùng với cục bộ";
+"accountPage.publishedAddress" = "Địa chỉ";
+"accountPage.publishedPort" = "Cảng";
+"accountPage.security" = "An ninh";
+"accountPage.enableSRTP" = "Khả năng trao đổi khóa SDES";
+"accountPage.encryptNegotiation" = "Hoạt động giao dịch mã hóa (TLS)";
+"accountPage.registerNameExplanation" = "Đăng ký tên người dùng để giúp người khác tìm và liên hệ với bạn dễ dàng hơn trên Jami.";
+"accountPage.profileHeader" = "Hồ sơ";
+"accountPage.profileNameNotSelected" = "Chưa chọn tên";
+"accountPage.accountHeader" = "Tài khoản";
+"accountPage.profileName" = "Tên hiển thị";
+"accountPage.profileNamePlaceholder" = "Nhập tên hiển thị";
+"accountPage.editProfile" = "Sửa hồ sơ";
+"accountPage.manageAccount" = "Quản lý tài khoản";
+"accountPage.encryptAccount" = "Mật khẩu";
+"accountPage.passwordExplanation" = "Tài khoản Jami của bạn chỉ được đăng ký trên thiết bị này dưới dạng một kho lưu trữ chứa các khóa của tài khoản. Quyền truy cập vào kho lưu trữ này có thể được bảo vệ bằng mật khẩu.";
+"accountPage.passwordsDoNotMatch" = "Mật khẩu không khớp.";
+"accountPage.passwordCreated" = "Đã đặt mật khẩu";
+"accountPage.passwordUpdated" = "Đã cập nhật mật khẩu";
+"accountPage.linkedDevices" = "Các thiết bị liên kết";
+"accountPage.unlink" = "Hủy liên kết";
+"accountPage.generatingPin" = "Đang tạo mã PIN…";
+"accountPage.passwordForPin" = "Tài khoản được bảo vệ bằng mật khẩu. Nhập mật khẩu để tạo mã PIN.";
+"accountPage.pinExplanationTitle" = "Trên thiết bị khác";
+"accountPage.pinExplanationMessage" = "Cài đặt và khởi động Jami. Chọn “Nhập từ thiết bị khác” và quét mã QR. Hoặc, nhập mã PIN thủ công.";
+"accountPage.pinError" = "Đã xảy ra lỗi khi tạo mã PIN.";
+"accountPage.notificationTitle" = "Thông báo";
+"accountPage.notificationError" = "Thông báo cho Jami đã bị tắt. Bật trong cài đặt thiết bị để sử dụng tính năng này.";
+"accountPage.callsFromUnknownContacts" = "Cho phép cuộc gọi từ các liên hệ không xác định.";
+"accountPage.accountSettingsExplanation" = "Các cài đặt này sẽ chỉ áp dụng cho tài khoản này.";
+"accountPage.appSettings" = "Cài đặt ứng dụng";
+"accountPage.appSettingsExplanation" = "Các cài đặt này sẽ áp dụng cho toàn bộ ứng dụng.";
+"accountPage.connectivityAndConfiguration" = "Kết nối và cấu hình";
+"accountPage.sipExpirationTime" = "Thời gian hết hạn đăng ký (thì giây)";
+"accountPage.tlsVerifyServerCertificates" = "Kiểm tra chứng chỉ TLS của máy chủ";
+"accountPage.tlsVerifyClientCertificates" = "Xác minh chứng chỉ TLS của máy khách";
+"accountPage.tlsRequireTlsCertificate" = "Yêu cầu chứng chỉ cho các kết nối TLS đến";
+"accountPage.tlsDisableSecureDlgCheck" = "Thiết lập kiểm tra đối thoại an toàn cho dữ liệu TLS nhập";
+"accountPage.editSipExpirationTime" = "Thời gian hết hạn";
+"accountPage.selectSipExpirationTime" = "Đặt thời gian (tính bằng giây) cho việc hết hạn đăng ký";
+"accountPage.invalidSipExpirationTime" = "Nhập một giá trị từ 60 đến 604800 giây";
+"accountPage.invalidPort" = "Nhập một giá trị từ 0 đến 65535";
+"accountPage.invalidAddress" = "Nhập một địa chỉ hợp lệ";
+"accountPage.thisDevice" = "Thiết bị này";
+"accountPage.otherDevices" = "Các thiết bị liên kết khác";
+"accountPage.accountIdentity" = "Danh tính tài khoản";
+"accountPage.bootstrap" = "Bootstrap";
+"accountPage.dhtConfiguration" = "Thiết lập OpenDHT";
+"accountPage.nameServer" = "Name server";
+"accountPage.chats" = "Trò chuyện";
+"accountPage.typingIndicator" = "Chỉ số đánh máy";
+"accountPage.typingIndicatorExplanation" = "Cho biết khi nào tin nhắn đang được nhập.";
+
+// Backup Account
+"backupAccount.explanation" = "Tài khoản Jami này chỉ tồn tại trên thiết bị này. Tài khoản sẽ bị mất nếu thiết bị này bị mất hoặc nếu ứng dụng bị gỡ cài đặt. Bạn nên sao lưu tài khoản này.";
+"backupAccount.title" = "Tài khoản sao lưu";
+"backupAccount.creating" = "Đang tạo bản sao lưu";
+"backupAccount.archiveName" = "Chọn một tên cho kho lưu trữ.";
+"backupAccount.archiveNamePlaceholder" = "Tên kho lưu trữ";
+"backupAccount.passwordRequest" = "Nhập mật khẩu tài khoản.";
+"backupAccount.backupButton" = "Sao lưu";
+"backupAccount.documentPickerButton" = "Mở vị trí sao lưu";
+"backupAccount.exportSuccess" = "Đã tạo bản sao lưu";
+"backupAccount.errorWrongLocation" = "Đường dẫn tệp đã chọn không hợp lệ. Vui lòng chọn vị trí khác.";
+"backupAccount.errorAccessDenied" = "Quyền truy cập vào vị trí đã chọn đã bị từ chối.";
+"backupAccount.errorFailed" = "Đã xảy ra lỗi khi xuất tài khoản.";
+
+// Account
+"account.sipServer" = "Server";
+"account.port" = "Cảng";
+"account.proxyServer" = "Tín hiệu";
+"account.createSipAccount" = "Cấu hình tài khoản SIP";
+"account.sipAccount" = "Tài khoản SIP";
+"account.configure" = "Cấu hình";
+"account.advancedFeatures" = "Tính năng nâng cao";
+"account.serverLabel" = "Nhập địa chỉ";
+"account.portLabel" = "Nhập số cổng";
+"account.accountStatus" = "Tình trạng tài khoản";
+"account.enableAccount" = "Khả năng tài khoản";
+"account.statusOnline" = "Online";
+"account.statusOffline" = "Offline";
+"account.statusConnecting" = "Kết nối";
+"account.statusUnknown" = "Không biết";
+"account.statusConnectionerror" = "Hầm kết nối";
+"account.needMigration" = "Tài khoản cần được di chuyển.";
+"account.me" = "Tôi.";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "Không có liên lạc bị chặn";
+
+// Link New Device
+"linkDevice.title" = "Kết nối thiết bị mới";
+"linkDevice.networkError" = "Đã xảy ra lỗi mạng khi xuất tài khoản.";
+"linkDevice.errorWrongPassword" = "Có lỗi xác thực trong quá trình kết nối thiết bị. Vui lòng kiểm tra danh tính và thử lại.";
+"linkDevice.errorNetwork" = "Đã xảy ra lỗi mạng khi liên kết tài khoản. Vui lòng xác minh kết nối của bạn và thử lại.";
+"linkDevice.errorTimeout" = "Thao tác đã hết thời gian chờ. Vui lòng thử lại.";
+"linkDevice.errorCode" = "Đã xảy ra lỗi khi tạo mã. Vui lòng thử lại.";
+"linkDevice.errorWrongData" = "Đã xảy ra lỗi khi xuất tài khoản. Vui lòng thử lại.";
+"linkDevice.initialInfo" = "Trên thiết bị mới, bắt đầu một tài khoản mới.";
+"linkDevice.infoAddAccount" = "Chọn Thêm tài khoản → Kết nối từ thiết bị khác.";
+"linkDevice.infoQRCode" = "Khi sẵn sàng, hãy quét mã QR.";
+"linkDevice.infoCode" = "Khi sẵn sàng, hãy nhập mã và chạm Kết nối.";
+"linkDevice.connecting" = "Đang kết nối với thiết bị mới của bạn…";
+"linkDevice.authenticationInfo" = "Đã tìm thấy thiết bị mới tại địa chỉ IP sau. Đó có phải là bạn không? Để tiếp tục thao tác xuất tài khoản, hãy chạm Xác nhận.";
+"linkDevice.newDeviceIP" = "Địa chỉ IP của thiết bị mới: %1@";
+"linkDevice.code" = "mã";
+"linkDevice.wrongEntry" = "Mã định danh thiết bị mới không được nhận dạng. Vui lòng làm theo hướng dẫn ở trên.";
+"linkDevice.exportInProgress" = "Thao tác xuất tài khoản sang thiết bị mới đang diễn ra. Vui lòng xác nhận việc nhập trên thiết bị mới.";
+"linkDevice.completed" = "Tài khoản đã được nhập thành công trên thiết bị mới.";
+
+// Contact Page
+"contactPage.startAudioCall" = "Bắt đầu cuộc gọi âm thanh";
+"contactPage.startVideoCall" = "Bắt đầu cuộc gọi hình ảnh";
+"contactPage.send" = "Gửi đi";
+"contactPage.leaveConversation" = "Để lại cuộc trò chuyện";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "- Đặt ra...";
+"dataTransfer.readableStatusError" = "Trận lỗi";
+"dataTransfer.readableStatusAwaiting" = "Chờ đợi...";
+"dataTransfer.readableStatusOngoing" = "Chuyển";
+"dataTransfer.readableStatusCanceled" = "Đã hủy bỏ";
+"dataTransfer.sendingFailed" = "Đã xảy ra lỗi khi gửi.";
+"dataTransfer.readableStatusSuccess" = "Hoàn thành";
+"dataTransfer.recordInBackgroundWarning" = "Việc quay video trong khi đa nhiệm với nhiều ứng dụng có thể dẫn đến video chất lượng thấp hơn. Để có kết quả tốt nhất, hãy quay khi không đa nhiệm";
+
+// Notifications
+"notifications.missedCall" = "Lần gọi bị bỏ lỡ";
+"notifications.newFile" = "Dữ liệu mới";
+"notifications.locationSharingStarted" = "Việc chia sẻ địa điểm tiếp theo bắt đầu";
+"notifications.locationSharingStopped" = "Chia sẻ địa điểm tiếp nhận đã dừng lại";
+"dataTransfer.readableStatusDecline" = "Sự suy giảm";
+"dataTransfer.readableStatusAccept" = "Chấp nhận";
+"dataTransfer.infoMessage" = "Chạm để bắt đầu ghi";
+"dataTransfer.sendMessage" = "Gửi đi";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "Thỉnh cầu được nhận";
+"generatedMessage.swarmCreated" = "Đã tạo cuộc trò chuyện";
+"generatedMessage.invitationReceived" = "%@ đã được mời tham gia cuộc trò chuyện.";
+"generatedMessage.invitationAccepted" = "%@ đã tham gia cuộc trò chuyện.";
+"generatedMessage.youJoined" = "Bạn đã tham gia cuộc trò chuyện.";
+"generatedMessage.contactBlocked" = "%@ đã bị chặn khỏi cuộc trò chuyện.";
+"generatedMessage.contactUnblocked" = "%@ đã được bỏ chặn khỏi cuộc trò chuyện.";
+"generatedMessage.outgoingCall" = "Tiếp tục gọi";
+"generatedMessage.missedOutgoingCall" = "Lỡ cuộc gọi ra ngoài";
+"generatedMessage.missedIncomingCall" = "Lỡ cuộc gọi tiếp nhận";
+"generatedMessage.liveLocationSharing" = "Chia sẻ địa điểm trực tiếp";
+"generatedMessage.contactLeftConversation" = "%@ đã rời khỏi cuộc trò chuyện.";
+"generatedMessage.nonSwarmInvitationReceived" = "Bạn đã gửi một lời mời.";
+"generatedMessage.nonSwarmInvitationAccepted" = "Lời mời của bạn đã được chấp nhận.";
+
+// General Settings
+"generalSettings.videoSettings" = "Cài đặt video";
+"generalSettings.videoAcceleration" = "Khả năng tăng tốc video";
+"generalSettings.fileTransfer" = "Chuyển tập tin";
+"generalSettings.locationSharing" = "Chia sẻ vị trí";
+"generalSettings.automaticAcceptIncomingFiles" = "Tự động chấp nhận các tệp nhập";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "(MB, 0 = không giới hạn)";
+"generalSettings.limitLocationSharingDuration" = "Giới hạn thời gian chia sẻ vị trí";
+"generalSettings.locationSharingDuration" = "Thời gian chia sẻ vị trí";
+"generalSettings.donationCampaign" = "Chiến dịch quyên góp";
+"generalSettings.enableDonationCampaign" = "Bật chiến dịch quyên góp";
+
+// Log View
+"logView.title" = "Chẩn đoán";
+"logView.description" = "Mở cài đặt nhật ký chẩn đoán";
+"logView.startLogging" = "Bắt đầu ghi nhật ký";
+"logView.stopLogging" = "Ngừng khai thác";
+"logView.saveError" = "Đã xảy ra lỗi khi lưu tệp.";
+"logView.shareError" = "Xảy ra lỗi khi chia sẻ tệp.";
+
+// Migrate Account
+"migrateAccount.title" = "Di chuyển tài khoản";
+"migrateAccount.migrateButton" = "Tài khoản di cư";
+"migrateAccount.explanation" = "Cần di chuyển tài khoản.";
+"migrateAccount.passwordExplanation" = "Để tiếp tục di chuyển tài khoản, hãy nhập mật khẩu tài khoản.";
+"migrateAccount.error" = "Đã xảy ra lỗi khi di chuyển tài khoản. Thử lại hoặc xóa tài khoản.";
+"migrateAccount.migrating" = "Đang di chuyển…";
+"migrateAccount.migrateAnother" = "Chuyển đến tài khoản khác";
+
+// About Jami
+"aboutJami.declaration1" = "Jami, một gói GNU, là phần mềm cho giao tiếp ngang hàng phổ quát và phân tán, tôn trọng quyền tự do và quyền riêng tư của người dùng. Truy cập";
+"aboutJami.declaration2" = "để tìm hiểu thêm.";
+"aboutJami.noWarranty1" = "Chương trình này hoàn toàn không có bảo hành. Xem";
+"aboutJami.noWarranty2" = "phiên bản 3 trở lên để biết chi tiết.";
+"aboutJami.contribute" = "Tham gia";
+"aboutJami.feedback" = "Nhận phản hồi";
+"aboutJami.developers" = "Nhà phát triển";
+"aboutJami.media" = "Truyền thông";
+"aboutJami.communityManagement" = "Quản lý Cộng đồng";
+"aboutJami.specialThanks" = "Cảm ơn đặc biệt đến";
+"aboutJami.info" = "Đây là danh sách những người đã đầu tư một lượng thời gian đáng kể, với những kết quả hữu ích, vào Jami. Bất kỳ người đóng góp nào như vậy muốn được thêm vào danh sách nên liên hệ với chúng tôi.";
+"aboutJami.header" = "Chúng tôi muốn cảm ơn những người đóng góp của chúng tôi, những nỗ lực qua nhiều năm của họ đã làm nên phần mềm này như ngày nay.";
+
+// Accessibility
+"accessibility.close" = "Gần";
+"accessibility.smartListSwitchAccounts" = "Chuyển tài khoản";
+"accessibility.smartListConnectedAs" = "Tài khoản hiện tại là %@";
+"accessibility.smartListAddAccount" = "Thêm tài khoản";
+"accessibility.aboutJamiTitle" = "Về Jami";
+"accessibility.welcomeToJamiTitle" = "Chào mừng đến với Jami.";
+"accessibility.createAccountVerifyUsernamePrompt" = "Nhập tên người dùng để kiểm tra tình trạng khả dụng.";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "Hình ảnh hồ sơ";
+"accessibility.profilePicturePickerHint" = "Chạm hai lần để chụp ảnh hoặc chọn ảnh từ thư viện";
+"accessibility.swarmPicturePicker" = "Ảnh nhóm";
+"accessibility.accountSummaryQrCode" = "Mã QR";
+"accessibility.accountSummaryQrCodeHint" = "Chạm hai lần để xem mã QR tài khoản";
+"accessibility.accountSummaryEditProfileHint" = "Chạm hai lần để chỉnh sửa hồ sơ";
+"accessibility.accountSummaryEditSettingsButton" = "Cài đặt";
+"accessibility.conversationStartVoiceCall" = "Bắt đầu cuộc gọi thoại với %@";
+"accessibility.conversationStartVideoCall" = "Bắt đầu cuộc gọi video với %@";
+"accessibility.conversationComposeMessage" = "Soạn tin nhắn";
+"accessibility.conversationShareMedia" = "Chia sẻ phương tiện";
+"accessibility.conversationCameraHint" = "Chạm hai lần để mở máy ảnh";
+"accessibility.audioPlayerPlay" = "Phát";
+"accessibility.audioPlayerPause" = "Tạm dừng";
+"accessibility.conversationRowUnreadCount" = "%@ tin nhắn chưa đọc.";
+"accessibility.conversationRowBlocked" = "Cuộc trò chuyện đã bị chặn";
+"accessibility.conversationRowSyncing" = "Đang đồng bộ";
+"accessibility.conversationRowLastMessage" = "Tin nhắn cuối lúc %@";
+"accessibility.userPresenceOnline" = "Online";
+"accessibility.userPresenceAvailable" = "Khả dụng";
+"accessibility.pendingRequestsRowPlural" = "Lời mời đã nhận: %@ lời mời đang chờ";
+"accessibility.pendingRequestsRowSingular" = "Lời mời đã nhận: %@ lời mời đang chờ";
+"accessibility.pendingRequestsRowHint" = "Chạm hai lần để xem lại và trả lời các lời mời bạn đã nhận";
+"accessibility.pendingRequestsListBlockUser" = "Chặn người gửi lời mời";
+"accessibility.pendingRequestsListRejectInvitation" = "Từ chối lời mời";
+"accessibility.pendingRequestsListAcceptInvitation" = "Chấp nhận lời mời";
+"accessibility.messageBubbleDeleted" = "Tin nhắn đã xóa";
+"accessibility.messageBubbleEdited" = "Được biên tập";
+"accessibility.messageBubbleRead" = "Đã đọc";
+"accessibility.messageBubbleUnread" = "Chưa đọc";
+"accessibility.textNotAvailable" = "Đã nhận tin nhắn văn bản trống lúc %@. Tin nhắn này có thể đã không được gửi đúng cách.";
+"accessibility.fileTransferNoName" = "Đã nhận tệp lúc %@, không có tên";
+"accessibility.inReply" = "Trả lời tin nhắn";
+"accessibility.text.receivedOn" = "%1@, tin nhắn nhận lúc %2@";
+"accessibility.text.sentOn" = "%1@, tin nhắn gửi lúc %2@";
+"accessibility.fileTransfer.receivedOn" = "Tệp: %1@, nhận lúc %2@";
+"accessibility.fileTransfer.sentOn" = "Tệp: %1@, gửi lúc %2@";
+"accessibility.call.lasted" = "Đã gọi %@";
+"accessibility.calls.default.toggleAudio" = "Tắt tiếng micrô";
+"accessibility.calls.default.toggleVideo" = "Bật camera";
+"accessibility.calls.default.pauseCall" = "Tiếng gọi tạm dừng";
+"accessibility.calls.default.endCall" = "Kết thúc cuộc gọi";
+"accessibility.calls.default.addParticipant" = "Thêm người tham gia";
+"accessibility.calls.default.switchCamera" = "Chuyển máy ảnh";
+"accessibility.calls.default.toggleSpeaker" = "Bật loa ngoài";
+"accessibility.calls.default.openConversation" = "Cuộc trò chuyện mở";
+"accessibility.calls.default.showDialpad" = "Hiển thị bàn phím quay số";
+"accessibility.calls.default.raiseHand" = "Giơ tay";
+
+"accessibility.calls.alter.toggleAudio" = "Bật tiếng micrô";
+"accessibility.calls.alter.toggleVideo" = "Hình ảnh dừng";
+"accessibility.calls.alter.pauseCall" = "Đặt lại cuộc gọi";
+"accessibility.calls.alter.endCall" = "Kết thúc cuộc gọi";
+"accessibility.calls.alter.addParticipant" = "Thêm người tham gia";
+"accessibility.calls.alter.switchCamera" = "Chuyển máy ảnh";
+"accessibility.calls.alter.toggleSpeaker" = "Tắt loa ngoài";
+"accessibility.calls.alter.openConversation" = "Cuộc trò chuyện mở";
+"accessibility.calls.alter.showDialpad" = "Hiển thị bàn phím quay số";
+"accessibility.calls.alter.raiseHand" = "Tay dưới";
+"accessibility.conference.minimize" = "Giảm thiểu";
+"accessibility.conference.maximize" = "Tăng tối đa";
+"accessibility.conference.setModerator" = "Set moderator";
+"accessibility.conference.unsetModerator" = "Moderator không cài đặt";
+"accessibility.conference.muteAudio" = "Âm thanh câm";
+"accessibility.conference.unmuteAudio" = "Đáp âm thanh không động";
+"accessibility.conference.endCall" = "Kết thúc cuộc gọi";
+"accessibility.conference.lowerHand" = "Tay dưới";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "Tay lên";
+"accessibility.conference.moderator" = "Người điều hành";
+"accessibility.conference.recording" = "Recording";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "Mã QR mã thông báo";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "Hồng rực rỡ";
+"swarmColors.purple" = "Tím";
+"swarmColors.violet" = "Tím violet";
+"swarmColors.indigoBlue" = "Chàm";
+"swarmColors.skyBlue" = "Xanh da trời";
+"swarmColors.cyan" = "Lục lam";
+"swarmColors.teal" = "Xanh mòng két";
+"swarmColors.green" = "Xanh lá";
+"swarmColors.limeGreen" = "Xanh chanh";
+"swarmColors.mediumGray" = "Xám trung bình";
+"swarmColors.yellowGreen" = "Vàng lục";
+"swarmColors.amber" = "Hổ phách";
+"swarmColors.brightOrange" = "Cam sáng";
+"swarmColors.brown" = "Nâu";
+"swarmColors.steelBlue" = "Xanh thép";
+
+// Share extension
+"shareExtension.noAccount.title" = "Không tìm thấy tài khoản";
+"shareExtension.noAccount.description" = "Để tiếp tục, hãy tạo một tài khoản trong ứng dụng chính.";
+"shareExtension.unsupportedType.title" = "Nội dung không được hỗ trợ";
+"shareExtension.unsupportedType.description" = "Việc chia sẻ nội dung đã chọn hiện không được hỗ trợ.";
+"shareExtension.sending" = "Đang gửi…";
+"shareExtension.noSearchResults" = "Không có cuộc trò chuyện nào khớp với tìm kiếm của bạn";
+"shareExtension.tryDifferentFilter" = "Thử một bộ lọc khác";
+"shareExtension.sendToConversation" = "Gửi đến %d cuộc trò chuyện";
+"shareExtension.sendToConversationsPlural" = "Gửi đến %d cuộc trò chuyện";
+"shareExtension.selectAccountTitle" = "Chọn tài khoản";
+"shareExtension.searchConversations" = "Tìm kiếm cuộc trò chuyện";
+"shareExtension.accessibilitySelectConversation" = "Chạm hai lần để chọn cuộc trò chuyện này";
+"shareExtension.accessibilitySelectedAccount" = "Tài khoản đã chọn: %@. Chạm hai lần để thay đổi tài khoản.";
+"shareExtension.accessibilitySendButton" = "Chạm hai lần để gửi đến các cuộc trò chuyện đã chọn";
+"shareExtension.accessibilitySelectAccount" = "Chạm hai lần để chọn tài khoản này";
+
+// Peer Services
+"peerServices.title" = "Dịch vụ chia sẻ";
+"peerServices.refresh" = "Làm mới dịch vụ";
+"peerServices.empty" = "Không có dịch vụ chia sẻ nào khả dụng";
+"peerServices.errorOffline" = "Liên hệ đang ngoại tuyến";
+"peerServices.errorUnreachable" = "Không thể truy cập liên hệ";
+"peerServices.errorTimeout" = "Yêu cầu đã hết thời gian chờ";
+"peerServices.errorUnknown" = "Không thể truy xuất dịch vụ";
+"peerServices.done" = "Được làm";
+"peerServices.notSupported" = "Không được hỗ trợ";
+"peerServices.open" = "Mở";
+
+// Collaborative documents
+"collab.documents" = "Tài liệu";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "Tạo";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "Liên kết";
+"collab.linkHint" = "Địa chỉ";
+"collab.linkAdd" = "Thêm";
+"collab.linkRemove" = "Tắt";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = "Đậm";
+"collab.italic" = "Nghiêng";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "Gạch ngang";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "Trung tâm";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "Undo";
+"collab.redo" = "Redo";
+"collab.remove" = "Tắt";
+"collab.open" = "Mở";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "Tắt";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";

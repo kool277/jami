@@ -1,0 +1,40 @@
+/*
+ *  Copyright (C) 2016-2019 Savoir-faire Linux Inc.
+ *
+ *  Author: Romain Bertozzi <romain.bertozzi@savoirfairelinux.com>
+ *
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+#ifndef RingPrefixHeader_pch
+#define RingPrefixHeader_pch
+
+#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+/*
+ *  Objective-C++ compiles without modules, so the @import block of Ring-Swift.h
+ *  is skipped there and the frameworks a Swift class is exposed with have to be
+ *  imported here instead.
+ */
+#import <WebKit/WebKit.h>
+
+/*
+ *  Because Realm does not support mix ObjC/Swift projects. This workaround fixes compilation failure
+ *  due to the RealmSwiftObject missing declartion from *-Swift.h
+ *  See https://github.com/realm/realm-cocoa/issues/3073 for more details
+ */
+#define RealmSwiftObject NSObject
+
+#endif

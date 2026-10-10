@@ -1,0 +1,46 @@
+<b>Jami</b>, GNU paket, softver je za univerzalnu i distribuiranu ravnopravnu komunikaciju koja poštuje slobodu i privatnost svojih korisnika.
+
+Jami je najjednostavniji i najlakši način za povezivanje s ljudima (i uređajima) putem izravnih poruka, audio i video poziva preko <b>Interneta</b> i LAN/WAN <b>intraneta</b>.
+
+Jami je besplatna/besplatna, end-to-end šifrirana i privatna <b>komunikacijska platforma</b>.
+
+Jami je softver <b>otvorenog koda</b> koji <b>prioritet daje privatnosti korisnika</b>.
+
+Jami ima dizajn profesionalnog izgleda i dostupan je za širok raspon platformi. Za razliku od alternativa, Jami <b>pozivi su izravni između korisnika</b>, budući da ne koristi poslužitelje za rukovanje pozivima.
+
+Ovo daje najveću privatnost, budući da <b>distribuirana</b> priroda Jamija znači da su vaši pozivi samo između sudionika.
+
+Jedan-na-jedan i <b>grupni razgovori</b> s Jamijem poboljšani su izravnim porukama, audio i video pozivima, snimanjem i slanjem audio i video poruka, prijenosom datoteka, dijeljenjem zaslona i dijeljenjem lokacije.
+
+Jami također može funkcionirati kao <b>SIP klijent</b>.
+
+Dostupno je više <b>Jami ekstenzija</b>: Audio Filter, Auto Answer, Green Screen, Segmentation, Watermark i Whisper Transkript.
+
+Jami se može jednostavno implementirati u organizacijama s <b>JAMS (Jami Account Management Server)</b>, omogućujući korisnicima da se povežu sa svojim korporativnim vjerodajnicama ili kreiraju lokalne račune. JAMS vam omogućuje da <b>upravljate vlastitom</b> Jami zajednicom dok iskorištavate prednosti Jamijeve distribuirane mrežne arhitekture.
+
+Jami je <b>dostupan za</b> GNU/Linux, Windows, macOS, iOS, Android, Android TV i web preglednike, čineći Jami interoperabilnim i međuplatformskim komunikacijskim okvirom.
+
+<b>Upravljajte s višestrukim</b> SIP računima, Jami računima i JAMS računima s Jami klijentom instaliranim na jednom ili više uređaja.
+
+Jami je besplatan, neograničen, privatan, bez oglašavanja, kompatibilan, brz, autonoman i anoniman.
+
+<b>Saznajte više o:</b>
+Jami: https://jami.net/
+Jami ekstenzije: https://jami.net/extensions/
+JAMS (Jami Account Management Server): https://jami.biz/
+Jami dokumentacija: https://docs.jami.net/
+
+<b>Pratite nas za više:</b>
+Mastodon: https://mstdn.io/@Jami
+Video zapisi: https://docs.jami.net/videos/
+
+<b>Voljeli bismo čuti vaše mišljenje! Pridružite se Jami zajednici:</b>
+Doprinesite: https://jami.net/contribute/
+Forum: https://forum.jami.net/
+
+Izgradite <b>IoT projekte</b> s Jamijem. Ponovno upotrijebite univerzalnu komunikacijsku tehnologiju Jami s njegovom prijenosnom bibliotekom na vašem sustavu po izboru.
+
+Jami za Android TV testiran je na NVIDIA SHIELD TV-u s Logitech kamerama.
+
+Jami je objavljen pod <b>GPL licencom</b>, verzija 3 ili novija.
+Autorska prava © Savoir-faire Linux Inc.

@@ -1,0 +1,101 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt install -y software-properties-common curl
+
+RUN add-apt-repository universe && \
+    apt-get update && \
+    apt-get install -y -o Acquire::Retries=10 \
+        g++ \
+        gcc \
+        cpp \
+        file \
+        make \
+        libc6-dev \
+        libstdc++-10-dev \
+        git \
+        autoconf \
+        automake \
+        autopoint \
+        cmake \
+        meson \
+        dpkg-dev \
+        libdbus-1-dev \
+        libupnp-dev \
+        libgnutls28-dev \
+        libargon2-dev \
+        libclutter-gtk-1.0-dev \
+        libclutter-1.0-dev \
+        libglib2.0-dev \
+        libnotify-dev \
+        yasm \
+        nasm \
+        autotools-dev \
+        libtool \
+        gettext \
+        libsystemd-dev \
+        libpulse-dev \
+        libasound2-dev \
+        libpcre3-dev \
+        libyaml-cpp-dev \
+        libboost-dev \
+        libxext-dev \
+        libxfixes-dev \
+        libspeex-dev \
+        libspeexdsp-dev \
+        uuid-dev \
+        libavcodec-dev \
+        libavutil-dev \
+        libavformat-dev \
+        libswscale-dev \
+        libavdevice-dev \
+        libopus-dev \
+        libx264-dev \
+        libpipewire-0.3-dev \
+        libudev-dev \
+        libjsoncpp-dev \
+        libmsgpack-dev \
+        libnatpmp-dev \
+        libayatana-appindicator3-dev \
+        libnm-dev \
+        libcrypto++-dev \
+        libva-dev \
+        libvdpau-dev \
+        libssl-dev \
+        libsndfile1-dev \
+        libsecp256k1-dev \
+        libasio-dev \
+        libexpat1 libexpat1-dev \
+        lcov gcovr \
+        libxcb-shape0-dev \
+        libwebrtc-audio-processing-dev \
+        libcppunit-dev \
+        libarchive-dev \
+        ninja-build
+
+# Tests framework
+RUN apt-get install -y -o Acquire::Retries=10 \
+        libcppunit-dev \
+        sip-tester && \
+    apt-get clean
+
+# Rust toolchain, required to build the yffi (Y-CRDT) contrib package used by
+# the collaborative editing feature. Installed system-wide, and on PATH, so it
+# is reachable by the unprivileged user the build runs as (which has no HOME).
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/var/cache/cargo \
+    PATH=/usr/local/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+# The toolchain is pinned: "stable" moves under us, so an unrelated Rust release
+# could break the build with no change on our side. Bump this line deliberately.
+#
+# The whole toolchain tree is read-only: a build must not be able to touch the
+# compiler it is about to use, nor the env script that scripts source to find it.
+# Cargo's writable state -- its registry cache and its lock file -- goes to a
+# directory of its own, outside the tree and outside PATH, shared between build
+# users with the sticky bit so none of them can remove another's files.
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+        | CARGO_HOME=/usr/local/cargo sh -s -- -y --profile minimal --default-toolchain 1.96.0 && \
+    chmod -R a+rX /usr/local/rustup /usr/local/cargo && \
+    install -d -m 1777 /var/cache/cargo

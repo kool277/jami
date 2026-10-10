@@ -1,0 +1,161 @@
+def JENKINS_SSH_KEY = '35cefd32-dd99-41b0-8312-0b386df306ff'
+def DL_SSH_KEY = '5825b39b-dfc6-435f-918e-12acc1f56221'
+def REMOTE_HOST = 'sshadmin@ring-repovm-01.mtl.sfl'
+
+pipeline {
+    agent any
+    triggers {
+        gerrit customUrl: '',
+            gerritProjects: [
+                [branches: [[compareType: 'PLAIN', pattern: 'master']],
+                 compareType: 'PLAIN',
+                 disableStrictForbiddenFileVerification: false,
+                 pattern: 'dhtnet']],
+            triggerOnEvents: [
+                commentAddedContains('!build'),
+                patchsetCreated(excludeDrafts: true, excludeNoCodeChange: true)]
+    }
+    options {
+        ansiColor('xterm')
+    }
+    parameters {
+            string(name: 'GERRIT_REFSPEC',
+                   defaultValue: 'refs/heads/dhtnet',
+                   description: 'The Gerrit refspec to fetch.')
+            choice(name: 'PUBLISH_CHANNEL',
+                   choices: ['nightly', 'stable'],
+                   description: 'Nightly is for build created automaticaly or with low confidence level. After testing and careful review, you can run manual stable build.')
+    }
+    environment {
+        PKG_NAME="dhtnet"
+        PKG_VERSION=""
+        FOLDER_NAME="$PKG_NAME-$PKG_VERSION"
+    }
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                checkout changelog: true, poll: false,
+                    scm: [$class: 'GitSCM',
+                        branches: [[name: 'FETCH_HEAD']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [
+                            [$class: 'CloneOption', noTags: true, reference: '', shallow: true],
+                            [$class: 'WipeWorkspace']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[refspec: '${GERRIT_REFSPEC}', url: 'https://${JAMI_GERRIT_URL}/dhtnet']]]
+            }
+        }
+        stage('Prepare build') {
+            steps {
+                script {
+                    PKG_VERSION=sh(
+                        script: "head -1 extras/packaging/build.version | grep -o '^[0-9\\.]\\+\$' -",
+                        returnStdout: true
+                    ).trim()
+                    FOLDER_NAME="$PKG_NAME-$PKG_VERSION"
+                }
+                sh """
+                    if [ -z "$PKG_VERSION" ]; then
+                        echo "Empty value in build.version: $PKG_VERSION"
+                        exit 1
+                    fi
+
+                    rm -Rf "dependencies/msgpack"
+                    rm -Rf "dependencies/opendht"
+                    rm -Rf "dependencies/pjproject"
+                    rm -Rf "dependencies/restinio"
+                    git submodule update --init --recursive
+                """
+                dir('extras/packaging') {
+                    sh """
+                        rm -Rf "$FOLDER_NAME"
+                        rm -f -- *${FOLDER_NAME}.tar.gz
+                        mkdir -p "$FOLDER_NAME"
+
+                        # copy source code
+                        cp -Rf ../../dependencies "$FOLDER_NAME/dependencies"
+                        cp -Rf ../../include "$FOLDER_NAME/include"
+                        cp -Rf ../../src "$FOLDER_NAME/src"
+                        cp -Rf ../../tools "$FOLDER_NAME/tools"
+                        cp -Rf ../../CMakeLists.txt "$FOLDER_NAME/CMakeLists.txt"
+                        cp -Rf ../../COPYING "$FOLDER_NAME/COPYING"
+                        cp -Rf ../../dhtnet.pc.in "$FOLDER_NAME/dhtnet.pc.in"
+                        cp -Rf ../../README.md "$FOLDER_NAME/README.md"
+
+                        # copy debian conf and create debian/ubuntu archive
+                        cp -Rf "./gnu-linux/debian" "$FOLDER_NAME/debian"
+                        tar -czf "deb-${FOLDER_NAME}.tar.gz" "$FOLDER_NAME"
+                        rm -Rf "$FOLDER_NAME/debian"
+
+                        # create archive for rpm-based distro like fedora
+                        tar -czf "rpm-${FOLDER_NAME}.tar.gz" "${FOLDER_NAME}"
+                    """
+                }
+            }
+        }
+        stage('Build distributions') {
+            matrix {
+                axes {
+                    axis {
+                        name 'TARGET'
+                        values 'ubuntu_22.04', 'ubuntu_24.04', 'ubuntu_24.10', 'debian_12', 'fedora_39', 'fedora_40'/*, 'almalinux_9'*/
+                    }
+                }
+                stages {
+                    stage('Build') {
+                        steps {
+                            dir('extras/packaging') {
+                                sh """
+                                    target="${TARGET}"
+                                    mkdir -p "\$target"
+                                    docker build -t "dhtnet-builder:\$target" -f "gnu-linux/\$target.Dockerfile" --build-arg PKG_NAME="$FOLDER_NAME" .
+                                    docker run --rm \
+                                        -v "\$(pwd)/\$target/":/build/artifacts \
+                                        -e PKG_NAME="$FOLDER_NAME" "dhtnet-builder:\$target"
+                                """
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        stage('Publish to dhtnet.sfl.io') {
+            steps {
+                dir('extras/packaging') {
+                    sshagent(credentials: [JENKINS_SSH_KEY, DL_SSH_KEY]) {
+                        sh """
+                            mkdir -p publish
+                            cp -R --parents ubuntu_*/dhtnet_*.deb publish/
+                            cp -R --parents debian_*/dhtnet_*.deb publish/
+                            cp -R --parents fedora_*/dhtnet-*.rpm publish/
+                            # cp -R --parents almalinux_*/dhtnet-*.rpm publish/
+
+                            rm -Rf publish/**/*debug*
+                            rm -Rf publish/**/*.src.*
+
+                            if [ -f "\${SSH_IDENTITY_FILE}" ]; then
+                                export RSYNC_RSH="ssh -i \${SSH_IDENTITY_FILE}"
+                            fi
+
+                            echo "##########################"
+                            echo "## deploying repository ##"
+                            echo "##########################"
+                            echo "Using RSYNC_RSH='\${RSYNC_RSH}'"
+                            rsync --archive --recursive --verbose \
+                                --delete publish/ \
+                                "${REMOTE_HOST}:/srv/repository/dhtnet/$PUBLISH_CHANNEL"
+                        """
+                    }
+                }
+            }
+        }
+    }
+    post {
+        success {
+            dir('extras/packaging/publish') {
+                archiveArtifacts artifacts: '**/*',
+                                 caseSensitive: false
+            }
+        }
+    }
+}

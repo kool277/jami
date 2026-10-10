@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Debug JamsProd",
+            "request": "attach",
+            "hostName": "192.168.50.255",
+            "port": 8000,
+            "projectName": "jams-server"
+        },
+        {
+            "type": "java",
+            "name": "Debug JamsLocal",
+            "request": "attach",
+            "hostName": "192.168.51.70",
+            "port": 5002,
+            "projectName": "jams-server"
+        },
+        {
+            "type": "java",
+            "name": "Debug JamsDev",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 5002,
+            "projectName": "jams-server"
+        }
+    ]
+}

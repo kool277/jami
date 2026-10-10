@@ -1,0 +1,4177 @@
+/*
+ * Copyright (C) 2004-2026 Savoir-faire Linux Inc.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#include "conversation_module.h"
+
+#include "account_const.h"
+#include "call.h"
+#include "client/jami_signal.h"
+#include "fileutils.h"
+#include "jamidht/account_manager.h"
+#include "jamidht/commit_message.h"
+#include "jamidht/jamiaccount.h"
+#include "jamidht/collaborative_editing.h"
+#include "jamidht/presence_manager.h"
+#include "manager.h"
+#ifdef ENABLE_PLUGIN
+#include "plugin/jamipluginmanager.h"
+#endif
+#include "sip/sipcall.h"
+#include "vcard.h"
+#include "json_utils.h"
+
+#include <opendht/thread_pool.h>
+#include <dhtnet/certstore.h>
+
+#include <algorithm>
+#include <fstream>
+
+namespace jami {
+
+using ConvInfoMap = std::map<std::string, ConvInfo>;
+
+struct PendingConversationFetch
+{
+    bool ready {false};
+    bool cloning {false};
+    std::string deviceId {};
+    std::map<std::string, std::string> preferences {};
+    std::map<std::string, std::map<std::string, std::string>> status {};
+    std::set<std::string> connectingTo {};
+    std::shared_ptr<dhtnet::ChannelSocket> socket {};
+};
+
+constexpr std::chrono::seconds MAX_INVITE_CLOCK_SKEW {5 * 60};
+
+static TimePoint
+validateInviteTimestamp(TimePoint embedded, TimePoint localReceived)
+{
+    if (embedded > localReceived + MAX_INVITE_CLOCK_SKEW)
+        return localReceived;
+    return embedded;
+}
+
+constexpr std::chrono::seconds MAX_FALLBACK {12 * 3600s};
+// Maximum attempts at cloning a conversation whose repository fails validation
+// before giving up. Validation failures are permanent (the remote history is
+// immutable), so retrying is wasted work; the counter is kept in-memory only,
+// so a restart allows a new bounded round of attempts.
+constexpr unsigned MAX_VALIDATION_FAILURES {3};
+
+struct SyncedConversation
+{
+    struct DeferredFetch
+    {
+        std::string peer;
+        std::string deviceId;
+        std::string commitId;
+    };
+
+    std::mutex mtx;
+    std::unique_ptr<asio::steady_timer> fallbackClone;
+    std::chrono::seconds fallbackTimer {5s};
+    // Earliest time a new clone round may start. Armed together with fallbackClone so that
+    // triggers calling cloneConversation() directly honour the same backoff as the timer.
+    std::chrono::steady_clock::time_point nextCloneAttempt {};
+    // The devices whose clone failed in the current backoff window. The devices of a round
+    // are enumerated asynchronously, and the first refusal lands before the others were
+    // even asked: a device that does not hold the repository -- every device of a member
+    // but the ones that opened a document -- declines the git channel in a few ms. Holding
+    // the whole conversation back on it would throttle the very device able to serve the
+    // clone, so the backoff binds only the devices that already failed in this window; the
+    // others still get their one try.
+    std::set<std::string> cloneFailedDevices;
+    // A failure not tied to a device (the repository failed validation, the clone threw)
+    // backs every device off, as before.
+    bool cloneBackoffAllDevices {false};
+    unsigned validationFailures {0};
+    ConvInfo info;
+    std::unique_ptr<PendingConversationFetch> pending;
+    std::map<std::string, DeferredFetch> deferredFetches;
+    std::shared_ptr<Conversation> conversation;
+
+    // Requires mtx. Shared by clone registration and clone installation.
+    bool canReplicateDocuments(const std::string& username) const
+    {
+        return !info.isRemoved() && conversation && conversation->mode() != ConversationMode::DOCUMENT
+               && !conversation->isRemoving() && conversation->isMember(username);
+    }
+
+    bool announcesDocument(const std::string& documentId) const
+    {
+        if (!conversation)
+            return false;
+        const auto documents = conversation->collaborativeDocuments();
+        return std::any_of(documents.begin(), documents.end(), [&](const auto& doc) {
+            return doc.at("id") == documentId;
+        });
+    }
+
+    bool isUnrecoverable() const { return validationFailures >= MAX_VALIDATION_FAILURES; }
+
+    bool cloneThrottled(const std::string& deviceId) const
+    {
+        // conversation mtx must be locked
+        if (std::chrono::steady_clock::now() >= nextCloneAttempt)
+            return false;
+        return cloneBackoffAllDevices || cloneFailedDevices.find(deviceId) != cloneFailedDevices.end();
+    }
+
+    // Arms the retry deadline and returns the delay until it. Callers must still async_wait()
+    // on fallbackClone. A failure inside an armed window joins it rather than extending it,
+    // so a round of N refusals still retries after one delay, not N doublings of it. An empty
+    // deviceId backs every device off.
+    std::chrono::seconds scheduleCloneRetry(const std::string& deviceId = {})
+    {
+        // conversation mtx must be locked
+        const auto now = std::chrono::steady_clock::now();
+        if (now >= nextCloneAttempt) {
+            // A new window: what failed in the previous one is not held against this round.
+            cloneFailedDevices.clear();
+            cloneBackoffAllDevices = false;
+            nextCloneAttempt = now + fallbackTimer;
+            fallbackTimer = std::min(fallbackTimer * 2, MAX_FALLBACK);
+        }
+        if (deviceId.empty())
+            cloneBackoffAllDevices = true;
+        else
+            cloneFailedDevices.emplace(deviceId);
+        fallbackClone->expires_at(nextCloneAttempt);
+        return std::chrono::ceil<std::chrono::seconds>(nextCloneAttempt - now);
+    }
+
+    void resetCloneRetry()
+    {
+        // conversation mtx must be locked
+        nextCloneAttempt = {};
+        fallbackTimer = 5s;
+        cloneFailedDevices.clear();
+        cloneBackoffAllDevices = false;
+    }
+
+    SyncedConversation(const std::string& convId)
+        : info {convId}
+    {
+        fallbackClone = std::make_unique<asio::steady_timer>(*Manager::instance().ioContext());
+    }
+    SyncedConversation(const ConvInfo& info)
+        : info {info}
+    {
+        fallbackClone = std::make_unique<asio::steady_timer>(*Manager::instance().ioContext());
+    }
+
+    bool startFetch(const std::string& deviceId, bool checkIfConv = false)
+    {
+        // conversation mtx must be locked
+        if (checkIfConv && conversation)
+            return false; // Already a conversation
+        if (pending) {
+            if (pending->ready)
+                return false; // Already doing stuff
+            if (pending->connectingTo.find(deviceId) != pending->connectingTo.end())
+                return false; // Already connecting to this device
+        } else {
+            pending = std::make_unique<PendingConversationFetch>();
+        }
+        pending->connectingTo.insert(deviceId);
+        return true;
+    }
+
+    void stopFetch(const std::string& deviceId)
+    {
+        // conversation mtx must be locked
+        if (!pending)
+            return;
+        pending->connectingTo.erase(deviceId);
+        if (pending->connectingTo.empty())
+            pending.reset();
+    }
+
+    void deferFetch(const std::string& peer, const std::string& deviceId, const std::string& commitId)
+    {
+        // conversation mtx must be locked
+        deferredFetches[deviceId] = {peer, deviceId, commitId};
+    }
+
+    std::optional<DeferredFetch> finishFetch(const std::string& deviceId)
+    {
+        // conversation mtx must be locked
+        stopFetch(deviceId);
+        auto deferred = deferredFetches.find(deviceId);
+        if (deferred == deferredFetches.end())
+            return std::nullopt;
+        auto request = std::move(deferred->second);
+        deferredFetches.erase(deferred);
+        return request;
+    }
+
+    void clearFetches()
+    {
+        // conversation mtx must be locked
+        pending.reset();
+        deferredFetches.clear();
+    }
+
+    std::vector<std::map<std::string, std::string>> getMembers(bool includeLeft, bool includeBanned) const
+    {
+        // conversation mtx must be locked
+        if (conversation)
+            return conversation->getMembers(true, includeLeft, includeBanned);
+        // If we're cloning, we can return the initial members
+        std::vector<std::map<std::string, std::string>> result;
+        result.reserve(info.members.size());
+        for (const auto& uri : info.members) {
+            result.emplace_back(std::map<std::string, std::string> {{"uri", uri}});
+        }
+        return result;
+    }
+};
+
+class ConversationModule::Impl : public std::enable_shared_from_this<Impl>
+{
+public:
+    Impl(std::shared_ptr<JamiAccount>&& account,
+         std::shared_ptr<AccountManager>&& accountManager,
+         NeedsSyncingCb&& needsSyncingCb,
+         SengMsgCb&& sendMsgCb,
+         NeedSocketCb&& onNeedSocket,
+         NeedSocketCb&& onNeedSwarmSocket,
+         OneToOneRecvCb&& oneToOneRecvCb);
+
+    template<typename S, typename T>
+    inline auto withConv(const S& convId, T&& cb) const
+    {
+        if (auto conv = getConversation(convId)) {
+            std::lock_guard lk(conv->mtx);
+            return cb(*conv);
+        } else {
+            JAMI_WARNING("Conversation {} not found", convId);
+        }
+        return decltype(cb(std::declval<SyncedConversation&>()))();
+    }
+    template<typename S, typename T>
+    inline auto withConversation(const S& convId, T&& cb)
+    {
+        if (auto conv = getConversation(convId)) {
+            std::lock_guard lk(conv->mtx);
+            if (conv->conversation)
+                return cb(*conv->conversation);
+        } else {
+            JAMI_WARNING("Conversation {} not found", convId);
+        }
+        return decltype(cb(std::declval<Conversation&>()))();
+    }
+
+    // Retrieving recent commits
+    /**
+     * Clone a conversation (initial) from device
+     * @param deviceId
+     * @param convId
+     */
+    void cloneConversation(const std::string& deviceId, const std::string& peer, const std::string& convId);
+    void cloneConversation(const std::string& deviceId,
+                           const std::string& peer,
+                           const std::shared_ptr<SyncedConversation>& conv);
+
+    /**
+     * Pull remote device
+     * @param peer              Contact URI
+     * @param deviceId          Contact's device
+     * @param conversationId
+     * @param commitId (optional)
+     */
+    void fetchNewCommits(const std::string& peer,
+                         const std::string& deviceId,
+                         const std::string& conversationId,
+                         const std::string& commitId = "");
+    /**
+     * Handle events to receive new commits
+     */
+    void handlePendingConversation(const std::string& conversationId, const std::string& deviceId);
+
+    // Requests
+    std::optional<ConversationRequest> getRequest(const std::string& id) const;
+
+    // Conversations
+    /**
+     * Get members
+     * @param conversationId
+     * @param includeBanned
+     * @return a map of members with their role and details
+     */
+    std::vector<std::map<std::string, std::string>> getConversationMembers(const std::string& conversationId,
+                                                                           bool includeBanned = false) const;
+    void setConversationMembers(const std::string& convId, const std::set<std::string>& members);
+
+    /**
+     * Remove a repository and all files
+     * @param convId
+     * @param sync      If we send an update to other account's devices
+     * @param force     True if ignore the removing flag
+     */
+    void removeRepository(const std::string& convId, bool sync, bool force = false);
+    void removeRepositoryImpl(SyncedConversation& conv, bool sync, bool force = false);
+    /**
+     * Remove a conversation
+     * @param conversationId
+     */
+    bool removeConversation(const std::string& conversationId, bool forceRemove = false);
+    bool removeConversationImpl(SyncedConversation& conv, bool forceRemove = false);
+    void removeDocumentReplica(const std::string& documentId);
+    std::vector<std::string> childDocuments(const std::vector<std::string>& parents) const;
+
+    /**
+     * Send a message notification to all members
+     * @param conversation
+     * @param commit
+     * @param sync      If we send an update to other account's devices
+     * @param deviceId  If we need to filter a specific device
+     */
+    void sendMessageNotification(const std::string& conversationId,
+                                 bool sync,
+                                 const std::string& commitId = "",
+                                 const std::string& deviceId = "",
+                                 bool bootstrapReplay = false);
+    void sendMessageNotification(Conversation& conversation,
+                                 bool sync,
+                                 const std::string& commitId = "",
+                                 const std::string& deviceId = "",
+                                 bool bootstrapReplay = false);
+
+    /**
+     * @return if a convId is a valid conversation (repository cloned & usable)
+     */
+    bool isConversation(const std::string& convId) const
+    {
+        std::lock_guard lk(conversationsMtx_);
+        auto c = conversations_.find(convId);
+        return c != conversations_.end() && c->second;
+    }
+
+    /**
+     * @return true if convId should ignore new invites/requests, except for removed
+     * group conversations.
+     */
+    bool isActiveOrNonReinvitableConversation(const std::string& convId) const
+    {
+        auto conv = getConversation(convId);
+        if (!conv)
+            return false;
+        std::lock_guard lk(conv->mtx);
+        return conv->info.mode == ConversationMode::ONE_TO_ONE || !conv->info.isRemoved();
+    }
+
+    void addConvInfo(const ConvInfo& info)
+    {
+        std::lock_guard lk(convInfosMtx_);
+        convInfos_[info.id] = info;
+        saveConvInfos();
+    }
+
+    std::string getOneToOneConversation(const std::string& uri) const noexcept;
+
+    bool updateConvForContact(const std::string& uri, const std::string& oldConv, const std::string& newConv);
+
+    std::shared_ptr<SyncedConversation> getConversation(std::string_view convId) const
+    {
+        std::lock_guard lk(conversationsMtx_);
+        auto c = conversations_.find(convId);
+        return c != conversations_.end() ? c->second : nullptr;
+    }
+    std::shared_ptr<SyncedConversation> getConversation(std::string_view convId)
+    {
+        std::lock_guard lk(conversationsMtx_);
+        auto c = conversations_.find(convId);
+        return c != conversations_.end() ? c->second : nullptr;
+    }
+    std::shared_ptr<SyncedConversation> startConversation(const std::string& convId)
+    {
+        std::lock_guard lk(conversationsMtx_);
+        auto& c = conversations_[convId];
+        if (!c)
+            c = std::make_shared<SyncedConversation>(convId);
+        return c;
+    }
+    std::shared_ptr<SyncedConversation> startConversation(const ConvInfo& info)
+    {
+        std::lock_guard lk(conversationsMtx_);
+        auto& c = conversations_[info.id];
+        if (!c)
+            c = std::make_shared<SyncedConversation>(info);
+        return c;
+    }
+    std::vector<std::shared_ptr<SyncedConversation>> getSyncedConversations() const
+    {
+        std::lock_guard lk(conversationsMtx_);
+        std::vector<std::shared_ptr<SyncedConversation>> result;
+        result.reserve(conversations_.size());
+        for (const auto& [_, c] : conversations_)
+            result.emplace_back(c);
+        return result;
+    }
+    std::vector<std::shared_ptr<Conversation>> getConversations() const
+    {
+        auto conversations = getSyncedConversations();
+        std::vector<std::shared_ptr<Conversation>> result;
+        result.reserve(conversations.size());
+        for (const auto& sc : conversations) {
+            std::lock_guard lk(sc->mtx);
+            if (sc->conversation)
+                result.emplace_back(sc->conversation);
+        }
+        return result;
+    }
+
+    void createCommit(const std::string& conversationId,
+                      CommitMessage&& message,
+                      bool announce = true,
+                      OnCommitCb&& onCommit = {},
+                      OnDoneCb&& cb = {});
+
+    void sendMessage(const std::string& conversationId,
+                     std::string message,
+                     const std::string& replyTo = "",
+                     bool announce = true,
+                     OnCommitCb&& onCommit = {},
+                     OnDoneCb&& cb = {});
+
+    void editMessage(const std::string& conversationId, const std::string& newBody, const std::string& editedId);
+
+    void bootstrapCb(std::string convId);
+
+    // The following methods modify what is stored on the disk
+    /**
+     * @note convInfosMtx_ should be locked
+     */
+    void saveConvInfos() const { ConversationModule::saveConvInfos(accountId_, convInfos_); }
+    /**
+     * @note conversationsRequestsMtx_ should be locked
+     */
+    void saveConvRequests() const { ConversationModule::saveConvRequests(accountId_, conversationsRequests_); }
+    void declineOtherConversationWith(const std::string& uri);
+    bool addConversationRequest(const std::string& id, const ConversationRequest& req)
+    {
+        // conversationsRequestsMtx_ MUST BE LOCKED
+        if (isActiveOrNonReinvitableConversation(id))
+            return false;
+        auto it = conversationsRequests_.find(id);
+        if (it != conversationsRequests_.end()) {
+            const bool existingDeclined = it->second.declined != TimePoint {};
+            const bool incomingDeclined = req.declined != TimePoint {};
+            if (incomingDeclined && existingDeclined) {
+                // Keep only the latest decline and avoid sync ping-pong.
+                if (req.declined <= it->second.declined)
+                    return false;
+                conversationsRequests_[id] = req;
+                saveConvRequests();
+                return false;
+            } else if (incomingDeclined) {
+                // Accept a decline only if it is newer than the active request.
+                if (req.declined < it->second.received)
+                    return false;
+            } else if (existingDeclined) {
+                // Accept a re-invitation only if it arrived after the previous decline.
+                if (req.received <= it->second.declined)
+                    return false;
+            } else {
+                // Ignore duplicate active requests.
+                return false;
+            }
+        } else if (req.isOneToOne()) {
+            // Check that we're not adding a second one to one trust request
+            // NOTE: If a new one to one request is received, we can decline the previous one.
+            declineOtherConversationWith(req.from);
+        }
+        JAMI_DEBUG("[Account {}] [Conversation {}] Adding conversation request from {}", accountId_, id, req.from);
+        conversationsRequests_[id] = req;
+        saveConvRequests();
+        return true;
+    }
+    void rmConversationRequest(const std::string& id)
+    {
+        // conversationsRequestsMtx_ MUST BE LOCKED
+        auto it = conversationsRequests_.find(id);
+        if (it != conversationsRequests_.end()) {
+            auto& md = syncingMetadatas_[id];
+            md = it->second.metadatas;
+            md["syncing"] = "true";
+            md["created"] = std::to_string(toSecondsSinceEpoch(it->second.received));
+        }
+        saveMetadata();
+        conversationsRequests_.erase(id);
+        saveConvRequests();
+    }
+
+    std::weak_ptr<JamiAccount> account_;
+    std::shared_ptr<AccountManager> accountManager_;
+    const std::string accountId_ {};
+    NeedsSyncingCb needsSyncingCb_;
+    SengMsgCb sendMsgCb_;
+    NeedSocketCb onNeedSocket_;
+    NeedSocketCb onNeedSwarmSocket_;
+    OneToOneRecvCb oneToOneRecvCb_;
+
+    std::string deviceId_ {};
+    std::string username_ {};
+
+    // Requests
+    mutable std::mutex conversationsRequestsMtx_;
+    std::map<std::string, ConversationRequest> conversationsRequests_;
+
+    // Conversations
+    mutable std::mutex conversationsMtx_ {};
+    std::map<std::string, std::shared_ptr<SyncedConversation>, std::less<>> conversations_;
+
+    // The following information are stored on the disk
+    mutable std::mutex convInfosMtx_; // Note, should be locked after conversationsMtx_ if needed
+    std::map<std::string, ConvInfo> convInfos_;
+
+    // When sending a new message, we need to send the notification to some peers of the
+    // conversation However, the conversation may be not bootstrapped, so the list will be empty.
+    // notSyncedNotification_ will store the notifiaction to announce until we have peers to sync
+    // with.
+    std::mutex notSyncedNotificationMtx_;
+    std::map<std::string, std::string> notSyncedNotification_;
+
+    std::weak_ptr<Impl> weak() { return std::static_pointer_cast<Impl>(shared_from_this()); }
+
+    std::mutex refreshMtx_;
+    std::map<std::string, uint64_t> refreshMessage;
+    std::atomic_int syncCnt {0};
+
+#ifdef LIBJAMI_TEST
+    std::function<void(std::string, Conversation::BootstrapStatus)> bootstrapCbTest_;
+    std::function<void(const std::string&, const std::string&, bool)> fetchCompletedCbTest_;
+    std::function<void(const std::string&)> cloneReadyCbTest_;
+#endif
+
+    uint64_t presenceListenerToken_ {0};
+    void onBuddyOnline(const std::string& uri);
+
+    ~Impl()
+    {
+        if (auto acc = account_.lock()) {
+            if (auto pm = acc->presenceManager()) {
+                if (presenceListenerToken_)
+                    pm->removeListener(presenceListenerToken_);
+            }
+        }
+    }
+
+    void fixStructures(std::shared_ptr<JamiAccount> account,
+                       const std::vector<std::tuple<std::string, std::string, std::string>>& updateContactConv,
+                       const std::set<std::string>& toRm);
+
+    void cloneConversationFrom(const std::shared_ptr<SyncedConversation> conv, const std::string& deviceId);
+    void bootstrap(const std::string& convId);
+    void fallbackClone(const asio::error_code& ec, const std::string& conversationId);
+
+    void cloneConversationFrom(const ConversationRequest& request);
+
+    void cloneConversationFrom(const std::string& conversationId, const std::string& uri);
+
+    // While syncing, we do not want to lose metadata (avatar/title and mode)
+    std::map<std::string, std::map<std::string, std::string>> syncingMetadatas_;
+    void saveMetadata()
+    {
+        auto path = fileutils::get_data_dir() / accountId_;
+        std::lock_guard lock(dhtnet::fileutils::getFileLock(path / "syncingMetadatas"));
+        std::ofstream file(path / "syncingMetadatas", std::ios::trunc | std::ios::binary);
+        msgpack::pack(file, syncingMetadatas_);
+    }
+
+    void loadMetadata()
+    {
+        try {
+            // read file
+            auto path = fileutils::get_data_dir() / accountId_;
+            std::lock_guard lock(dhtnet::fileutils::getFileLock(path / "syncingMetadatas"));
+            auto file = fileutils::loadFile("syncingMetadatas", path);
+            // load values
+            msgpack::unpacked result;
+            msgpack::unpack(result, (const char*) file.data(), file.size(), 0);
+            result.get().convert(syncingMetadatas_);
+        } catch (const std::exception& e) {
+            JAMI_WARNING("[Account {}] [ConversationModule] unable to load syncing metadata: {}", accountId_, e.what());
+        }
+    }
+
+    void initPresence()
+    {
+        if (!presenceListenerToken_)
+            if (auto acc = account_.lock())
+                presenceListenerToken_ = acc->presenceManager()->addListener(
+                    [w = weak_from_this()](const std::string& uri, bool online) {
+                        if (!online)
+                            return;
+                        if (auto sthis = w.lock())
+                            sthis->onBuddyOnline(uri);
+                    });
+    }
+};
+
+ConversationModule::Impl::Impl(std::shared_ptr<JamiAccount>&& account,
+                               std::shared_ptr<AccountManager>&& accountManager,
+                               NeedsSyncingCb&& needsSyncingCb,
+                               SengMsgCb&& sendMsgCb,
+                               NeedSocketCb&& onNeedSocket,
+                               NeedSocketCb&& onNeedSwarmSocket,
+                               OneToOneRecvCb&& oneToOneRecvCb)
+    : account_(account)
+    , accountManager_(accountManager)
+    , accountId_(account->getAccountID())
+    , needsSyncingCb_(needsSyncingCb)
+    , sendMsgCb_(sendMsgCb)
+    , onNeedSocket_(onNeedSocket)
+    , onNeedSwarmSocket_(onNeedSwarmSocket)
+    , oneToOneRecvCb_(oneToOneRecvCb)
+{
+    if (auto accm = account->accountManager())
+        if (const auto* info = accm->getInfo()) {
+            deviceId_ = info->deviceId;
+            username_ = info->accountId;
+        }
+    conversationsRequests_ = convRequests(accountId_);
+    loadMetadata();
+}
+
+void
+ConversationModule::Impl::cloneConversation(const std::string& deviceId,
+                                            const std::string& peerUri,
+                                            const std::string& convId)
+{
+    JAMI_DEBUG("[Account {}] [Conversation {}] [device {}] Cloning conversation", accountId_, convId, deviceId);
+
+    auto conv = startConversation(convId);
+    std::unique_lock lk(conv->mtx);
+    cloneConversation(deviceId, peerUri, conv);
+}
+
+void
+ConversationModule::Impl::cloneConversation(const std::string& deviceId,
+                                            const std::string& peerUri,
+                                            const std::shared_ptr<SyncedConversation>& conv)
+{
+    // conv->mtx must be locked
+    if (conv->info.mode == ConversationMode::DOCUMENT && conv->info.isRemoved())
+        return;
+    if (conv->isUnrecoverable()) {
+        JAMI_WARNING("[Account {}] [Conversation {}] [device {}] Conversation is marked unrecoverable, "
+                     "ignoring clone request",
+                     accountId_,
+                     conv->info.id,
+                     deviceId);
+        return;
+    }
+    // Checked whether or not a fetch is pending: a device that already failed in this
+    // window stays out even while another one is being tried, and one that did not is
+    // let in either way -- startFetch() arbitrates the round.
+    if (!conv->conversation && conv->cloneThrottled(deviceId)) {
+        JAMI_DEBUG("[Account {}] [Conversation {}] [device {}] Clone retry is not due yet, ignoring "
+                   "clone request",
+                   accountId_,
+                   conv->info.id,
+                   deviceId);
+        return;
+    }
+    if (!conv->conversation) {
+        // Note: here we don't return and connect to all members
+        // the first that will successfully connect will be used for
+        // cloning.
+        // This avoid the case when we try to clone from convInfos + sync message
+        // at the same time.
+        if (!conv->startFetch(deviceId, true)) {
+            JAMI_WARNING("[Account {}] [Conversation {}] [device {}] Already fetching conversation",
+                         accountId_,
+                         conv->info.id,
+                         deviceId);
+            addConvInfo(conv->info);
+            return;
+        }
+        onNeedSocket_(
+            conv->info.id,
+            deviceId,
+            [w = weak(), conv, deviceId](const auto& channel) {
+                std::lock_guard lk(conv->mtx);
+                if (conv->pending && !conv->pending->ready) {
+                    if (channel) {
+                        conv->pending->ready = true;
+                        conv->pending->deviceId = channel->deviceId().toString();
+                        conv->pending->socket = channel;
+                        if (!conv->pending->cloning) {
+                            conv->pending->cloning = true;
+                            dht::ThreadPool::io().run([w, convId = conv->info.id, deviceId = conv->pending->deviceId]() {
+                                if (auto sthis = w.lock())
+                                    sthis->handlePendingConversation(convId, deviceId);
+                            });
+                        }
+                        return true;
+                    } else {
+                        conv->stopFetch(deviceId);
+                    }
+                }
+                return false;
+            },
+            MIME_TYPE_GIT,
+            false);
+
+        JAMI_LOG("[Account {}] [Conversation {}] [device {}] Requesting device", accountId_, conv->info.id, deviceId);
+        conv->info.members.emplace(username_);
+        conv->info.members.emplace(peerUri);
+        addConvInfo(conv->info);
+    } else {
+        JAMI_DEBUG("[Account {}] [Conversation {}] Conversation already cloned", accountId_, conv->info.id);
+    }
+}
+
+void
+ConversationModule::Impl::fetchNewCommits(const std::string& peer,
+                                          const std::string& deviceId,
+                                          const std::string& conversationId,
+                                          const std::string& commitId)
+{
+    auto conv = getConversation(conversationId);
+    {
+        bool needReclone = false;
+        std::unique_lock lkInfos(convInfosMtx_);
+
+        auto itConvInfo = convInfos_.find(conversationId);
+        if (itConvInfo != convInfos_.end() && itConvInfo->second.isRemoved()) {
+            if (!conv)
+                return;
+
+            const bool isOneToOne = (itConvInfo->second.mode == ConversationMode::ONE_TO_ONE);
+            auto contactInfo = accountManager_->getContactInfo(peer);
+            const bool shouldReadd = isOneToOne && contactInfo && contactInfo->confirmed && contactInfo->isActive()
+                                     && !contactInfo->isBanned() && contactInfo->added > itConvInfo->second.removed
+                                     && contactInfo->conversationId != conversationId;
+
+            if (shouldReadd) {
+                if (conv) {
+                    std::unique_lock lkSynced(conv->mtx);
+
+                    if (!conv->conversation) {
+                        conv->info.created = nowMs();
+                        conv->info.erased = TimePoint {};
+                        convInfos_[conversationId] = conv->info;
+                        saveConvInfos();
+                        needReclone = true;
+                    }
+                }
+
+                lkInfos.unlock();
+
+                if (needReclone && conv) {
+                    {
+                        std::unique_lock lkSynced(conv->mtx);
+                        cloneConversation(deviceId, peer, conv);
+                    }
+                }
+
+                return;
+            }
+
+            JAMI_WARNING("[Account {:s}] [Conversation {}] Received a commit, but conversation is removed",
+                         accountId_,
+                         conversationId);
+            return;
+        }
+    }
+    std::optional<ConversationRequest> oldReq;
+    {
+        std::lock_guard lk(conversationsRequestsMtx_);
+        oldReq = getRequest(conversationId);
+        if (oldReq != std::nullopt && oldReq->declined != TimePoint {}) {
+            JAMI_DEBUG("[Account {}] [Conversation {}] Received a request for a conversation already declined.",
+                       accountId_,
+                       conversationId);
+            return;
+        }
+    }
+    if (!commitId.empty())
+        JAMI_DEBUG("[Account {:s}] [Conversation {}] [device {}] fetching '{:s}'",
+                accountId_,
+                conversationId,
+                deviceId,
+                commitId);
+
+    const bool shouldRequestInvite = username_ != peer;
+    if (!conv) {
+        if (oldReq == std::nullopt && shouldRequestInvite) {
+            // A commit for a repository nothing is known about. If it names a
+            // document announced in some conversation, its announcement drives
+            // replication; it must not become a separate conversation invite.
+            if (auto acc = account_.lock()) {
+                if (acc->collaborativeEditing()->knowsDocument(conversationId))
+                    return;
+            }
+            // We didn't find a conversation or a request with the given ID.
+            // This suggests that someone tried to send us an invitation but
+            // that we didn't receive it, so we ask for a new one.
+            JAMI_WARNING("[Account {}] [Conversation {}] Unable to find conversation, asking for an invite",
+                         accountId_,
+                         conversationId);
+            sendMsgCb_(peer, {}, std::map<std::string, std::string> {{MIME_TYPE_INVITE, conversationId}}, 0);
+        }
+        return;
+    }
+    std::unique_lock lk(conv->mtx);
+
+    if (conv->conversation) {
+        // Check if we already have the commit
+        if (not commitId.empty() && conv->conversation->hasCommit(commitId)) {
+            return;
+        }
+        if (conv->conversation->isRemoving()) {
+            JAMI_WARNING("[Account {}] [Conversation {}] conversaton is being removed", accountId_, conversationId);
+            return;
+        }
+        if (!conv->conversation->isPeerAuthorized(peer, deviceId, true)) {
+            JAMI_WARNING("[Account {}] [Conversation {}] device {} is not authorized for {}",
+                         accountId_,
+                         conversationId,
+                         deviceId,
+                         peer);
+            return;
+        }
+
+        // Retrieve current last message
+        auto lastMessageId = conv->conversation->lastCommitId();
+        if (lastMessageId.empty()) {
+            JAMI_ERROR("[Account {}] [Conversation {}] No message detected. This is a bug", accountId_, conversationId);
+            return;
+        }
+
+        if (!conv->startFetch(deviceId)) {
+            conv->deferFetch(peer, deviceId, commitId);
+            JAMI_WARNING("[Account {}] [Conversation {}] Already fetching from {}, deferring commit {}",
+                         accountId_,
+                         conversationId,
+                         deviceId,
+                         commitId);
+            return;
+        }
+
+        syncCnt.fetch_add(1);
+        onNeedSocket_(
+            conversationId,
+            deviceId,
+            [w = weak(), conv, conversationId, peer = std::move(peer), deviceId, commitId = std::move(commitId)](
+                const auto& channel) {
+                auto sthis = w.lock();
+                auto acc = sthis ? sthis->account_.lock() : nullptr;
+                std::unique_lock lk(conv->mtx);
+                auto conversation = conv->conversation;
+                if (!channel || !acc || !conversation) {
+                    auto deferred = conv->finishFetch(deviceId);
+                    lk.unlock();
+                    if (sthis && deferred)
+                        sthis->fetchNewCommits(deferred->peer, deferred->deviceId, conversationId, deferred->commitId);
+                    if (sthis && sthis->syncCnt.fetch_sub(1) == 1)
+                        emitSignal<libjami::ConversationSignal::ConversationSyncFinished>(sthis->accountId_);
+                    return false;
+                }
+                conversation->addGitSocket(channel->deviceId(), channel);
+                lk.unlock();
+                conversation->sync(
+                    peer,
+                    deviceId,
+                    [w, conv, conversationId = std::move(conversationId), peer, deviceId, commitId](bool ok) {
+                        auto shared = w.lock();
+                        if (!shared)
+                            return;
+#ifdef LIBJAMI_TEST
+                        if (shared->fetchCompletedCbTest_)
+                            shared->fetchCompletedCbTest_(conversationId, commitId, ok);
+#endif
+                        if (!ok) {
+                            JAMI_WARNING("[Account {}] [Conversation {}] Unable to fetch new commit from "
+                                         "{}, other peer may be disconnected",
+                                         shared->accountId_,
+                                         conversationId,
+                                         deviceId);
+                            JAMI_LOG("[Account {}] [Conversation {}] Relaunch sync with {}",
+                                     shared->accountId_,
+                                     conversationId,
+                                     deviceId);
+                        }
+
+                        std::optional<SyncedConversation::DeferredFetch> deferred;
+                        {
+                            std::lock_guard lk(conv->mtx);
+                            deferred = conv->finishFetch(deviceId);
+                            // Notify peers that a new commit is there (DRT)
+                            if (not commitId.empty() && ok && conv->conversation && !conv->info.isRemoved()) {
+                                shared->sendMessageNotification(*conv->conversation, false, commitId, deviceId);
+                            }
+                        }
+                        if (deferred)
+                            shared->fetchNewCommits(deferred->peer,
+                                                    deferred->deviceId,
+                                                    conversationId,
+                                                    deferred->commitId);
+                        if (shared->syncCnt.fetch_sub(1) == 1) {
+                            emitSignal<libjami::ConversationSignal::ConversationSyncFinished>(shared->accountId_);
+                        }
+                    },
+                    commitId);
+                return true;
+            },
+            "",
+            false);
+    } else {
+        if (oldReq != std::nullopt)
+            return;
+        if (conv->pending)
+            return;
+        bool clone = !conv->info.isRemoved();
+        if (clone) {
+            cloneConversation(deviceId, peer, conv);
+            return;
+        }
+        if (!shouldRequestInvite)
+            return;
+        lk.unlock();
+        JAMI_WARNING("[Account {}] [Conversation {}] Unable to find conversation, asking for an invite",
+                     accountId_,
+                     conversationId);
+        sendMsgCb_(peer, {}, std::map<std::string, std::string> {{MIME_TYPE_INVITE, conversationId}}, 0);
+    }
+}
+
+void
+ConversationModule::Impl::onBuddyOnline(const std::string& uri)
+{
+    auto acc = account_.lock();
+    if (!acc)
+        return;
+
+    auto toUpdate = std::make_shared<std::vector<std::shared_ptr<Conversation>>>();
+    for (auto& conv : getConversations()) {
+        if (conv->isMember(uri)) {
+            toUpdate->emplace_back(std::move(conv));
+        }
+    }
+
+    if (auto pm = acc->presenceManager()) {
+        auto devices = pm->getDevices(uri);
+        for (const auto& conv : *toUpdate)
+            conv->addKnownDevices(devices, uri);
+    }
+}
+
+// Clone and store conversation
+void
+ConversationModule::Impl::handlePendingConversation(const std::string& conversationId, const std::string& deviceId)
+{
+    auto acc = account_.lock();
+    if (!acc)
+        return;
+    auto conv = getConversation(conversationId);
+    if (!conv)
+        return;
+    std::unique_lock lk(conv->mtx, std::defer_lock);
+    auto erasePending = [&] {
+        conv->pending.reset();
+        lk.unlock();
+    };
+    try {
+        auto conversation = std::make_shared<Conversation>(acc, deviceId, conversationId);
+#ifdef LIBJAMI_TEST
+        if (cloneReadyCbTest_)
+            cloneReadyCbTest_(conversationId);
+#endif
+        conversation->onMembersChanged([w = weak_from_this(), conversationId](const auto& members) {
+            // Delay in another thread to avoid deadlocks
+            dht::ThreadPool::io().run([w, conversationId, members = std::move(members)] {
+                if (auto sthis = w.lock())
+                    sthis->setConversationMembers(conversationId, members);
+            });
+        });
+        conversation->onMessageStatusChanged([this, conversationId](const auto& status) {
+            auto msg = std::make_shared<SyncMsg>();
+            msg->ms = {{conversationId, status}};
+            needsSyncingCb_(std::move(msg));
+        });
+        conversation->onNeedSocket(onNeedSwarmSocket_);
+        if (!conversation->isMember(username_, true)) {
+            JAMI_ERROR("[Account {}] [Conversation {}] Conversation cloned but we do not seem to be a valid member",
+                       accountId_,
+                       conversationId);
+            conversation->erase();
+            lk.lock();
+            erasePending();
+            return;
+        }
+
+        // Make sure that the list of members stored in convInfos_ matches the
+        // one from the conversation's repository.
+        // (https://git.jami.net/savoirfairelinux/jami-daemon/-/issues/1026)
+        setConversationMembers(conversationId, conversation->memberUris("", {}));
+
+        // Map lookups must precede locking the parent. A leave locks that parent
+        // too, so checking and installing the child are atomic with respect to it.
+        const bool isDocument = conversation->mode() == ConversationMode::DOCUMENT;
+        auto parent = isDocument ? getConversation(conversation->parentConversationId()) : nullptr;
+        std::unique_lock<std::mutex> parentLock;
+        if (parent && parent != conv)
+            parentLock = std::unique_lock(parent->mtx);
+        lk.lock();
+        // Pending downloads saved by older versions have no parent field.
+        if (isDocument && conv->info.parent.empty() && parent && parent != conv
+            && parent->canReplicateDocuments(username_) && parent->announcesDocument(conversationId)) {
+            conv->info.parent = conversation->parentConversationId();
+            addConvInfo(conv->info);
+        }
+        if (isDocument
+            && (!parent || parent == conv || !parent->canReplicateDocuments(username_)
+                || conv->info.parent != conversation->parentConversationId()
+                || !parent->announcesDocument(conversationId))) {
+            JAMI_WARNING("[Account {}] Discarding document {}: parent is inactive or no longer announces it",
+                         accountId_,
+                         conversationId);
+            conversation->erase();
+            conv->info.removed = std::max(nowMs(), conv->info.created);
+            conv->info.erased = conv->info.removed;
+            addConvInfo(conv->info);
+            erasePending();
+            return;
+        }
+        if (conv->info.mode != conversation->mode()) {
+            JAMI_ERROR(
+                "[Account {}] [Conversation {}] Cloned conversation mode is {}, but {} was expected from invite.",
+                accountId_,
+                conversationId,
+                static_cast<int>(conversation->mode()),
+                static_cast<int>(conv->info.mode));
+            // TODO: erase conversation after transition period
+            // conversation->erase();
+            // erasePending();
+            // return;
+            conv->info.mode = conversation->mode();
+            addConvInfo(conv->info);
+        }
+
+        if (conv->pending && conv->pending->socket)
+            conversation->addGitSocket(DeviceId(deviceId), std::move(conv->pending->socket));
+        auto removeRepo = false;
+        // Note: a removeContact while cloning. In this case, the conversation
+        // must not be announced and removed.
+        if (conv->info.isRemoved())
+            removeRepo = true;
+        std::map<std::string, std::string> preferences;
+        std::map<std::string, std::map<std::string, std::string>> status;
+        if (conv->pending) {
+            preferences = std::move(conv->pending->preferences);
+            status = std::move(conv->pending->status);
+        }
+        conv->conversation = conversation;
+        if (parentLock.owns_lock())
+            parentLock.unlock();
+        conv->resetCloneRetry();
+        if (removeRepo) {
+            removeRepositoryImpl(*conv, false, true);
+            erasePending();
+            return;
+        }
+
+        auto commitId = conversation->join();
+        if (!commitId.empty())
+            sendMessageNotification(*conversation, false, commitId);
+        erasePending(); // Will unlock
+
+#ifdef LIBJAMI_TEST
+        conversation->onBootstrapStatus(bootstrapCbTest_);
+#endif
+        auto id = conversation->id();
+        conversation->bootstrap([w = weak(), id = std::move(id)]() {
+            if (auto sthis = w.lock())
+                sthis->bootstrapCb(id);
+        });
+
+        if (auto pm = acc->presenceManager()) {
+            for (const auto& member : conversation->memberUris()) {
+                conversation->addKnownDevices(pm->getDevices(member), member);
+            }
+        }
+
+        if (!preferences.empty())
+            conversation->updatePreferences(preferences);
+        if (!status.empty())
+            conversation->updateMessageStatus(status);
+        syncingMetadatas_.erase(conversationId);
+        saveMetadata();
+
+        if (conversation->mode() == ConversationMode::DOCUMENT) {
+            // A document is not a conversation to the clients and is never
+            // synced to this account's other devices; what has a stake in the
+            // clone's completion is the CRDT session that asked for it.
+            acc->collaborativeEditing()->onRepositoryUpdated(conversation->parentConversationId(),
+                                                             conversationId,
+                                                             !conversation->documentHistory(1).empty());
+            return;
+        }
+
+        acc->collaborativeEditing()->syncDocuments(conversationId);
+        // Inform user that the conversation is ready
+        emitSignal<libjami::ConversationSignal::ConversationReady>(accountId_, conversationId);
+        needsSyncingCb_({});
+        // Download members profile on first sync
+        auto isOneOne = conversation->mode() == ConversationMode::ONE_TO_ONE;
+        auto askForProfile = isOneOne;
+        if (!isOneOne) {
+            // If not 1:1 only download profiles from self (to avoid non checked files)
+            auto cert = acc->certStore().getCertificate(deviceId);
+            askForProfile = cert && cert->issuer && cert->issuer->getId().toString() == username_;
+        }
+        if (askForProfile) {
+            for (const auto& member : conversation->memberUris(username_)) {
+                acc->askForProfile(conversationId, deviceId, member);
+            }
+        }
+    } catch (const InvalidRepositoryError&) {
+        // Permanent failure: the remote repository contains malformed commits and
+        // its history is immutable, so every re-clone would fail the same way.
+        // Stop after a few attempts instead of retrying (and waking the peer's
+        // devices through the DHT proxy) indefinitely.
+        ++conv->validationFailures;
+        if (conv->isUnrecoverable()) {
+            JAMI_ERROR("[Account {}] [Conversation {}] Failed validation {} times, marking conversation "
+                       "as unrecoverable: remove it and ask the peer for a new invitation",
+                       accountId_,
+                       conversationId,
+                       conv->validationFailures);
+            emitSignal<libjami::ConversationSignal::OnConversationError>(
+                accountId_, conversationId, EUNRECOVERABLE, "Conversation repository failed validation repeatedly");
+        } else {
+            auto retryIn = conv->scheduleCloneRetry();
+            JAMI_WARNING(
+                "[Account {}] [Conversation {}] Remote conversation failed validation ({}/{}). Re-clone in {}s",
+                accountId_,
+                conversationId,
+                conv->validationFailures,
+                MAX_VALIDATION_FAILURES,
+                retryIn.count());
+            conv->fallbackClone->async_wait(std::bind(&ConversationModule::Impl::fallbackClone,
+                                                      shared_from_this(),
+                                                      std::placeholders::_1,
+                                                      conversationId));
+        }
+    } catch (const std::exception& e) {
+        auto retryIn = conv->scheduleCloneRetry();
+        JAMI_WARNING(
+            "[Account {}] [Conversation {}] Something went wrong when cloning conversation: {}. Re-clone in {}s",
+            accountId_,
+            conversationId,
+            e.what(),
+            retryIn.count());
+        conv->fallbackClone->async_wait(std::bind(&ConversationModule::Impl::fallbackClone,
+                                                  shared_from_this(),
+                                                  std::placeholders::_1,
+                                                  conversationId));
+    }
+    lk.lock();
+    erasePending();
+}
+
+std::optional<ConversationRequest>
+ConversationModule::Impl::getRequest(const std::string& id) const
+{
+    // ConversationsRequestsMtx MUST BE LOCKED
+    auto it = conversationsRequests_.find(id);
+    if (it != conversationsRequests_.end())
+        return it->second;
+    return std::nullopt;
+}
+
+std::string
+ConversationModule::Impl::getOneToOneConversation(const std::string& uri) const noexcept
+{
+    if (auto details = accountManager_->getContactInfo(uri)) {
+        // If contact is removed there is no conversation
+        // If banned, conversation is still on disk
+        if (details->removed != TimePoint {} && details->banned == 0) {
+            // Check if contact is removed
+            if (details->removed > details->added)
+                return {};
+        }
+        return details->conversationId;
+    }
+    return {};
+}
+
+bool
+ConversationModule::Impl::updateConvForContact(const std::string& uri,
+                                               const std::string& oldConv,
+                                               const std::string& newConv)
+{
+    if (newConv != oldConv) {
+        auto conversation = getOneToOneConversation(uri);
+        if (conversation != oldConv) {
+            JAMI_DEBUG("[Account {}] [Conversation {}] Old conversation is not found in details {} - found: {}",
+                       accountId_,
+                       newConv,
+                       oldConv,
+                       conversation);
+            return false;
+        }
+        accountManager_->updateContactConversation(uri, newConv);
+        return true;
+    }
+    return false;
+}
+
+void
+ConversationModule::Impl::declineOtherConversationWith(const std::string& uri)
+{
+    // conversationsRequestsMtx_ MUST BE LOCKED
+    for (auto& [id, request] : conversationsRequests_) {
+        if (request.declined != TimePoint {})
+            continue; // Ignore already declined requests
+        if (request.isOneToOne() && request.from == uri) {
+            JAMI_WARNING("[Account {}] [Conversation {}] Decline conversation request from {}", accountId_, id, uri);
+            request.declined = nowMs();
+            syncingMetadatas_.erase(id);
+            saveMetadata();
+            emitSignal<libjami::ConversationSignal::ConversationRequestDeclined>(accountId_, id);
+        }
+    }
+}
+
+std::vector<std::map<std::string, std::string>>
+ConversationModule::Impl::getConversationMembers(const std::string& conversationId, bool includeBanned) const
+{
+    return withConv(conversationId, [&](const auto& conv) { return conv.getMembers(true, includeBanned); });
+}
+
+void
+ConversationModule::Impl::removeRepository(const std::string& conversationId, bool sync, bool force)
+{
+    auto conv = getConversation(conversationId);
+    if (!conv)
+        return;
+    std::unique_lock lk(conv->mtx);
+    removeRepositoryImpl(*conv, sync, force);
+}
+
+void
+ConversationModule::Impl::removeRepositoryImpl(SyncedConversation& conv, bool sync, bool force)
+{
+    if (conv.conversation && (force || conv.conversation->isRemoving())) {
+        // Stop fetch!
+        conv.clearFetches();
+        // And abort the ones already running: the repository is about to be deleted, and erase()
+        // below waits for them to release the repository write lock.
+        conv.conversation->shutdownConnections();
+
+        JAMI_LOG("[Account {}] [Conversation {}] Remove conversation", accountId_, conv.info.id);
+        try {
+            if (conv.conversation->mode() == ConversationMode::ONE_TO_ONE) {
+                for (const auto& member : conv.conversation->getInitialMembers()) {
+                    if (member != username_) {
+                        // Note: this can happen while re-adding a contact.
+                        // In this case, check that we are removing the linked conversation.
+                        if (conv.info.id == getOneToOneConversation(member)) {
+                            accountManager_->removeContactConversation(member);
+                        }
+                    }
+                }
+            }
+        } catch (const std::exception& e) {
+            JAMI_ERROR("{}", e.what());
+        }
+        conv.conversation->erase();
+        conv.conversation.reset();
+
+        if (!sync)
+            return;
+
+        conv.info.erased = nowMs();
+        needsSyncingCb_({});
+        addConvInfo(conv.info);
+    }
+}
+
+bool
+ConversationModule::Impl::removeConversation(const std::string& conversationId, bool forceRemove)
+{
+    auto removed = withConv(conversationId,
+                            [this, forceRemove](auto& conv) { return removeConversationImpl(conv, forceRemove); });
+    if (removed)
+        // Collect after marking the parent removed: no new child can register
+        // past that point, including a clone without a repository yet.
+        for (const auto& documentId : childDocuments({conversationId}))
+            // Each held document is left the way the conversation just was: a
+            // leave commit the other holders fetch, then the repository goes.
+            // A silent erasure instead would leave this device forever listed
+            // as a member of a document it can no longer be reached for.
+            withConv(documentId, [this](auto& conv) { return removeConversationImpl(conv, false); });
+    return removed;
+}
+
+std::vector<std::string>
+ConversationModule::Impl::childDocuments(const std::vector<std::string>& parents) const
+{
+    std::vector<std::string> ids;
+    if (parents.empty())
+        return ids;
+    for (const auto& conv : getSyncedConversations()) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->info.mode == ConversationMode::DOCUMENT
+            && std::find(parents.begin(), parents.end(), conv->info.parent) != parents.end())
+            ids.push_back(conv->info.id);
+    }
+    return ids;
+}
+
+void
+ConversationModule::Impl::removeDocumentReplica(const std::string& documentId)
+{
+    if (!ConversationRepository::isValidConversationId(documentId)) {
+        JAMI_WARNING("[Account {}] Refusing to remove replica with invalid document id '{}'", accountId_, documentId);
+        return;
+    }
+    auto conv = startConversation(documentId);
+    std::lock_guard lk(conv->mtx);
+    if (conv->conversation && conv->conversation->mode() != ConversationMode::DOCUMENT)
+        return;
+
+    conv->info.mode = ConversationMode::DOCUMENT;
+    conv->info.members.emplace(username_);
+    conv->info.removed = std::max(nowMs(), conv->info.created);
+    conv->info.erased = nowMs();
+    if (conv->fallbackClone)
+        conv->fallbackClone->cancel();
+    conv->pending.reset();
+    addConvInfo(conv->info);
+    if (conv->conversation) {
+        conv->conversation->shutdownConnections();
+        conv->conversation->erase();
+        conv->conversation.reset();
+    }
+}
+
+bool
+ConversationModule::Impl::removeConversationImpl(SyncedConversation& conv, bool forceRemove)
+{
+    auto members = conv.getMembers(false, false);
+    auto isSyncing = !conv.conversation;
+    auto hasMembers = !isSyncing // If syncing there is no member to inform
+                      && std::find_if(members.begin(),
+                                      members.end(),
+                                      [&](const auto& member) { return member.at("uri") == username_; })
+                             != members.end() // We must be still a member
+                      && members.size() != 1; // If there is only ourself
+    conv.info.removed = nowMs();
+    if (isSyncing)
+        conv.info.erased = nowMs();
+    if (conv.fallbackClone)
+        conv.fallbackClone->cancel();
+    if (isSyncing)
+        conv.clearFetches();
+    conv.resetCloneRetry();
+    // Sync now, because it can take some time to really removes the datas
+    needsSyncingCb_({});
+    addConvInfo(conv.info);
+    // A document is not one of the account's conversations to a client: it is
+    // listed and removed through the collaborative editing API.
+    if (!conv.conversation || conv.conversation->mode() != ConversationMode::DOCUMENT)
+        emitSignal<libjami::ConversationSignal::ConversationRemoved>(accountId_, conv.info.id);
+    if (isSyncing)
+        return true;
+
+    if (forceRemove && conv.conversation->mode() == ConversationMode::ONE_TO_ONE) {
+        // skip waiting for sync
+        removeRepositoryImpl(conv, true);
+        return true;
+    }
+
+    auto commitId = conv.conversation->leave();
+    if (hasMembers) {
+        JAMI_LOG("Wait that someone sync that user left conversation {}", conv.info.id);
+        // Commit that we left
+        if (!commitId.empty()) {
+            // Do not sync as it's synched by convInfos
+            sendMessageNotification(*conv.conversation, false, commitId);
+        } else {
+            JAMI_ERROR("Failed to send message to conversation {}", conv.info.id);
+        }
+        // In this case, we wait that another peer sync the conversation
+        // to definitely remove it from the device. This is to inform the
+        // peer that we left the conversation and never want to receive
+        // any messages
+        return true;
+    }
+
+    // Else we are the last member, so we can remove
+    removeRepositoryImpl(conv, true);
+    return true;
+}
+
+void
+ConversationModule::Impl::sendMessageNotification(const std::string& conversationId,
+                                                  bool sync,
+                                                  const std::string& commitId,
+                                                  const std::string& deviceId,
+                                                  bool bootstrapReplay)
+{
+    if (auto conv = getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            sendMessageNotification(*conv->conversation, sync, commitId, deviceId, bootstrapReplay);
+    }
+}
+
+void
+ConversationModule::Impl::sendMessageNotification(Conversation& conversation,
+                                                  bool sync,
+                                                  const std::string& commitId,
+                                                  const std::string& deviceId,
+                                                  bool bootstrapReplay)
+{
+    auto acc = account_.lock();
+    if (!acc)
+        return;
+    auto commit = commitId == "" ? conversation.lastCommitId() : commitId;
+    if (bootstrapReplay && conversation.lastCommitId() != commit)
+        return;
+    Json::Value message;
+    message["id"] = conversation.id();
+    message["commit"] = commit;
+    message["deviceId"] = deviceId_;
+    const auto text = json::toString(message);
+
+    // Send message notification will announce the new commit in 3 steps.
+    const auto messageMap = std::map<std::string, std::string> {{MIME_TYPE_GIT, text}};
+
+    // First, because our account can have several devices, announce to other devices
+    if (sync) {
+        // Announce to our devices
+        std::lock_guard lk(refreshMtx_);
+        auto& refresh = refreshMessage[username_];
+        refresh = sendMsgCb_(username_, {}, messageMap, refresh);
+    }
+
+    // Then, we announce to 2 random members in the conversation that aren't in the DRT
+    // This allow new devices without the ability to sync to their other devices to sync with us.
+    // Or they can also use an old backup.
+    std::vector<std::string> nonConnectedMembers;
+    std::vector<NodeId> devices;
+    {
+        std::lock_guard lk(notSyncedNotificationMtx_);
+        devices = conversation.peersToSyncWith();
+        auto members = conversation.memberUris(username_, {MemberRole::BANNED});
+        std::vector<std::string> connectedMembers;
+        // print all members
+        for (const auto& device : devices) {
+            auto cert = acc->certStore().getCertificate(device.toString());
+            if (cert && cert->issuer)
+                connectedMembers.emplace_back(cert->issuer->getId().toString());
+        }
+        std::sort(std::begin(connectedMembers), std::end(connectedMembers));
+        std::set_difference(members.begin(),
+                            members.end(),
+                            connectedMembers.begin(),
+                            connectedMembers.end(),
+                            std::inserter(nonConnectedMembers, nonConnectedMembers.begin()));
+        std::shuffle(nonConnectedMembers.begin(), nonConnectedMembers.end(), acc->rand);
+        if (nonConnectedMembers.size() > 2)
+            nonConnectedMembers.resize(2);
+        if (!conversation.isBootstrapped()) {
+            JAMI_DEBUG("[Conversation {}] Not yet bootstrapped, save notification", conversation.id());
+            // Because we can get some git channels but not bootstrapped, we should keep this
+            // to refresh when bootstrapped.
+            if (bootstrapReplay)
+                notSyncedNotification_.try_emplace(conversation.id(), commit);
+            else
+                notSyncedNotification_[conversation.id()] = commit;
+        }
+    }
+
+    std::lock_guard lk(refreshMtx_);
+    for (const auto& member : nonConnectedMembers) {
+        auto& refresh = refreshMessage[member];
+        refresh = sendMsgCb_(member, {}, messageMap, refresh);
+    }
+
+    // Finally we send to devices that the DRT choose.
+    for (const auto& device : devices) {
+        auto deviceIdStr = device.toString();
+        auto memberUri = conversation.uriFromDevice(deviceIdStr);
+        if (memberUri.empty() || deviceIdStr == deviceId)
+            continue;
+        auto& refresh = refreshMessage[deviceIdStr];
+        refresh = sendMsgCb_(memberUri, device, messageMap, refresh);
+    }
+
+    // And we wake up the mobile devices we are responsible for (i.e. closer
+    // to them than any connected node). They are not actively connected to
+    // the DRT, so the DHT message (converted to a push notification by the
+    // DHT proxy) is the only way for them to learn about the new commit.
+    // Note: the repository only contains certificates of devices that wrote
+    // commits, so for read-only devices we resolve the member URI through
+    // the certificate store (filled when the device was last connected).
+    for (const auto& target : conversation.mobileNodesToNotify()) {
+        const auto& device = target.device;
+        auto deviceIdStr = device.toString();
+        if (deviceIdStr == deviceId)
+            continue;
+        auto& refresh = refreshMessage[deviceIdStr];
+        refresh = sendMsgCb_(target.uri, device, messageMap, refresh);
+    }
+}
+
+void
+ConversationModule::Impl::sendMessage(const std::string& conversationId,
+                                      std::string message,
+                                      const std::string& replyTo,
+                                      bool announce,
+                                      OnCommitCb&& onCommit,
+                                      OnDoneCb&& cb)
+{
+    auto msg = CommitMessage::text(std::move(message), replyTo);
+    createCommit(conversationId, std::move(msg), announce, std::move(onCommit), std::move(cb));
+}
+
+void
+ConversationModule::Impl::createCommit(
+    const std::string& conversationId, CommitMessage&& message, bool announce, OnCommitCb&& onCommit, OnDoneCb&& cb)
+{
+    if (auto conv = getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            conv->conversation->createCommit(std::move(message),
+                                             std::move(onCommit),
+                                             [this,
+                                              conversationId,
+                                              announce,
+                                              cb = std::move(cb)](bool ok, const std::string& commitId) {
+                                                 if (cb)
+                                                     cb(ok, commitId);
+                                                 if (!announce)
+                                                     return;
+                                                 if (ok)
+                                                     sendMessageNotification(conversationId, true, commitId);
+                                                 else
+                                                     JAMI_ERROR("Failed to send message to conversation {}",
+                                                                conversationId);
+                                             });
+    }
+}
+
+void
+ConversationModule::Impl::editMessage(const std::string& conversationId,
+                                      const std::string& newBody,
+                                      const std::string& editedId)
+{
+    // Check that editedId is a valid commit, from ourself and plain/text
+    auto validCommit = false;
+    std::string type, fileId;
+    if (auto conv = getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation) {
+            auto commit = conv->conversation->getCommit(editedId);
+            if (commit != std::nullopt) {
+                type = commit->commitMsg.type;
+                if (type == CommitType::DATA_TRANSFER) {
+                    fileId = getFileId(editedId, commit->commitMsg.tid, commit->commitMsg.displayName);
+                }
+                validCommit = commit->authorId == username_
+                              && (type == CommitType::TEXT || type == CommitType::DATA_TRANSFER
+                                  || type == CommitType::COLLAB_DOC)
+                              && (type != CommitType::DATA_TRANSFER || !fileId.empty());
+            }
+        }
+    }
+    if (!validCommit) {
+        JAMI_ERROR("Unable to edit commit {:s}", editedId);
+        return;
+    }
+    // Commit message edition
+    CommitMessage message;
+    if (type == CommitType::DATA_TRANSFER) {
+        // Remove file!
+        auto path = fileutils::get_data_dir() / accountId_ / "conversation_data" / conversationId / fileId;
+        dhtnet::fileutils::remove(path, true);
+        message = CommitMessage::fileDeleted(editedId);
+    } else if (type == CommitType::COLLAB_DOC) {
+        // A document is retired by editing its announcement, like a file. What it
+        // holds lives in a repository of its own, erased on each device when the
+        // commit lands there, so nothing is removed from here.
+        message = CommitMessage::collabDocRemoved(editedId);
+    } else {
+        message = CommitMessage::edit(newBody, editedId);
+    }
+    createCommit(conversationId, std::move(message));
+}
+
+void
+ConversationModule::Impl::bootstrapCb(std::string convId)
+{
+    std::string commitId;
+    {
+        std::lock_guard lk(notSyncedNotificationMtx_);
+        auto it = notSyncedNotification_.find(convId);
+        if (it != notSyncedNotification_.end()) {
+            commitId = std::move(it->second);
+            notSyncedNotification_.erase(it);
+        }
+    }
+    if (commitId.empty())
+        return;
+    JAMI_DEBUG("[Account {}] [Conversation {}] Resend pending message notification", accountId_, convId);
+    dht::ThreadPool::io().run([w = weak(), convId, commitId = std::move(commitId)] {
+        if (auto sthis = w.lock())
+            sthis->sendMessageNotification(convId, true, commitId, {}, true);
+    });
+}
+
+void
+ConversationModule::Impl::fixStructures(
+    std::shared_ptr<JamiAccount> acc,
+    const std::vector<std::tuple<std::string, std::string, std::string>>& updateContactConv,
+    const std::set<std::string>& toRm)
+{
+    for (const auto& [uri, oldConv, newConv] : updateContactConv) {
+        updateConvForContact(uri, oldConv, newConv);
+    }
+    ////////////////////////////////////////////////////////////////
+    // Note: This is only to homogenize trust and convRequests
+    std::vector<std::string> invalidPendingRequests;
+    {
+        auto requests = acc->getTrustRequests();
+        std::lock_guard lk(conversationsRequestsMtx_);
+        for (const auto& request : requests) {
+            auto itConvId = request.find(libjami::Account::TrustRequest::CONVERSATIONID);
+            auto itConvFrom = request.find(libjami::Account::TrustRequest::FROM);
+            if (itConvId != request.end() && itConvFrom != request.end()) {
+                // Check if requests exists or is declined.
+                auto itReq = conversationsRequests_.find(itConvId->second);
+                auto declined = itReq == conversationsRequests_.end() || itReq->second.declined != TimePoint {};
+                if (declined) {
+                    JAMI_WARNING("Invalid trust request found: {:s}", itConvId->second);
+                    invalidPendingRequests.emplace_back(itConvFrom->second);
+                }
+            }
+        }
+        auto requestRemoved = false;
+        for (auto it = conversationsRequests_.begin(); it != conversationsRequests_.end();) {
+            if (it->second.from == username_) {
+                JAMI_WARNING("Detected request from ourself, this makes no sense. Remove {}", it->first);
+                it = conversationsRequests_.erase(it);
+            } else {
+                ++it;
+            }
+        }
+        if (requestRemoved) {
+            saveConvRequests();
+        }
+    }
+    for (const auto& invalidPendingRequest : invalidPendingRequests)
+        acc->discardTrustRequest(invalidPendingRequest);
+
+    ////////////////////////////////////////////////////////////////
+    for (const auto& conv : toRm) {
+        JAMI_ERROR("[Account {}] Remove conversation ({})", accountId_, conv);
+        removeConversation(conv, true);
+    }
+    for (const auto& conversation : getConversations())
+        acc->collaborativeEditing()->syncDocuments(conversation->id());
+    JAMI_DEBUG("[Account {}] Conversations loaded!", accountId_);
+}
+
+void
+ConversationModule::Impl::cloneConversationFrom(const std::shared_ptr<SyncedConversation> conv,
+                                                const std::string& deviceId)
+{
+    std::lock_guard lk(conv->mtx);
+    const auto& conversationId = conv->info.id;
+    if (conv->info.mode == ConversationMode::DOCUMENT && conv->info.isRemoved())
+        return;
+    if (conv->isUnrecoverable()) {
+        JAMI_WARNING("[Account {}] [Conversation {}] [device {}] Conversation is marked unrecoverable, "
+                     "ignoring clone request",
+                     accountId_,
+                     conversationId,
+                     deviceId);
+        return;
+    }
+    // Checked whether or not a fetch is pending: a device that already failed in this
+    // window stays out even while another one is being tried, and one that did not is
+    // let in either way -- startFetch() arbitrates the round.
+    if (!conv->conversation && conv->cloneThrottled(deviceId)) {
+        JAMI_DEBUG("[Account {}] [Conversation {}] [device {}] Clone retry is not due yet, ignoring "
+                   "clone request",
+                   accountId_,
+                   conversationId,
+                   deviceId);
+        return;
+    }
+    if (!conv->startFetch(deviceId, true)) {
+        JAMI_WARNING("[Account {}] [Conversation {}] Already fetching", accountId_, conversationId);
+        return;
+    }
+
+    onNeedSocket_(
+        conversationId,
+        deviceId,
+        [wthis = weak_from_this(), conv, conversationId, deviceId](const auto& channel) {
+            std::lock_guard lk(conv->mtx);
+            if (conv->pending && !conv->pending->ready) {
+                if (channel) {
+                    conv->pending->ready = true;
+                    conv->pending->deviceId = channel->deviceId().toString();
+                    conv->pending->socket = channel;
+                    if (!conv->pending->cloning) {
+                        conv->pending->cloning = true;
+                        dht::ThreadPool::io().run([wthis, conversationId, deviceId = conv->pending->deviceId]() {
+                            if (auto sthis = wthis.lock())
+                                sthis->handlePendingConversation(conversationId, deviceId);
+                        });
+                    }
+                    return true;
+                } else if (auto sthis = wthis.lock()) {
+                    conv->stopFetch(deviceId);
+                    auto retryIn = conv->scheduleCloneRetry(deviceId);
+                    JAMI_WARNING("[Account {}] [Conversation {}] [device {}] Clone failed. Re-clone in {}s",
+                                 sthis->accountId_,
+                                 conversationId,
+                                 deviceId,
+                                 retryIn.count());
+                    conv->fallbackClone->async_wait(std::bind(&ConversationModule::Impl::fallbackClone,
+                                                              sthis,
+                                                              std::placeholders::_1,
+                                                              conversationId));
+                }
+            }
+            return false;
+        },
+        MIME_TYPE_GIT,
+        false);
+}
+
+void
+ConversationModule::Impl::fallbackClone(const asio::error_code& ec, const std::string& conversationId)
+{
+    if (ec == asio::error::operation_aborted)
+        return;
+    auto conv = getConversation(conversationId);
+    if (!conv || conv->conversation)
+        return;
+    auto members = getConversationMembers(conversationId);
+    for (const auto& member : members)
+        if (member.at("uri") != username_)
+            cloneConversationFrom(conversationId, member.at("uri"));
+}
+
+void
+ConversationModule::Impl::bootstrap(const std::string& convId)
+{
+    std::vector<std::shared_ptr<SyncedConversation>> toClone;
+    std::vector<std::shared_ptr<Conversation>> conversations;
+    if (convId.empty()) {
+        std::vector<std::shared_ptr<SyncedConversation>> convs;
+        {
+            std::lock_guard lk(convInfosMtx_);
+            for (const auto& [conversationId, convInfo] : convInfos_) {
+                if (auto conv = getConversation(conversationId))
+                    convs.emplace_back(std::move(conv));
+            }
+        }
+        for (auto& conv : convs) {
+            std::lock_guard lk(conv->mtx);
+            if (!conv->conversation && !conv->info.isRemoved()) {
+                // we need to ask to clone requests when bootstrapping all conversations
+                // otherwise it can stay syncing
+                toClone.emplace_back(std::move(conv));
+            } else if (conv->conversation) {
+                conversations.emplace_back(conv->conversation);
+            }
+        }
+    } else if (auto conv = getConversation(convId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            conversations.emplace_back(conv->conversation);
+    }
+
+    for (const auto& conversation : conversations) {
+        if (auto acc = account_.lock())
+            acc->collaborativeEditing()->syncDocuments(conversation->id());
+#ifdef LIBJAMI_TEST
+        conversation->onBootstrapStatus(bootstrapCbTest_);
+#endif
+        conversation->bootstrap([w = weak(), id = conversation->id()] {
+            if (auto sthis = w.lock())
+                sthis->bootstrapCb(id);
+        });
+
+        if (auto acc = account_.lock()) {
+            if (auto pm = acc->presenceManager()) {
+                for (const auto& member : conversation->memberUris()) {
+                    conversation->addKnownDevices(pm->getDevices(member), member);
+                }
+            }
+        }
+    }
+    for (const auto& conv : toClone) {
+        for (const auto& member : conv->getMembers(false, false)) {
+            if (member.at("uri") != username_)
+                cloneConversationFrom(conv->info.id, member.at("uri"));
+        }
+    }
+}
+
+void
+ConversationModule::Impl::cloneConversationFrom(const ConversationRequest& request)
+{
+    auto memberHash = dht::InfoHash(request.from);
+    if (!memberHash) {
+        JAMI_WARNING("Invalid member detected: {}", request.from);
+        return;
+    }
+    auto conv = startConversation(request.conversationId);
+    std::lock_guard lk(conv->mtx);
+    // Explicit (or auto-accepted) request: the peer just told us to clone, don't sit on a
+    // backoff armed by earlier failures.
+    conv->resetCloneRetry();
+    if (conv->info.created == TimePoint {}) {
+        conv->info = {request.conversationId};
+        conv->info.created = request.received;
+        conv->info.members.emplace(username_);
+        conv->info.members.emplace(request.from);
+        conv->info.mode = request.mode();
+        addConvInfo(conv->info);
+    } else if (conv->info.mode != ConversationMode::ONE_TO_ONE && conv->info.isRemoved()) {
+        // Re-invited to a group conversation we previously left.
+        conv->info.created = nowMs();
+        conv->info.erased = TimePoint {};
+        addConvInfo(conv->info);
+    }
+    accountManager_->forEachDevice(memberHash, [w = weak(), conv](const auto& pk) {
+        auto sthis = w.lock();
+        auto deviceId = pk->getLongId().toString();
+        if (!sthis or deviceId == sthis->deviceId_)
+            return;
+        sthis->cloneConversationFrom(conv, deviceId);
+    });
+}
+
+void
+ConversationModule::Impl::cloneConversationFrom(const std::string& conversationId, const std::string& uri)
+{
+    if (!ConversationRepository::isValidConversationId(conversationId)) {
+        JAMI_WARNING("[Account {}] Invalid conversation id detected: '{}'", accountId_, conversationId);
+        return;
+    }
+    auto memberHash = dht::InfoHash(uri);
+    if (!memberHash) {
+        JAMI_WARNING("Invalid member detected: {}", uri);
+        return;
+    }
+    auto conv = startConversation(conversationId);
+    accountManager_->forEachDevice(memberHash,
+                                   [w = weak(), conv, conversationId](
+                                       const std::shared_ptr<dht::crypto::PublicKey>& pk) {
+                                       auto sthis = w.lock();
+                                       auto deviceId = pk->getLongId().toString();
+                                       if (!sthis or deviceId == sthis->deviceId_)
+                                           return;
+                                       sthis->cloneConversationFrom(conv, deviceId);
+                                   });
+}
+
+////////////////////////////////////////////////////////////////
+
+void
+ConversationModule::saveConvRequests(const std::string& accountId,
+                                     const std::map<std::string, ConversationRequest>& conversationsRequests)
+{
+    auto path = fileutils::get_data_dir() / accountId;
+    saveConvRequestsToPath(path, conversationsRequests);
+}
+
+void
+ConversationModule::saveConvRequestsToPath(const std::filesystem::path& path,
+                                           const std::map<std::string, ConversationRequest>& conversationsRequests)
+{
+    auto p = path / "convRequests";
+    std::lock_guard lock(dhtnet::fileutils::getFileLock(p));
+    std::ofstream file(p, std::ios::trunc | std::ios::binary);
+    msgpack::pack(file, conversationsRequests);
+}
+
+void
+ConversationModule::saveConvInfos(const std::string& accountId, const ConvInfoMap& conversations)
+{
+    auto path = fileutils::get_data_dir() / accountId;
+    saveConvInfosToPath(path, conversations);
+}
+
+void
+ConversationModule::saveConvInfosToPath(const std::filesystem::path& path, const ConvInfoMap& conversations)
+{
+    std::lock_guard lock(dhtnet::fileutils::getFileLock(path / "convInfo"));
+    std::ofstream file(path / "convInfo", std::ios::trunc | std::ios::binary);
+    msgpack::pack(file, conversations);
+}
+
+////////////////////////////////////////////////////////////////
+
+ConversationModule::ConversationModule(std::shared_ptr<JamiAccount> account,
+                                       std::shared_ptr<AccountManager> accountManager,
+                                       NeedsSyncingCb&& needsSyncingCb,
+                                       SengMsgCb&& sendMsgCb,
+                                       NeedSocketCb&& onNeedSocket,
+                                       NeedSocketCb&& onNeedSwarmSocket,
+                                       OneToOneRecvCb&& oneToOneRecvCb,
+                                       bool autoLoadConversations)
+    : pimpl_ {std::make_unique<Impl>(std::move(account),
+                                     std::move(accountManager),
+                                     std::move(needsSyncingCb),
+                                     std::move(sendMsgCb),
+                                     std::move(onNeedSocket),
+                                     std::move(onNeedSwarmSocket),
+                                     std::move(oneToOneRecvCb))}
+{
+    if (autoLoadConversations) {
+        loadConversations();
+    }
+}
+
+void
+ConversationModule::setAccountManager(std::shared_ptr<AccountManager> accountManager)
+{
+    std::unique_lock lk(pimpl_->conversationsMtx_);
+    pimpl_->accountManager_ = accountManager;
+}
+
+#ifdef LIBJAMI_TEST
+void
+ConversationModule::onBootstrapStatus(const std::function<void(std::string, Conversation::BootstrapStatus)>& cb)
+{
+    pimpl_->bootstrapCbTest_ = cb;
+    for (auto& c : pimpl_->getConversations())
+        c->onBootstrapStatus(pimpl_->bootstrapCbTest_);
+}
+void
+ConversationModule::onFetchCompleted(const std::function<void(const std::string&, const std::string&, bool)>& cb)
+{
+    pimpl_->fetchCompletedCbTest_ = cb;
+}
+
+void
+ConversationModule::onCloneReady(const std::function<void(const std::string&)>& cb)
+{
+    pimpl_->cloneReadyCbTest_ = cb;
+}
+#endif
+
+void
+ConversationModule::loadConversations()
+{
+    auto acc = pimpl_->account_.lock();
+    if (!acc)
+        return;
+    JAMI_LOG("[Account {}] Start loading conversations…", pimpl_->accountId_);
+    auto conversationPath = fileutils::get_data_dir() / pimpl_->accountId_ / "conversations";
+
+    std::unique_lock lk(pimpl_->conversationsMtx_);
+    auto contacts = pimpl_->accountManager_->getContacts(
+        true); // Avoid to lock configurationMtx while conv Mtx is locked
+    std::unique_lock ilk(pimpl_->convInfosMtx_);
+    pimpl_->convInfos_ = convInfos(pimpl_->accountId_);
+    pimpl_->conversations_.clear();
+
+    struct Ctx
+    {
+        std::mutex cvMtx;
+        std::condition_variable cv;
+        std::mutex toRmMtx;
+        std::set<std::string> toRm;
+        std::mutex convMtx;
+        size_t convNb;
+        std::map<dht::InfoHash, Contact> contacts;
+        std::vector<std::tuple<std::string, std::string, std::string>> updateContactConv;
+    };
+    struct PendingConvCounter
+    {
+        std::shared_ptr<Ctx> ctx;
+        PendingConvCounter(std::shared_ptr<Ctx> c)
+            : ctx(std::move(c))
+        {
+            std::lock_guard lk {ctx->cvMtx};
+            ++ctx->convNb;
+        }
+        ~PendingConvCounter()
+        {
+            std::lock_guard lk {ctx->cvMtx};
+            --ctx->convNb;
+            ctx->cv.notify_all();
+        }
+    };
+    auto ctx = std::make_shared<Ctx>();
+    ctx->convNb = 0;
+    ctx->contacts = std::move(contacts);
+
+    std::error_code ec;
+    for (const auto& convIt : std::filesystem::directory_iterator(conversationPath, ec)) {
+        auto name = convIt.path().filename().string();
+        if (!convIt.is_directory() || !isConversationId(name))
+            continue;
+        dht::ThreadPool::io().run(
+            [this, ctx, repository = std::move(name), acc, _ = std::make_shared<PendingConvCounter>(ctx)] {
+                try {
+                    auto sconv = std::make_shared<SyncedConversation>(repository);
+                    auto conv = std::make_shared<Conversation>(acc, repository);
+                    conv->onMessageStatusChanged([this, repository](const auto& status) {
+                        auto msg = std::make_shared<SyncMsg>();
+                        msg->ms = {{repository, status}};
+                        pimpl_->needsSyncingCb_(std::move(msg));
+                    });
+                    conv->onMembersChanged([w = pimpl_->weak_from_this(), repository](const auto& members) {
+                        // Delay in another thread to avoid deadlocks
+                        dht::ThreadPool::io().run([w, repository, members = std::move(members)] {
+                            if (auto sthis = w.lock())
+                                sthis->setConversationMembers(repository, members);
+                        });
+                    });
+                    conv->onNeedSocket(pimpl_->onNeedSwarmSocket_);
+                    auto members = conv->memberUris(acc->getUsername(), {});
+                    // NOTE: The following if is here to protect against any incorrect state
+                    // that can be introduced
+                    if (conv->mode() == ConversationMode::ONE_TO_ONE && members.size() == 1) {
+                        // If we got a 1:1 conversation, but not in the contact details, it's rather a
+                        // duplicate or a weird state
+                        auto otherUri = *members.begin();
+                        auto itContact = ctx->contacts.find(dht::InfoHash(otherUri));
+                        if (itContact == ctx->contacts.end()) {
+                            JAMI_WARNING("Contact {} not found", otherUri);
+                            return;
+                        }
+                        const std::string& convFromDetails = itContact->second.conversationId;
+                        auto isRemoved = !itContact->second.isActive();
+                        if (convFromDetails != repository) {
+                            if (convFromDetails.empty()) {
+                                if (isRemoved) {
+                                    // If details is empty, contact is removed and not banned.
+                                    JAMI_ERROR("Conversation {} detected for {} and should be removed",
+                                               repository,
+                                               otherUri);
+                                    std::lock_guard lkMtx {ctx->toRmMtx};
+                                    ctx->toRm.insert(repository);
+                                } else {
+                                    JAMI_ERROR("No conversation detected for {} but one exists ({}). Update details",
+                                               otherUri,
+                                               repository);
+                                    std::lock_guard lkMtx {ctx->toRmMtx};
+                                    ctx->updateContactConv.emplace_back(
+                                        std::make_tuple(otherUri, convFromDetails, repository));
+                                }
+                            }
+                        }
+                    }
+                    {
+                        std::lock_guard lkMtx {ctx->convMtx};
+                        auto convInfo = pimpl_->convInfos_.find(repository);
+                        if (convInfo == pimpl_->convInfos_.end()) {
+                            JAMI_ERROR("Missing conv info for {}. This is a bug!", repository);
+                            sconv->info.created = nowMs();
+                            sconv->info.lastDisplayed = conv->infos()[ConversationMapKeys::LAST_DISPLAYED];
+                        } else {
+                            sconv->info = convInfo->second;
+                            if (convInfo->second.isRemoved()) {
+                                // A conversation was removed, but repository still exists
+                                conv->setRemovingFlag();
+                                std::lock_guard lkMtx {ctx->toRmMtx};
+                                ctx->toRm.insert(repository);
+                            }
+                        }
+                        // Even if we found the conversation in convInfos_, unable to assume that the
+                        // list of members stored in `convInfo` is correct
+                        // (https://git.jami.net/savoirfairelinux/jami-daemon/-/issues/1025). For this
+                        // reason, we always use the list we got from the conversation repository to set
+                        // the value of `sconv->info.members`.
+                        members.emplace(acc->getUsername());
+                        sconv->info.members = std::move(members);
+                        sconv->info.mode = conv->mode();
+                        if (conv->mode() == ConversationMode::DOCUMENT)
+                            sconv->info.parent = conv->parentConversationId();
+                        // convInfosMtx_ is already locked
+                        pimpl_->convInfos_[repository] = sconv->info;
+                    }
+                    auto commits = conv->commitsEndedCalls();
+
+                    if (!commits.empty()) {
+                        // Note: here, this means that some calls were actives while the
+                        // daemon finished (can be a crash).
+                        // Notify other in the conversation that the call is finished
+                        pimpl_->sendMessageNotification(*conv, true, *commits.rbegin());
+                    }
+                    sconv->conversation = conv;
+                    std::lock_guard lkMtx {ctx->convMtx};
+                    pimpl_->conversations_.emplace(repository, std::move(sconv));
+                } catch (const std::logic_error& e) {
+                    JAMI_WARNING("[Account {}] Conversations not loaded: {}", pimpl_->accountId_, e.what());
+                }
+            });
+    }
+    if (ec) {
+        JAMI_ERROR("Failed to read conversations directory {}: {}", conversationPath, ec.message());
+    }
+
+    std::unique_lock lkCv(ctx->cvMtx);
+    ctx->cv.wait(lkCv, [&] { return ctx->convNb == 0; });
+
+    // Prune any invalid conversations without members and
+    // set the removed flag if needed
+    std::set<std::string> removed;
+    for (auto itInfo = pimpl_->convInfos_.begin(); itInfo != pimpl_->convInfos_.end();) {
+        const auto& info = itInfo->second;
+        if (info.members.empty()) {
+            itInfo = pimpl_->convInfos_.erase(itInfo);
+            continue;
+        }
+        if (info.isRemoved())
+            removed.insert(info.id);
+        auto itConv = pimpl_->conversations_.find(info.id);
+        if (itConv == pimpl_->conversations_.end()) {
+            // convInfos_ can contain a conversation that is not yet cloned
+            // so we need to add it there.
+            itConv = pimpl_->conversations_.emplace(info.id, std::make_shared<SyncedConversation>(info)).first;
+        }
+        if (itConv != pimpl_->conversations_.end() && itConv->second && itConv->second->conversation && info.isRemoved())
+            itConv->second->conversation->setRemovingFlag();
+        if (!info.isRemoved() && itConv == pimpl_->conversations_.end()) {
+            // In this case, the conversation is not synced and we only know ourself
+            if (info.members.size() == 1 && *info.members.begin() == acc->getUsername()) {
+                JAMI_WARNING("[Account {:s}] Conversation {:s} seems not present/synced.", pimpl_->accountId_, info.id);
+                emitSignal<libjami::ConversationSignal::ConversationRemoved>(pimpl_->accountId_, info.id);
+                itInfo = pimpl_->convInfos_.erase(itInfo);
+                continue;
+            }
+        }
+        ++itInfo;
+    }
+    // On oldest version, removeConversation didn't update "appdata/contacts"
+    // causing a potential incorrect state between "appdata/contacts" and "appdata/convInfos"
+    if (!removed.empty())
+        acc->unlinkConversations(removed);
+
+    for (const auto& [contactId, contact] : ctx->contacts) {
+        if (contact.conversationId.empty())
+            continue;
+
+        if (pimpl_->convInfos_.find(contact.conversationId) != pimpl_->convInfos_.end())
+            continue;
+
+        ConvInfo newInfo;
+        newInfo.id = contact.conversationId;
+        newInfo.created = nowMs();
+        newInfo.members.emplace(pimpl_->username_);
+        newInfo.members.emplace(contactId.toString());
+        pimpl_->conversations_.emplace(contact.conversationId, std::make_shared<SyncedConversation>(newInfo));
+        pimpl_->convInfos_.emplace(contact.conversationId, std::move(newInfo));
+    }
+
+    pimpl_->saveConvInfos();
+
+    ilk.unlock();
+    lk.unlock();
+
+    dht::ThreadPool::io().run(
+        [w = pimpl_->weak(), acc, updateContactConv = std::move(ctx->updateContactConv), toRm = std::move(ctx->toRm)]() {
+            // Will lock account manager
+            if (auto shared = w.lock())
+                shared->fixStructures(acc, updateContactConv, toRm);
+        });
+}
+
+void
+ConversationModule::loadSingleConversation(const std::string& convId)
+{
+    auto acc = pimpl_->account_.lock();
+    if (!acc)
+        return;
+    JAMI_LOG("[Account {}] Start loading conversation {}", pimpl_->accountId_, convId);
+
+    std::unique_lock lk(pimpl_->conversationsMtx_);
+    std::unique_lock ilk(pimpl_->convInfosMtx_);
+    // Load convInfos to retrieve requests that have been accepted but not yet synchronized.
+    pimpl_->convInfos_ = convInfos(pimpl_->accountId_);
+    pimpl_->conversations_.clear();
+
+    try {
+        auto sconv = std::make_shared<SyncedConversation>(convId);
+
+        auto conv = std::make_shared<Conversation>(acc, convId);
+
+        conv->onNeedSocket(pimpl_->onNeedSwarmSocket_);
+
+        sconv->conversation = conv;
+        pimpl_->conversations_.emplace(convId, std::move(sconv));
+    } catch (const std::logic_error& e) {
+        JAMI_WARNING("[Account {}] Conversations not loaded: {}", pimpl_->accountId_, e.what());
+    }
+
+    // Add all other conversations as dummy conversations to indicate their existence so
+    // isConversation could detect conversations correctly.
+    auto conversationsRepositoryIds = dhtnet::fileutils::readDirectory(fileutils::get_data_dir() / pimpl_->accountId_
+                                                                       / "conversations");
+    for (auto repositoryId : conversationsRepositoryIds) {
+        // Only canonical conversation ids: the directory may also hold transient
+        // artifacts, and a dummy conversation created from one would advertise a
+        // bogus id to the rest of the module.
+        if (repositoryId != convId && isConversationId(repositoryId)) {
+            auto conv = std::make_shared<SyncedConversation>(repositoryId);
+            pimpl_->conversations_.emplace(repositoryId, conv);
+        }
+    }
+
+    // Add conversations from convInfos_ so isConversation could detect conversations correctly.
+    // This includes conversations that have been accepted but are not yet synchronized.
+    for (auto itInfo = pimpl_->convInfos_.begin(); itInfo != pimpl_->convInfos_.end();) {
+        const auto& info = itInfo->second;
+        if (info.members.empty()) {
+            itInfo = pimpl_->convInfos_.erase(itInfo);
+            continue;
+        }
+        auto itConv = pimpl_->conversations_.find(info.id);
+        if (itConv == pimpl_->conversations_.end()) {
+            // convInfos_ can contain a conversation that is not yet cloned
+            // so we need to add it there.
+            pimpl_->conversations_.emplace(info.id, std::make_shared<SyncedConversation>(info));
+        }
+        ++itInfo;
+    }
+
+    ilk.unlock();
+    lk.unlock();
+}
+
+void
+ConversationModule::bootstrap(const std::string& convId)
+{
+    pimpl_->bootstrap(convId);
+}
+
+void
+ConversationModule::monitor()
+{
+    for (auto& conv : pimpl_->getConversations())
+        conv->monitor();
+}
+
+void
+ConversationModule::clearPendingFetch()
+{
+    // Note: This is a workaround. convModule() is kept if account is disabled/re-enabled.
+    // iOS uses setAccountActive() a lot, and if for some reason the previous pending fetch
+    // is not erased (callback not called), it will block the new messages as it will not
+    // sync. The best way to debug this is to get logs from the last ICE connection for
+    // syncing the conversation. It may have been killed in some un-expected way avoiding to
+    // call the callbacks. This should never happen, but if it's the case, this will allow
+    // new messages to be synced correctly.
+    for (auto& conv : pimpl_->getSyncedConversations()) {
+        std::lock_guard lk(conv->mtx);
+        if (conv && (conv->pending || !conv->deferredFetches.empty())) {
+            JAMI_ERROR("This is a bug, seems to still fetch to some device on initializing");
+            conv->clearFetches();
+        }
+    }
+}
+
+void
+ConversationModule::reloadRequests()
+{
+    pimpl_->conversationsRequests_ = convRequests(pimpl_->accountId_);
+}
+
+std::vector<std::string>
+ConversationModule::getConversations() const
+{
+    std::vector<std::string> result;
+    std::lock_guard lk(pimpl_->convInfosMtx_);
+    result.reserve(pimpl_->convInfos_.size());
+    for (const auto& [key, conv] : pimpl_->convInfos_) {
+        if (conv.isRemoved())
+            continue;
+        // Collaborative documents are swarms, not conversations: the clients
+        // list them per conversation through the collaborative-editing API.
+        if (conv.mode == ConversationMode::DOCUMENT)
+            continue;
+        result.emplace_back(key);
+    }
+    return result;
+}
+
+std::string
+ConversationModule::getOneToOneConversation(const std::string& uri) const noexcept
+{
+    return pimpl_->getOneToOneConversation(uri);
+}
+
+bool
+ConversationModule::updateConvForContact(const std::string& uri, const std::string& oldConv, const std::string& newConv)
+{
+    return pimpl_->updateConvForContact(uri, oldConv, newConv);
+}
+
+std::vector<std::map<std::string, std::string>>
+ConversationModule::getConversationRequests() const
+{
+    std::vector<std::map<std::string, std::string>> requests;
+    std::lock_guard lk(pimpl_->conversationsRequestsMtx_);
+    requests.reserve(pimpl_->conversationsRequests_.size());
+    for (const auto& [id, request] : pimpl_->conversationsRequests_) {
+        if (request.declined != TimePoint {})
+            continue; // Do not add declined requests
+        requests.emplace_back(request.toMap());
+    }
+    return requests;
+}
+
+void
+ConversationModule::onTrustRequest(const std::string& uri,
+                                   const std::string& conversationId,
+                                   const std::vector<uint8_t>& payload,
+                                   TimePoint received,
+                                   TimePoint invited)
+{
+    if (!ConversationRepository::isValidConversationId(conversationId)) {
+        JAMI_WARNING("[Account {}] Ignoring trust request from {} with invalid conversation id '{}'",
+                     pimpl_->accountId_,
+                     uri,
+                     conversationId);
+        return;
+    }
+    std::unique_lock lk(pimpl_->conversationsRequestsMtx_);
+    ConversationRequest req;
+    req.from = uri;
+    req.conversationId = conversationId;
+    req.metadatas = ConversationRepository::infosFromVCard(
+        vCard::utils::toMap(std::string_view(reinterpret_cast<const char*>(payload.data()), payload.size())));
+    if (invited != TimePoint {})
+        req.received = validateInviteTimestamp(invited, received);
+    else
+        // Older peer that doesn't embed an invite timestamp yet
+        req.received = received;
+    auto reqMap = req.toMap();
+
+    auto contactInfo = pimpl_->accountManager_->getContactInfo(uri);
+    if (contactInfo && contactInfo->confirmed && !contactInfo->isBanned() && contactInfo->isActive()) {
+        JAMI_LOG("[Account {}] Contact {} is confirmed, cloning {}", pimpl_->accountId_, uri, conversationId);
+        lk.unlock();
+        updateConvForContact(uri, contactInfo->conversationId, conversationId);
+        pimpl_->cloneConversationFrom(req);
+        return;
+    }
+
+    if (pimpl_->addConversationRequest(conversationId, std::move(req))) {
+        lk.unlock();
+        emitSignal<libjami::ConfigurationSignal::IncomingTrustRequest>(pimpl_->accountId_,
+                                                                       conversationId,
+                                                                       uri,
+                                                                       payload,
+                                                                       toSecondsSinceEpoch(received));
+        emitSignal<libjami::ConversationSignal::ConversationRequestReceived>(pimpl_->accountId_, conversationId, reqMap);
+        pimpl_->needsSyncingCb_({});
+    } else {
+        JAMI_DEBUG("[Account {}] Received a request for a conversation already existing. Ignore", pimpl_->accountId_);
+    }
+}
+
+void
+ConversationModule::onConversationRequest(const std::string& from, const Json::Value& value)
+{
+    ConversationRequest req(value);
+    if (!ConversationRepository::isValidConversationId(req.conversationId)) {
+        JAMI_WARNING("[Account {}] Ignoring conversation request from {} with invalid conversation id '{}'",
+                     pimpl_->accountId_,
+                     from,
+                     req.conversationId);
+        return;
+    }
+    auto isOneToOne = req.isOneToOne();
+    std::unique_lock lk(pimpl_->conversationsRequestsMtx_);
+    JAMI_DEBUG("[Account {}] Receive a new conversation request for conversation {} from {}",
+               pimpl_->accountId_,
+               req.conversationId,
+               from);
+    auto convId = req.conversationId;
+
+    // Already accepted request, do nothing. Exception: a group conversation
+    // we previously left can be legitimately re-invited to (same convId
+    // reused).
+    if (pimpl_->isActiveOrNonReinvitableConversation(convId))
+        return;
+    // Prefer the sender-embedded invite timestamp (set by generateInvitation()) so that a
+    // passively redelivered/re-asked invite (same timestamp) can be told apart from a
+    // genuine new re-invitation (fresh timestamp). Fall back to now() only for older peers
+    // that don't embed one yet. The embedded value is untrusted peer input, so clamp it to a
+    // reasonable clock-skew window to prevent a far-future timestamp from suppressing later
+    // legitimate re-invites in the request de-duplication logic.
+    if (req.received == TimePoint {})
+        req.received = nowMs();
+    else
+        req.received = validateInviteTimestamp(req.received, nowMs());
+    req.from = from;
+
+    if (isOneToOne) {
+        auto contactInfo = pimpl_->accountManager_->getContactInfo(from);
+        if (contactInfo && contactInfo->confirmed && !contactInfo->isBanned() && contactInfo->isActive()) {
+            JAMI_LOG("[Account {}] Contact {} is confirmed, cloning {}", pimpl_->accountId_, from, convId);
+            lk.unlock();
+            updateConvForContact(from, contactInfo->conversationId, convId);
+            pimpl_->cloneConversationFrom(req);
+            return;
+        }
+    }
+
+    auto reqMap = req.toMap();
+    if (pimpl_->addConversationRequest(convId, std::move(req))) {
+        lk.unlock();
+        // Note: no need to sync here because other connected devices should receive
+        // the same conversation request. Will sync when the conversation will be added
+        if (isOneToOne)
+            pimpl_->oneToOneRecvCb_(convId, from);
+        emitSignal<libjami::ConversationSignal::ConversationRequestReceived>(pimpl_->accountId_, convId, reqMap);
+    }
+}
+
+std::string
+ConversationModule::peerFromConversationRequest(const std::string& convId) const
+{
+    std::lock_guard lk(pimpl_->conversationsRequestsMtx_);
+    auto it = pimpl_->conversationsRequests_.find(convId);
+    if (it != pimpl_->conversationsRequests_.end()) {
+        return it->second.from;
+    }
+    return {};
+}
+
+void
+ConversationModule::onNeedConversationRequest(const std::string& from, const std::string& conversationId)
+{
+    if (!ConversationRepository::isValidConversationId(conversationId))
+        return;
+    auto conv = pimpl_->getConversation(conversationId);
+    if (!conv)
+        return;
+    std::unique_lock lk(conv->mtx);
+    if (!conv->conversation)
+        return;
+    if (conv->conversation->mode() == ConversationMode::DOCUMENT) {
+        // A document is joined by cloning it, never by invitation.
+        JAMI_WARNING("{} is asking an invite for document {}", from, conversationId);
+        return;
+    }
+    if (!conv->conversation->isMember(from, true)) {
+        JAMI_WARNING("{} is asking a new invite for {}, but not a member", from, conversationId);
+        return;
+    }
+    JAMI_LOG("{} is asking a new invite for {}", from, conversationId);
+    // Reuse the original invite timestamp so passive resends aren't treated as new invitations.
+    auto it = conv->info.invited.find(from);
+    bool needsPersist = it == conv->info.invited.end();
+    auto sent = needsPersist ? nowMs() : it->second;
+    if (needsPersist)
+        conv->info.invited[from] = sent;
+    auto info = needsPersist ? conv->info : ConvInfo {};
+    auto invite = conv->conversation->generateInvitation(sent);
+    lk.unlock();
+    if (needsPersist) {
+        // convInfosMtx_ must not be taken while conv->mtx is held.
+        std::lock_guard lkInfos(pimpl_->convInfosMtx_);
+        pimpl_->convInfos_[conversationId] = std::move(info);
+        pimpl_->saveConvInfos();
+    }
+    pimpl_->sendMsgCb_(from, {}, std::move(invite), 0);
+}
+
+void
+ConversationModule::acceptConversationRequest(const std::string& conversationId, const std::string& deviceId)
+{
+    // For all conversation members, try to open a git channel with this conversation ID
+    std::unique_lock lkCr(pimpl_->conversationsRequestsMtx_);
+    auto request = pimpl_->getRequest(conversationId);
+    if (request == std::nullopt) {
+        lkCr.unlock();
+        if (auto conv = pimpl_->getConversation(conversationId)) {
+            std::unique_lock lk(conv->mtx);
+            if (!conv->conversation) {
+                lk.unlock();
+                pimpl_->cloneConversationFrom(conv, deviceId);
+            }
+        }
+        JAMI_WARNING("[Account {}] [Conversation {}] [device {}] Request not found.",
+                     pimpl_->accountId_,
+                     conversationId,
+                     deviceId);
+        return;
+    }
+    pimpl_->rmConversationRequest(conversationId);
+    lkCr.unlock();
+    pimpl_->accountManager_->acceptTrustRequest(request->from, true);
+    pimpl_->cloneConversationFrom(*request);
+}
+
+void
+ConversationModule::declineConversationRequest(const std::string& conversationId)
+{
+    std::lock_guard lk(pimpl_->conversationsRequestsMtx_);
+    auto it = pimpl_->conversationsRequests_.find(conversationId);
+    if (it != pimpl_->conversationsRequests_.end()) {
+        it->second.declined = nowMs();
+        pimpl_->saveConvRequests();
+    }
+    pimpl_->syncingMetadatas_.erase(conversationId);
+    pimpl_->saveMetadata();
+    emitSignal<libjami::ConversationSignal::ConversationRequestDeclined>(pimpl_->accountId_, conversationId);
+    pimpl_->needsSyncingCb_({});
+}
+
+std::string
+ConversationModule::startConversation(ConversationMode mode, const dht::InfoHash& otherMember)
+{
+    auto acc = pimpl_->account_.lock();
+    if (!acc)
+        return {};
+    // Create the conversation object
+    std::shared_ptr<Conversation> conversation;
+    try {
+        conversation = std::make_shared<Conversation>(acc, mode, otherMember.toString());
+        auto conversationId = conversation->id();
+        conversation->onMessageStatusChanged([this, conversationId](const auto& status) {
+            auto msg = std::make_shared<SyncMsg>();
+            msg->ms = {{conversationId, status}};
+            pimpl_->needsSyncingCb_(std::move(msg));
+        });
+        conversation->onMembersChanged([w = pimpl_->weak_from_this(), conversationId](const auto& members) {
+            // Delay in another thread to avoid deadlocks
+            dht::ThreadPool::io().run([w, conversationId, members = std::move(members)] {
+                if (auto sthis = w.lock())
+                    sthis->setConversationMembers(conversationId, members);
+            });
+        });
+        conversation->onNeedSocket(pimpl_->onNeedSwarmSocket_);
+#ifdef LIBJAMI_TEST
+        conversation->onBootstrapStatus(pimpl_->bootstrapCbTest_);
+#endif
+        conversation->bootstrap([w = pimpl_->weak_from_this(), conversationId]() {
+            if (auto sthis = w.lock())
+                sthis->bootstrapCb(conversationId);
+        });
+        if (auto pm = acc->presenceManager()) {
+            for (const auto& member : conversation->memberUris()) {
+                conversation->addKnownDevices(pm->getDevices(member), member);
+            }
+        }
+    } catch (const std::exception& e) {
+        JAMI_ERROR("[Account {}] Error while generating a conversation {}", pimpl_->accountId_, e.what());
+        return {};
+    }
+    auto convId = conversation->id();
+    auto conv = pimpl_->startConversation(convId);
+    std::unique_lock lk(conv->mtx);
+    conv->info.created = nowMs();
+    conv->info.mode = mode;
+    conv->info.members.emplace(pimpl_->username_);
+    if (otherMember)
+        conv->info.members.emplace(otherMember.toString());
+    conv->conversation = conversation;
+    addConvInfo(conv->info);
+    lk.unlock();
+
+    pimpl_->needsSyncingCb_({});
+    emitSignal<libjami::ConversationSignal::ConversationReady>(pimpl_->accountId_, convId);
+    return convId;
+}
+
+std::string
+ConversationModule::startDocument(const std::string& parentConversationId, const std::string& mimeType)
+{
+    auto acc = pimpl_->account_.lock();
+    if (!acc)
+        return {};
+    // The repository is created first, then loaded through the same constructor
+    // a held swarm uses, so the wiring below is identical whether the document
+    // was created here or cloned from a peer.
+    std::string docId;
+    std::shared_ptr<Conversation> conversation;
+    try {
+        {
+            auto repo = ConversationRepository::createDocument(acc, parentConversationId, mimeType);
+            if (!repo)
+                return {};
+            docId = repo->id();
+        }
+        conversation = std::make_shared<Conversation>(acc, docId);
+        conversation->onMembersChanged([w = pimpl_->weak_from_this(), docId](const auto& members) {
+            // Delay in another thread to avoid deadlocks
+            dht::ThreadPool::io().run([w, docId, members = std::move(members)] {
+                if (auto sthis = w.lock())
+                    sthis->setConversationMembers(docId, members);
+            });
+        });
+        conversation->onNeedSocket(pimpl_->onNeedSwarmSocket_);
+#ifdef LIBJAMI_TEST
+        conversation->onBootstrapStatus(pimpl_->bootstrapCbTest_);
+#endif
+        conversation->bootstrap([w = pimpl_->weak_from_this(), docId]() {
+            if (auto sthis = w.lock())
+                sthis->bootstrapCb(docId);
+        });
+    } catch (const std::exception& e) {
+        JAMI_ERROR("[Account {}] Error while generating a document {}", pimpl_->accountId_, e.what());
+        return {};
+    }
+    auto conv = pimpl_->startConversation(docId);
+    std::lock_guard lk(conv->mtx);
+    conv->info.created = nowMs();
+    conv->info.mode = ConversationMode::DOCUMENT;
+    conv->info.parent = parentConversationId;
+    conv->info.members.emplace(pimpl_->username_);
+    conv->conversation = conversation;
+    // Saved so the document is reloaded as held on restart, but never handed to
+    // the clients as a conversation nor synced to this account's other devices:
+    // each device discovers documents through the parent conversation.
+    pimpl_->addConvInfo(conv->info);
+    return docId;
+}
+
+bool
+ConversationModule::cloneDocumentFrom(const std::string& parentConversationId,
+                                      const std::string& documentId,
+                                      const std::vector<std::string>& candidates,
+                                      bool reopen)
+{
+    if (!ConversationRepository::isValidConversationId(documentId)) {
+        JAMI_WARNING("[Account {}] Refusing to clone invalid document id '{}'", pimpl_->accountId_, documentId);
+        return false;
+    }
+    if (candidates.empty())
+        return false;
+    auto parent = pimpl_->getConversation(parentConversationId);
+    if (!parent || parentConversationId == documentId)
+        return false;
+    auto conv = pimpl_->startConversation(documentId);
+    {
+        std::lock_guard parentLock(parent->mtx);
+        if (!parent->canReplicateDocuments(pimpl_->username_)) {
+            JAMI_DEBUG("[Account {}] Deferring document {}: parent is inactive", pimpl_->accountId_, documentId);
+            return false;
+        }
+        std::lock_guard lk(conv->mtx);
+        if (!conv->info.parent.empty() && conv->info.parent != parentConversationId) {
+            JAMI_WARNING("[Account {}] Refusing document {} with conflicting parent", pimpl_->accountId_, documentId);
+            return false;
+        }
+        if (!reopen && conv->info.removed != TimePoint {} && conv->info.isRemoved()) {
+            JAMI_DEBUG("[Account {}] [Document {}] Keeping explicitly removed replica offline",
+                       pimpl_->accountId_,
+                       documentId);
+            return false;
+        }
+        if (conv->info.parent.empty()) {
+            conv->info.parent = parentConversationId;
+            if (conv->pending)
+                pimpl_->addConvInfo(conv->info);
+        }
+        if (conv->conversation || conv->pending)
+            return true;
+        // Setting the mode up front spares the mode-mismatch complaint when the
+        // clone lands; a document reopened after a local removal is un-removed
+        // the same way a re-added conversation is.
+        conv->info.mode = ConversationMode::DOCUMENT;
+        conv->info.parent = parentConversationId;
+        conv->info.created = nowMs();
+        conv->info.removed = TimePoint {};
+        conv->info.erased = TimePoint {};
+        conv->info.members.emplace(pimpl_->username_);
+        // Each candidate plays the part an inviter plays for a conversation:
+        // it is who the pending clone is authorized to come from, which is
+        // what isPeerAuthorized() falls back to before the repo exists.
+        for (const auto& uri : candidates)
+            conv->info.members.emplace(uri);
+        pimpl_->addConvInfo(conv->info);
+    }
+    // The fetch starts from the preferred candidates only: should they fail,
+    // the fallback rounds walk everybody recorded above, with backoff, and
+    // stop once the clone lands. Asking every candidate up front instead
+    // would burst connection attempts at each member of a large conversation.
+    static constexpr size_t initialSources = 2;
+    auto initiated = std::min(candidates.size(), initialSources);
+    for (size_t i = 0; i < initiated; ++i)
+        pimpl_->cloneConversationFrom(documentId, candidates[i]);
+    return true;
+}
+
+void
+ConversationModule::removeDocumentReplica(const std::string& documentId)
+{
+    pimpl_->removeDocumentReplica(documentId);
+}
+
+std::string
+ConversationModule::addDocumentAttachment(const std::string& documentId, const std::vector<uint8_t>& data)
+{
+    auto conv = pimpl_->getConversation(documentId);
+    if (!conv)
+        return {};
+    std::shared_ptr<Conversation> conversation;
+    {
+        std::lock_guard lk(conv->mtx);
+        conversation = conv->conversation;
+    }
+    if (!conversation || conversation->mode() != ConversationMode::DOCUMENT)
+        return {};
+    auto [attachmentId, commitId] = conversation->addDocumentAttachment(data);
+    if (!commitId.empty())
+        pimpl_->sendMessageNotification(documentId, true, commitId);
+    return attachmentId;
+}
+
+void
+ConversationModule::cloneConversationFrom(const std::string& conversationId, const std::string& uri)
+{
+    pimpl_->cloneConversationFrom(conversationId, uri);
+}
+
+// Message send/load
+void
+ConversationModule::sendMessage(const std::string& conversationId,
+                                std::string message,
+                                const std::string& replyTo,
+                                bool announce,
+                                OnCommitCb&& onCommit,
+                                OnDoneCb&& cb)
+{
+    pimpl_->sendMessage(conversationId, std::move(message), replyTo, announce, std::move(onCommit), std::move(cb));
+}
+
+void
+ConversationModule::createCommit(
+    const std::string& conversationId, CommitMessage&& message, bool announce, OnCommitCb&& onCommit, OnDoneCb&& cb)
+{
+    pimpl_->createCommit(conversationId, std::move(message), announce, std::move(onCommit), std::move(cb));
+}
+
+void
+ConversationModule::editMessage(const std::string& conversationId,
+                                const std::string& newBody,
+                                const std::string& editedId)
+{
+    pimpl_->editMessage(conversationId, newBody, editedId);
+}
+
+void
+ConversationModule::reactToMessage(const std::string& conversationId,
+                                   const std::string& newBody,
+                                   const std::string& reactToId)
+{
+    auto message = CommitMessage::reaction(newBody, reactToId);
+    pimpl_->createCommit(conversationId, std::move(message));
+}
+
+void
+ConversationModule::addCallHistoryMessage(const std::string& uri, uint64_t duration_ms, const std::string& reason)
+{
+    auto finalUri = uri.substr(0, uri.find("@ring.dht"));
+    finalUri = finalUri.substr(0, uri.find("@jami.dht"));
+    auto convId = getOneToOneConversation(finalUri);
+    if (!convId.empty()) {
+        auto message = CommitMessage::outgoingCallEnd(finalUri, duration_ms, reason);
+        pimpl_->createCommit(convId, std::move(message));
+    }
+}
+
+bool
+ConversationModule::onMessageDisplayed(const std::string& peer,
+                                       const std::string& conversationId,
+                                       const std::string& interactionId)
+{
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::unique_lock lk(conv->mtx);
+        if (auto conversation = conv->conversation) {
+            lk.unlock();
+            return conversation->setMessageDisplayed(peer, interactionId);
+        }
+    }
+    return false;
+}
+
+std::map<std::string, std::map<std::string, std::map<std::string, std::string>>>
+ConversationModule::convMessageStatus() const
+{
+    std::map<std::string, std::map<std::string, std::map<std::string, std::string>>> messageStatus;
+    for (const auto& conv : pimpl_->getConversations()) {
+        auto d = conv->messageStatus();
+        if (!d.empty())
+            messageStatus[conv->id()] = std::move(d);
+    }
+    return messageStatus;
+}
+
+void
+ConversationModule::clearCache(const std::string& conversationId)
+{
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation) {
+            conv->conversation->clearCache();
+        }
+    }
+}
+
+uint32_t
+ConversationModule::loadConversation(const std::string& conversationId, const std::string& fromMessage, size_t n)
+{
+    auto acc = pimpl_->account_.lock();
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation) {
+            const uint32_t id = std::uniform_int_distribution<uint32_t> {1}(acc->rand);
+            LogOptions options;
+            options.from = fromMessage;
+            options.nbOfCommits = n;
+            auto convWeak = std::weak_ptr<Conversation>(conv->conversation);
+            conv->conversation->loadMessages(
+                [accountId = pimpl_->accountId_, conversationId, id, convWeak](auto&& messages) {
+                    emitSignal<libjami::ConversationSignal::SwarmLoaded>(id, accountId, conversationId, messages);
+#ifdef ENABLE_PLUGIN
+                    if (const auto convPtr = convWeak.lock()) {
+                        convPtr->loadMissingBodyOverwrites();
+                    }
+#endif
+                },
+                options);
+            return id;
+        }
+    }
+    return 0;
+}
+
+uint32_t
+ConversationModule::loadSwarmUntil(const std::string& conversationId,
+                                   const std::string& fromMessage,
+                                   const std::string& toMessage)
+{
+    auto acc = pimpl_->account_.lock();
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation) {
+            const uint32_t id = std::uniform_int_distribution<uint32_t> {}(acc->rand);
+            LogOptions options;
+            options.from = fromMessage;
+            options.to = toMessage;
+            options.includeTo = true;
+            auto convWeak = std::weak_ptr<Conversation>(conv->conversation);
+            conv->conversation->loadMessages(
+                [accountId = pimpl_->accountId_, conversationId, id, convWeak](auto&& messages) {
+                    emitSignal<libjami::ConversationSignal::SwarmLoaded>(id, accountId, conversationId, messages);
+#ifdef ENABLE_PLUGIN
+                    if (const auto convPtr = convWeak.lock()) {
+                        convPtr->loadMissingBodyOverwrites();
+                    }
+#endif
+                },
+                options);
+            return id;
+        }
+    }
+    return 0;
+}
+
+std::shared_ptr<TransferManager>
+ConversationModule::dataTransfer(const std::string& conversationId) const
+{
+    return pimpl_->withConversation(conversationId, [](auto& conversation) { return conversation.dataTransfer(); });
+}
+
+std::optional<bool>
+ConversationModule::fileTransferInfo(
+    const std::string& conversationId, const std::string& fileId, std::string& path, int64_t& total, int64_t& progress)
+{
+    auto conv = pimpl_->getConversation(conversationId);
+    if (!conv)
+        return false;
+    std::shared_ptr<TransferManager> transferManager;
+    {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            transferManager = conv->conversation->dataTransfer();
+    }
+    if (!transferManager)
+        return std::nullopt;
+    return transferManager->info(fileId, path, total, progress);
+}
+
+bool
+ConversationModule::onFileChannelRequest(const std::string& conversationId,
+                                         const std::string& member,
+                                         const std::string& fileId,
+                                         bool verifyShaSum) const
+{
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::filesystem::path path;
+        std::string sha3sum;
+        std::unique_lock lk(conv->mtx);
+        if (!conv->conversation)
+            return false;
+        if (!conv->conversation->onFileChannelRequest(member, fileId, path, sha3sum))
+            return false;
+
+        // Release the lock here to prevent the sha3 calculation from blocking other threads.
+        lk.unlock();
+        if (!std::filesystem::is_regular_file(path)) {
+            JAMI_WARNING("[Account {:s}] [Conversation {}] {:s} asked for non existing file {}",
+                         pimpl_->accountId_,
+                         conversationId,
+                         member,
+                         fileId);
+            return false;
+        }
+        // Check that our file is correct before sending
+        if (verifyShaSum && sha3sum != fileutils::sha3File(path)) {
+            JAMI_WARNING("[Account {:s}] [Conversation {}] {:s} asked for file {:s}, but our version is not "
+                         "complete or corrupted",
+                         pimpl_->accountId_,
+                         conversationId,
+                         member,
+                         fileId);
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
+
+bool
+ConversationModule::downloadFile(const std::string& conversationId,
+                                 const std::string& interactionId,
+                                 const std::string& fileId,
+                                 const std::string& path)
+{
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            return conv->conversation->downloadFile(interactionId, fileId, path, "", "");
+    }
+    return false;
+}
+
+void
+ConversationModule::syncConversations(const std::string& peer, const std::string& deviceId)
+{
+    // Sync conversations where peer is member
+    std::set<std::string> toFetch;
+    std::set<std::string> toClone;
+    for (const auto& conv : pimpl_->getSyncedConversations()) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation) {
+            if (!conv->conversation->isRemoving() && conv->conversation->isMember(peer, false)) {
+                toFetch.emplace(conv->info.id);
+            }
+        } else if (!conv->info.isRemoved()
+                   && std::find(conv->info.members.begin(), conv->info.members.end(), peer)
+                          != conv->info.members.end()) {
+            // In this case the conversation was never cloned (can be after an import)
+            toClone.emplace(conv->info.id);
+        }
+    }
+    for (const auto& cid : toFetch)
+        pimpl_->fetchNewCommits(peer, deviceId, cid);
+    for (const auto& cid : toClone)
+        pimpl_->cloneConversation(deviceId, peer, cid);
+    if (pimpl_->syncCnt.load() == 0)
+        emitSignal<libjami::ConversationSignal::ConversationSyncFinished>(pimpl_->accountId_);
+}
+
+void
+ConversationModule::onSyncData(const SyncMsg& msg, const std::string& peerId, const std::string& deviceId)
+{
+    std::vector<std::string> toClone;
+    // Conversations whose removal was learned from this message. Their
+    // documents must be forfeited too, and documents are excluded from the
+    // device sync (holding one is a per-device choice), so the forfeit is
+    // inferred here from the parent's removal.
+    std::vector<std::string> removedConversations;
+    // Set when the conversation list or requests actually change, so the change
+    // can be re-propagated to our other devices (relay). Metadata-only updates
+    // (preferences, message status) deliberately do not set it.
+    bool listChanged = false;
+    for (const auto& [key, convInfo] : msg.c) {
+        const auto& convId = convInfo.id;
+        if (!isConversationId(convId))
+            continue;
+        {
+            std::lock_guard lk(pimpl_->conversationsRequestsMtx_);
+            pimpl_->rmConversationRequest(convId);
+        }
+
+        // Whether this conversation is new to our list. Used to decide if the
+        // change must be relayed: a conversation we already know but have not
+        // finished cloning yet must not be treated as a change, otherwise it
+        // would re-trigger syncing on every received sync.
+        bool isNewConv = not pimpl_->isConversation(convId);
+        auto conv = pimpl_->startConversation(convInfo);
+        std::unique_lock lk(conv->mtx);
+        // Skip outdated info
+        if (std::max(convInfo.created, convInfo.removed) < std::max(conv->info.created, conv->info.removed))
+            continue;
+        if (not convInfo.isRemoved()) {
+            // If multi devices, it can detect a conversation that was already
+            // removed, so just check if the convinfo contains a removed conv
+            if (conv->info.removed != TimePoint {}) {
+                if (conv->info.removed >= convInfo.created) {
+                    // Only reclone if re-added, else the peer is not synced yet (could be
+                    // offline before)
+                    continue;
+                }
+                JAMI_DEBUG("Re-add previously removed conversation {:s}", convId);
+            }
+            conv->info = convInfo;
+            if (!conv->conversation) {
+                if (isNewConv)
+                    listChanged = true;
+                if (deviceId != "") {
+                    pimpl_->cloneConversation(deviceId, peerId, conv);
+                } else {
+                    // In this case, information is from JAMS
+                    // JAMS does not store the conversation itself, so we
+                    // must use information to clone the conversation
+                    addConvInfo(convInfo);
+                    toClone.emplace_back(convId);
+                }
+            }
+        } else {
+            if (conv->conversation && !conv->conversation->isRemoving()) {
+                emitSignal<libjami::ConversationSignal::ConversationRemoved>(pimpl_->accountId_, convId);
+                conv->conversation->setRemovingFlag();
+            }
+            auto update = false;
+            if (conv->info.removed == TimePoint {}) {
+                update = true;
+                listChanged = true;
+                conv->info.removed = nowMs();
+                emitSignal<libjami::ConversationSignal::ConversationRemoved>(pimpl_->accountId_, convId);
+            }
+            if (convInfo.erased != TimePoint {} && conv->info.erased == TimePoint {}) {
+                update = true;
+                listChanged = true;
+                conv->info.erased = nowMs();
+                pimpl_->addConvInfo(conv->info);
+                pimpl_->removeRepositoryImpl(*conv, false);
+            } else if (update) {
+                pimpl_->addConvInfo(conv->info);
+            }
+            if (update)
+                removedConversations.emplace_back(convId);
+        }
+    }
+
+    // The account left the removed conversations, forfeiting their documents
+    // on this device as well. The removal already carried the account's leave
+    // to the other holders, so each local replica is dropped silently.
+    // Collected outside the loop above: the conversation map lock and a
+    // conversation's own lock nest the other way around.
+    for (const auto& documentId : pimpl_->childDocuments(removedConversations))
+        pimpl_->removeDocumentReplica(documentId);
+
+    for (const auto& cid : toClone) {
+        auto members = getConversationMembers(cid);
+        for (const auto& member : members) {
+            if (member.at("uri") != pimpl_->username_)
+                cloneConversationFrom(cid, member.at("uri"));
+        }
+    }
+
+    for (const auto& [convId, req] : msg.cr) {
+        if (!ConversationRepository::isValidConversationId(convId)) {
+            JAMI_WARNING("[Account {}] [device {}] Ignoring synced request with invalid conversation id '{}'",
+                         pimpl_->accountId_,
+                         deviceId,
+                         convId);
+            continue;
+        }
+        if (req.from == pimpl_->username_) {
+            JAMI_WARNING("Detected request from ourself, ignore {}.", convId);
+            continue;
+        }
+        std::unique_lock lk(pimpl_->conversationsRequestsMtx_);
+        if (pimpl_->isConversation(convId)) {
+            // Already handled request
+            pimpl_->rmConversationRequest(convId);
+            continue;
+        }
+
+        // New request
+        if (!pimpl_->addConversationRequest(convId, req))
+            continue;
+        // A request was added or transitioned to declined: the request list
+        // changed and must be re-propagated to our other devices.
+        listChanged = true;
+
+        if (req.declined != TimePoint {}) {
+            // Request declined
+            JAMI_LOG("[Account {:s}] Declined request detected for conversation {:s} (device {:s})",
+                     pimpl_->accountId_,
+                     convId,
+                     deviceId);
+            pimpl_->syncingMetadatas_.erase(convId);
+            pimpl_->saveMetadata();
+            lk.unlock();
+            emitSignal<libjami::ConversationSignal::ConversationRequestDeclined>(pimpl_->accountId_, convId);
+            continue;
+        }
+        lk.unlock();
+
+        JAMI_LOG("[Account {:s}] New request detected for conversation {:s} (device {:s})",
+                 pimpl_->accountId_,
+                 convId,
+                 deviceId);
+
+        emitSignal<libjami::ConversationSignal::ConversationRequestReceived>(pimpl_->accountId_, convId, req.toMap());
+    }
+
+    // Updates preferences for conversations
+    for (const auto& [convId, p] : msg.p) {
+        if (auto conv = pimpl_->getConversation(convId)) {
+            std::unique_lock lk(conv->mtx);
+            if (conv->conversation) {
+                auto conversation = conv->conversation;
+                lk.unlock();
+                conversation->updatePreferences(p);
+            } else if (conv->pending) {
+                conv->pending->preferences = p;
+            }
+        }
+    }
+
+    // Updates displayed for conversations
+    for (const auto& [convId, ms] : msg.ms) {
+        if (auto conv = pimpl_->getConversation(convId)) {
+            std::unique_lock lk(conv->mtx);
+            if (conv->conversation) {
+                auto conversation = conv->conversation;
+                lk.unlock();
+                conversation->updateMessageStatus(ms);
+            } else if (conv->pending) {
+                conv->pending->status = ms;
+            }
+        }
+    }
+
+    // If the conversation list or requests changed as a result of this sync,
+    // re-propagate to our other devices (relay) so a change learned from one
+    // device reaches the others. This only applies to peer-to-peer syncs:
+    // when the data comes from the JAMS server (empty deviceId), the server is
+    // the synchronization hub and already holds the change, so re-propagating
+    // would push it straight back and cause an infinite sync loop.
+    if (listChanged && !deviceId.empty())
+        pimpl_->needsSyncingCb_({});
+}
+
+bool
+ConversationModule::needsSyncingWith(const std::string& memberUri) const
+{
+    // Check if a conversation needs to fetch remote or to be cloned
+    std::lock_guard lk(pimpl_->conversationsMtx_);
+    for (const auto& [key, ci] : pimpl_->conversations_) {
+        std::lock_guard lk(ci->mtx);
+        if (ci->conversation) {
+            if (ci->conversation->isRemoving() && ci->conversation->isMember(memberUri, false))
+                return true;
+        } else if (ci->info.removed == TimePoint {}
+                   && std::find(ci->info.members.begin(), ci->info.members.end(), memberUri) != ci->info.members.end()) {
+            // In this case the conversation was never cloned (can be after an import)
+            return true;
+        }
+    }
+    return false;
+}
+
+void
+ConversationModule::setFetched(const std::string& conversationId,
+                               const std::string& deviceId,
+                               const std::string& commitId)
+{
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation) {
+            bool remove = conv->conversation->isRemoving();
+            conv->conversation->hasFetched(deviceId, commitId);
+            if (remove)
+                pimpl_->removeRepositoryImpl(*conv, true);
+        }
+    }
+}
+
+void
+ConversationModule::fetchNewCommits(const std::string& peer,
+                                    const std::string& deviceId,
+                                    const std::string& conversationId,
+                                    const std::string& commitId)
+{
+    if (!ConversationRepository::isValidConversationId(conversationId)) {
+        JAMI_WARNING("[Account {}] [device {}] Ignoring commit notification for invalid conversation id '{}'",
+                     pimpl_->accountId_,
+                     deviceId,
+                     conversationId);
+        return;
+    }
+    pimpl_->fetchNewCommits(peer, deviceId, conversationId, commitId);
+}
+
+void
+ConversationModule::addConversationMember(const std::string& conversationId,
+                                          const dht::InfoHash& contactUri,
+                                          bool sendRequest)
+{
+    auto conv = pimpl_->getConversation(conversationId);
+    if (not conv || not conv->conversation) {
+        JAMI_ERROR("Conversation {:s} does not exist", conversationId);
+        return;
+    }
+    std::unique_lock lk(conv->mtx);
+
+    auto contactUriStr = contactUri.toString();
+    if (conv->conversation->isMember(contactUriStr, true)) {
+        JAMI_DEBUG("{:s} is already a member of {:s}, resend invite", contactUriStr, conversationId);
+        // Note: This should not be necessary, but if for whatever reason the other side didn't
+        // join we should not forbid new invites
+        auto sent = nowMs();
+        conv->info.invited[contactUriStr] = sent;
+        auto info = conv->info;
+        auto invite = conv->conversation->generateInvitation(sent);
+        lk.unlock();
+        // convInfosMtx_ must not be taken while conv->mtx is held
+        // so update convInfos_/save only after unlocking conv->mtx.
+        {
+            std::lock_guard lkInfos(pimpl_->convInfosMtx_);
+            pimpl_->convInfos_[conversationId] = std::move(info);
+            pimpl_->saveConvInfos();
+        }
+        pimpl_->sendMsgCb_(contactUriStr, {}, std::move(invite), 0);
+        return;
+    }
+
+    conv->conversation->addMember(contactUriStr,
+                                  [this, conv, conversationId, sendRequest, contactUriStr](bool ok,
+                                                                                           const std::string& commitId) {
+                                      if (ok) {
+                                          std::unique_lock lk(conv->mtx);
+                                          pimpl_->sendMessageNotification(*conv->conversation,
+                                                                          true,
+                                                                          commitId); // For the other members
+                                          if (sendRequest) {
+                                              auto sent = nowMs();
+                                              conv->info.invited[contactUriStr] = sent;
+                                              auto info = conv->info;
+                                              auto invite = conv->conversation->generateInvitation(sent);
+                                              lk.unlock();
+                                              // convInfosMtx_ must be taken after releasing conv->mtx
+                                              {
+                                                  std::lock_guard lkInfos(pimpl_->convInfosMtx_);
+                                                  pimpl_->convInfos_[conversationId] = std::move(info);
+                                                  pimpl_->saveConvInfos();
+                                              }
+                                              pimpl_->sendMsgCb_(contactUriStr, {}, std::move(invite), 0);
+                                          }
+                                      }
+                                  });
+}
+
+void
+ConversationModule::removeConversationMember(const std::string& conversationId,
+                                             const dht::InfoHash& contactUri,
+                                             bool isDevice)
+{
+    auto contactUriStr = contactUri.toString();
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            return conv->conversation
+                ->removeMember(contactUriStr, isDevice, [this, conversationId](bool ok, const std::string& commitId) {
+                    if (ok) {
+                        pimpl_->sendMessageNotification(conversationId, true, commitId);
+                    }
+                });
+    }
+}
+
+std::vector<std::map<std::string, std::string>>
+ConversationModule::getConversationMembers(const std::string& conversationId, bool includeBanned) const
+{
+    return pimpl_->getConversationMembers(conversationId, includeBanned);
+}
+
+uint32_t
+ConversationModule::countInteractions(const std::string& convId,
+                                      const std::string& toId,
+                                      const std::string& fromId,
+                                      const std::string& authorUri) const
+{
+    if (auto conv = pimpl_->getConversation(convId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            return conv->conversation->countInteractions(toId, fromId, authorUri);
+    }
+    return 0;
+}
+
+void
+ConversationModule::search(uint32_t req, const std::string& convId, const Filter& filter) const
+{
+    if (convId.empty()) {
+        auto convs = pimpl_->getConversations();
+        if (convs.empty()) {
+            emitSignal<libjami::ConversationSignal::MessagesFound>(req,
+                                                                   pimpl_->accountId_,
+                                                                   std::string {},
+                                                                   std::vector<std::map<std::string, std::string>> {});
+            return;
+        }
+        auto finishedFlag = std::make_shared<std::atomic_int>(convs.size());
+        for (const auto& conv : convs) {
+            conv->search(req, filter, finishedFlag);
+        }
+    } else if (auto conv = pimpl_->getConversation(convId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            conv->conversation->search(req, filter, std::make_shared<std::atomic_int>(1));
+    }
+}
+
+void
+ConversationModule::updateConversationInfos(const std::string& conversationId,
+                                            const std::map<std::string, std::string>& infos,
+                                            bool sync)
+{
+    auto conv = pimpl_->getConversation(conversationId);
+    if (not conv or not conv->conversation) {
+        JAMI_ERROR("Conversation {:s} does not exist", conversationId);
+        return;
+    }
+    std::lock_guard lk(conv->mtx);
+    conv->conversation->updateInfos(infos, [this, conversationId, sync](bool ok, const std::string& commitId) {
+        if (ok && sync) {
+            pimpl_->sendMessageNotification(conversationId, true, commitId);
+        } else if (sync)
+            JAMI_WARNING("Unable to update info on {:s}", conversationId);
+    });
+}
+
+std::map<std::string, std::string>
+ConversationModule::conversationInfos(const std::string& conversationId) const
+{
+    {
+        std::lock_guard lk(pimpl_->conversationsRequestsMtx_);
+        auto itReq = pimpl_->conversationsRequests_.find(conversationId);
+        if (itReq != pimpl_->conversationsRequests_.end())
+            return itReq->second.metadatas;
+    }
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        std::map<std::string, std::string> md;
+        {
+            std::lock_guard lk(pimpl_->conversationsRequestsMtx_);
+            auto syncingMetadatasIt = pimpl_->syncingMetadatas_.find(conversationId);
+            if (syncingMetadatasIt != pimpl_->syncingMetadatas_.end()) {
+                if (conv->conversation) {
+                    pimpl_->syncingMetadatas_.erase(syncingMetadatasIt);
+                    pimpl_->saveMetadata();
+                } else {
+                    md = syncingMetadatasIt->second;
+                }
+            }
+        }
+        if (conv->conversation)
+            return conv->conversation->infos();
+        else
+            return md;
+    }
+    JAMI_ERROR("Conversation {:s} does not exist", conversationId);
+    return {};
+}
+
+void
+ConversationModule::setConversationPreferences(const std::string& conversationId,
+                                               const std::map<std::string, std::string>& prefs)
+{
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::unique_lock lk(conv->mtx);
+        if (not conv->conversation) {
+            JAMI_ERROR("Conversation {:s} does not exist", conversationId);
+            return;
+        }
+        auto conversation = conv->conversation;
+        lk.unlock();
+        conversation->updatePreferences(prefs);
+        auto msg = std::make_shared<SyncMsg>();
+        msg->p = {{conversationId, conversation->preferences(true)}};
+        pimpl_->needsSyncingCb_(std::move(msg));
+    }
+}
+
+std::map<std::string, std::string>
+ConversationModule::getConversationPreferences(const std::string& conversationId, bool includeCreated) const
+{
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            return conv->conversation->preferences(includeCreated);
+    }
+    return {};
+}
+
+std::map<std::string, std::map<std::string, std::string>>
+ConversationModule::convPreferences() const
+{
+    std::map<std::string, std::map<std::string, std::string>> p;
+    for (const auto& conv : pimpl_->getConversations()) {
+        auto prefs = conv->preferences(true);
+        if (!prefs.empty())
+            p[conv->id()] = std::move(prefs);
+    }
+    return p;
+}
+
+std::vector<uint8_t>
+ConversationModule::conversationVCard(const std::string& conversationId) const
+{
+    if (auto conv = pimpl_->getConversation(conversationId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            return conv->conversation->vCard();
+    }
+    JAMI_ERROR("Conversation {:s} does not exist", conversationId);
+    return {};
+}
+
+bool
+ConversationModule::isMemberBanned(const std::string& convId, const std::string& uri) const
+{
+    dhtnet::tls::TrustStore::PermissionStatus status;
+    {
+        std::lock_guard lk(pimpl_->conversationsMtx_);
+        status = pimpl_->accountManager_->getCertificateStatus(uri);
+    }
+    if (auto conv = pimpl_->getConversation(convId)) {
+        std::lock_guard lk(conv->mtx);
+        if (!conv->conversation)
+            return true;
+        if (conv->conversation->mode() != ConversationMode::ONE_TO_ONE)
+            return conv->conversation->isMemberBanned(uri);
+        // If 1:1 we check the certificate status
+        return status == dhtnet::tls::TrustStore::PermissionStatus::BANNED;
+    }
+    return true;
+}
+
+bool
+ConversationModule::isDeviceBanned(const std::string& convId, const std::string& deviceId) const
+{
+    dhtnet::tls::TrustStore::PermissionStatus status;
+    {
+        std::lock_guard lk(pimpl_->conversationsMtx_);
+        status = pimpl_->accountManager_->getCertificateStatus(deviceId);
+    }
+    if (auto conv = pimpl_->getConversation(convId)) {
+        std::lock_guard lk(conv->mtx);
+        if (!conv->conversation)
+            return true;
+        if (conv->conversation->mode() != ConversationMode::ONE_TO_ONE)
+            return conv->conversation->isDeviceBanned(deviceId);
+        return status == dhtnet::tls::TrustStore::PermissionStatus::BANNED;
+    }
+    return true;
+}
+
+bool
+ConversationModule::isPeerAuthorized(const std::string& convId,
+                                     const std::string& uri,
+                                     const std::string& deviceId,
+                                     bool includeInvited) const
+{
+    dhtnet::tls::TrustStore::PermissionStatus memberStatus;
+    dhtnet::tls::TrustStore::PermissionStatus deviceStatus;
+    {
+        std::lock_guard lk(pimpl_->conversationsMtx_);
+        memberStatus = pimpl_->accountManager_->getCertificateStatus(uri);
+        deviceStatus = pimpl_->accountManager_->getCertificateStatus(deviceId);
+    }
+    if (memberStatus == dhtnet::tls::TrustStore::PermissionStatus::BANNED
+        || deviceStatus == dhtnet::tls::TrustStore::PermissionStatus::BANNED) {
+        return false;
+    }
+    if (auto conv = pimpl_->getConversation(convId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            return conv->conversation->isPeerAuthorized(uri, deviceId, includeInvited);
+        if (!includeInvited)
+            return false;
+        return !conv->info.isRemoved() && conv->info.members.find(uri) != conv->info.members.end();
+    }
+
+    return false;
+}
+
+bool
+ConversationModule::isPeerAuthorizedByConversation(const dht::crypto::Certificate& certificate) const
+{
+    if (!certificate.issuer)
+        return false;
+
+    for (const auto& conversation : pimpl_->getConversations()) {
+        if (!conversation->isRemoving() && conversation->isPeerCertificateAuthorized(certificate))
+            return true;
+    }
+    return false;
+}
+
+bool
+ConversationModule::mayServeDocument(const std::string& documentId,
+                                     const std::string& uri,
+                                     const std::string& deviceId) const
+{
+    auto conv = pimpl_->getConversation(documentId);
+    if (!conv)
+        return false; // We don't hold this document — nothing to vouch with
+    std::shared_ptr<Conversation> conversation;
+    {
+        std::lock_guard lk(conv->mtx);
+        conversation = conv->conversation;
+    }
+    if (!conversation || conversation->mode() != ConversationMode::DOCUMENT)
+        return false;
+    if (conversation->isMemberBanned(uri))
+        return false; // Banned from the document: only an admin's re-add can undo that
+    return isPeerAuthorized(conversation->parentConversationId(), uri, deviceId, false);
+}
+
+void
+ConversationModule::authorizeDocumentPeer(const std::string& documentId,
+                                          const std::string& uri,
+                                          const std::string& deviceId,
+                                          std::function<void(bool)>&& cb)
+{
+    auto conv = pimpl_->getConversation(documentId);
+    if (!conv)
+        return cb(false); // We don't hold this document — nothing to vouch with
+    std::shared_ptr<Conversation> conversation;
+    {
+        std::lock_guard lk(conv->mtx);
+        conversation = conv->conversation;
+    }
+    if (!conversation || conversation->mode() != ConversationMode::DOCUMENT)
+        return cb(false);
+    if (conversation->isMemberBanned(uri))
+        return cb(false); // Banned from the document: only an admin's re-add can undo that
+    if (!isPeerAuthorized(conversation->parentConversationId(), uri, deviceId, false))
+        return cb(false);
+    // The add commit is what makes the clone we are about to serve
+    // self-justifying: the peer's membership is part of what it receives.
+    conversation->addMember(uri, [cb = std::move(cb)](bool ok, const std::string&) { cb(ok); });
+}
+
+void
+ConversationModule::removeContact(const std::string& uri, bool banned)
+{
+    // Remove linked conversation's requests
+    {
+        std::lock_guard lk(pimpl_->conversationsRequestsMtx_);
+        auto update = false;
+        for (auto it = pimpl_->conversationsRequests_.begin(); it != pimpl_->conversationsRequests_.end(); ++it) {
+            if (it->second.from == uri && it->second.declined == TimePoint {}) {
+                JAMI_DEBUG("Declining conversation request {:s} from {:s}", it->first, uri);
+                pimpl_->syncingMetadatas_.erase(it->first);
+                pimpl_->saveMetadata();
+                emitSignal<libjami::ConversationSignal::ConversationRequestDeclined>(pimpl_->accountId_, it->first);
+                update = true;
+                it->second.declined = nowMs();
+            }
+        }
+        if (update) {
+            pimpl_->saveConvRequests();
+            pimpl_->needsSyncingCb_({});
+        }
+    }
+    if (banned) {
+        auto conversationId = getOneToOneConversation(uri);
+        pimpl_->withConversation(conversationId, [&](auto& conv) { conv.shutdownConnections(); });
+        return; // Keep the conversation in banned model but stop connections
+    }
+
+    // Removed contacts should not be linked to any conversation
+    pimpl_->accountManager_->updateContactConversation(uri, "");
+
+    // Remove all one-to-one conversations with the removed contact
+    auto isSelf = uri == pimpl_->username_;
+    std::vector<std::string> toRm;
+    auto removeConvInfo = [&](const auto& conv, const auto& members) {
+        if ((isSelf && members.size() == 1)
+            || (!isSelf && std::find(members.begin(), members.end(), uri) != members.end())) {
+            // Mark the conversation as removed if it wasn't already
+            if (!conv->info.isRemoved()) {
+                conv->info.removed = nowMs();
+                emitSignal<libjami::ConversationSignal::ConversationRemoved>(pimpl_->accountId_, conv->info.id);
+                pimpl_->addConvInfo(conv->info);
+                return true;
+            }
+        }
+        return false;
+    };
+    {
+        std::lock_guard lk(pimpl_->conversationsMtx_);
+        for (auto& [convId, conv] : pimpl_->conversations_) {
+            std::lock_guard lk(conv->mtx);
+            if (conv->conversation) {
+                try {
+                    // Note it's important to check getUsername(), else
+                    // removing self can remove all conversations
+                    if (conv->conversation->mode() == ConversationMode::ONE_TO_ONE) {
+                        auto initMembers = conv->conversation->getInitialMembers();
+                        if (removeConvInfo(conv, initMembers))
+                            toRm.emplace_back(convId);
+                    }
+                } catch (const std::exception& e) {
+                    JAMI_WARNING("{}", e.what());
+                }
+            } else {
+                removeConvInfo(conv, conv->info.members);
+            }
+        }
+    }
+    for (const auto& id : toRm)
+        pimpl_->removeRepository(id, true, true);
+    for (const auto& documentId : pimpl_->childDocuments(toRm))
+        pimpl_->removeDocumentReplica(documentId);
+}
+
+bool
+ConversationModule::removeConversation(const std::string& conversationId)
+{
+    auto conversation = pimpl_->getConversation(conversationId);
+    std::string existingConvId;
+
+    if (!conversation) {
+        JAMI_LOG("Conversation {} not found", conversationId);
+        return false;
+    }
+
+    std::shared_ptr<Conversation> conv;
+    {
+        std::lock_guard lk(conversation->mtx);
+        conv = conversation->conversation;
+    }
+
+    auto sendNotification = [&](const std::string& convId) {
+        if (auto convObj = pimpl_->getConversation(convId)) {
+            std::lock_guard lk(convObj->mtx);
+            if (convObj->conversation) {
+                auto commitId = convObj->conversation->lastCommitId();
+                if (!commitId.empty()) {
+                    pimpl_->sendMessageNotification(*convObj->conversation, true, commitId);
+                }
+            }
+        }
+    };
+
+    auto handleNewConversation = [&](const std::string& uri) {
+        std::string newConvId = startConversation(ConversationMode::ONE_TO_ONE, dht::InfoHash(uri));
+        pimpl_->accountManager_->updateContactConversation(uri, newConvId, true);
+        sendNotification(newConvId);
+        return newConvId;
+    };
+
+    if (!conv) {
+        auto contacts = pimpl_->accountManager_->getContacts(false);
+        for (const auto& contact : contacts) {
+            if (contact.second.conversationId == conversationId) {
+                const std::string& uri = contact.first.toString();
+                handleNewConversation(uri);
+            }
+        }
+
+        return pimpl_->removeConversation(conversationId);
+    }
+
+    if (conv->mode() == ConversationMode::ONE_TO_ONE) {
+        auto members = conv->getMembers(true, false, false);
+        if (members.empty()) {
+            return false;
+        }
+
+        for (const auto& m : members) {
+            const auto& uri = m.at("uri");
+
+            if (members.size() == 1 && uri == pimpl_->username_) {
+                if (conv->getInitialMembers().size() == 1 && conv->getInitialMembers()[0] == pimpl_->username_) {
+                    // Self conversation, create new conversation and remove the old one
+                    handleNewConversation(uri);
+                } else {
+                    existingConvId = findMatchingOneToOneConversation(conversationId, conv->memberUris("", {}));
+                    if (existingConvId.empty()) {
+                        // If left with only ended conversation of peer
+                        for (const auto& otherMember : conv->getInitialMembers()) {
+                            if (otherMember != pimpl_->username_) {
+                                handleNewConversation(otherMember);
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+
+            if (uri == pimpl_->username_)
+                continue;
+
+            existingConvId = findMatchingOneToOneConversation(conversationId, conv->memberUris("", {}));
+            if (!existingConvId.empty()) {
+                // Found an existing conversation, just update the contact
+                pimpl_->accountManager_->updateContactConversation(uri, existingConvId, true);
+                sendNotification(existingConvId);
+            } else {
+                // No existing conversation found, create a new one
+                handleNewConversation(uri);
+            }
+        }
+    }
+
+    return pimpl_->removeConversation(conversationId);
+}
+
+std::string
+ConversationModule::findMatchingOneToOneConversation(const std::string& excludedConversationId,
+                                                     const std::set<std::string>& targetUris) const
+{
+    std::lock_guard lk(pimpl_->conversationsMtx_);
+    for (const auto& [otherConvId, otherConvPtr] : pimpl_->conversations_) {
+        if (otherConvId == excludedConversationId)
+            continue;
+
+        std::lock_guard lk(otherConvPtr->mtx);
+        if (!otherConvPtr->conversation || otherConvPtr->conversation->mode() != ConversationMode::ONE_TO_ONE)
+            continue;
+
+        const auto& info = otherConvPtr->info;
+        if (info.removed != TimePoint {} && info.isRemoved())
+            continue;
+
+        auto otherUris = otherConvPtr->conversation->memberUris();
+
+        if (otherUris == targetUris)
+            return otherConvId;
+    }
+
+    return {};
+}
+
+bool
+ConversationModule::isHosting(const std::string& conversationId, const std::string& confId) const
+{
+    if (conversationId.empty()) {
+        std::lock_guard lk(pimpl_->conversationsMtx_);
+        return std::find_if(pimpl_->conversations_.cbegin(),
+                            pimpl_->conversations_.cend(),
+                            [&](const auto& conv) {
+                                return conv.second->conversation && conv.second->conversation->isHosting(confId);
+                            })
+               != pimpl_->conversations_.cend();
+    } else if (auto conv = pimpl_->getConversation(conversationId)) {
+        if (conv->conversation) {
+            return conv->conversation->isHosting(confId);
+        }
+    }
+    return false;
+}
+
+std::vector<std::map<std::string, std::string>>
+ConversationModule::getActiveCalls(const std::string& conversationId) const
+{
+    return pimpl_->withConversation(conversationId,
+                                    [](const auto& conversation) { return conversation.currentCalls(); });
+}
+
+std::shared_ptr<SIPCall>
+ConversationModule::call(const std::string& url,
+                         const std::vector<libjami::MediaMap>& mediaList,
+                         std::function<void(const std::string&, const DeviceId&, const std::shared_ptr<SIPCall>&)>&& cb)
+{
+    std::string conversationId = "", confId = "", uri = "", deviceId = "";
+    if (url.find('/') == std::string::npos) {
+        conversationId = url;
+    } else {
+        auto parameters = jami::split_string(url, '/');
+        if (parameters.size() != 4) {
+            JAMI_ERROR("Incorrect url {:s}", url);
+            return {};
+        }
+        conversationId = parameters[0];
+        uri = parameters[1];
+        deviceId = parameters[2];
+        confId = parameters[3];
+    }
+
+    auto conv = pimpl_->getConversation(conversationId);
+    if (!conv)
+        return {};
+    std::unique_lock lk(conv->mtx);
+    if (!conv->conversation) {
+        JAMI_ERROR("Conversation {:s} not found", conversationId);
+        return {};
+    }
+
+    // Check if we want to join a specific conference
+    // So, if confId is specified or if there is some activeCalls
+    // or if we are the default host.
+    auto activeCalls = conv->conversation->currentCalls();
+    auto infos = conv->conversation->infos();
+    auto itRdvAccount = infos.find("rdvAccount");
+    auto itRdvDevice = infos.find("rdvDevice");
+    auto sendCallRequest = false;
+    if (!confId.empty()) {
+        sendCallRequest = true;
+        JAMI_DEBUG("Calling self, join conference");
+    } else if (!activeCalls.empty()) {
+        // Else, we try to join active calls
+        sendCallRequest = true;
+        auto& ac = *activeCalls.rbegin();
+        confId = ac.at("id");
+        uri = ac.at("uri");
+        deviceId = ac.at("device");
+    } else if (itRdvAccount != infos.end() && itRdvDevice != infos.end() && !itRdvAccount->second.empty()) {
+        // Else, creates "to" (accountId/deviceId/conversationId/confId) and ask remote host
+        sendCallRequest = true;
+        uri = itRdvAccount->second;
+        deviceId = itRdvDevice->second;
+        confId = "0";
+        JAMI_DEBUG("Remote host detected. Calling {:s} on device {:s}", uri, deviceId);
+    }
+    lk.unlock();
+
+    auto account = pimpl_->account_.lock();
+    std::vector<libjami::MediaMap> mediaMap = mediaList.empty() ? MediaAttribute::mediaAttributesToMediaMaps(
+                                                                      pimpl_->account_.lock()->createDefaultMediaList(
+                                                                          pimpl_->account_.lock()->isVideoEnabled()))
+                                                                : mediaList;
+
+    if (!sendCallRequest || (uri == pimpl_->username_ && deviceId == pimpl_->deviceId_)) {
+        confId = confId == "0" ? Manager::instance().callFactory.getNewCallID() : confId;
+        // TODO attach host with media list
+        hostConference(conversationId, confId, "", mediaMap);
+        return {};
+    }
+
+    // Else we need to create a call
+    auto& manager = Manager::instance();
+    std::shared_ptr<SIPCall> call = manager.callFactory.newSipCall(account, Call::CallType::OUTGOING, mediaMap);
+
+    if (not call)
+        return {};
+
+    auto callUri = fmt::format("{}/{}/{}/{}", conversationId, uri, deviceId, confId);
+    account->getIceOptions([call,
+                            accountId = account->getAccountID(),
+                            callUri,
+                            uri = std::move(uri),
+                            conversationId,
+                            deviceId,
+                            cb = std::move(cb)](auto&& opts) {
+        if (call->isIceEnabled()) {
+            if (not call->createIceMediaTransport(false)
+                or not call->initIceMediaTransport(true, std::forward<dhtnet::IceTransportOptions>(opts))) {
+                return;
+            }
+        }
+        JAMI_DEBUG("New outgoing call with {}", uri);
+        call->setPeerNumber(uri);
+        call->setPeerUri("swarm:" + uri);
+
+        JAMI_DEBUG("Calling: {:s}", callUri);
+        call->setState(Call::ConnectionState::TRYING);
+        call->setPeerNumber(callUri);
+        call->setPeerUri("rdv:" + callUri);
+        call->addStateListener(
+            [accountId, conversationId](Call::CallState call_state, Call::ConnectionState cnx_state, int) {
+                if (cnx_state == Call::ConnectionState::DISCONNECTED && call_state == Call::CallState::MERROR) {
+                    emitSignal<libjami::ConfigurationSignal::NeedsHost>(accountId, conversationId);
+                    return true;
+                }
+                return true;
+            });
+        cb(callUri, DeviceId(deviceId), call);
+    });
+
+    return call;
+}
+
+void
+ConversationModule::hostConference(const std::string& conversationId,
+                                   const std::string& confId,
+                                   const std::string& callId,
+                                   const std::vector<libjami::MediaMap>& mediaList)
+{
+    auto acc = pimpl_->account_.lock();
+    if (!acc)
+        return;
+    auto conf = acc->getConference(confId);
+    auto createConf = !conf;
+    std::shared_ptr<SIPCall> call;
+    if (!callId.empty()) {
+        call = std::dynamic_pointer_cast<SIPCall>(acc->getCall(callId));
+        if (!call) {
+            JAMI_WARNING("No call with id {} found", callId);
+            return;
+        }
+    }
+    if (createConf) {
+        conf = std::make_shared<Conference>(acc, confId);
+        acc->attach(conf);
+    }
+
+    if (!callId.empty())
+        conf->addSubCall(callId);
+
+    if (callId.empty())
+        conf->attachHost(mediaList);
+
+    if (createConf) {
+        emitSignal<libjami::CallSignal::ConferenceCreated>(acc->getAccountID(), conversationId, conf->getConfId());
+    } else {
+        conf->reportMediaNegotiationStatus();
+        emitSignal<libjami::CallSignal::ConferenceChanged>(acc->getAccountID(), conf->getConfId(), conf->getStateStr());
+        return;
+    }
+
+    auto conv = pimpl_->getConversation(conversationId);
+    if (!conv)
+        return;
+    std::unique_lock lk(conv->mtx);
+    if (!conv->conversation) {
+        JAMI_ERROR("Conversation {} not found", conversationId);
+        return;
+    }
+    // Add commit to conversation
+    auto message = CommitMessage::conferenceHostingStart(conf->getConfId(), pimpl_->deviceId_, pimpl_->username_);
+    conv->conversation->hostConference(std::move(message),
+                                       [w = pimpl_->weak(), conversationId](bool ok, const std::string& commitId) {
+                                           if (ok) {
+                                               if (auto shared = w.lock())
+                                                   shared->sendMessageNotification(conversationId, true, commitId);
+                                           } else {
+                                               JAMI_ERROR("Failed to send message to conversation {}", conversationId);
+                                           }
+                                       });
+
+    // When conf finished = remove host & commit
+    // Master call, so when it's stopped, the conference will be stopped (as we use the hold
+    // state for detaching the call)
+    conf->onShutdown([w = pimpl_->weak(),
+                      accountUri = pimpl_->username_,
+                      confId = conf->getConfId(),
+                      conversationId,
+                      conv](int duration) {
+        auto shared = w.lock();
+        if (shared) {
+            auto message = CommitMessage::conferenceHostingEnd(confId, shared->deviceId_, accountUri, duration);
+
+            std::lock_guard lk(conv->mtx);
+            if (!conv->conversation) {
+                JAMI_ERROR("Conversation {} not found", conversationId);
+                return;
+            }
+            conv->conversation
+                ->removeActiveConference(std::move(message), [w, conversationId](bool ok, const std::string& commitId) {
+                    if (ok) {
+                        if (auto shared = w.lock()) {
+                            shared->sendMessageNotification(conversationId, true, commitId);
+                        }
+                    } else {
+                        JAMI_ERROR("Failed to send message to conversation {}", conversationId);
+                    }
+                });
+        }
+    });
+}
+
+std::map<std::string, ConvInfo>
+ConversationModule::convInfos(const std::string& accountId)
+{
+    return convInfosFromPath(fileutils::get_data_dir() / accountId);
+}
+
+std::map<std::string, ConvInfo>
+ConversationModule::convInfosFromPath(const std::filesystem::path& path)
+{
+    std::map<std::string, ConvInfo> convInfos;
+    try {
+        // read file
+        std::lock_guard lock(dhtnet::fileutils::getFileLock(path / "convInfo"));
+        auto file = fileutils::loadFile("convInfo", path);
+        // load values
+        msgpack::unpacked result;
+        msgpack::unpack(result, (const char*) file.data(), file.size());
+        result.get().convert(convInfos);
+        std::erase_if(convInfos, [](const auto& item) { return !isConversationId(item.first); });
+    } catch (const std::exception& e) {
+        JAMI_WARNING("[convInfo] error loading convInfo: {}", e.what());
+    }
+    // Ids are used as directory names: drop anything persisted before ids were validated
+    for (auto it = convInfos.begin(); it != convInfos.end();) {
+        if (!ConversationRepository::isValidConversationId(it->first)
+            || !ConversationRepository::isValidConversationId(it->second.id)) {
+            JAMI_WARNING("[convInfo] dropping conversation with invalid id '{}'", it->first);
+            it = convInfos.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    return convInfos;
+}
+
+std::map<std::string, ConversationRequest>
+ConversationModule::convRequests(const std::string& accountId)
+{
+    return convRequestsFromPath(fileutils::get_data_dir() / accountId);
+}
+
+std::map<std::string, ConversationRequest>
+ConversationModule::convRequestsFromPath(const std::filesystem::path& path)
+{
+    std::map<std::string, ConversationRequest> convRequests;
+    try {
+        // read file
+        std::lock_guard lock(dhtnet::fileutils::getFileLock(path / "convRequests"));
+        auto file = fileutils::loadFile("convRequests", path);
+        // load values
+        msgpack::unpacked result;
+        msgpack::unpack(result, (const char*) file.data(), file.size(), 0);
+        result.get().convert(convRequests);
+    } catch (const std::exception& e) {
+        JAMI_WARNING("[convInfo] error loading convInfo: {}", e.what());
+    }
+    for (auto it = convRequests.begin(); it != convRequests.end();) {
+        if (!ConversationRepository::isValidConversationId(it->first)
+            || !ConversationRepository::isValidConversationId(it->second.conversationId)) {
+            JAMI_WARNING("[convRequests] dropping request with invalid conversation id '{}'", it->first);
+            it = convRequests.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    return convRequests;
+}
+
+void
+ConversationModule::addConvInfo(const ConvInfo& info)
+{
+    pimpl_->addConvInfo(info);
+}
+
+void
+ConversationModule::Impl::setConversationMembers(const std::string& convId, const std::set<std::string>& members)
+{
+    if (auto conv = getConversation(convId)) {
+        std::lock_guard lk(conv->mtx);
+        conv->info.members = members;
+        addConvInfo(conv->info);
+    }
+}
+
+std::shared_ptr<Conversation>
+ConversationModule::getConversation(const std::string& convId)
+{
+    if (auto conv = pimpl_->getConversation(convId)) {
+        std::lock_guard lk(conv->mtx);
+        return conv->conversation;
+    }
+    return nullptr;
+}
+
+std::shared_ptr<dhtnet::ChannelSocket>
+ConversationModule::gitSocket(std::string_view deviceId, std::string_view convId) const
+{
+    if (auto conv = pimpl_->getConversation(convId)) {
+        std::lock_guard lk(conv->mtx);
+        if (conv->conversation)
+            return conv->conversation->gitSocket(DeviceId(deviceId));
+        else if (conv->pending)
+            return conv->pending->socket;
+    }
+    return nullptr;
+}
+
+void
+ConversationModule::removeGitSocket(std::string_view deviceId,
+                                    std::string_view convId,
+                                    const std::shared_ptr<dhtnet::ChannelSocket>& expected)
+{
+    pimpl_->withConversation(convId, [&](auto& conv) { conv.removeGitSocket(DeviceId(deviceId), expected); });
+}
+
+void
+ConversationModule::shutdownConnections()
+{
+    for (const auto& c : pimpl_->getSyncedConversations()) {
+        std::lock_guard lkc(c->mtx);
+        if (c->conversation)
+            c->conversation->shutdownConnections();
+        if (c->pending)
+            c->pending->socket = {};
+    }
+}
+void
+ConversationModule::addSwarmChannel(const std::string& conversationId, std::shared_ptr<dhtnet::ChannelSocket> channel)
+{
+    pimpl_->withConversation(conversationId, [&](auto& conv) { conv.addSwarmChannel(std::move(channel)); });
+}
+
+void
+ConversationModule::addKnownDevice(const std::string& peerUri, const DeviceId& deviceId)
+{
+    for (const auto& conv : pimpl_->getConversations())
+        if (conv->isMember(peerUri))
+            conv->connectNode(deviceId);
+}
+
+void
+ConversationModule::connectivityChanged()
+{
+    for (const auto& conv : pimpl_->getConversations())
+        conv->connectivityChanged();
+}
+
+std::shared_ptr<Typers>
+ConversationModule::getTypers(const std::string& convId)
+{
+    if (auto c = pimpl_->getConversation(convId)) {
+        std::lock_guard lk(c->mtx);
+        if (c->conversation)
+            return c->conversation->typers();
+    }
+    return nullptr;
+}
+
+void
+ConversationModule::initPresence()
+{
+    pimpl_->initPresence();
+}
+
+} // namespace jami

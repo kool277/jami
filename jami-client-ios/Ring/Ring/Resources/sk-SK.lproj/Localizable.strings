@@ -1,0 +1,839 @@
+﻿/*
+ * Copyright (C) 2017-2025 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+ */
+
+// Global
+"global.accountSettings" = "Nastavenia účtu";
+"global.username" = "Používateľské meno";
+"global.recommended" = "Odporúčané";
+"global.password" = "Heslo";
+"global.registerAUsername" = "Registrovať používateľské meno";
+"global.enterPassword" = "Zadajte heslo";
+"global.enterUsername" = "Zadajte meno používateľa";
+"global.cancel" = "Zrušiť";
+"global.blockContact" = "Zablokovať kontakt";
+"global.removeAccount" = "Odstrániť účet";
+"global.incomingCall" = "Prichádzajúci hovor";
+"global.ok" = "V poriadku";
+"global.close" = "Zavrieť";
+"global.share" = "Zdieľať";
+"global.forward" = "Presmerovať";
+"global.save" = "Uložiť";
+"global.resend" = "Znovu odoslať";
+"global.preview" = "Náhľad";
+"global.accept" = "Prijať";
+"global.block" = "Blokovať";
+"global.decline" = "Odmietnuť";
+"global.name" = "Meno";
+"global.copy" = "Kopírovať";
+"global.reply" = "Odpovedať";
+"global.search" = "Vyhľadávanie...";
+"global.supportJami" = "Podporte projekt Jami";
+"global.deleteMessage" = "Vymazať správu";
+"global.deleteFile" = "Vymazať súbor zo zariadenia";
+"global.editMessage" = "Zobraziť správu";
+"global.editing" = "Upravuje sa";
+"global.create" = "Vytvoriť";
+"global.edit" = "Upraviť";
+"global.remove" = "Odstrániť";
+"global.call" = "Volať";
+"global.video" = "Video";
+"global.time" = "Čas";
+"global.editPassword" = "Upraviť heslo";
+"global.confirmPassword" = "Potvrďte heslo";
+"global.confirm" = "Potvrdiť";
+"global.cameraDisabled" = "Prístup ku kamere je zakázaný. Ak chcete použiť túto funkciu, povoľte prístup v nastaveniach zariadenia.";
+"global.confirm" = "Potvrdiť";
+"global.connect" = "Pripojiť";
+"global.leave" = "Opustiť";
+
+// ProfileEditor
+"profileEditor.editGroup" = "Edit group";
+"profileEditor.editContact" = "Edit contact";
+"profileEditor.name" = "Meno";
+"profileEditor.groupNamePlaceholder" = "Enter a group name";
+"profileEditor.contactNamePlaceholder" = "Enter a name";
+"profileEditor.description" = "Opis";
+"profileEditor.descriptionPlaceholder" = "Enter a description";
+"profileEditor.localChangesFooter" = "This name and picture are visible only on this device.";
+"profileEditor.resetOriginal" = "Use original name and picture";
+"profileEditor.resetOriginalHint" = "Restores the name and picture this contact set for themselves";
+"profileEditor.changePicture" = "Change picture";
+"profileEditor.changePictureHint" = "Choose a new picture from the camera or photo library";
+"profileEditor.noPicture" = "No picture";
+"profileEditor.pictureSelected" = "Picture selected";
+"profileEditor.removePicture" = "Remove picture";
+"profileEditor.resetPicture" = "Use original picture";
+"profileEditor.discardTitle" = "Discard changes?";
+"profileEditor.discardMessage" = "Your unsaved changes will be lost.";
+"profileEditor.discard" = "Zahodiť";
+"profileEditor.saveError" = "The changes could not be saved. Please try again.";
+"profileEditor.editGroupHint" = "Opens the group editor";
+"profileEditor.editContactHint" = "Opens the contact editor";
+// Scan
+"scan.badQrCode" = "Nesprávny kód QR";
+
+// SwarmCreation
+"swarmcreation.searchBar" = "Nájsť kontakt…";
+"swarmcreation.addDescription" = "Pridať popis";
+// Swarm
+"swarm.muteConversation" = "Stíšiť konverzáciu";
+"swarm.leaveConversation" = "Opustiť konverzáciu";
+"swarm.removeConversation" = "Odstrániť konverzáciu";
+"swarm.removeContact" = "Odstrániť kontakt";
+"swarm.restartConversation" = "Reštartovať konverzáciu";
+"swarm.conversationEnded" = "Konverzácia skončila";
+"swarm.chooseColor" = "Farba konverzácie";
+"swarm.typeOfSwarm" = "Typ konverzácie";
+"swarm.identifier" = "Identifikátor";
+"swarm.conversationId" = "ID konverzácie";
+"swarm.settings" = "Nastavenia";
+"swarm.members" = "Členovia";
+"swarm.contactHeader" = "Kontakt";
+"swarm.showContactQRCode" = "Zobraziť QR kód kontaktu";
+"swarm.shareContactInfo" = "Zdieľať kontaktné informácie";
+"swarm.accessibilityContactQRCode" = "Zobraziť QR kód kontaktu";
+"swarm.accessibilityContactQRCodeHint" = "Otvorí obrazovku s QR kódom kontaktu";
+"swarm.accessibilityContactShareHint" = "Otvorí možnosti zdieľania kontaktných informácií";
+"swarm.accessibilityColorPicker" = "Výber farby konverzácie";
+"swarm.conversationHeader" = "Rozhovory";
+"swarm.shareContactMessage" = "Tento kontakt, %1@, môžete pridať na distribuovanej komunikačnej platforme Jami: https://jami.net";
+"swarm.oneToOne" = "Privátny";
+"swarm.adminInvitesOnly" = "Privátna skupina (obmedzené pozvánky)";
+"swarm.invitesOnly" = "Privátna skupina";
+"swarm.publicChat" = "Verejná skupina";
+"swarm.others" = "Ostatné";
+"swarm.member" = "Člen";
+"swarm.invited" = "Pozvaný";
+"swarm.admin" = "Správca";
+"swarm.blocked" = "Zablokované";
+"swarm.unknown" = "Neznámy";
+"swarm.left" = "Odišiel";
+"swarm.invite" = "Invite";
+"swarm.inviteMembers" = "Pozvať členov";
+"swarm.inviteSelectedMembers" = "Pozvať vybrané kontakty";
+"swarm.inviteMembersSelected" = "Vybrané";
+"swarm.inviteMembersNotSelected" = "Nevybrané";
+"swarm.confirmLeaveConversation" = "Chcete opustiť túto konverzáciu?";
+"swarm.Leave" = "Odchádzam";
+"swarm.newGroup" = "Vytvoriť novú skupinu";
+"swarm.namePlaceholder" = "Názov skupiny";
+"swarm.explanationText" = "Členov možno pozvať kedykoľvek po vytvorení skupiny.";
+"swarm.customizeProfile" = "Prispôsobiť profil skupiny";
+"swarm.changePicture" = "Zmeniť obrázok skupiny";
+"swarm.customize" = "Prispôsobiť skupinu";
+"swarm.selectContacts" = "Vyberte kontakty";
+
+// Contact Picker
+"contactPicker.calls" = "Hovory";
+"contactPicker.contacts" = "Kontakty";
+
+// Smartlist
+"smartlist.yesterday" = "Včera";
+"smartlist.results" = "Jami search";
+"smartlist.jamsResults" = "Organization search";
+"smartlist.conversations" = "Konverzácie";
+"smartlist.conversationsSearchHint" = "You don't have any conversations yet.";
+"smartlist.publicDirectoryHint" = "People on Jami outside your contacts.";
+"smartlist.jamsDirectoryHint" = "People in your organization outside your contacts.";
+"smartlist.dialpad" = "Keypad";
+"smartlist.noConversationsFound" = "Žiadne konverzácie nezodpovedajú vyhľadávaniu.";
+"smartlist.newContact" = "Nový kontakt";
+"smartlist.newGroup" = "Nová skupina";
+"smartlist.accounts" = "Your accounts";
+"smartlist.invitationReceived" = "Prijaté pozvania";
+"smartlist.noResults" = "Žiadne výsledky";
+"smartlist.noConversation" = "Žiadne konverzácie";
+"smartlist.searchBarPlaceholder" = "Zadajte meno…";
+"smartlist.searchBar" = "Vyhľadávanie";
+"smartlist.noNetworkConnectivity" = "Žiadne sieťové pripojenie";
+"smartlist.cellularAccess" = "Uistite sa, že je v nastaveniach povolený prístup k mobilným dátam.";
+"smartlist.accountsTitle" = "Účty";
+"smartlist.addAccountButton" = "+ Pridať účet";
+"smartlist.noNumber" = "Vybraný kontakt nemá žiadne číslo";
+"smartlist.selectOneNumber" = "Vyberte jedno z čísel";
+"smartlist.invitations" = "Pozvánky";
+"smartlist.aboutJami" = "O programe Jami";
+"smartlist.inviteFriends" = "Pozvať priateľov";
+"smartlist.disableDonation" = "Teraz nie";
+"smartlist.donationExplanation" = "Ak vás baví používať Jami a veríte v naše poslanie, chcete prispieť?";
+"smartlist.inSynchronization" = "Synchronizuje sa…";
+
+// Conversation
+"conversation.addToContactsButton" = "Pridať do kontaktov";
+"conversation.sendInvitationButton" = "Poslať pozvánku";
+"conversation.addToContactsLabel" = "Pridať do kontaktov?";
+"conversation.notContactLabel" = "%@ nie je v zozname kontaktov";
+"conversation.messagePlaceholder" = "Písať";
+"conversation.imageSaved" = "Uložené";
+"conversation.errorSavingImage" = "Obrázok sa nepodarilo uložiť";
+"conversation.errorSavingImageMessage" = "Pri ukladaní obrázka do knižnice fotografií sa vyskytla chyba.";
+"conversation.photoAccessRequiredMessage" = "Jami potrebuje prístup k vašej knižnici fotografií na ukladanie obrázkov. Môžete to povoliť v Nastaveniach.";
+"conversation.receivedRequest" = "%@ vám poslal pozvánku na konverzáciu.";
+"conversation.incomingRequest" = "vám poslal pozvánku na konverzáciu.";
+"conversation.requestMessage" = "Dobrý deň,\nchcete sa pripojiť ku konverzácii?";
+"conversation.sendRequest" = "Pošlite im pozvánku, aby ste mohli konverzovať.";
+"conversation.sendRequestTitle" = "Poslať pozvánku na konverzáciu";
+"conversation.synchronizationTitle" = "Prijali ste pozvánku na konverzáciu.";
+"conversation.syncingTitle" = "Synchronizácia konverzácie";
+"conversation.synchronizationMessage" = "Čaká sa na pripojenie %@ na synchronizáciu konverzácie…";
+"conversation.inReplyTo" = "V odpovedi na";
+"conversation.repliedTo" = "%@ odpovedal používateľovi %@";
+"conversation.yourself" = "Ty...";
+"conversation.edited" = "Vytvorené";
+"conversation.deletedMessage" = "%@ odstránil(a) správu";
+"conversation.contactBlocked" = "Kontakt zablokovaný";
+// An ellipsis is not directly shown in the following typing indicator strings.
+// An ellipsis animation is shown when messages are being typed in the view.
+// An ellipsis "…" is visually displayed as ".", "..", or "..." using a timer.
+"conversation.typingIndicatorOneUser" = "%@ píše";
+"conversation.typingIndicatorTwoUsers" = "%1@ a %2@ píšu";
+"conversation.typingIndicatorOtherUsers" = "%1@, %2@ a ďalší %3@ píšu";
+"conversation.typingIndicatorOthersUsers" = "%1@, %2@ a ďalší %3@ píšu";
+"conversation.lastMessageDeleted" = "(odstránená správa)";
+
+// Invitations
+"invitations.noInvitations" = "Žiadne pozvánky";
+"invitations.accepted" = "Prijaté";
+"invitations.declined" = "Odmietnuté";
+"invitations.blocked" = "Zablokované";
+"invitations.list" = "Prijaté pozvania";
+
+// Walkthrough
+
+//Welcome Screen
+"welcome.title" = "Zdieľajte, voľne a súkromne s Jami";
+"welcome.text" = "Jami je slobodná a univerzálna komunikačná platforma, ktorá zachováva súkromie a slobodu používateľov.";
+"welcome.haveAccount" = "Už mám účet.";
+"welcome.linkDevice" = "Import z iného zariadenia";
+"welcome.linkBackup" = "Importovať zo zálohovaného archívu";
+"welcome.createAccount" = "Vytvorte účet Jami";
+"welcome.connectToJAMS" = "Pripojiť sa k riadiacemu serveru";
+
+// Creation Profile Screen
+"createProfile.skipCreateProfile" = "Preskočiť";
+"createProfile.profileCreated" = "Ďalej";
+"createProfile.title" = "Prispôsobte si svoj profil";
+"createProfile.enterNameLabel" = "Zadajte meno na zobrazenie";
+"createProfile.enterNamePlaceholder" = "Zadajte meno";
+"createProfile.subtitle" = "Váš profil je zdieľaný iba s vašimi kontaktmi. Profil možno kedykoľvek zmeniť.";
+"createProfile.createProfilePicture" = "Vytvoriť profilový obrázok";
+
+// Create Account form
+"createAccount.createAccountFormTitle" = "Pridajte sa k Jami";
+"createAccount.lookingForUsernameAvailability" = "Kontroluje sa dostupnosť používateľského mena…";
+"createAccount.invalidUsername" = "Neplatné používateľské meno. Zadajte správne používateľské meno.";
+"createAccount.usernameAlreadyTaken" = "Používateľské meno je už použité";
+"createAccount.usernameValid" = "Používateľské meno je dostupné.";
+"createAccount.UsernameNotRegisteredTitle" = "Chyba siete";
+"createAccount.UsernameNotRegisteredMessage" = "Účet bol vytvorený, ale používateľské meno nebolo zaregistrované";
+"createAccount.timeoutTitle" = "Účet vytvorený";
+"createAccount.timeoutMessage" = "Prebieha registrácia používateľského mena. Čakajte, prosím…";
+"createAccount.sipConfigure" = "Konfigurovať existujúci SIP účet";
+"createAccount.creatingAccount" = "Vytvára sa účet";
+"createAccount.nameExplanation" = "Môžete si vybrať uživatelské meno, ktoré pomôže iným ľahko nájsť a dostať sa k vám na Jami.";
+"createAccount.newAccount" = "Nový účet";
+"createAccount.encryptionEnabled" = "Ochrana heslom je zapnutá";
+"createAccount.encrypt" = "Chrániť heslom";
+"createAccount.customize" = "Priemyselné";
+"createAccount.encryptTitle" = "Chrániť účet heslom";
+"createAccount.encryptExplanation" = "Účet Jami sa vytvorí a uloží lokálne iba na tomto zariadení ako archív obsahujúci jeho kľúče účtu. Prístup k archívu možno voliteľne chrániť heslom.";
+
+// Link To Account form
+"linkToAccount.importAccount" = "Importovať účet";
+"linkToAccount.showQrCode" = "QR kód";
+"linkToAccount.showPinCode" = "Overovací kód";
+"linkToAccount.actionRequired" = "Vyžaduje sa akcia.\nPotvrďte účet na zdrojovom zariadení.";
+"linkToAccount.allSet" = "Účet bol úspešne importovaný.";
+"linkToAccount.goToAccounts" = "Prejsť na importovaný účet";
+"linkToAccount.exportInstructions" = "Na zdrojovom zariadení spustite export.";
+"linkToAccount.exportInstructionsPath" = "Vyberte Účet → Nastavenia účtu → Prepojiť nové zariadenie.";
+"linkToAccount.scanQrCode" = "Keď budete pripravení, naskenujte QR kód.";
+"linkToAccount.enterProvidedCode" = "Keď budete pripravení, zadajte overovací kód.";
+"linkToAccount.accountLockedWithPassword" = "Účet je chránený heslom. Ak chcete pokračovať, zadajte heslo účtu.";
+"linkToAccount.exit" = "Odísť";
+"linkToAccount.shareMessage" = "Váš kód je: %@";
+"linkToAccount.alertTile" = "Chcete zastaviť prepájanie účtu?";
+"linkToAccount.alertMessage" = "Zastavením sa zruší operácia importu účtu.";
+
+// Import from Archive
+"importFromArchive.explanation" = "Importujte účet Jami z miestneho archívu.";
+"importFromArchive.passwordExplanation" = "Ak je účet chránený heslom, vyplňte prosím nasledujúce pole.";
+"importFromArchive.title" = "Importovať z archívu";
+"importFromArchive.buttonTitle" = "Dovoz";
+"importFromArchive.selectArchiveButton" = "Vyberte súbor archívu";
+
+// Link to Jami Account Management Server (JAMS) form
+"linkToAccountManager.signIn" = "Prihlásiť sa";
+"linkToAccountManager.title" = "Účet riadiaceho servera";
+"linkToAccountManager.accountManagerPlaceholder" = "URL servera na správu";
+"linkToAccountManager.accountManagerLabel" = "Zadajte URL servera na správu";
+"linkToAccountManager.jamsExplanation" = "Zadajte URL servera na správu";
+"linkToAccountManager.enterCredentials" = "Zadajte prihlasovacie údaje riadiaceho servera";
+
+// Alerts
+"alerts.accountCannotBeFoundTitle" = "Chyba účtu";
+"alerts.accountCannotBeFoundMessage" = "Nie je možné nájsť účet v sieti Jami. Uistite sa, že bol exportovaný v Jami z existujúceho zariadenia a že poskytnuté prihlasovacie údaje sú správne.";
+"alerts.accountAddedTitle" = "Účet pridaný";
+"alerts.accountNoNetworkTitle" = "Chyba siete";
+"alerts.accountNoNetworkMessage" = "Pri pridávaní účtu Jami do distribuovanej siete sa vyskytla chyba pripojenia. Skúste to znova. Ak problém pretrváva, kontaktujte správcu systému.";
+"alerts.accountDefaultErrorTitle" = "Chyba účtu";
+"alerts.accountDefaultErrorMessage" = "Pri vytváraní účtu sa vyskytla chyba.";
+"alerts.profileTakePhoto" = "Zhotoviť fotografiu";
+"alerts.profileUploadPhoto" = "Nahrať fotografiu";
+"alerts.accountLinkedTitle" = "Prepájanie účtu";
+"alerts.dbFailedTitle" = "Pri spúšťaní Jami sa vyskytla chyba";
+"alerts.dbFailedMessage" = "Zavrite a znovu otvorte aplikáciu";
+"alerts.confirmBlockContact" = "Chcete zablokovať tento kontakt? História konverzácie s týmto kontaktom bude tiež natrvalo odstránená.";
+"alerts.confirmDeleteConversation" = "Chcete natrvalo odstrániť túto konverzáciu?";
+"alerts.confirmLeaveConversation" = "Chcete opustiť túto konverzáciu?";
+"alerts.confirmRemoveOneToOneConversation" = "Chcete odstrániť túto konverzáciu? Existujúca história bude odstránená. Ak nemáte iné konverzácie s týmto kontaktom, môže sa začať nová konverzácia.";
+"alerts.confimRemoveContact" = "Chcete odstrániť tento kontakt? Existujúca história bude odstránená.";
+"alerts.confirmDeleteConversationFromContact" = "Chcete odstrániť konverzáciu s týmto kontaktom?";
+"alerts.confirmDeleteConversationTitle" = "Odstrániť konverzáciu";
+"alerts.noMediaPermissionsTitle" = "Nie sú udelené práva pre médiá";
+"alerts.noLibraryPermissionsTitle" = "Nie je povolený prístup ku knižnici fotografií";
+"alerts.noLocationPermissionsTitle" = "Prístup k lokalite nepovolený";
+"alerts.errorWrongCredentials" = "Pri pripájaní k riadiacemu serveru sa vyskytla chyba. Skúste to znova. Ak problém pretrváva, kontaktujte správcu systému.";
+"alerts.recordVideoMessage" = "Nahrať videosprávu";
+"alerts.recordAudioMessage" = "Nahrať audio správu";
+"alerts.uploadFile" = "Poslať súbor";
+"alerts.uploadPhoto" = "Otvorená galéria";
+"alerts.sendPhoto" = "Odoslať fotografiu";
+"alerts.locationServiceIsDisabled" = "Zapnite „Lokalizačné služby“, aby ste umožnili aplikácii „Jami“ určiť polohu zariadenia.";
+"alerts.locationSharing" = "Zdieľajte moju polohu";
+"alerts.alreadylocationSharing" = "Už zdieľanie polohy s týmto používateľom";
+"alerts.locationSharingDurationTitle" = "Ako dlho by malo byť spoločné umiestnenie?";
+"alerts.locationSharingDuration10min" = "10 min.";
+"alerts.locationSharingDuration1hour" = "1 hodina";
+"alerts.mapInformation" = "Informácie o mape";
+"alerts.openStreetMapCopyright" = "© prispievatelia OpenStreetMap";
+"alerts.openStreetMapCopyrightMoreInfo" = "Zistiť viac";
+
+// Actions
+"actions.deleteAction" = "Vymazať";
+"actions.backAction" = "Späť";
+"actions.doneAction" = "Hotovo";
+"actions.goToSettings" = "Prejdite do Nastavenia";
+"actions.stopLocationSharing" = "Ukončiť zdieľanie";
+
+// Calls
+"calls.ringing" = "Zvoní...";
+"calls.connecting" = "Pripájanie...";
+"calls.callFinished" = "Hovor bol ukončený";
+"calls.currentCallWith" = "Hovor s";
+"calls.maximize" = "Maximálne";
+"calls.minimize" = "Minimalizovať";
+"calls.startPictureInPicture" = "Start Picture in Picture";
+"calls.setModerator" = "Nastaviť moderátor";
+"calls.removeModerator" = "Odstaviť moderátor";
+"calls.muteAudio" = "Stlmiť mikrofón";
+"calls.unmuteAudio" = "Zrušiť stlmenie mikrofónu";
+"calls.raiseHand" = "Zdvihnite ruku";
+"calls.lowerHand" = "Dolná ruka";
+"calls.inThisCall" = "In this call (%@)";
+"calls.participantsInCall" = "%@ in call";
+"calls.peerRecording" = "Hlasové nahrávky";
+"calls.gridLayout" = "Grid view";
+"calls.calling" = "Calling…";
+"calls.callingParticipants" = "Calling (%@)";
+"calls.stopCalling" = "Stop calling %@";
+"calls.participantOptions" = "Options for %@";
+"calls.inviting" = "Inviting…";
+"calls.activeCallLabel" = "Prebieha hovor. Chcete sa pripojiť k hovoru? K hovoru sa môžete pripojiť aj neskôr z konverzácie.";
+"calls.activeCallInConversation" = "Je to hovor, chcete sa k nemu pripojiť?";
+"calls.acceptWithAudio" = "Prijať so zvukom";
+"calls.acceptWithVideo" = "Prijať s videom";
+
+// Account Page
+"accountPage.devicesListHeader" = "Zariadenia";
+"accountPage.settingsHeader" = "Nastavenia";
+"accountPage.notificationsHeader" = "Upozornenia";
+"accountPage.blockedContacts" = "Blokované kontakty";
+"accountPage.unblockContact" = "Odblokovať";
+"accountPage.proxyAddressAlert" = "Zadajte adresu proxy";
+"accountPage.noProxyExplanationLabel" = "Keď je proxy vypnuté, nie je možné prijímať upozornenia.";
+"accountPage.proxyPaceholder" = "Adresa proxy";
+"accountPage.useProxyList" = "Použiť zoznam proxy";
+"accountPage.proxyListURL" = "URL zoznamu proxy";
+"accountPage.proxyExplanation" = "Upozornenia sú smerované cez proxy. Môžete použiť predvolený server proxy, zadať vlastnú adresu servera proxy alebo poskytnúť adresu URL so zoznamom serverov proxy";
+"accountPage.proxyHeader" = "Proxy";
+"accountPage.currentProxy" = "Aktuálne proxy";
+"accountPage.enableNotifications" = "Umožniť oznámenie";
+"accountPage.proxyDisabledAlertTitle" = "Proxy server zakázaný";
+"accountPage.proxyDisabledAlertBody" = "Ak chcete dostávať upozornenia, povoľte prosím proxy.";
+"accountPage.removeDeviceTitle" = "Odstrániť zariadenie";
+"accountPage.revokeDeviceMessage" = "Chcete odstrániť toto zariadenie? Túto akciu nemožno vrátiť späť.";
+"accountPage.revokeDeviceButton" = "Odobrať";
+"accountPage.revokeDevicePlaceholder" = "Zadajte heslo k účtu";
+"accountPage.deviceRevoked" = "Odobratie zariadenia dokončené";
+"accountPage.deviceRevocationProgress" = "Odstraňuje sa…";
+"accountPage.deviceRevocationSuccess" = "Zariadenie odstránené";
+"accountPage.deviceRevocationTryAgain" = "Skúste znova";
+"accountPage.deviceRevocationWrongPassword" = "Nesprávne heslo";
+"accountPage.deviceRevocationUnknownDevice" = "Neznáme zariadenie";
+"accountPage.deviceRevocationError" = "Chyba odstraňovania zariadenia";
+"accountPage.linkDeviceTitle" = "Prepojiť ďalšie zariadenie";
+"accountPage.other" = "Iné";
+"accountPage.removeAccountMessage" = "Ak účet nebol zálohovaný alebo pridaný do iného zariadenia, účet a registrované používateľské meno budú NENÁVRATNE STRATENÉ.";
+"accountPage.inviteFriends" = "Pozvať priateľov";
+"accountPage.contactMeOnJamiTitle" = "Kontaktujte ma na Jami!";
+"accountPage.contactMeOnJamiContant" = "Kontaktujte ma pomocou „%s“ na distribuovanej komunikačnej platforme Jami: https://jami.net";
+"accountPage.passwordPlaceholder" = "Zadajte heslo k účtu";
+"accountPage.usernamePlaceholder" = "Zadajte želané používateľské meno";
+"accountPage.registerNameErrorMessage" = "Používateľské meno nie je dostupné.";
+"accountPage.usernameRegistering" = "Registruje sa";
+"accountPage.usernameRegisterAction" = "Registrovať";
+"accountPage.usernameRegistrationFailedTitle" = "Registrácia zlyhala";
+"accountPage.usernameRegistrationFailed" = "Skontrolujte heslo účtu.";
+"accountPage.createPassword" = "Nastaviť heslo";
+"accountPage.changePassword" = "Zmeniť heslo";
+"accountPage.currentPasswordPlaceholder" = "Vložte súčasný heslo";
+"accountPage.newPasswordPlaceholder" = "Vložte nový heslo";
+"accountPage.newPasswordConfirmPlaceholder" = "Potvrďte nový heslo";
+"accountPage.changePasswordError" = "Nesprávne heslo";
+"accountPage.enableBoothMode" = "Umožniť režim kabíny";
+"accountPage.disableBoothMode" = "Zmazať režim kabíny";
+"accountPage.disableBoothModeExplanation" = "Zadajte heslo účtu";
+"accountPage.boothModeExplanation" = "V režime kabíny nie je uložená historika konverzácií a funkcia Jami je obmedzená výstupnými hovormi.";
+"accountPage.noBoothMode" = "Ak chcete povoliť režim kabíny, najprv chráňte účet heslom.";
+"accountPage.boothModeAlertMessage" = "Po zapnutí režimu kabíny budú všetky konverzácie odstránené.";
+"accountPage.peerDiscovery" = "Povoliť lokálne vyhľadávanie peerov";
+"accountPage.peerDiscoveryExplanation" = "Pripojiť k iným DHT uzlom na rovnakej lokálnej sieti";
+"accountPage.autoRegistration" = "Autoregistrácia po uplynutí platnosti";
+"accountPage.connectivityHeader" = "Pripojenie";
+"accountPage.turnEnabled" = "Aktivujte TURN";
+"accountPage.turnServer" = "TURN adresa";
+"accountPage.turnUsername" = "TURN používateľské meno";
+"accountPage.turnPassword" = "TURN heslo";
+"accountPage.turnRealm" = "TURN realm";
+"accountPage.upnpEnabled" = "Používať UPnP";
+"accountPage.stunEnabled" = "Použiť STUN";
+"accountPage.stunServer" = "STUN adresa";
+"accountPage.publicAddressHeader" = "Verejná adresa";
+"accountPage.allowIPAutoRewrite" = "Povoliť automatické prepisovanie IP";
+"accountPage.publishedSameAsLocal" = "Publikovaný rovnaký ako miestny";
+"accountPage.publishedAddress" = "Adresa";
+"accountPage.publishedPort" = "Port";
+"accountPage.security" = "Bezpečnosť";
+"accountPage.enableSRTP" = "Umožniť výmenu SDES kľúčov";
+"accountPage.encryptNegotiation" = "Dohodnutie parametrov šifrovania (TLS)";
+"accountPage.registerNameExplanation" = "Zaregistrujte si používateľské meno, aby vás ostatní mohli ľahšie nájsť a kontaktovať na Jami.";
+"accountPage.profileHeader" = "Profil";
+"accountPage.profileNameNotSelected" = "Meno nie je vybraté";
+"accountPage.accountHeader" = "Účet";
+"accountPage.profileName" = "Profilové meno";
+"accountPage.profileNamePlaceholder" = "Zadajte používateľské meno";
+"accountPage.editProfile" = "Upraviť profil";
+"accountPage.manageAccount" = "Spravovať účet";
+"accountPage.encryptAccount" = "Heslo";
+"accountPage.passwordExplanation" = "Váš účet Jami je registrovaný iba na tomto zariadení ako archív obsahujúci kľúče vášho účtu. Prístup k tomuto archívu môže byť chránený heslom.";
+"accountPage.passwordsDoNotMatch" = "Heslá sa nezhodujú.";
+"accountPage.passwordCreated" = "Heslo nastavené";
+"accountPage.passwordUpdated" = "Heslo aktualizované";
+"accountPage.linkedDevices" = "Prepojené zariadenia";
+"accountPage.unlink" = "Odpojiť";
+"accountPage.generatingPin" = "Generuje sa PIN kód…";
+"accountPage.passwordForPin" = "Účet je chránený heslom. Zadajte heslo na vygenerovanie PIN kódu.";
+"accountPage.pinExplanationTitle" = "Na inom zariadení";
+"accountPage.pinExplanationMessage" = "Nainštalujte a spustite Jami. Vyberte „Importovať z iného zariadenia“ a naskenujte QR kód. Prípadne zadajte kód PIN manuálne.";
+"accountPage.pinError" = "Pri generovaní PIN kódu sa vyskytla chyba.";
+"accountPage.notificationTitle" = "Upozornenia";
+"accountPage.notificationError" = "Upozornenia pre Jami sú vypnuté. Ak chcete použiť túto funkciu, zapnite ich v nastaveniach zariadenia.";
+"accountPage.callsFromUnknownContacts" = "Povoliť hovory od neznámych kontaktov.";
+"accountPage.accountSettingsExplanation" = "Tieto nastavenia sa budú vzťahovať iba na tento účet.";
+"accountPage.appSettings" = "Nastavenia aplikácie";
+"accountPage.appSettingsExplanation" = "Tieto nastavenia sa budú vzťahovať na celú aplikáciu.";
+"accountPage.connectivityAndConfiguration" = "Konektivita a konfigurácie";
+"accountPage.sipExpirationTime" = "Čas uplynutia platnosti registrácie (sekundy)";
+"accountPage.tlsVerifyServerCertificates" = "Overenie certifikátov TLS serverov";
+"accountPage.tlsVerifyClientCertificates" = "Overte certifikáty TLS klienta";
+"accountPage.tlsRequireTlsCertificate" = "Vyžadovať certifikáty pre prichádzajúce TLS pripojenia";
+"accountPage.tlsDisableSecureDlgCheck" = "Znechytávajte zabezpečený dialógový overenie pre prichádzajúce údaje TLS";
+"accountPage.editSipExpirationTime" = "Čas expirácie";
+"accountPage.selectSipExpirationTime" = "Nastavte čas (v sekundách) do vypršania platnosti registrácie";
+"accountPage.invalidSipExpirationTime" = "Zadajte hodnotu od 60 do 604800 sekúnd";
+"accountPage.invalidPort" = "Zadajte hodnotu od 0 do 65535";
+"accountPage.invalidAddress" = "Zadajte platnú adresu";
+"accountPage.thisDevice" = "Toto zariadenie";
+"accountPage.otherDevices" = "Ostatné prepojené zariadenia";
+"accountPage.accountIdentity" = "Identita účtu";
+"accountPage.bootstrap" = "Bootstrap";
+"accountPage.dhtConfiguration" = "Konfigurácia OpenDHT";
+"accountPage.nameServer" = "Menný server";
+"accountPage.chats" = "Chaty";
+"accountPage.typingIndicator" = "Indikátor typu";
+"accountPage.typingIndicatorExplanation" = "Indikovať, keď sa píšu správy.";
+
+// Backup Account
+"backupAccount.explanation" = "Tento účet Jami existuje iba na tomto zariadení. Ak sa toto zariadenie stratí alebo sa aplikácia odinštaluje, účet sa stratí. Odporúča sa vytvoriť zálohu tohto účtu.";
+"backupAccount.title" = "Zálohovať účet";
+"backupAccount.creating" = "Vytvára sa záloha";
+"backupAccount.archiveName" = "Vyberte názov archívu.";
+"backupAccount.archiveNamePlaceholder" = "Názov archívu";
+"backupAccount.passwordRequest" = "Zadajte heslo účtu.";
+"backupAccount.backupButton" = "Zálohovať";
+"backupAccount.documentPickerButton" = "Otvoriť umiestnenie zálohy";
+"backupAccount.exportSuccess" = "Záloha vytvorená";
+"backupAccount.errorWrongLocation" = "Vybraná cesta k súboru je neplatná. Vyberte iné umiestnenie.";
+"backupAccount.errorAccessDenied" = "Prístup k vybranému umiestneniu bol zamietnutý.";
+"backupAccount.errorFailed" = "Pri exporte účtu sa vyskytla chyba.";
+
+// Account
+"account.sipServer" = "Server";
+"account.port" = "Port";
+"account.proxyServer" = "Proxy";
+"account.createSipAccount" = "Nakonfigurovať SIP účet";
+"account.sipAccount" = "SIP Účet";
+"account.configure" = "Konfigurovať";
+"account.advancedFeatures" = "Pokročilé funkcie";
+"account.serverLabel" = "Zadajte adresu";
+"account.portLabel" = "Zadajte číslo portu";
+"account.accountStatus" = "Status účtu";
+"account.enableAccount" = "Povoliť účet";
+"account.statusOnline" = "Online";
+"account.statusOffline" = "Offline";
+"account.statusConnecting" = "Pripájanie";
+"account.statusUnknown" = "Neznámy";
+"account.statusConnectionerror" = "Chyba pripojenia";
+"account.needMigration" = "Účet vyžaduje migráciu.";
+"account.me" = "Ja";
+
+// Block List Page
+"blockListPage.noBlockedContacts" = "Žiadne blokované kontakty";
+
+// Link New Device
+"linkDevice.title" = "Prepojiť nové zariadenie";
+"linkDevice.networkError" = "Pri exporte účtu sa vyskytla chyba siete.";
+"linkDevice.errorWrongPassword" = "Pri prepájaní zariadenia došlo k chybe overenia. Skontrolujte prihlasovacie údaje a skúste to znova.";
+"linkDevice.errorNetwork" = "Pri prepájaní účtu došlo k chybe siete. Overte pripojenie a skúste to znova.";
+"linkDevice.errorTimeout" = "Operácia vypršala. Skúste to prosím znova.";
+"linkDevice.errorCode" = "Pri generovaní kódu sa vyskytla chyba. Skúste to znova.";
+"linkDevice.errorWrongData" = "Pri exporte účtu došlo k chybe. Skúste to prosím znova.";
+"linkDevice.initialInfo" = "Na novom zariadení spustite nový účet.";
+"linkDevice.infoAddAccount" = "Vyberte Pridať účet → Pripojiť z iného zariadenia.";
+"linkDevice.infoQRCode" = "Keď budete pripravení, naskenujte QR kód.";
+"linkDevice.infoCode" = "Keď budete pripravení, zadajte kód a ťuknite na Pripojiť.";
+"linkDevice.connecting" = "Pripája sa k vášmu novému zariadeniu…";
+"linkDevice.authenticationInfo" = "Na nasledujúcej IP adrese sa našlo nové zariadenie. Ste to vy? Ak chcete pokračovať v exporte účtu, ťuknite na Potvrdiť.";
+"linkDevice.newDeviceIP" = "IP adresa nového zariadenia: %1@";
+"linkDevice.code" = "kód";
+"linkDevice.wrongEntry" = "Nerozpoznaný identifikátor nového zariadenia. Postupujte prosím podľa pokynov vyššie.";
+"linkDevice.exportInProgress" = "Prebieha export účtu do nového zariadenia. Potvrďte import na novom zariadení.";
+"linkDevice.completed" = "Účet bol úspešne importovaný na nové zariadenie.";
+
+// Contact Page
+"contactPage.startAudioCall" = "Začať audio hovor";
+"contactPage.startVideoCall" = "Začať video hovor";
+"contactPage.send" = "Poslať";
+"contactPage.leaveConversation" = "Nechaj rozhovor";
+
+// DataTransfer
+"dataTransfer.readableStatusCreated" = "Inicializácia...";
+"dataTransfer.readableStatusError" = "Chyba";
+"dataTransfer.readableStatusAwaiting" = "Čaká sa...";
+"dataTransfer.readableStatusOngoing" = "Prenáša sa";
+"dataTransfer.readableStatusCanceled" = "Zrušené";
+"dataTransfer.sendingFailed" = "Pri odosielaní sa vyskytla chyba.";
+"dataTransfer.readableStatusSuccess" = "Dokončiť";
+"dataTransfer.recordInBackgroundWarning" = "Nahrávanie videa počas multitaskingu s viacerými aplikáciami môže viesť k nižšej kvalite videí. Ak chcete dosiahnuť najlepšie výsledky, nahrávajte, keď nevykonávate multitasking";
+
+// Notifications
+"notifications.missedCall" = "Zmeškaný hovor";
+"notifications.newFile" = "Nový súbor";
+"notifications.locationSharingStarted" = "Začalo sa zdieľanie miest";
+"notifications.locationSharingStopped" = "Príchodné zdieľanie lokality sa zastavilo";
+"dataTransfer.readableStatusDecline" = "Odmietnuť";
+"dataTransfer.readableStatusAccept" = "Prijať";
+"dataTransfer.infoMessage" = "Ťuknutím spustíte nahrávanie";
+"dataTransfer.sendMessage" = "Poslať";
+
+
+// Generated Message
+"generatedMessage.contactAdded" = "Bola prijatá pozvánka";
+"generatedMessage.swarmCreated" = "Konverzácia vytvorená";
+"generatedMessage.invitationReceived" = "%@ bol(a) pozvaný(á) do konverzácie.";
+"generatedMessage.invitationAccepted" = "%@ sa pripojil(a) ku konverzácii.";
+"generatedMessage.youJoined" = "Pripojili ste sa do konverzácie.";
+"generatedMessage.contactBlocked" = "%@ bol(a) zablokovaný(á) v konverzácii.";
+"generatedMessage.contactUnblocked" = "%@ bol(a) odblokovaný(á) v konverzácii.";
+"generatedMessage.outgoingCall" = "Odchádzajúci hovor";
+"generatedMessage.missedOutgoingCall" = "Zmeškaný odchádzajúci hovory";
+"generatedMessage.missedIncomingCall" = "Zmeškaný príchodzí hovor";
+"generatedMessage.liveLocationSharing" = "Živo zdieľanie polohy";
+"generatedMessage.contactLeftConversation" = "%@ opustil(a) konverzáciu.";
+"generatedMessage.nonSwarmInvitationReceived" = "Poslali ste pozvánku.";
+"generatedMessage.nonSwarmInvitationAccepted" = "Vaša pozvánka bola prijatá.";
+
+// General Settings
+"generalSettings.videoSettings" = "Nastavenia videa";
+"generalSettings.videoAcceleration" = "Povoliť akceleráciu videa";
+"generalSettings.fileTransfer" = "Prenos súborov";
+"generalSettings.locationSharing" = "Obsadba miest";
+"generalSettings.automaticAcceptIncomingFiles" = "Automaticky prijať prichádzajúce súbory";
+"generalSettings.acceptTransferLimit" = "Maximum automatic download size";
+"generalSettings.acceptTransferLimitDescription" = "(MB, 0 = neobmedzené)";
+"generalSettings.limitLocationSharingDuration" = "Obmedzenie trvania zdieľania umiestnenia";
+"generalSettings.locationSharingDuration" = "Dĺžka trvania podielu pozícií";
+"generalSettings.donationCampaign" = "Darcovská kampaň";
+"generalSettings.enableDonationCampaign" = "Povoliť darcovskú kampaň";
+
+// Log View
+"logView.title" = "Diagnostika";
+"logView.description" = "Otvorené nastavenia diagnostického protokolu";
+"logView.startLogging" = "Spustiť zaznamenávanie";
+"logView.stopLogging" = "Prestaňte s vykladaním";
+"logView.saveError" = "Pri ukladaní súboru sa vyskytla chyba.";
+"logView.shareError" = "Pri zdieľaní súboru sa vyskytla chyba.";
+
+// Migrate Account
+"migrateAccount.title" = "Migrácia účtu";
+"migrateAccount.migrateButton" = "Migrovať účet";
+"migrateAccount.explanation" = "Vyžaduje sa migrácia účtu.";
+"migrateAccount.passwordExplanation" = "Ak chcete pokračovať v migrácii účtu, zadajte heslo účtu.";
+"migrateAccount.error" = "Pri migrácii účtu sa vyskytla chyba. Skúste to znova alebo účet odstráňte.";
+"migrateAccount.migrating" = "Migruje sa…";
+"migrateAccount.migrateAnother" = "Migrovať ďalší účet";
+
+// About Jami
+"aboutJami.declaration1" = "Jami, balík GNU, je softvér pre univerzálnu a distribuovanú komunikáciu typu peer-to-peer, ktorý rešpektuje slobodu a súkromie svojich používateľov. Navštíviť";
+"aboutJami.declaration2" = "Navštívte, aby ste sa dozvedeli viac";
+"aboutJami.noWarranty1" = "Tento program je dodávaný bez akejkoľvek záruky.";
+"aboutJami.noWarranty2" = "Podrobnosti nájdete vo verzii 3 alebo novšej.";
+"aboutJami.contribute" = "Prispejte";
+"aboutJami.feedback" = "Spätná väzba";
+"aboutJami.developers" = "Vývojári";
+"aboutJami.media" = "Médiá";
+"aboutJami.communityManagement" = "Správa komunity";
+"aboutJami.specialThanks" = "Špeciálne poďakovanie";
+"aboutJami.info" = "Toto je zoznam ľudí, ktorí venovali značné množstvo času s užitočnými výsledkami do Jami. Takíto prispievatelia, ktorí chcú byť pridaní do zoznamu, by nás mali kontaktovať.";
+"aboutJami.header" = "Chceli by sme poďakovať našim prispievateľom, ktorých úsilie počas mnohých rokov urobilo tento program tým, čím je.";
+
+// Accessibility
+"accessibility.close" = "Zavrieť";
+"accessibility.smartListSwitchAccounts" = "Prepnúť účet";
+"accessibility.smartListConnectedAs" = "Aktuálny účet je %@";
+"accessibility.smartListAddAccount" = "Pridať účet";
+"accessibility.aboutJamiTitle" = "O programe Jami";
+"accessibility.welcomeToJamiTitle" = "Vitajte v Jami";
+"accessibility.createAccountVerifyUsernamePrompt" = "Zadajte používateľské meno na overenie dostupnosti.";
+"accessibility.avatarExpandHint" = "Double-tap to enlarge the picture";
+"accessibility.avatarCollapseHint" = "Double-tap to shrink the picture";
+"accessibility.profilePicturePicker" = "Profilu";
+"accessibility.profilePicturePickerHint" = "Dvojitým ťuknutím odfotíte alebo vyberiete obrázok z knižnice";
+"accessibility.swarmPicturePicker" = "Obrázok skupiny";
+"accessibility.accountSummaryQrCode" = "QR kód";
+"accessibility.accountSummaryQrCodeHint" = "Dvojitým ťuknutím zobrazíte QR kód účtu";
+"accessibility.accountSummaryEditProfileHint" = "Dvojitým ťuknutím upravíte profil";
+"accessibility.accountSummaryEditSettingsButton" = "Nastavenia";
+"accessibility.conversationStartVoiceCall" = "Začať hlasový hovor s %@";
+"accessibility.conversationStartVideoCall" = "Začať videohovor s %@";
+"accessibility.conversationComposeMessage" = "Napísať správu";
+"accessibility.conversationShareMedia" = "Zdieľať médiá";
+"accessibility.conversationCameraHint" = "Dvojitým ťuknutím otvoríte fotoaparát";
+"accessibility.audioPlayerPlay" = "Spustiť";
+"accessibility.audioPlayerPause" = "Pozastaviť";
+"accessibility.conversationRowUnreadCount" = "%@ neprečítaných správ.";
+"accessibility.conversationRowBlocked" = "Konverzácia zablokovaná";
+"accessibility.conversationRowSyncing" = "Prebieha synchronizácia";
+"accessibility.conversationRowLastMessage" = "Posledná správa o %@";
+"accessibility.userPresenceOnline" = "Online";
+"accessibility.userPresenceAvailable" = "Dostupné";
+"accessibility.pendingRequestsRowPlural" = "Prijaté pozvánky: %@ čakajúcich pozvánok";
+"accessibility.pendingRequestsRowSingular" = "Prijatá pozvánka: %@ čakajúca pozvánka";
+"accessibility.pendingRequestsRowHint" = "Dvojitým ťuknutím skontrolujete a odpoviete na prijaté pozvánky";
+"accessibility.pendingRequestsListBlockUser" = "Zablokovať odosielateľa pozvánky";
+"accessibility.pendingRequestsListRejectInvitation" = "Odmietnuť pozvánku";
+"accessibility.pendingRequestsListAcceptInvitation" = "Prijať pozvánku";
+"accessibility.messageBubbleDeleted" = "Správa odstránená";
+"accessibility.messageBubbleEdited" = "Vytvorené";
+"accessibility.messageBubbleRead" = "Prečítané";
+"accessibility.messageBubbleUnread" = "Neprečítané";
+"accessibility.textNotAvailable" = "Na %@ bola prijatá prázdna textová správa. Možno nebola odoslaná správne.";
+"accessibility.fileTransferNoName" = "Súbor prijatý %@, názov nie je k dispozícii";
+"accessibility.inReply" = "V odpovedi na správu";
+"accessibility.text.receivedOn" = "%1@, správa prijatá %2@";
+"accessibility.text.sentOn" = "%1@, správa odoslaná %2@";
+"accessibility.fileTransfer.receivedOn" = "Súbor: %1@, prijatý %2@";
+"accessibility.fileTransfer.sentOn" = "Súbor: %1@, odoslaný %2@";
+"accessibility.call.lasted" = "Trvalo %@";
+"accessibility.calls.default.toggleAudio" = "Stlmiť mikrofón";
+"accessibility.calls.default.toggleVideo" = "Spustiť kameru";
+"accessibility.calls.default.pauseCall" = "Závok na pauzu";
+"accessibility.calls.default.endCall" = "Ukončiť hovor";
+"accessibility.calls.default.addParticipant" = "Pridať účastníka";
+"accessibility.calls.default.switchCamera" = "Prepnúť kameru";
+"accessibility.calls.default.toggleSpeaker" = "Zapnúť reproduktor";
+"accessibility.calls.default.openConversation" = "Otvoriť konverzáciu";
+"accessibility.calls.default.showDialpad" = "Zobraziť číselník";
+"accessibility.calls.default.raiseHand" = "Zdvihnite ruku";
+
+"accessibility.calls.alter.toggleAudio" = "Zrušiť stlmenie mikrofónu";
+"accessibility.calls.alter.toggleVideo" = "Zastavte kameru";
+"accessibility.calls.alter.pauseCall" = "Prepracovať hovor";
+"accessibility.calls.alter.endCall" = "Ukončiť hovor";
+"accessibility.calls.alter.addParticipant" = "Pridať účastníka";
+"accessibility.calls.alter.switchCamera" = "Prepnúť kameru";
+"accessibility.calls.alter.toggleSpeaker" = "Vypnúť reproduktor";
+"accessibility.calls.alter.openConversation" = "Otvoriť konverzáciu";
+"accessibility.calls.alter.showDialpad" = "Zobraziť číselník";
+"accessibility.calls.alter.raiseHand" = "Dolná ruka";
+"accessibility.conference.minimize" = "Minimalizovať";
+"accessibility.conference.maximize" = "Maximálne";
+"accessibility.conference.setModerator" = "Nastaviť moderátor";
+"accessibility.conference.unsetModerator" = "Odstaviť moderátor";
+"accessibility.conference.muteAudio" = "Stlmiť zvuk";
+"accessibility.conference.unmuteAudio" = "Nevymazaný zvuk";
+"accessibility.conference.endCall" = "Ukončiť hovor";
+"accessibility.conference.lowerHand" = "Dolná ruka";
+"accessibility.conference.showParticipants" = "Show participants";
+"accessibility.conference.showFullVideo" = "Show full video";
+"accessibility.conference.cropVideo" = "Crop video";
+"accessibility.conference.localPreview" = "Your video";
+"accessibility.conference.hideLocalPreview" = "Hide your video";
+"accessibility.conference.showLocalPreview" = "Show your video";
+"accessibility.conference.speaking" = "Speaking";
+"accessibility.conference.handRaised" = "Roko zvednuté";
+"accessibility.conference.moderator" = "Moderátor";
+"accessibility.conference.recording" = "Hlasové nahrávky";
+"accessibility.conference.microphoneMuted" = "Microphone muted";
+"accessibility.conference.cameraOff" = "Camera off";
+"accessibility.account.tokenQRcode" = "QR kód tokenu";
+
+// Swarm Colors
+"swarmColors.vibrantPink" = "Žiarivá ružová";
+"swarmColors.purple" = "Fialová";
+"swarmColors.violet" = "Fialková";
+"swarmColors.indigoBlue" = "Indigová modrá";
+"swarmColors.skyBlue" = "Nebovomodrá";
+"swarmColors.cyan" = "Azúrová";
+"swarmColors.teal" = "Modrozelená";
+"swarmColors.green" = "Zelená";
+"swarmColors.limeGreen" = "Limetkovozelená";
+"swarmColors.mediumGray" = "Stredne sivá";
+"swarmColors.yellowGreen" = "Žltozelená";
+"swarmColors.amber" = "Jantárová";
+"swarmColors.brightOrange" = "Jasná oranžová";
+"swarmColors.brown" = "Hnedá";
+"swarmColors.steelBlue" = "Oceľovomodrá";
+
+// Share extension
+"shareExtension.noAccount.title" = "Účet sa nenašiel";
+"shareExtension.noAccount.description" = "Ak chcete pokračovať, vytvorte účet v hlavnej aplikácii.";
+"shareExtension.unsupportedType.title" = "Nepodporovaný obsah";
+"shareExtension.unsupportedType.description" = "Zdieľanie vybraného obsahu momentálne nie je podporované.";
+"shareExtension.sending" = "Odosiela sa…";
+"shareExtension.noSearchResults" = "Vášmu vyhľadávaniu nezodpovedajú žiadne konverzácie";
+"shareExtension.tryDifferentFilter" = "Skúste iný filter";
+"shareExtension.sendToConversation" = "Odoslať do %d konverzácie";
+"shareExtension.sendToConversationsPlural" = "Odoslať do %d konverzácií";
+"shareExtension.selectAccountTitle" = "Vybrať účet";
+"shareExtension.searchConversations" = "Hľadať konverzácie";
+"shareExtension.accessibilitySelectConversation" = "Dvojitým ťuknutím vyberiete túto konverzáciu";
+"shareExtension.accessibilitySelectedAccount" = "Vybraný účet: %@. Dvojitým ťuknutím zmeníte účet.";
+"shareExtension.accessibilitySendButton" = "Dvojitým ťuknutím odošlete do vybraných konverzácií";
+"shareExtension.accessibilitySelectAccount" = "Dvojitým ťuknutím vyberiete tento účet";
+
+// Peer Services
+"peerServices.title" = "Zdieľané služby";
+"peerServices.refresh" = "Obnoviť služby";
+"peerServices.empty" = "Nie sú k dispozícii žiadne zdieľané služby";
+"peerServices.errorOffline" = "Kontakt je offline";
+"peerServices.errorUnreachable" = "Kontakt je nedosiahnuteľný";
+"peerServices.errorTimeout" = "Žiadosti vypršal časový limit";
+"peerServices.errorUnknown" = "Nepodarilo sa načítať služby";
+"peerServices.done" = "Hotovo";
+"peerServices.notSupported" = "Nepodporované";
+"peerServices.open" = "Otvoriť";
+
+// Collaborative documents
+"collab.documents" = "Dokumenty";
+"collab.menu" = "Document actions";
+"collab.newDocument" = "New document";
+"collab.untitled" = "Untitled document";
+"collab.documentNameHint" = "Document name";
+"collab.create" = "Vytvoriť";
+"collab.rename" = "Rename";
+"collab.openError" = "This document could not be opened.";
+"collab.noDocuments" = "No document has been written in this conversation yet.";
+"collab.createdBy" = "Created by %@";
+"collab.editingAlone" = "Only you are editing";
+"collab.editingOthers" = "%d other people are editing";
+"collab.editingOneOther" = "1 other person is editing";
+"collab.history" = "Version history";
+"collab.noHistory" = "This document has no saved version yet.";
+"collab.versionLeave" = "Back to the current version";
+"collab.versionShown" = "Version of %@";
+"collab.versionRestore" = "Restore";
+"collab.versionRestored" = "The document was restored to this version.";
+"collab.versionUnchanged" = "This version is the document you already have.";
+"collab.versionRestoreError" = "This version could not be restored.";
+"collab.versionBy" = "%1$@ — %2$@";
+"collab.versionDeltas" = "%1$@ — %2$@, %3$d change(s)";
+"collab.linkTitle" = "Prepojiť";
+"collab.linkHint" = "Adresa";
+"collab.linkAdd" = "Pridať";
+"collab.linkRemove" = "Odstrániť";
+"collab.exportPdf" = "Export to PDF";
+"collab.export" = "Export a local copy";
+"collab.exportHtml" = "Export to HTML";
+"collab.exportMarkdown" = "Export to Markdown";
+"collab.exportText" = "Export to plain text";
+"collab.exportMissingImages" = "%d picture(s) in this document have not arrived yet, and will be left out of the exported file.";
+"collab.exportAnyway" = "Export anyway";
+"collab.exportError" = "This document could not be exported.";
+"collab.imageError" = "This image could not be added.";
+"collab.imageTooLarge" = "This image is too large to be added to a document.";
+"collab.sendError" = "Your changes could not be sent.";
+"collab.editableDocument" = "Editable document";
+"collab.createError" = "This document could not be created.";
+"collab.bold" = "Tučné";
+"collab.italic" = "Kurzíva";
+"collab.underline" = "Underline";
+"collab.strikethrough" = "Prečiarknuté";
+"collab.heading" = "Heading %d";
+"collab.bulletList" = "Bulleted list";
+"collab.orderedList" = "Numbered list";
+"collab.alignLeft" = "Align left";
+"collab.alignCenter" = "Centrum";
+"collab.alignRight" = "Align right";
+"collab.alignJustify" = "Justify";
+"collab.insertImage" = "Insert image";
+"collab.clearFormat" = "Clear formatting";
+"collab.undo" = "O krok späť";
+"collab.redo" = "O krok vpred";
+"collab.remove" = "Odstrániť";
+"collab.open" = "Otvoriť";
+"collab.downloadAndOpen" = "Download and open";
+// Full labels shown inside the document-list row menu.
+"collab.removeLocallyMenu" = "Remove from this device";
+"collab.removeEverywhereMenu" = "Remove for everyone";
+// Short labels shown inside document-list swipe actions.
+"collab.removeLocallyAction" = "Offload";
+"collab.removeEverywhereAction" = "Odstrániť";
+"collab.removeTitle" = "Remove document";
+"collab.removeMessage" = "\"%@\" will be removed for every member of this conversation. This cannot be undone.";
+"collab.removeError" = "This document could not be removed.";
+"collab.removeLocallyTitle" = "Remove from this device";
+"collab.removeLocallyMessage" = "\"%@\" will be removed from this device only. The other members keep it, and opening it again downloads it back.";
+"collab.removeLocallyError" = "This document could not be removed from this device.";
+"collab.notDownloaded" = "Not downloaded";
+"collab.createdByNotDownloaded" = "Created by %@, not downloaded";
+"collab.documentRemoved" = "Document removed";
+"collab.documentRemovedMessage" = "\"%@\" was removed by its author.";
+"collab.documentRemovedLocally" = "Document removed from this device";
+"collab.documentRemovedLocallyMessage" = "\"%@\" is no longer on this device. Opening it again downloads it back.";
