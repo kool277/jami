@@ -1,6 +1,6 @@
 #!/bin/sh
-# Configure and build jami-client-qt (and jami-core through the daemon
-# symlink) with tests, as upstream CI does. Run inside the container,
+# Configure and build jami-client-qt (and jami-core from the jami-daemon
+# tree that run.sh mounts as daemon/) with tests, as upstream CI does. Run inside the container,
 # from /src/jami-client-qt.
 set -eu
 

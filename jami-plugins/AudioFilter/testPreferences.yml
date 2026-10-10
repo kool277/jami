@@ -1,5 +1,0 @@
-irFile: "rir_jack_lyons_lp2_96k.mp3"
-streamlist: "in"
-sample: "sample.mp3"
-output1: "processed.mp3"
-output2: "notprocessed.mp3"

@@ -1,8 +1,0 @@
-{
-    "id": "pluginId",
-    "name": "pluginName",
-    "description": "plugin description",
-    "version": "version",
-    "iconPath" : "icon.svg",
-    "backgroundPath" : "background.jpg"
-}

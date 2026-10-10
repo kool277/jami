@@ -1,6 +1,0 @@
-[gerrit]
-host=review.jami.net
-port=29420
-project=jami-plugins
-defaultremote=origin
-defaultbranch=master

@@ -1,9 +1,0 @@
-[
-    {
-        "type": "EditText",
-        "key": "textGlobalPreference",
-        "title": "{{text_translatable1}}",
-        "summary": "{{summary_translatable1}}",
-        "defaultValue": "{{default_translatable1}}"
-    }
-]

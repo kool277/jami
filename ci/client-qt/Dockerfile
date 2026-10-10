@@ -3,7 +3,7 @@
 # jami-client-qt/extras/build/docker/Dockerfile.client-qt-gnulinux and
 # Qt 6.12.0 from the Qt online repository via aqtinstall, because the
 # libqt-jami packages are still 6.10.x. The workspace is bind-mounted at
-# /src so that jami-client-qt/daemon -> ../jami-daemon resolves.
+# /src and jami-daemon/ at /src/jami-client-qt/daemon (see run.sh).
 ARG BASE=jami-daemon-build
 FROM ${BASE}
 

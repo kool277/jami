@@ -1,8 +1,0 @@
-{
-    "id" : "Segmentation",
-    "name": "Segmentation",
-    "description": "Segmentation run yolo model on video and show the Segmentation result",
-    "version": "1.0.0",
-    "iconPath" : "icon.svg",
-    "backgroundPath" : "background.jpg"
-}

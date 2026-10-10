@@ -1,3 +1,0 @@
-[submodule "daemon"]
-	path = daemon
-	url = https://review.jami.net/jami-daemon

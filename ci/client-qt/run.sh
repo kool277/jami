@@ -1,7 +1,9 @@
 #!/bin/sh
 # Run a command in the jami-client-qt build container. The whole workspace
-# is mounted at /src (jami-client-qt/daemon is a symlink to ../jami-daemon)
-# and /var/cache/jami holds the contrib tarballs and Rust crates.
+# is mounted at /src, and jami-daemon/ also at /src/jami-client-qt/daemon:
+# the client's daemon submodule stays uninitialized in this workspace, so
+# the client builds the one shared daemon tree and contrib. /var/cache/jami
+# holds the contrib tarballs and Rust crates.
 #   ci/client-qt/run.sh                         # = ci-build.sh
 #   ci/client-qt/run.sh sh /ci/ci-test.sh
 # DOCKER_RUN_ARGS adds options to docker run (word-split).
@@ -29,6 +31,7 @@ exec docker run --rm $tty \
     --shm-size=1g \
     -e HOME=/tmp/home -e TARBALLS=/var/cache/jami -e CARGO_HOME=/var/cache/jami/cargo \
     -e JOBS="${JOBS:-16}" \
-    -v "$ws:/src" -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
+    -v "$ws:/src" -v "$ws/jami-daemon:/src/jami-client-qt/daemon" \
+    -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
     ${DOCKER_RUN_ARGS:-} \
     -w /src/jami-client-qt "$image" "$@"

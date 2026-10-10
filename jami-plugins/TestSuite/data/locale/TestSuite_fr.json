@@ -1,9 +1,0 @@
-{
-    "text_translatable1": "text un en français",
-    "text_translatable2": "text deux en français",
-    "summary_translatable1": "summary un en français",
-    "summary_translatable2": "summary deux en français",
-    "default_translatable1": "default un en français",
-    "default_translatable2": "default deux en français",
-    "description": "TestSuite est un plugin pour les test."
-}

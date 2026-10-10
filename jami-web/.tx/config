@@ -1,9 +1,0 @@
-[main]
-host = https://www.transifex.com
-
-[o:savoirfairelinux:p:jami:r:jami-web]
-file_filter  = server/locale/<lang>/translation.json
-source_file  = server/locale/en/translation.json
-source_lang  = en
-type         = KEYVALUEJSON
-m_perc = 0

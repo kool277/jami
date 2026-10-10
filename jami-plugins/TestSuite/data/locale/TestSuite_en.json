@@ -1,9 +1,0 @@
-{
-    "text_translatable1": "text one in english",
-    "text_translatable2": "text two in english",
-    "summary_translatable1": "summary one in english",
-    "summary_translatable2": "summary two in english",
-    "default_translatable1": "default one in english",
-    "default_translatable2": "default two in english",
-    "description": "TestSuite is a empty process plugin conceived for use in the daemon unit tests."
-}

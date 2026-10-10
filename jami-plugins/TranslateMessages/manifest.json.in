@@ -1,8 +1,0 @@
-{
-    "id": "@ProjectName@",
-    "name": "{{name}}",
-    "description": "{{description_summary}}",
-    "version": "1.0.1",
-    "iconPath": "icon.svg",
-    "backgroundPath": "background.svg"
-}

@@ -1,9 +1,0 @@
-[
-    {
-        "type": "EditText",
-        "key": "textAccountPreference",
-        "title": "{{text_translatable2}}",
-        "summary": "{{summary_translatable2}}",
-        "defaultValue": "{{default_translatable2}}"
-    }
-]

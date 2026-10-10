@@ -1,6 +1,0 @@
-[gerrit]
-host=review.jami.net
-port=29420
-project=jami-nameservice
-defaultremote=origin
-defaultbranch=master

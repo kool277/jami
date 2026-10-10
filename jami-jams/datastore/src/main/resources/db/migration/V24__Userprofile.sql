@@ -1,1 +1,0 @@
-ALTER TABLE local_directory ADD COLUMN groupMemberships varchar(5000);

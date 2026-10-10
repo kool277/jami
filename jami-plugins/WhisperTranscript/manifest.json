@@ -1,8 +1,0 @@
-{
-    "id": "WhisperTranscript",
-    "name": "{{name}}",
-    "description": "{{description_summary}}",
-    "version": "1.0.1",
-    "iconPath": "icon.svg",
-    "backgroundPath": "background.jpg"
-}

@@ -1,3 +1,0 @@
-jami-plugins/WhisperTranscript/modelSRC/mModelDecoder.onnx filter=lfs diff=lfs merge=lfs -text
-jami-plugins/WhisperTranscript/modelSRC/mModelDecoder.ort filter=lfs diff=lfs merge=lfs -text
-jami-plugins/TensorflowSegmentation/modelsSRC/mModel-resnet50float.pb filter=lfs diff=lfs merge=lfs -text

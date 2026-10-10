@@ -1,7 +1,0 @@
-jami_wrapper.cpp
-binding.gyp
-build/
-dist/
-node_modules/
-*.tsbuildinfo
-npm/*/jamid.node

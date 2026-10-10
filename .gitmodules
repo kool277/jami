@@ -1,0 +1,27 @@
+[submodule "jami-daemon"]
+	path = jami-daemon
+	url = https://github.com/kool277/jami-daemon.git
+[submodule "jami-client-qt"]
+	path = jami-client-qt
+	url = https://github.com/kool277/jami-client-qt.git
+[submodule "jami-client-android"]
+	path = jami-client-android
+	url = https://github.com/kool277/jami-client-android.git
+[submodule "jami-client-ios"]
+	path = jami-client-ios
+	url = https://github.com/kool277/jami-client-ios.git
+[submodule "jami-jams"]
+	path = jami-jams
+	url = https://github.com/kool277/jami-jams.git
+[submodule "jami-web"]
+	path = jami-web
+	url = https://github.com/kool277/jami-web.git
+[submodule "dhtnet"]
+	path = dhtnet
+	url = https://github.com/kool277/dhtnet.git
+[submodule "jami-plugins"]
+	path = jami-plugins
+	url = https://review.jami.net/jami-plugins
+[submodule "jami-nameservice"]
+	path = jami-nameservice
+	url = https://review.jami.net/jami-nameservice
