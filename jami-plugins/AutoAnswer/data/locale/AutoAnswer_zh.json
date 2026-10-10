@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "機器人觸發器",
+        "trigger_summary": "機器人會回應的文字",
+        "bot_answer": "機器人回應",
+        "answer_summary": "機器人將會傳送的文字",
+        "default_trigger": "嗨",
+        "default_answer": "您好，我目前很忙，但將會儘速回覆您。",
+        "always_title": "自動啟用機器人",
+        "always_summary": "機器人將會對所有對話啟用。",
+        "name": "自動答覆",
+        "description_summary": "设置一个用特定文本应答的自动回复"
+}

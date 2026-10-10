@@ -1,0 +1,14 @@
+{
+    "irfile_title": "Risposta all'impulso",
+    "irfile_entries_1": "Genesis 6 Studio - Configurazione della batteria in sala dal vivo",
+    "irfile_entries_2": "Jack Lions Concert Hall - Università di York",
+    "irfile_entries_3": "St. Patrick’s Church - Patrington",
+    "streamlist_title": "Flusso audio",
+    "streamlist_summary": "Seleziona il flusso da filtrare",
+    "streamlist_entries_1": "Inviato",
+    "streamlist_entries_2": "Ricevuto",
+    "always_summary": "Attivare il filtro all'avvio di una chiamata",
+    "always_title": "Attiva automaticamente il filtro",
+    "name": "Filtro audio",
+    "description_summary": "Applica un filtro di riverbero al tuo video. Usa Jami per le sessioni di musica online e riproduci musica online."
+}

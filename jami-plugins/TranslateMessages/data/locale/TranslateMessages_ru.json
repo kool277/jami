@@ -1,0 +1,20 @@
+{
+    "name": "Переводчик сообщений",
+    "description_summary": "Автоматически переводите входящие и исходящие сообщения с помощью локальной офлайн-модели — никакие данные не покидают ваше устройство.",
+    "translate_incoming_title": "Переводить входящие сообщения",
+    "translate_incoming_summary": "Показывать перевод полученных сообщений",
+    "target_language_title": "Язык входящих сообщений",
+    "target_language_summary": "Язык для перевода полученных сообщений",
+    "translate_outgoing_title": "Переводить исходящие сообщения",
+    "translate_outgoing_summary": "Переводить сообщения перед отправкой, чтобы получатель получил их на своём языке",
+    "send_target_language_title": "Язык исходящих сообщений",
+    "send_target_language_summary": "Язык для перевода исходящих сообщений",
+    "account_translate_incoming_title": "Переводить входящие сообщения (переопределение для аккаунта)",
+    "account_translate_incoming_summary": "Переопределить перевод входящих сообщений для этого аккаунта",
+    "account_target_language_title": "Язык входящих сообщений (переопределение для аккаунта)",
+    "account_target_language_summary": "Переопределить язык входящих сообщений для этого аккаунта",
+    "account_translate_outgoing_title": "Переводить исходящие сообщения (переопределение для аккаунта)",
+    "account_translate_outgoing_summary": "Переопределить перевод исходящих сообщений для этого аккаунта",
+    "account_send_target_language_title": "Язык исходящих сообщений (переопределение для аккаунта)",
+    "account_send_target_language_summary": "Переопределить язык исходящих сообщений для этого аккаунта"
+}

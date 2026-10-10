@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Attivare il robot",
+        "trigger_summary": "Testo a cui risponderà il robot",
+        "bot_answer": "Risposta del robot",
+        "answer_summary": "Testo che invierà il robot",
+        "default_trigger": "Ciao",
+        "default_answer": "Ciao, non posso rispondere ora, ma ti risponderò il prima possibile.",
+        "always_title": "Attiva automaticamente il robot",
+        "always_summary": "Il robot sarà attivo per tutte le conversazioni.",
+        "name": "Risposta automatica",
+        "description_summary": "Configurare un robot che risponda automaticamente con un testo dato."
+}

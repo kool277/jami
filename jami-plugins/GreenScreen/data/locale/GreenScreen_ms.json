@@ -1,0 +1,15 @@
+{
+    "background_title": "പശ്ചാത്തല ചിത്രം",
+    "blur_title": "പശ്ചാത്തലം മങ്ങിയതാണു്",
+    "acceleration_title": "ഹാർഡ്വെയർ ആക്സിലറേഷൻ ഉപയോഗിക്കുക",
+    "acceleration_summary": "അനുയോജ്യമായ സന്ദർഭങ്ങളിൽ CUDA അല്ലെങ്കിൽ NNAPI ഉപയോഗിക്കുക",
+    "blurlevel_title": "മങ്ങിയ നില",
+    "streamslist_title": "വീഡിയോ സ്ട്രീം",
+    "streamslist_summary": "പശ്ചാത്തലം മറയ്ക്കുന്നതിന് സ്ട്രീം തിരഞ്ഞെടുക്കുക",
+    "streamslist_entries_1": "അയച്ചു",
+    "streamslist_entries_2": "ലഭിച്ച",
+    "ForegroundSegmentationAlways_title": "ഗ്രീൻ സ്ക്രീൻ യാന്ത്രികമായി സജീവമാക്കുക",
+    "ForegroundSegmentationAlways_summary": "ഒരു കോൾ തുടങ്ങുമ്പോള് പശ്ചാത്തലം മറയ്ക്കുക.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

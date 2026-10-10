@@ -1,0 +1,15 @@
+{
+    "background_title": "תמונה של רקע",
+    "blur_title": "רקע מטושטש",
+    "acceleration_title": "השתמשו בהאקסלרציה של חומרה",
+    "acceleration_summary": "השתמשו CUDA או NNAPI, אם זה מתאים",
+    "blurlevel_title": "רמת התמיסה",
+    "streamslist_title": "זרימת וידאו",
+    "streamslist_summary": "בחר את הזרם כדי להסתיר את ההשקע",
+    "streamslist_entries_1": "נשלח",
+    "streamslist_entries_2": "קיבלתי",
+    "ForegroundSegmentationAlways_title": "תפעיל באופן אוטומטי GreenScreen",
+    "ForegroundSegmentationAlways_summary": "הסתתר את הרקע כאשר שיחת טלפון מתחילה.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

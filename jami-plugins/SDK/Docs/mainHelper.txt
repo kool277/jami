@@ -1,0 +1,16 @@
+
+Create a main.cpp skeleton files: MAIN
+
+This option creates plugin's 'main.cpp' file. If this file already exists,
+it will be overwritten.
+The main file implement plugin's external loading function that Jami plugin
+system will call to initialize and register all functionalities for latter
+use.
+
+Since every functionality must be covered by the initialization function,
+every time a new functionality is added to the plugin, it also must be added
+to the initialization function. For that reason, this SDK is set to rewrite
+the main.cpp file every time you create a new functionality.
+
+For more technical information, please refer to:
+https://docs.jami.net/developer/jami-plugins.html .

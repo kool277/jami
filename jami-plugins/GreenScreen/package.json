@@ -1,0 +1,23 @@
+{
+    "name": "GreenScreen",
+    "version": "2.0.0",
+    "extractLibs": false,
+    "deps": [
+        "fmt",
+        "opencv",
+        "opendht"
+    ],
+    "defines": [
+        "NVIDIA=False",
+        "TESTPROCESS=False"
+    ],
+    "custom_scripts": {
+        "pre_build": [
+            "mkdir msvc"
+        ],
+        "build": [
+            "cmake --build ./msvc --config Release"
+        ],
+        "post_build": []
+    }
+}

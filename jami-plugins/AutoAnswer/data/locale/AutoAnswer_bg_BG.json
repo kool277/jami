@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Отприлчик на бота",
+        "trigger_summary": "Текст, на който Bot ще отговори",
+        "bot_answer": "Отговор на бота",
+        "answer_summary": "Текст, който ще изпрати Бот",
+        "default_trigger": "Здравейте.",
+        "default_answer": "Здравейте, в момента съм заета, но ще ви отговоря възможно най-скоро.",
+        "always_title": "Автоматично активиране на Bot",
+        "always_summary": "Бот ще бъде активен за всички разговори.",
+        "name": "Авт. отговор",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

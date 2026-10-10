@@ -1,0 +1,15 @@
+{
+    "background_title": "Obrázek pozadí",
+    "blur_title": "Rozmazat pozadí",
+    "acceleration_title": "Použití hardwarové akcelerace",
+    "acceleration_summary": "Použít CUDA nebo NNAPI tak, kde bude potřeba",
+    "blurlevel_title": "Stupeň rozmazání",
+    "streamslist_title": "Video stream",
+    "streamslist_summary": "Výběrem streamu skryjete pozadí",
+    "streamslist_entries_1": "Posláno",
+    "streamslist_entries_2": "Přijato",
+    "ForegroundSegmentationAlways_title": "Automaticky aktivovat GreenScreen",
+    "ForegroundSegmentationAlways_summary": "Skrýt pozadí při zahájení hovoru.",
+    "name": "Zelená obrazovka",
+    "description_summary": "Upravte pozadí během videohovoru nebo přidejte efekt rozostření."
+}

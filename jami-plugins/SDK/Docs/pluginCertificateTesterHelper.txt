@@ -1,0 +1,4 @@
+To execute this script, run the following command:
+   - pip install -r <certificate_requirements.txt>
+   - change the current directory to extra/tests
+   - PYTHONPATH="<absolute-path-to-certificate-module>" <path-to-TestSuite/PluginCertificateTester.py>

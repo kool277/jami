@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "বট ট্রিগার",
+        "trigger_summary": "টেক্সট যা বট সাড়া দেবে",
+        "bot_answer": "বট প্রতিক্রিয়া",
+        "answer_summary": "বার্তা যা বট পাঠাবে",
+        "default_trigger": "হ্যালো.",
+        "default_answer": "হ্যালো, আমি বর্তমানে ব্যস্ত কিন্তু যত তাড়াতাড়ি সম্ভব উত্তর দেব।",
+        "always_title": "স্বয়ংক্রিয়ভাবে সক্রিয় করুন",
+        "always_summary": "সব কথোপকথনের জন্য বট সক্রিয় থাকবে।",
+        "name": "স্বয়ংক্রিয় উত্তর",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

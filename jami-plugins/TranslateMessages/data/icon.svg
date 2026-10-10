@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="300" viewBox="0 0 300 300" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="25%" y1="10%" x2="75%" y2="90%">
+      <stop offset="0%" stop-color="#20A5A1"/>
+      <stop offset="100%" stop-color="#28F4F9"/>
+    </linearGradient>
+    <linearGradient id="bubbleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#e0fafa" stop-opacity="0.95"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="150" cy="150" r="145" fill="url(#bgGrad)"/>
+
+  <!-- Left speech bubble (source language) -->
+  <path d="M 65,80 Q 65,58 87,58 L 175,58 Q 197,58 197,80 L 197,130 Q 197,152 175,152 L 110,152 L 90,175 L 95,152 L 87,152 Q 65,152 65,130 Z"
+        fill="url(#bubbleGrad)" opacity="0.92"/>
+
+  <!-- Right speech bubble (target language) -->
+  <path d="M 103,148 Q 103,126 125,126 L 213,126 Q 235,126 235,148 L 235,198 Q 235,220 213,220 L 205,220 L 210,243 L 190,220 L 125,220 Q 103,220 103,198 Z"
+        fill="url(#bubbleGrad)" opacity="0.92"/>
+
+  <!-- "A" in left bubble -->
+  <text x="112" y="120" font-family="Georgia, serif" font-size="56" font-weight="bold"
+        fill="#1a8c88" text-anchor="middle" dominant-baseline="auto">A</text>
+
+  <!-- "文" in right bubble -->
+  <text x="188" y="196" font-family="'Noto Sans CJK SC', 'Source Han Sans', sans-serif" font-size="50" font-weight="bold"
+        fill="#1a8c88" text-anchor="middle" dominant-baseline="auto">あ</text>
+
+</svg>

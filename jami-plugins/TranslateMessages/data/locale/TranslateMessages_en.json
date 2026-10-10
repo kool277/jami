@@ -1,0 +1,20 @@
+{
+    "name": "Translate Messages",
+    "description_summary": "Automatically translate incoming and outgoing messages using a local offline model — no data leaves your device.",
+    "translate_incoming_title": "Translate incoming messages",
+    "translate_incoming_summary": "Show a translation of messages you receive",
+    "target_language_title": "Language of incoming messages",
+    "target_language_summary": "Language to translate received messages into",
+    "translate_outgoing_title": "Translate outgoing messages",
+    "translate_outgoing_summary": "Translate your messages before sending so the peer receives them in their language",
+    "send_target_language_title": "Language of outgoing messages",
+    "send_target_language_summary": "Language to translate your outgoing messages into",
+    "account_translate_incoming_title": "Translate incoming messages (account override)",
+    "account_translate_incoming_summary": "Override incoming message translation for this account",
+    "account_target_language_title": "Language of incoming messages (account override)",
+    "account_target_language_summary": "Override the incoming language for this account",
+    "account_translate_outgoing_title": "Translate outgoing messages (account override)",
+    "account_translate_outgoing_summary": "Override outgoing message translation for this account",
+    "account_send_target_language_title": "Language of outgoing messages (account override)",
+    "account_send_target_language_summary": "Override the outgoing language for this account"
+}

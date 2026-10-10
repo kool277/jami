@@ -1,0 +1,20 @@
+{
+    "name": "Traduzione messaggi",
+    "description_summary": "Traduci automaticamente i messaggi in entrata e in uscita con un modello locale offline — nessun dato lascia il tuo dispositivo.",
+    "translate_incoming_title": "Traduci messaggi in entrata",
+    "translate_incoming_summary": "Mostra una traduzione dei messaggi che ricevi",
+    "target_language_title": "Lingua dei messaggi in entrata",
+    "target_language_summary": "Lingua in cui tradurre i messaggi ricevuti",
+    "translate_outgoing_title": "Traduci messaggi in uscita",
+    "translate_outgoing_summary": "Traduci i tuoi messaggi prima di inviarli affinché il destinatario li riceva nella propria lingua",
+    "send_target_language_title": "Lingua dei messaggi in uscita",
+    "send_target_language_summary": "Lingua in cui tradurre i messaggi in uscita",
+    "account_translate_incoming_title": "Traduci messaggi in entrata (sostituzione per account)",
+    "account_translate_incoming_summary": "Sostituisci la traduzione dei messaggi in entrata per questo account",
+    "account_target_language_title": "Lingua dei messaggi in entrata (sostituzione per account)",
+    "account_target_language_summary": "Sostituisci la lingua di entrata per questo account",
+    "account_translate_outgoing_title": "Traduci messaggi in uscita (sostituzione per account)",
+    "account_translate_outgoing_summary": "Sostituisci la traduzione dei messaggi in uscita per questo account",
+    "account_send_target_language_title": "Lingua dei messaggi in uscita (sostituzione per account)",
+    "account_send_target_language_summary": "Sostituisci la lingua di uscita per questo account"
+}

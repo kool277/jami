@@ -1,0 +1,14 @@
+{
+    "irfile_title": "Răspuns la impuls",
+    "irfile_entries_1": "Genesis 6 Studio - Set de tobe în cameră în direct",
+    "irfile_entries_2": "Jack Lions Concert Hall - University of York",
+    "irfile_entries_3": "St. Patrick’s Church - Patrington",
+    "streamlist_title": "Flux audio",
+    "streamlist_summary": "Alege fluxul de filtrat",
+    "streamlist_entries_1": "Trimis",
+    "streamlist_entries_2": "Primit",
+    "always_summary": "Activează filtrul la începutul apelului",
+    "always_title": "Activează automat filtrul",
+    "name": "Filtru audio",
+    "description_summary": "Aplică un filtru de reverberație la video. Folosește Jami pentru sesiuni de muzică prin internet și difuzează muzică."
+}

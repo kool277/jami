@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Çka vë në punë Robotin",
+        "trigger_summary": "Tekst të cilit do t’i përgjigjet Roboti",
+        "bot_answer": "Përgjigje roboti",
+        "answer_summary": "Tekst që do të dërgojë Roboti",
+        "default_trigger": "Njatjeta",
+        "default_answer": "Tungjatjeta, aktualisht jam i zënë, por do t’ju përgjigjem sa më shpejt të jetë e mundur.",
+        "always_title": "Aktivizoje automatikisht Robotin",
+        "always_summary": "Roboti do të jetë aktiv për krejt bisedat",
+        "name": "Vetëpërgjigje",
+        "description_summary": "Ujdisni një robot që i përgjigjet automatikisht një teksti të dhënë."
+}

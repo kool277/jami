@@ -1,0 +1,16 @@
+[{
+    "type": "List",
+    "key": "model",
+    "title": "{{model_title}}",
+    "summary": "{{model_summary}}",
+    "defaultValue": "base",
+    "scope": "plugin",
+    "entryValues": [
+        "tiny",
+        "base"
+    ],
+    "entries": [
+        "{{tiny}}",
+        "{{base}}"
+    ]
+}]

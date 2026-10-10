@@ -1,0 +1,15 @@
+{
+    "background_title": "背景画像",
+    "blur_title": "模糊な背景",
+    "acceleration_title": "ハードウェア加速を使用",
+    "acceleration_summary": "適用される場合 CUDA または NNAPI を使用する",
+    "blurlevel_title": "ぼかしレベル",
+    "streamslist_title": "ビデオストリーム",
+    "streamslist_summary": "背景を隠すためにストリームを選択",
+    "streamslist_entries_1": "送信",
+    "streamslist_entries_2": "受信",
+    "ForegroundSegmentationAlways_title": "自動でグリーンスクリーンを起動する",
+    "ForegroundSegmentationAlways_summary": "呼び出しが始まる時,背景を隠す.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

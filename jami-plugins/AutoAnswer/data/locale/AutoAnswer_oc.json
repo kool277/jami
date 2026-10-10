@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Trigor bot",
+        "trigger_summary": "Tèxte que Bot respondrà",
+        "bot_answer": "Respons del bot",
+        "answer_summary": "Tèxte que Bot enviarà",
+        "default_trigger": "Bonjour, lo",
+        "default_answer": "Bonjour, ara soi ocupat mas vos respondrai lo mai lèu possible.",
+        "always_title": "Activar automaticament Bot",
+        "always_summary": "Bot serà actiu per totas las conversas.",
+        "name": "Responsa automatica",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

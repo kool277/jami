@@ -1,0 +1,34 @@
+{
+    "name": "ffmpeg",
+    "version": "6.0.1",
+    "url": "https://ffmpeg.org/releases/ffmpeg-__VERSION__.tar.xz",
+    "deps": [
+        "mp3lame",
+        "vpx",
+        "x264",
+        "opus",
+        "ffnvcodec",
+        "media-sdk"
+    ],
+    "patches": [
+        "change-RTCP-ratio.patch",
+        "rtp_ext_abs_send_time.patch",
+        "libopusenc-reload-packet-loss-at-encode.patch",
+        "libopusdec-enable-FEC.patch",
+        "windows-configure.patch",
+        "windows-configure-ffnvcodec.patch",
+        "windows-configure-mp3lame.patch"
+    ],
+    "win_patches": [
+    ],
+    "project_paths": [],
+    "with_env" : "",
+    "custom_scripts": {
+        "pre_build": [],
+        "build": [
+            "call \"%CONTRIB_SRC_DIR%\\ffmpeg\\build_ffmpeg.bat\"",
+            "cd Build/win32/x64/lib & ren *.a *.lib"
+        ],
+        "post_build": []
+    }
+}

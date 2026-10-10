@@ -1,0 +1,8 @@
+{
+    "id": "Example",
+    "name": "{{name}}",
+    "description": "{{description_summary}}",
+    "version": "1.0.0",
+    "iconPath": "icon.svg",
+    "backgroundPath": "background.jpg"
+}

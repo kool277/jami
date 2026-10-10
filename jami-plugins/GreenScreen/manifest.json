@@ -1,0 +1,8 @@
+{
+    "id": "GreenScreen",
+    "name": "{{name}}",
+    "description": "{{description_summary}}",
+    "version": "2.0.0",
+    "iconPath": "icon.svg",
+    "backgroundPath": "background.jpg"
+}

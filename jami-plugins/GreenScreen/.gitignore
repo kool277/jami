@@ -1,0 +1,5 @@
+/GreenScreen
+/libonnxruntime.so*
+*.mp4
+GreenScreen*
+/libonnxruntime.dylib

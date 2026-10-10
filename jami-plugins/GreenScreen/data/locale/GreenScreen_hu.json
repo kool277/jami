@@ -1,0 +1,15 @@
+{
+    "background_title": "Háttérkép",
+    "blur_title": "Háttér életlenítése",
+    "acceleration_title": "Hardveres gyorsítás használata",
+    "acceleration_summary": "CUDA vagy NNAPI használata megfelelő esetben",
+    "blurlevel_title": "Életlenítési szint",
+    "streamslist_title": "Video-adatfolyam",
+    "streamslist_summary": "Adatfolyam kijelölése a háttér elrejtéséhez",
+    "streamslist_entries_1": "Elküldve",
+    "streamslist_entries_2": "Érkezett",
+    "ForegroundSegmentationAlways_title": "A Zöld képernyő beépülő modul önműködő indítása",
+    "ForegroundSegmentationAlways_summary": "Háttér elrejtése hívás indulásakor.",
+    "name": "Zöld képernyő",
+    "description_summary": "Módosítsa a hátteret videohívás közben, vagy adjon hozzá elmosódást."
+}

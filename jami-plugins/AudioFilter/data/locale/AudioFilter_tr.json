@@ -1,0 +1,14 @@
+{
+    "irfile_title": "Impulse response",
+    "irfile_entries_1": "Genesis 6 Studio - Canlı Oda Davul Kurulumu",
+    "irfile_entries_2": "Jack Lions Konser Salonu - York Üniversitesi",
+    "irfile_entries_3": "Aziz Patrick Kilisesi - Patrington",
+    "streamlist_title": "Ses akışı",
+    "streamlist_summary": "Filtrelemek için akış seç",
+    "streamlist_entries_1": "Gönderildi",
+    "streamlist_entries_2": "Alındı",
+    "always_summary": "Çağrı başladığında filtreyi etkinleştir",
+    "always_title": "Filtreyi otomatik olarak etkinleştir",
+    "name": "Ses Filtresi",
+    "description_summary": "Görüntüne bir yankı filtresi uygula. Çevrimiçi müzik oturumları için Jami'yi kullan ve çevrimiçi müzik çal."
+}

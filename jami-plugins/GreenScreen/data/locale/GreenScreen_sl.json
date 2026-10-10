@@ -1,0 +1,15 @@
+{
+    "background_title": "Slika ozadja",
+    "blur_title": "Zabriši ozadje",
+    "acceleration_title": "Uporabi strojno pospeševanje",
+    "acceleration_summary": "Uporabi CUDA ali NNAPI, če je na voljo",
+    "blurlevel_title": "Raven zabrisanosti",
+    "streamslist_title": "Video tok",
+    "streamslist_summary": "Izberite tok, da zakrijete ozadje",
+    "streamslist_entries_1": "Poslano",
+    "streamslist_entries_2": "Prejeto",
+    "ForegroundSegmentationAlways_title": "Samodejno aktiviraj zeleno ozadje",
+    "ForegroundSegmentationAlways_summary": "Skrijte ozadje, ko se začne klic.",
+    "name": "Zeleno/nadomestno ozadje",
+    "description_summary": "Spremenite ozadje med videoklicem ali dodajte učinek zabrisanosti."
+}

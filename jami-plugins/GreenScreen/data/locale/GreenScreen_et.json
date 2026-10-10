@@ -1,0 +1,15 @@
+{
+    "background_title": "Taustapilt",
+    "blur_title": "Hägusta taust",
+    "acceleration_title": "Kasuta nutiseadme raudvaralist kiirendamist",
+    "acceleration_summary": "Kui võimali, siis kasuta CUDA või NNAPI liidestust",
+    "blurlevel_title": "Hägustuse tase",
+    "streamslist_title": "Videovoog",
+    "streamslist_summary": "Tausta varjamiseks vali meediavoog",
+    "streamslist_entries_1": "Saadetud",
+    "streamslist_entries_2": "Saadud",
+    "ForegroundSegmentationAlways_title": "Pane GreenScreen automaatselt tööle",
+    "ForegroundSegmentationAlways_summary": "Kõne alguses peida taust.",
+    "name": "GreenScreen",
+    "description_summary": "Muuda videokõne ajal oma tausta või lisa tausta hägustamine."
+}

@@ -1,0 +1,20 @@
+{
+    "name": "Traduction de messages",
+    "description_summary": "Traduisez automatiquement les messages reçus et envoyés à l'aide d'un modèle local hors ligne — aucune donnée ne quitte votre appareil.",
+    "translate_incoming_title": "Traduire les messages reçus",
+    "translate_incoming_summary": "Afficher une traduction des messages que vous recevez",
+    "target_language_title": "Langue des messages reçus",
+    "target_language_summary": "Langue dans laquelle traduire les messages reçus",
+    "translate_outgoing_title": "Traduire les messages envoyés",
+    "translate_outgoing_summary": "Traduire vos messages avant l'envoi afin que le destinataire les reçoive dans sa langue",
+    "send_target_language_title": "Langue des messages envoyés",
+    "send_target_language_summary": "Langue dans laquelle traduire vos messages sortants",
+    "account_translate_incoming_title": "Traduire les messages reçus (substitution par compte)",
+    "account_translate_incoming_summary": "Remplacer la traduction des messages reçus pour ce compte",
+    "account_target_language_title": "Langue des messages reçus (substitution par compte)",
+    "account_target_language_summary": "Remplacer la langue des messages reçus pour ce compte",
+    "account_translate_outgoing_title": "Traduire les messages envoyés (substitution par compte)",
+    "account_translate_outgoing_summary": "Remplacer la traduction des messages envoyés pour ce compte",
+    "account_send_target_language_title": "Langue des messages envoyés (substitution par compte)",
+    "account_send_target_language_summary": "Remplacer la langue des messages sortants pour ce compte"
+}

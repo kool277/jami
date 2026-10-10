@@ -1,0 +1,20 @@
+{
+    "name": "메시지 번역",
+    "description_summary": "로컬 오프라인 모델을 사용하여 수신 및 발신 메시지를 자동으로 번역합니다 — 데이터가 기기 밖으로 나가지 않습니다.",
+    "translate_incoming_title": "수신 메시지 번역",
+    "translate_incoming_summary": "받은 메시지의 번역 표시",
+    "target_language_title": "수신 메시지 언어",
+    "target_language_summary": "수신 메시지를 번역할 언어",
+    "translate_outgoing_title": "발신 메시지 번역",
+    "translate_outgoing_summary": "상대방이 자신의 언어로 받을 수 있도록 보내기 전에 메시지를 번역합니다",
+    "send_target_language_title": "발신 메시지 언어",
+    "send_target_language_summary": "발신 메시지를 번역할 언어",
+    "account_translate_incoming_title": "수신 메시지 번역 (계정 재정의)",
+    "account_translate_incoming_summary": "이 계정의 수신 메시지 번역 재정의",
+    "account_target_language_title": "수신 메시지 언어 (계정 재정의)",
+    "account_target_language_summary": "이 계정의 수신 언어 재정의",
+    "account_translate_outgoing_title": "발신 메시지 번역 (계정 재정의)",
+    "account_translate_outgoing_summary": "이 계정의 발신 메시지 번역 재정의",
+    "account_send_target_language_title": "발신 메시지 언어 (계정 재정의)",
+    "account_send_target_language_summary": "이 계정의 발신 언어 재정의"
+}

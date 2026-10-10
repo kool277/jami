@@ -1,0 +1,10 @@
+[
+    {
+        "type": "Switch",
+        "key": "Foreground SegmentationAlways",
+        "title": "{{ForegroundSegmentationAlways_title}}",
+        "summary": "{{ForegroundSegmentationAlways_summary}}",
+        "defaultValue": "0",
+        "scope": "plugin"
+    }
+]

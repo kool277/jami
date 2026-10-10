@@ -1,0 +1,20 @@
+{
+    "name": "Berichten vertalen",
+    "description_summary": "Vertaal automatisch inkomende en uitgaande berichten met een lokaal offline model — er verlaat geen data uw apparaat.",
+    "translate_incoming_title": "Inkomende berichten vertalen",
+    "translate_incoming_summary": "Een vertaling tonen van de berichten die u ontvangt",
+    "target_language_title": "Taal van inkomende berichten",
+    "target_language_summary": "Taal waarnaar ontvangen berichten worden vertaald",
+    "translate_outgoing_title": "Uitgaande berichten vertalen",
+    "translate_outgoing_summary": "Uw berichten vertalen voor verzending zodat de ontvanger ze in zijn eigen taal krijgt",
+    "send_target_language_title": "Taal van uitgaande berichten",
+    "send_target_language_summary": "Taal waarnaar uw uitgaande berichten worden vertaald",
+    "account_translate_incoming_title": "Inkomende berichten vertalen (account-overschrijving)",
+    "account_translate_incoming_summary": "Vertaling van inkomende berichten voor dit account overschrijven",
+    "account_target_language_title": "Taal van inkomende berichten (account-overschrijving)",
+    "account_target_language_summary": "Inkomende taal voor dit account overschrijven",
+    "account_translate_outgoing_title": "Uitgaande berichten vertalen (account-overschrijving)",
+    "account_translate_outgoing_summary": "Vertaling van uitgaande berichten voor dit account overschrijven",
+    "account_send_target_language_title": "Taal van uitgaande berichten (account-overschrijving)",
+    "account_send_target_language_summary": "Uitgaande taal voor dit account overschrijven"
+}

@@ -1,0 +1,15 @@
+{
+    "background_title": "Achtergrondbeeld",
+    "blur_title": "Onduidelijke achtergrond",
+    "acceleration_title": "Gebruik hardware versnelling",
+    "acceleration_summary": "Gebruik CUDA of NNAPI indien van toepassing",
+    "blurlevel_title": "Vervoudingsniveau",
+    "streamslist_title": "Video-stroom",
+    "streamslist_summary": "Selecteer de stroom om de achtergrond te verbergen",
+    "streamslist_entries_1": "Gestuurd",
+    "streamslist_entries_2": "Ontvangen",
+    "ForegroundSegmentationAlways_title": "Automatisch activeren van GreenScreen",
+    "ForegroundSegmentationAlways_summary": "Verberg de achtergrond als een oproep begint.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Trigger bot",
+        "trigger_summary": "Các văn bản mà Bot sẽ trả lời",
+        "bot_answer": "Phản ứng của bot",
+        "answer_summary": "Thông tin nhắn mà Bot sẽ gửi",
+        "default_trigger": "Chào anh.",
+        "default_answer": "Chào, lúc này tôi bận nhưng sẽ trả lời sớm nhất có thể.",
+        "always_title": "Tự động kích hoạt Bot",
+        "always_summary": "Bot sẽ hoạt động trong mọi cuộc trò chuyện.",
+        "name": "Phản ứng tự động",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

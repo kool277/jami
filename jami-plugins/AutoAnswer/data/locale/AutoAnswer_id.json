@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Pemicu bot",
+        "trigger_summary": "Teks yang akan direspons oleh Bot",
+        "bot_answer": "Respons bot",
+        "answer_summary": "Teks yang akan dikirim Bot",
+        "default_trigger": "Hai",
+        "default_answer": "Halo, saat ini saya sedang sibuk nanti akan saya balas sesegera mungkin.",
+        "always_title": "Mengaktifkan Bot secara otomatis",
+        "always_summary": "Bot akan aktif untuk semua percakapan.",
+        "name": "Jawab Otomatis",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

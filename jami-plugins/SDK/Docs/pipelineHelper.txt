@@ -1,0 +1,31 @@
+
+Create a plugin skeleton: PLUGIN
+
+A plugin creation will pass through several steps:
+    1 - authorship information;
+    2 - name;
+    3 - manifest;
+    4 - main file;
+    5 - functionalities;
+    6 - preferences;
+    7 - package;
+    8 - build related files,
+
+And will output a basic plugin capable of being build, installed, loaded and used!
+This basic plugin, although will perform no modification to the data to which it
+is linked to. The data process implementation is on your hands!
+
+Feel free to create awesome plugins! But respect these constraints:
+- use ffmpeg and opencv from ring-daemon project.
+- if using tensorflow, choose version 2.1.0. Why?
+  -> We have all needed header files of tensorflow in <jami-plugins>/contrib/libs.tar.gz;
+  -> We provide docker images with libraries for Tensorflow C++ API and Tensorflow
+     Lite, for both Android and Linux development.
+- if you need other libraries, check if we support it's build with ring-daemon project,
+  otherwise, you will have to build it and ensure correctly link to the plugin libraries.
+
+For detailed information about manifest, main file, functionalities, preferences, package,
+and build related files please refer to the specific help command.
+
+For DockerHub links and more technical information, please refer to:
+https://git.jami.net/savoirfairelinux/ring-project/wikis/technical/7.-Jami-plugins .

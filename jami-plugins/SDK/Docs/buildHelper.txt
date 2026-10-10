@@ -1,0 +1,30 @@
+
+To compile (or create build files) with default configurations: BUILD (-def)
+
+This option allows the default plugin compilation or the creation of the
+CMakeLists.txt and build.sh files.
+
+As compilation tool:
+    This option does not support cross-compilation neither optional build.
+    If you want to compile for another platform, or if you have build variables
+    that may vary, please directly use the <jami-plugins>/build-plugin.py script.
+
+    -> For GNU/Linux host, remember to set all environment variables
+    before calling the build script.
+    -> For Windows host, remember to properly set cmake configuration
+    options in plugin's package.json.
+
+As build files creation tool:
+    This option creates base files used for plugins build. For GNU/Linux and Android
+    compilations, the current plugin environment expects a build.sh file capable of
+    pre-assembling, building and assembling the final jpl. For Windows, the environment
+    expects a CMakeLists.txt and package.json with custom build rules for cmake.
+
+    For pratical examples and further development of those files, you may peek at our
+    available plugins at https://git.jami.net/savoirfairelinux/jami-plugins .
+
+Alternatively, you can ignore this SDK and build your plugin using the build-plugin.py
+script.
+
+For more technical information, please refer to:
+https://git.jami.net/savoirfairelinux/ring-project/wikis/technical/7.-Jami-plugins .

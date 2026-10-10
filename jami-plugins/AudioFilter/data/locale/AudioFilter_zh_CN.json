@@ -1,0 +1,14 @@
+{
+    "irfile_title": "脉冲响应",
+    "irfile_entries_1": "Genesis 6 Studio -直播室鼓的设置",
+    "irfile_entries_2": "Jack Lions Concert Hall - 約克大學",
+    "irfile_entries_3": "St. Patrick’s Church - 帕特靈頓",
+    "streamlist_title": "音频串流",
+    "streamlist_summary": "选择要过滤的串流",
+    "streamlist_entries_1": "已发送",
+    "streamlist_entries_2": "已接收",
+    "always_summary": "当呼叫开始时激活过滤器",
+    "always_title": "自动激活过滤器",
+    "name": "音频滤波器",
+    "description_summary": "将混响滤波器应用于视频。使用Jami进行在线音乐会话，并在线播放音乐"
+}

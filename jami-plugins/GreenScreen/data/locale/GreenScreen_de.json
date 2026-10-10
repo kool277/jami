@@ -1,0 +1,15 @@
+{
+    "background_title": "Hintergrundbild",
+    "blur_title": "Hintergrund weichzeichnen",
+    "acceleration_title": "Hardwarebeschleunigung verwenden",
+    "acceleration_summary": "CUDA oder NNAPI verwenden, sofern anwendbar",
+    "blurlevel_title": "Weichzeichnungsstufe",
+    "streamslist_title": "Videostream",
+    "streamslist_summary": "Wählen Sie den Stream aus, bei dem der Hintergrund ausgeblendet werden soll",
+    "streamslist_entries_1": "Gesendet",
+    "streamslist_entries_2": "Empfangen",
+    "ForegroundSegmentationAlways_title": "Greenscreen automatisch aktivieren",
+    "ForegroundSegmentationAlways_summary": "Den Hintergrund ausblenden, wenn ein Anruf startet.",
+    "name": "Greenscreen",
+    "description_summary": "Ändern Sie Ihren Hintergrund während eines Videoanrufs oder fügen Sie einen Weichzeichnungseffekt hinzu."
+}

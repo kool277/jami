@@ -1,0 +1,21 @@
+
+Create a functionality's skeleton files: FUNCTIONALITY
+
+A functionality is a capability and a single Jami Plugin can implement
+multiple functionalities.
+
+Each functionality may be applied to different data types that requires
+diferent APIs. Currently, our plugin system supports the following data:
+(1) video during a call (Media Handler API).
+(2) audio during a call (Media Handler API).
+
+
+Be aware that when creating functionalities outside a full plugin pipeline
+creation, some modifications to match the preferences usablities may have
+to be done by hand. If you don't know how to do it, consider creating a
+functionality from inside a full plugin creation pipeline and then you can
+use it as an example. Alternatively, you can peek at our available plugins
+at https://git.jami.net/savoirfairelinux/jami-plugins .
+
+For more technical information, please refer to:
+https://git.jami.net/savoirfairelinux/ring-project/wikis/technical/7.-Jami-plugins .

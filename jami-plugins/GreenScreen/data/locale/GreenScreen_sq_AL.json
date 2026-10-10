@@ -1,0 +1,15 @@
+{
+    "background_title": "Figurë sfond",
+    "blur_title": "Turbulloje sfondin",
+    "acceleration_title": "Përdor përshpejtim hardware",
+    "acceleration_summary": "Përdor CUDA ose NNAPI, kur ka vend",
+    "blurlevel_title": "Shkallë turbullimi",
+    "streamslist_title": "Rrjedhë video",
+    "streamslist_summary": "Përzgjidhni rrjedhën që duhet fshehur në prapaskenë",
+    "streamslist_entries_1": "Dërguar",
+    "streamslist_entries_2": "Marrë",
+    "ForegroundSegmentationAlways_title": "Aktivizo vetvetiu GreenScreen-in",
+    "ForegroundSegmentationAlways_summary": "Fshihe sfondin, kur fillon një thirrje.",
+    "name": "Ekran i Gjelbër",
+    "description_summary": "Ndryshoni sfondin tuaj gjatë një thirrje me video, ose shtoni një efekt turbullimi."
+}

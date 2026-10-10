@@ -1,0 +1,14 @@
+{
+    "irfile_title": "استجابة النبض",
+    "irfile_entries_1": "ستوديو جينيسس 6 - طبول غرفة المعيشة",
+    "irfile_entries_2": "قاعة حفلات جاك ليونز - جامعة يورك",
+    "irfile_entries_3": "كنيسة سانت باتريك - باترينغتون",
+    "streamlist_title": "تدفق الصوت",
+    "streamlist_summary": "اختر التيار للتصفية",
+    "streamlist_entries_1": "أرسلت",
+    "streamlist_entries_2": "تلقيت",
+    "always_summary": "قم بتفعيل المرشح عند بدء المكالمة",
+    "always_title": "تنشيط الفلتر تلقائيًا",
+    "name": "Audio Filter",
+    "description_summary": "Apply a reverb filter to your video. Use Jami for online music sessions and play music online."
+}

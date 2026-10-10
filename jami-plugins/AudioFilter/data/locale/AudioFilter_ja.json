@@ -1,0 +1,14 @@
+{
+    "irfile_title": "衝動反応",
+    "irfile_entries_1": "創世記 6 スタジオ - ライブルーム ドラム セットアップ",
+    "irfile_entries_2": "ジャック・ライオンズコンサートホール - ヨーク大学",
+    "irfile_entries_3": "聖パトリック教会 - パトリントン",
+    "streamlist_title": "音声ストリート",
+    "streamlist_summary": "フィルタリングするストリームを選択",
+    "streamlist_entries_1": "送信",
+    "streamlist_entries_2": "受信",
+    "always_summary": "呼び出し開始時にフィルターを起動する",
+    "always_title": "フィルターを自動起動する",
+    "name": "Audio Filter",
+    "description_summary": "Apply a reverb filter to your video. Use Jami for online music sessions and play music online."
+}

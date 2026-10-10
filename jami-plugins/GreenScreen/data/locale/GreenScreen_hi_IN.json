@@ -1,0 +1,15 @@
+{
+    "background_title": "पृष्ठभूमि छवि",
+    "blur_title": "धुंधली पृष्ठभूमि",
+    "acceleration_title": "हार्डवेयर त्वरण का उपयोग करें",
+    "acceleration_summary": "यदि लागू हो तो CUDA या NNAPI का प्रयोग करें",
+    "blurlevel_title": "धुंध स्तर",
+    "streamslist_title": "वीडियो स्ट्रीम",
+    "streamslist_summary": "पृष्ठभूमि को छिपाने के लिए धारा का चयन करें",
+    "streamslist_entries_1": "भेजा गया",
+    "streamslist_entries_2": "प्राप्त किया गया",
+    "ForegroundSegmentationAlways_title": "स्वचालित रूप से ग्रीनस्क्रीन को सक्रिय करें",
+    "ForegroundSegmentationAlways_summary": "जब कॉल शुरू होता है तो पृष्ठभूमि छिपाएं।",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

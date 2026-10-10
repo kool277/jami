@@ -1,0 +1,19 @@
+{
+    "name": "TestSuite",
+    "version": "1.0.1",
+    "extractLibs": false,
+    "deps": [
+        "fmt",
+        "ffmpeg"
+    ],
+    "defines": [],
+    "custom_scripts": {
+        "pre_build": [
+            "mkdir msvc"
+        ],
+        "build": [
+            "cmake --build ./msvc --config Release"
+        ],
+        "post_build": []
+    }
+}

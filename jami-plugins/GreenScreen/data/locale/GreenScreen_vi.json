@@ -1,0 +1,15 @@
+{
+    "background_title": "Hình nền",
+    "blur_title": "Hình nền mờ",
+    "acceleration_title": "Dùng gia tốc phần cứng",
+    "acceleration_summary": "Dùng CUDA hoặc NNAPI khi có thể",
+    "blurlevel_title": "Mức độ mờ",
+    "streamslist_title": "Phát video",
+    "streamslist_summary": "Chọn luồng phát để ẩn nền",
+    "streamslist_entries_1": "Đã gửi",
+    "streamslist_entries_2": "Đã nhận",
+    "ForegroundSegmentationAlways_title": "Kích hoạt tự động GreenScreen",
+    "ForegroundSegmentationAlways_summary": "Ẩn nền khi cuộc gọi bắt đầu.",
+    "name": "Green Screen",
+    "description_summary": "Chỉnh sửa nền trong khi gọi video hoặc thêm hiệu ứng làm mờ."
+}

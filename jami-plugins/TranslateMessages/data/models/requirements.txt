@@ -1,0 +1,21 @@
+# TranslateMessages — model export dependencies
+#
+# Used by download_model.py to export HuggingFace models to ONNX format.
+# Only needed once to generate the model files; not required for building
+# or running the plugin.
+#
+# Setup (uses the same venv as the plugin):
+#   source ../../../.venv/bin/activate    # activate the project venv
+#   pip install -r requirements.txt
+
+# ── Model loading and export ──────────────────────────────────────────────────
+torch>=2.0.0                 # ONNX export via torch.onnx.export
+onnxscript                   # required by torch>=2.1 ONNX export internals
+transformers>=4.39.0         # NllbTokenizer, M2M100Tokenizer, EncoderDecoderCache
+onnx>=1.14.0                 # model graph manipulation after export
+sentencepiece>=0.2.1
+
+# ── Optional post-processing (required for --fp16 and --quantize flags) ───────
+onnxconverter-common>=1.13.0 # --fp16 : convert FP32 models to FP16
+onnxruntime[quantization]  # --quantize / --int4 : install via requirements.txt
+onnxruntime==1.24.4

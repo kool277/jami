@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Activador do bot",
+        "trigger_summary": "Texto que Bot vai responder",
+        "bot_answer": "Resposta do bot",
+        "answer_summary": "O texto que o bot vai enviar",
+        "default_trigger": "Ola,",
+        "default_answer": "Ola, actualmente estou ocupado, pero respondereiche o antes posible.",
+        "always_title": "Activar Bot automaticamente",
+        "always_summary": "Bot estará activo para todas as conversas.",
+        "name": "Resposta automática",
+        "description_summary": "Configurar un bot que responda automáticamente a un texto predefinido."
+}

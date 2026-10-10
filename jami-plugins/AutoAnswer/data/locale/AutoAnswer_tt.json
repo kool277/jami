@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Бот-экиткеч",
+        "trigger_summary": "Бот җавап бирәчәк текст",
+        "bot_answer": "Ботның реакциясе",
+        "answer_summary": "Бот җибәрәчәк текст",
+        "default_trigger": "Сәлам.",
+        "default_answer": "Сәлам, мин хәзер бик мәшгуль, әмма мөмкин кадәр тизрәк җавап бирәчәкмен.",
+        "always_title": "Автомат рәвештә ботны активлаштыру",
+        "always_summary": "Барлык сөйләшүләрдә бот актив булачак.",
+        "name": "Автомобиль җавап",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

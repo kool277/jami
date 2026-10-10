@@ -1,0 +1,18 @@
+[
+    {
+        "type": "List",
+        "key": "videostream",
+        "title": "{{videostream_title}}",
+        "summary": "{{videostream_summary}}",
+        "defaultValue": "1",
+        "scope": "plugin",
+        "entryValues": [
+            "0",
+            "1"
+        ],
+        "entries": [
+            "{{videostream_entries_1}}",
+            "{{videostream_entries_2}}"
+        ]
+    }
+]

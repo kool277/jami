@@ -1,0 +1,15 @@
+{
+    "background_title": "پس منظر تصویر",
+    "blur_title": "قارشیلیق",
+    "acceleration_title": "هاردوار سرعتینی ایستیفاده ائدیر",
+    "acceleration_summary": "دَییشدیرن زامان CUDA یا NNAPI",
+    "blurlevel_title": "چاشماق سطحي",
+    "streamslist_title": "ویدئو جریان",
+    "streamslist_summary": "پس زمینه سیزلیک اوچون جریان سئچیب",
+    "streamslist_entries_1": "گؤندردئلر",
+    "streamslist_entries_2": "آلینمیش",
+    "ForegroundSegmentationAlways_title": "GreenScreen- نی اوتوماتاتیک فعال ائدیر",
+    "ForegroundSegmentationAlways_summary": "تماس باشلاناندا آرخاسینی گئزلَت.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

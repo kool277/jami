@@ -1,0 +1,15 @@
+{
+    "background_title": "પૃષ્ઠભૂમિ છબી",
+    "blur_title": "અસ્પષ્ટ પૃષ્ઠભૂમિ",
+    "acceleration_title": "હાર્ડવેર પ્રવેગક ઉપયોગ કરો",
+    "acceleration_summary": "જ્યાં લાગુ હોય ત્યાં CUDA અથવા NNAPI નો ઉપયોગ કરો",
+    "blurlevel_title": "અસ્પષ્ટતા સ્તર",
+    "streamslist_title": "વિડિઓ સ્ટ્રીમ",
+    "streamslist_summary": "પૃષ્ઠભૂમિ છુપાવવા માટે સ્ટ્રીમ પસંદ કરો",
+    "streamslist_entries_1": "મોકલવામાં",
+    "streamslist_entries_2": "પ્રાપ્ત",
+    "ForegroundSegmentationAlways_title": "સ્વયંસંચાલિત રીતે ગ્રીનસ્ક્રીન સક્રિય કરો",
+    "ForegroundSegmentationAlways_summary": "જ્યારે કૉલ શરૂ થાય ત્યારે પૃષ્ઠભૂમિ છુપાવો.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

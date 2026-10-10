@@ -1,0 +1,20 @@
+{
+    "name": "Mesaj Çevirici",
+    "description_summary": "Yerel bir çevrimdışı model kullanarak gelen ve giden mesajları otomatik olarak çevirin — verileriniz cihazınızdan çıkmaz.",
+    "translate_incoming_title": "Gelen mesajları çevir",
+    "translate_incoming_summary": "Aldığınız mesajların çevirisini göster",
+    "target_language_title": "Gelen mesajların dili",
+    "target_language_summary": "Alınan mesajların çevrileceği dil",
+    "translate_outgoing_title": "Giden mesajları çevir",
+    "translate_outgoing_summary": "Mesajlarınızı göndermeden önce çevirerek alıcının kendi dilinde almasını sağlayın",
+    "send_target_language_title": "Giden mesajların dili",
+    "send_target_language_summary": "Giden mesajlarınızın çevrileceği dil",
+    "account_translate_incoming_title": "Gelen mesajları çevir (hesap geçersiz kılma)",
+    "account_translate_incoming_summary": "Bu hesap için gelen mesaj çevirisini geçersiz kıl",
+    "account_target_language_title": "Gelen mesajların dili (hesap geçersiz kılma)",
+    "account_target_language_summary": "Bu hesap için gelen dili geçersiz kıl",
+    "account_translate_outgoing_title": "Giden mesajları çevir (hesap geçersiz kılma)",
+    "account_translate_outgoing_summary": "Bu hesap için giden mesaj çevirisini geçersiz kıl",
+    "account_send_target_language_title": "Giden mesajların dili (hesap geçersiz kılma)",
+    "account_send_target_language_summary": "Bu hesap için giden dili geçersiz kıl"
+}

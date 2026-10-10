@@ -1,0 +1,26 @@
+
+To assemble a jpl: ASSEMBLE (-pre)
+
+The `assemble -pre` option gives the user the oportunity to create a folder
+as below:
+ - Linux host: <jami-plugins>/<PLUGINID>/build-local/jpl/
+ - Windows host: <jami-plugins>/<PLUGINID>/msvc/jpl/
+containing all data that will be inside `PLUGINID.jpl` archive.
+The exception is the plugin library itself that only will be added after
+compilation.
+
+The default usage will take all files inside the folder created by the `-pre`
+variation and compress them to your PLUGINID.jpl archive. This file can be
+find under <jami-plugins>/build/.
+
+Both process must be called from inside the CMakeLists.txt as POST_BUILD and
+PRE_BUILD commands, respectively.
+Our default CMakeLists.txt script already applies them. Also, you
+can check other usage examples from our available plugins at
+https://git.jami.net/savoirfairelinux/jami-plugins .
+
+For more information about our default CMakeLists.txt, please refer to:
+    -> help build
+
+For more technical information, please refer to:
+https://git.jami.net/savoirfairelinux/ring-project/wikis/technical/7.-Jami-plugins .

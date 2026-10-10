@@ -1,0 +1,20 @@
+{
+    "name": "消息翻译",
+    "description_summary": "使用本地离线模型自动翻译收发消息——数据不会离开您的设备。",
+    "translate_incoming_title": "翻译接收消息",
+    "translate_incoming_summary": "显示您收到的消息的翻译",
+    "target_language_title": "接收消息的语言",
+    "target_language_summary": "将接收到的消息翻译成的语言",
+    "translate_outgoing_title": "翻译发送消息",
+    "translate_outgoing_summary": "发送前翻译您的消息，使对方以其语言接收",
+    "send_target_language_title": "发送消息的语言",
+    "send_target_language_summary": "将发送消息翻译成的语言",
+    "account_translate_incoming_title": "翻译接收消息（账户覆盖）",
+    "account_translate_incoming_summary": "覆盖此账户的接收消息翻译设置",
+    "account_target_language_title": "接收消息的语言（账户覆盖）",
+    "account_target_language_summary": "覆盖此账户的接收语言",
+    "account_translate_outgoing_title": "翻译发送消息（账户覆盖）",
+    "account_translate_outgoing_summary": "覆盖此账户的发送消息翻译设置",
+    "account_send_target_language_title": "发送消息的语言（账户覆盖）",
+    "account_send_target_language_summary": "覆盖此账户的发送语言"
+}

@@ -1,0 +1,22 @@
+{
+    "name": "TensorflowSegmentation",
+    "version": "1.0.2",
+    "extractLibs": true,
+    "deps": [
+        "ffmpeg",
+        "opencv"
+    ],
+    "defines": [
+        "TFLITE=False",
+        "CPU=False"
+    ],
+    "custom_scripts": {
+        "pre_build": [
+            "mkdir msvc"
+        ],
+        "build": [
+            "cmake --build ./msvc --config Release"
+        ],
+        "post_build": []
+    }
+}

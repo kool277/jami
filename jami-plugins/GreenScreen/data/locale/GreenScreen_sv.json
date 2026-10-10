@@ -1,0 +1,15 @@
+{
+    "background_title": "Bakgrundbilder",
+    "blur_title": "Förmörkad bakgrund",
+    "acceleration_title": "Använd maskinvarutökning",
+    "acceleration_summary": "Använd CUDA eller NNAPI när det är tillämpligt",
+    "blurlevel_title": "Förvirring",
+    "streamslist_title": "Videostream",
+    "streamslist_summary": "Välj strömmen för att dölja bakgrunden",
+    "streamslist_entries_1": "Skickat",
+    "streamslist_entries_2": "Förhandsförfaranden",
+    "ForegroundSegmentationAlways_title": "Aktivera GreenScreen automatiskt",
+    "ForegroundSegmentationAlways_summary": "Hämta bakgrunden när ett samtal börjar.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

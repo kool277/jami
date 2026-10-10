@@ -1,0 +1,5 @@
+*.mp3
+/WhisperTranscript*
+/libonnxruntime.dylib
+/processed.mp4
+*.so

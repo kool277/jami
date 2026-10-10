@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "ബോട്ട് ട്രിഗർ",
+        "trigger_summary": "ബോട്ട് പ്രതികരിക്കേണ്ട ടെക്സ്റ്റ്",
+        "bot_answer": "ബോട്ട് പ്രതികരണം",
+        "answer_summary": "ബോട്ട് അയയ്ക്കുന്ന സന്ദേശം",
+        "default_trigger": "ഹായ്.",
+        "default_answer": "ഹലോ, ഞാന് ഇപ്പോൾ തിരക്കിലാണ്, പക്ഷെ എത്രയും വേഗം മറുപടി പറയും.",
+        "always_title": "ബോട്ട് യാന്ത്രികമായി സജീവമാക്കുക",
+        "always_summary": "എല്ലാ സംഭാഷണങ്ങളിലും ബോട്ട് സജീവമായിരിക്കും.",
+        "name": "Jawab panggilan secara automatik",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

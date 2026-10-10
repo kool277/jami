@@ -1,0 +1,15 @@
+{
+    "background_title": "背景图片",
+    "blur_title": "模糊背景",
+    "acceleration_title": "使用硬件加速",
+    "acceleration_summary": "在可用时使用CUDA或NNAPI",
+    "blurlevel_title": "模糊等級",
+    "streamslist_title": "视频串流",
+    "streamslist_summary": "选择要隐藏背景的串流",
+    "streamslist_entries_1": "已发送",
+    "streamslist_entries_2": "已接收",
+    "ForegroundSegmentationAlways_title": "自动启用绿幕",
+    "ForegroundSegmentationAlways_summary": "当呼叫开始时隐藏背景。",
+    "name": "绿屏",
+    "description_summary": "在视频通话期间修改背景或添加模糊效果"
+}

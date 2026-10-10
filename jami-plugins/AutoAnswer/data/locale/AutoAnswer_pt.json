@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Acionador de robô",
+        "trigger_summary": "Texto ao qual o robô responderá",
+        "bot_answer": "Resposta do robô",
+        "answer_summary": "Mensagem que o robô vai enviar",
+        "default_trigger": "Olá",
+        "default_answer": "Olá, estou ocupado, mas vou responder o mais rápido possível.",
+        "always_title": "Ativar o robô automaticamente",
+        "always_summary": "O robô estará ativo para todas as conversas.",
+        "name": "Resposta automática",
+        "description_summary": "Configurar um robô que responda automaticamente com um determinado texto."
+}

@@ -1,0 +1,10 @@
+[
+    {
+        "defaultValue" : "0",
+        "key" : "FilterAlways",
+        "scope" : "accountId",
+        "summary" : "{{always_summary}}",
+        "title" : "{{always_title}}",
+        "type" : "Switch"
+    }
+]

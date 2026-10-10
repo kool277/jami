@@ -1,0 +1,234 @@
+/*
+ * Copyright (C) 2022-2023 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation; either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+
+// Requirements:
+// - gerrit-trigger plugin
+// - Docker plugin
+// - ansicolor plugin
+
+pipeline {
+    agent {
+        node {
+            label 'builder-win'
+        }
+    }
+
+    triggers {
+        gerrit customUrl: '',
+            gerritProjects: [
+                [branches: [[compareType: 'PLAIN', pattern: 'master']],
+                 compareType: 'PLAIN',
+                 disableStrictForbiddenFileVerification: false,
+                 pattern: 'jami-plugins']],
+            triggerOnEvents: [
+                commentAddedContains('!build'),
+                patchsetCreated(excludeDrafts: true, excludeNoCodeChange: true,
+                    excludeTrivialRebase: true)]
+    }
+
+    options {
+        ansiColor('xterm')
+    }
+
+    parameters {
+        string(name: 'GERRIT_REFSPEC',
+                defaultValue: 'refs/heads/master',
+                description: 'The Gerrit plugins refspec to fetch.')
+        string(name: 'GERRIT_TOPIC',
+                defaultValue: '',
+                description: 'topic must match the plugins name if the pipeline is to build that plugins.')
+    }
+
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                // Wipe workspace and fetch jami-plugins
+                checkout changelog: true, poll: false,
+                    scm: [$class: 'GitSCM',
+                        branches: [[name: 'FETCH_HEAD']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [
+                            [$class: 'CloneOption', noTags: true, reference: '', shallow: true],
+                            [$class: 'WipeWorkspace']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[refspec: '${GERRIT_REFSPEC}', url: 'https://${JAMI_GERRIT_URL}/jami-plugins']]]
+            }
+        }
+
+        stage('Init repository') {
+            steps {
+                script {
+                    bat """
+                        git rev-parse HEAD
+                        git submodule update --init --recursive
+                    """
+                }
+            }
+        }
+
+        stage('Setup and Build Dependencies') {
+            steps {
+                script {
+                    bat """
+                        python daemon\\extras\\scripts\\winmake.py
+                    """
+                }
+            }
+        }
+
+        stage('Build GreenScreen') {
+            when {
+                expression { env.GERRIT_TOPIC == 'GreenScreen' } // not yet supported on Windows
+            }
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    bat 'python build-plugin.py --project=GreenScreen'
+                    if (!fileExists('\\build\\x64-windows\\GreenScreen.jpl')) {
+                        error "GreenScreen build output not found"
+                    }
+                    archiveArtifacts 'build\\x64-windows\\GreenScreen.jpl'
+                }
+                }
+            }
+        }
+
+        stage('Build AudioFilter') {
+            when {
+                expression { env.GERRIT_TOPIC == 'AudioFilter' } // not yet supported on Windows
+            }
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    bat """
+                        cd daemon
+                        git clean -xdf
+                        git checkout -- .
+                    """
+                    bat 'python build-plugin.py --project=AudioFilter'
+                    if (!fileExists('\\build\\x64-windows\\AudioFilter.jpl')) {
+                        error "AudioFilter build output not found"
+                    }
+                    archiveArtifacts 'build\\x64-windows\\AudioFilter.jpl'
+                }
+                }
+            }
+        }
+
+        stage('Build AutoAnswer') {
+            when {
+                expression { env.GERRIT_TOPIC == 'AutoAnswer' } // not yet supported on Windows
+            }
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    bat """
+                        cd daemon
+                        git clean -xdf
+                        git checkout -- .
+                    """
+                    bat 'python build-plugin.py --project=AutoAnswer'
+                    if (!fileExists('\\build\\x64-windows\\AutoAnswer.jpl')) {
+                        error "AutoAnswer build output not found"
+                    }
+                    archiveArtifacts 'build\\x64-windows\\AutoAnswer.jpl'
+                }
+                }
+            }
+        }
+
+        stage('Build WaterMark') {
+            when {
+                expression { env.GERRIT_TOPIC == 'WaterMark' } // not yet supported on Windows
+            }
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    bat """
+                        cd daemon
+                        git clean -xdf
+                        git checkout -- .
+                    """
+                    bat 'python build-plugin.py --project=WaterMark'
+                    if (!fileExists('\\build\\x64-windows\\WaterMark.jpl')) {
+                        error "WaterMark build output not found"
+                    }
+                    archiveArtifacts 'build\\x64-windows\\WaterMark.jpl'
+                }
+                }
+            }
+        }
+
+        stage('Build Whisper') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if(env.GERRIT_TOPIC == "Whisper" || env.GERRIT_TOPIC == "WhisperTranscript") {
+                        bat """
+                            cd daemon
+                            git clean -xdf
+                            git checkout -- .
+                        """
+                        bat 'python build-plugin.py --project=WhisperTranscript'
+                        if (!fileExists('\\build\\x64-windows\\WhisperTranscript.jpl')) {
+                            error "WhisperTranscript build output not found"
+                        }
+                        archiveArtifacts 'build\\x64-windows\\WhisperTranscript.jpl'
+                    }
+                }
+                }
+            }
+        }
+
+        stage('Build TranslateMessages') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if(env.GERRIT_TOPIC == "" || env.GERRIT_TOPIC == "all" || env.GERRIT_TOPIC == "TranslateMessages") {
+                        bat """
+                            python -m venv .venv-cuda
+                            .venv-cuda\\Scripts\\pip install onnxruntime-gpu==1.24.4
+                            python -m venv .venv-directml
+                            .venv-directml\\Scripts\\pip install onnxruntime-directml
+                            python -m venv .venv-cpu
+                            .venv-cpu\\Scripts\\pip install onnxruntime==1.24.4
+                            python -m venv .venv
+                            .venv\\Scripts\\pip install -r TranslateMessages\\data\\models\\requirements.txt
+                            chcp 65001
+                            set PYTHONUTF8=1
+                            cd TranslateMessages\\data\\models
+                            ..\\..\\..\\.venv\\Scripts\\python download_model.py --model-type m2m100 --quantize
+                            cd ..\\..\\..
+                            for /f "usebackq delims=" %%d in (`.venv-cuda\\Scripts\\python -c "import onnxruntime,os;print(os.path.dirname(onnxruntime.__file__))"`) do set CUDA_ORT_DIR=%%d
+                            for /f "usebackq delims=" %%d in (`.venv-directml\\Scripts\\python -c "import onnxruntime,os;print(os.path.dirname(onnxruntime.__file__))"`) do set DIRECTML_ORT_DIR=%%d
+                            for /f "usebackq delims=" %%d in (`.venv-cpu\\Scripts\\python -c "import onnxruntime,os;print(os.path.dirname(onnxruntime.__file__))"`) do set CPU_ORT_DIR=%%d
+                            set PLATFORM_TYPE=WINDOWS
+                            cmake -S TranslateMessages -B TranslateMessages\\build-local -DPLATFORM_TYPE=WINDOWS -DJAMI_PLUGIN_TRANSLATION_MODEL=m2m100 -DORT_CUDA_PYDIR=%CUDA_ORT_DIR% -DORT_DIRECTML_PYDIR=%DIRECTML_ORT_DIR% -DORT_CPU_PYDIR=%CPU_ORT_DIR% -DCMAKE_TOOLCHAIN_FILE=C:\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake
+                            cmake --build TranslateMessages\\build-local --config Release
+                        """
+                        if (!fileExists('build\\x64-windows\\TranslateMessages.jpl')) {
+                            error "TranslateMessages build output not found"
+                        }
+                        archiveArtifacts 'build\\x64-windows\\TranslateMessages.jpl'
+                    }
+                }
+                }
+            }
+        }
+    }
+}

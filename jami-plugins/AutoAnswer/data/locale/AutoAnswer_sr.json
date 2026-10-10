@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Bot okidač",
+        "trigger_summary": "Tekst na koji će bot odgovoriti",
+        "bot_answer": "Odgovor bota",
+        "answer_summary": "Tekst koji će bot poslati",
+        "default_trigger": "Zdravo",
+        "default_answer": "Zdravo, trenutno sam zauzet, ali ću vam odgovoriti što je pre moguće.",
+        "always_title": "Automatski aktiviraj bota",
+        "always_summary": "Bot će biti aktivan za sve razgovore.",
+        "name": "Automatski odgovor",
+        "description_summary": "Podesite bota koji automatski odgovara datim tekstom."
+}

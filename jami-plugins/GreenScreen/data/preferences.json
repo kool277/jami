@@ -1,0 +1,46 @@
+[
+    {
+        "type": "Path",
+        "mimeType": "image/png,image/jpeg,image/jpg",
+        "key": "background",
+        "title": "{{background_title}}",
+        "defaultValue": "data/backgrounds/background2.jpeg",
+        "scope": "plugin,Foreground Segmentation",
+        "dependsOn": "!blur"
+    },
+    {
+        "type": "Switch",
+        "key": "acceleration",
+        "title": "{{acceleration_title}}",
+        "summary": "{{acceleration_summary}}",
+        "defaultValue": "1",
+        "scope": "plugin"
+    },
+    {
+        "type": "Switch",
+        "key": "blur",
+        "title": "{{blur_title}}",
+        "defaultValue": "0",
+        "scope": "plugin,Foreground Segmentation"
+    },
+    {
+        "type": "List",
+        "key": "blurlevel",
+        "title": "{{blurlevel_title}}",
+        "defaultValue": "8",
+        "entries": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+        "entryValues": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+        "scope": "plugin,Foreground Segmentation",
+        "dependsOn": "blur"
+    },
+    {
+        "type": "List",
+        "key": "streamslist",
+        "title": "{{streamslist_title}}",
+        "summary": "{{streamslist_summary}}",
+        "defaultValue": "out",
+        "entries": ["{{streamslist_entries_1}}", "{{streamslist_entries_2}}"],
+        "entryValues": ["out", "in"],
+        "scope": "plugin"
+    }
+]

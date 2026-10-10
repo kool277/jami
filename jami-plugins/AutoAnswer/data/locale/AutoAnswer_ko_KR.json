@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "로봇 트리거",
+        "trigger_summary": "보트가 응답할 텍스트",
+        "bot_answer": "로봇 반응",
+        "answer_summary": "보트가 보낼 메시지는",
+        "default_trigger": "안녕하세요",
+        "default_answer": "안녕하세요, 저는 현재 바쁘지만 가능한 한 빨리 답변하겠습니다.",
+        "always_title": "자동으로 봇 활성화",
+        "always_summary": "모든 대화에 보트가 적극적으로 참여할 겁니다.",
+        "name": "자동 응답",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

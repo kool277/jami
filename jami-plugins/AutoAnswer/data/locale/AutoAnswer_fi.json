@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Botti päälle",
+        "trigger_summary": "Teksti johon botti vastaa",
+        "bot_answer": "Botin vastaus",
+        "answer_summary": "Teksti jonka botti lähettää",
+        "default_trigger": "Hei",
+        "default_answer": "Hei. Olen kiireinen juuri nyt, mutta vastaan sinulle mahdollisimman pian",
+        "always_title": "Aktivoi botti automaattisesti",
+        "always_summary": "Botti on aktiivinen kaikissa keskusteluissa",
+        "name": "Automaattinen vastaus",
+        "description_summary": "Aseta botti, joka vastaa automaattisesti annetulla tekstillä."
+}

@@ -1,0 +1,15 @@
+{
+    "background_title": "Imagem de fundo",
+    "blur_title": "Desfocar o fundo",
+    "acceleration_title": "Usar aceleração de hardware",
+    "acceleration_summary": "Usare CUDA ou NNAPI, quando aplicável",
+    "blurlevel_title": "Nível de desfocagem",
+    "streamslist_title": "Fluxo de vídeo",
+    "streamslist_summary": "Selecione o fluxo para ocultar o fundo",
+    "streamslist_entries_1": "Enviado",
+    "streamslist_entries_2": "Recebido",
+    "ForegroundSegmentationAlways_title": "Ativar automaticamente o ecrã verde",
+    "ForegroundSegmentationAlways_summary": "Ocultar o fundo quando começa uma chamada.",
+    "name": "Ecrã verde",
+    "description_summary": "Altere o fundo durante uma chamada de vídeo ou adicione um efeito de desfocagem."
+}

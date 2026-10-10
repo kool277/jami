@@ -1,0 +1,20 @@
+{
+    "name": "Tłumaczenie wiadomości",
+    "description_summary": "Automatycznie tłumacz wiadomości przychodzące i wychodzące za pomocą lokalnego modelu offline — żadne dane nie opuszczają urządzenia.",
+    "translate_incoming_title": "Tłumacz wiadomości przychodzące",
+    "translate_incoming_summary": "Wyświetlaj tłumaczenie otrzymanych wiadomości",
+    "target_language_title": "Język wiadomości przychodzących",
+    "target_language_summary": "Język, na który mają być tłumaczone otrzymane wiadomości",
+    "translate_outgoing_title": "Tłumacz wiadomości wychodzące",
+    "translate_outgoing_summary": "Tłumacz wiadomości przed wysłaniem, aby odbiorca otrzymał je w swoim języku",
+    "send_target_language_title": "Język wiadomości wychodzących",
+    "send_target_language_summary": "Język, na który mają być tłumaczone wychodzące wiadomości",
+    "account_translate_incoming_title": "Tłumacz wiadomości przychodzące (zastąpienie dla konta)",
+    "account_translate_incoming_summary": "Zastąp tłumaczenie wiadomości przychodzących dla tego konta",
+    "account_target_language_title": "Język wiadomości przychodzących (zastąpienie dla konta)",
+    "account_target_language_summary": "Zastąp język przychodzący dla tego konta",
+    "account_translate_outgoing_title": "Tłumacz wiadomości wychodzące (zastąpienie dla konta)",
+    "account_translate_outgoing_summary": "Zastąp tłumaczenie wiadomości wychodzących dla tego konta",
+    "account_send_target_language_title": "Język wiadomości wychodzących (zastąpienie dla konta)",
+    "account_send_target_language_summary": "Zastąp język wychodzący dla tego konta"
+}

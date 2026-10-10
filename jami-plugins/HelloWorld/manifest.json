@@ -1,0 +1,6 @@
+{
+    "name": "HelloWorld",
+    "description": "HelloWorld draws a circle in the center of a call's video",
+    "version": "1.0.1",
+    "iconPath" : "icon.svg"
+}

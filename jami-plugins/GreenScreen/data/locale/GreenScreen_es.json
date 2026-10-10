@@ -1,0 +1,15 @@
+{
+    "background_title": "Imagen de fondo",
+    "blur_title": "Difuminar fondo",
+    "acceleration_title": "Usar aceleración por hardware",
+    "acceleration_summary": "Usar CUDA o NNAPI cuando sea aplicable",
+    "blurlevel_title": "Nivel de difuminado",
+    "streamslist_title": "Flujo de video",
+    "streamslist_summary": "Seleccionar el flujo cuyo fondo se ocultará",
+    "streamslist_entries_1": "Enviado",
+    "streamslist_entries_2": "Recibido",
+    "ForegroundSegmentationAlways_title": "Activar automáticamente GreenScreen",
+    "ForegroundSegmentationAlways_summary": "Ocultar fondo cuando inicia una llamada.",
+    "name": "Pantalla verde",
+    "description_summary": "Modifica tu fondo durante una videollamada o agrega un efecto de desenfoque."
+}

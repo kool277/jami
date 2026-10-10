@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "போட் துப்பாக்கி",
+        "trigger_summary": "போட் பதிலளிக்கும் உரை",
+        "bot_answer": "போட் பதில்",
+        "answer_summary": "போட் அனுப்புகிறது என்று செய்தி",
+        "default_trigger": "வணக்கம்.",
+        "default_answer": "வணக்கம், தற்போது நான் பிஸியாக இருக்கிறேன் ஆனால் விரைவில் பதிலளிப்பேன்.",
+        "always_title": "தானாக செயலிழக்கவும்",
+        "always_summary": "போட் அனைத்து உரையாடல்களிலும் செயலில் இருக்கும்.",
+        "name": "தானியங்கி பதில்",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

@@ -1,0 +1,36 @@
+[
+    {
+        "type": "List",
+        "key": "color",
+        "title": "Circle color",
+        "summary": "select a color",
+        "defaultValue": "#00FF00",
+        "scope": "plugin,CenterCircle",
+        "entryValues": [
+            "#0000FF",
+            "#00FF00",
+            "#FF0000"
+        ],
+        "entries": [
+            "blue",
+            "green",
+            "red"
+        ]
+    },
+    {
+        "type": "List",
+        "key": "videostream",
+        "title": "Video stream",
+        "summary": "Select stream",
+        "defaultValue": "0",
+        "scope": "plugin",
+        "entryValues": [
+            "0",
+            "1"
+        ],
+        "entries": [
+            "sent",
+            "received"
+        ]
+    }
+]

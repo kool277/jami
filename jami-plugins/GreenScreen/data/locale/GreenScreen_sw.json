@@ -1,0 +1,15 @@
+{
+    "background_title": "Picha ya nyuma",
+    "blur_title": "Msingi wa fuvu",
+    "acceleration_title": "Tumia kasi ya vifaa",
+    "acceleration_summary": "Tumia CUDA au NNAPI kama inavyotumika",
+    "blurlevel_title": "Kiwango cha fuvu",
+    "streamslist_title": "Mtiririko wa video",
+    "streamslist_summary": "Chagua mkondo ili kuficha mandhari",
+    "streamslist_entries_1": "Kutumwa",
+    "streamslist_entries_2": "Kupokea",
+    "ForegroundSegmentationAlways_title": "Kuwasha kiotomatiki GreenScreen",
+    "ForegroundSegmentationAlways_summary": "Ficha background wakati wito huanza.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

@@ -1,0 +1,6 @@
+background: "backgrounds/background2.jpeg"
+blur: "0"
+blurlevel: "8"
+streamslist: "out"
+sample: "sample.mp4"
+output: "processed.mp4"

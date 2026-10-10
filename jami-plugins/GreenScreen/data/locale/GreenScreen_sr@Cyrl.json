@@ -1,0 +1,15 @@
+{
+    "background_title": "Слика из позадини",
+    "blur_title": "Нејасна позадина",
+    "acceleration_title": "Користе хардверско убрзање",
+    "acceleration_summary": "Уколико је то потребно, користите CUDA или NNAPI",
+    "blurlevel_title": "Ниво замарања",
+    "streamslist_title": "Видео струја",
+    "streamslist_summary": "Izaberite tok da biste sakrili pozadinu",
+    "streamslist_entries_1": "Послано",
+    "streamslist_entries_2": "Пријем",
+    "ForegroundSegmentationAlways_title": "Автоматски активирајте ГринСкрин",
+    "ForegroundSegmentationAlways_summary": "Скријте позадину када се позове.",
+    "name": "Zeleni ekran",
+    "description_summary": "Izmenite pozadinu tokom video poziva ili dodajte efekat zamućenja."
+}

@@ -1,0 +1,220 @@
+/*
+ * Copyright (C) 2022-2023 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation; either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+// Requirements:
+// - gerrit-trigger plugin
+// - Docker plugin
+// - ansicolor plugin
+
+def buildAllArchitectures(Closure buildTask) {
+    env.AVAILABLE_ARCHITECTURES.split(',').each { arch ->
+        echo "Building for Architecture ${arch}"
+        buildTask(arch)
+    }
+}
+def buildProject(String projectName, String arch, String additionalCommands = "") {
+    sh """
+        export PATH=/usr/local/bin:\$PATH
+        export BATCH_MODE=1
+        ${additionalCommands}
+        AUTHOR="SFL" DIVISION="Internal" python3 build-plugin.py --projects="${projectName}" --arch=${arch}
+    """
+    String buildPath = "build/${arch}-apple-Darwin/${projectName}.jpl"
+    if (!fileExists(buildPath)) {
+        error "${projectName} ${arch} build output not found"
+    }
+    archiveArtifacts buildPath
+}
+
+pipeline {
+    agent {
+        node {
+            label 'mac-mini.mtl.sfl'
+        }
+    }
+    triggers {
+        gerrit customUrl: '',
+            gerritProjects: [
+                [branches: [[compareType: 'PLAIN', pattern: 'master']],
+                 compareType: 'PLAIN',
+                 disableStrictForbiddenFileVerification: false,
+                 pattern: 'jami-plugins']],
+            triggerOnEvents: [
+                commentAddedContains('!build'),
+                patchsetCreated(excludeDrafts: true, excludeNoCodeChange: true,
+                    excludeTrivialRebase: true)]
+    }
+    options {
+        ansiColor('xterm')
+    }
+    parameters {
+        string(name: 'GERRIT_REFSPEC',
+                defaultValue: 'refs/heads/master',
+                description: 'The Gerrit plugins refspec to fetch.')
+        string(name: 'GERRIT_TOPIC',
+                defaultValue: '',
+                description: 'topic must match the plugins name if the pipeline is to build that plugins.')
+        booleanParam(name: 'ARCHIVE',
+                     defaultValue: true,
+                     description: 'do not propagate the release artifacts to the download server.')
+    }
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                // Wipe workspace and fetch jami-plugins
+                checkout changelog: true, poll: false,
+                    scm: [$class: 'GitSCM',
+                        branches: [[name: 'FETCH_HEAD']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [
+                            [$class: 'CloneOption', noTags: true, reference: '', shallow: true],
+                            [$class: 'WipeWorkspace']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[refspec: '${GERRIT_REFSPEC}', url: 'https://${JAMI_GERRIT_URL}/jami-plugins']]]
+            }
+        }
+        stage('Init repository') {
+            steps {
+                script {
+                    sh """
+                        git rev-parse HEAD
+                        git submodule update --init --recursive
+                    """
+                }
+            }
+        }
+        stage('Setup and Build Dependencies') {
+            steps {
+                script {
+                    def archs = []
+                    ['arm64', 'x86_64'].each { arch ->
+                        try {
+                            sh "cd contrib && ./build.py --arch ${arch}"
+                            archs << arch
+                        } catch(e) {
+                            unstable("Setup failed for ${arch} — skipping ${arch} plugin builds")
+                        }
+                    }
+                    if (archs.isEmpty()) {
+                        error "Setup failed for all architectures"
+                    }
+                    env.AVAILABLE_ARCHITECTURES = archs.join(',')
+                }
+            }
+        }
+        stage('Build GreenScreen') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if (env.GERRIT_TOPIC == 'all' || env.GERRIT_TOPIC == 'GreenScreen') {
+                        buildAllArchitectures { arch ->
+                            String additionalCommands = """
+                                cd ./daemon/contrib/native-${arch}
+                                make .onnx .opencv
+                                cd ./../../..
+                            """
+                            buildProject("GreenScreen", arch, additionalCommands)
+                        }
+                    }
+                }
+                }
+            }
+        }
+        stage('Build AudioFilter') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if (env.GERRIT_TOPIC == 'all' || env.GERRIT_TOPIC == 'AudioFilter') {
+                        buildAllArchitectures { arch ->
+                            buildProject("AudioFilter", arch)
+                        }
+                    }
+                }
+                }
+            }
+        }
+        stage('Build AutoAnswer') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if (env.GERRIT_TOPIC == 'all' || env.GERRIT_TOPIC == 'AutoAnswer') {
+                        buildAllArchitectures { arch ->
+                            buildProject("AutoAnswer", arch)
+                        }
+                    }
+                }
+                }
+            }
+        }
+        stage('Build WaterMark') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if (env.GERRIT_TOPIC == 'all' || env.GERRIT_TOPIC == 'WaterMark') {
+                        buildAllArchitectures { arch ->
+                            buildProject("WaterMark", arch)
+                        }
+                    }
+                }
+                }
+            }
+        }
+        stage('Build Whisper') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if (env.GERRIT_TOPIC == 'all' || env.GERRIT_TOPIC == 'Whisper' || env.GERRIT_TOPIC == 'WhisperTranscript') {
+                        buildAllArchitectures { arch ->
+                            buildProject("WhisperTranscript", arch)
+                        }
+                    }
+                }
+                }
+            }
+        }
+        stage('Build TranslateMessages') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if (env.GERRIT_TOPIC == 'all' || env.GERRIT_TOPIC == 'TranslateMessages') {
+                        sh """
+                            export PATH=/usr/local/bin:\$PATH
+                            python3 -m venv .venv
+                            .venv/bin/pip install onnxruntime==1.24.4
+                            .venv/bin/pip install -r TranslateMessages/data/models/requirements.txt
+                            cd TranslateMessages/data/models && ../../../.venv/bin/python3 download_model.py --model-type m2m100 --quantize && cd ../../..
+                        """
+                        buildAllArchitectures { arch ->
+                            sh """
+                                export PATH=/usr/local/bin:\$PATH
+                                export BATCH_MODE=1
+                                PLATFORM_TYPE="MACOS" cmake -S TranslateMessages -B TranslateMessages/build-local-${arch} -DJAMI_PLUGIN_TRANSLATION_MODEL=m2m100
+                                cmake --build TranslateMessages/build-local-${arch} -j\$(nproc)
+                            """
+                            String buildPath = "build/${arch}-apple-Darwin/TranslateMessages.jpl"
+                            if (!fileExists(buildPath)) {
+                                error "TranslateMessages ${arch} build output not found"
+                            }
+                            archiveArtifacts buildPath
+                        }
+                    }
+                }
+                }
+            }
+        }
+    }
+}

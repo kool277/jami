@@ -1,0 +1,14 @@
+{
+    "irfile_title": "Отговор на импулса",
+    "irfile_entries_1": "Студия \"Битие 6\" - Създадена барабана",
+    "irfile_entries_2": "Концертната зала на Джак Лайънс - Йоркски университет",
+    "irfile_entries_3": "Църква на Свети Патрик - Патрингтон",
+    "streamlist_title": "Аудио поток",
+    "streamlist_summary": "Изберете потока, който да филтрирате",
+    "streamlist_entries_1": "Изпратено",
+    "streamlist_entries_2": "Приети",
+    "always_summary": "Активирайте филтъра, когато започне обаждането",
+    "always_title": "Автоматично активиране на филтъра",
+    "name": "Audio Filter",
+    "description_summary": "Apply a reverb filter to your video. Use Jami for online music sessions and play music online."
+}

@@ -1,0 +1,15 @@
+{
+    "background_title": "నేపథ్య చిత్రం",
+    "blur_title": "అస్పష్టమైన నేపథ్యం",
+    "acceleration_title": "హార్డ్వేర్ త్వరణం ఉపయోగించండి",
+    "acceleration_summary": "అవసరమైతే CUDA లేదా NNAPI ను ఉపయోగించండి",
+    "blurlevel_title": "అస్పష్టత స్థాయి",
+    "streamslist_title": "వీడియో స్ట్రీమ్",
+    "streamslist_summary": "నేపథ్యాన్ని దాచడానికి స్ట్రీమ్ను ఎంచుకోండి",
+    "streamslist_entries_1": "పంపబడింది",
+    "streamslist_entries_2": "అందుకున్న",
+    "ForegroundSegmentationAlways_title": "స్వయంచాలకంగా గ్రీన్స్క్రీన్ యాక్టివేట్ చేయండి",
+    "ForegroundSegmentationAlways_summary": "ఒక కాల్ ప్రారంభమైనప్పుడు నేపథ్య దాచండి.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

@@ -1,0 +1,15 @@
+{
+    "background_title": "Bakgrunnsbilde",
+    "blur_title": "Skjulte bakgrunn",
+    "acceleration_title": "Bruk maskinverkstyrking",
+    "acceleration_summary": "Bruk CUDA eller NNAPI der det er gjeldende",
+    "blurlevel_title": "Dunkle nivå",
+    "streamslist_title": "Video-strøm",
+    "streamslist_summary": "Velg strømmen for å skjulje bakgrunnen",
+    "streamslist_entries_1": "Sending",
+    "streamslist_entries_2": "Motteke",
+    "ForegroundSegmentationAlways_title": "Å aktivere GreenScreen automatisk",
+    "ForegroundSegmentationAlways_summary": "Skjul bakgrunnen når ein samtal startar.",
+    "name": "Grønskjerm",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

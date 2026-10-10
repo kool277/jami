@@ -1,0 +1,8 @@
+{
+    "id": "WaterMark",
+    "name": "{{name}}",
+    "description": "{{description_summary}}",
+    "version": "2.1.0",
+    "iconPath": "icon.svg",
+    "backgroundPath": "background.jpg"
+}

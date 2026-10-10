@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Trigger bot",
+        "trigger_summary": "Ujumbe kwamba Bot kujibu",
+        "bot_answer": "Majibu ya Bot",
+        "answer_summary": "Ujumbe kwamba Bot kutuma",
+        "default_trigger": "Hi, kwa nini?",
+        "default_answer": "Halo, kwa sasa mimi ni busy lakini nitakujibu haraka iwezekanavyo.",
+        "always_title": "Kuwasha Bot moja kwa moja",
+        "always_summary": "Bot itakuwa hai kwa ajili ya mazungumzo yote.",
+        "name": "Jibu la Moja kwa Moja",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

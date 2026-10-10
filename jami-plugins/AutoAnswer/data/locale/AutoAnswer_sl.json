@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Prožilo bota",
+        "trigger_summary": "Besedilo, na katerega se bot odzove",
+        "bot_answer": "Odziv bota",
+        "answer_summary": "Besedilo, ki ga pošlje bot",
+        "default_trigger": "Živjo",
+        "default_answer": "Živijo, trenutno ne utegnem, ampak odgovorim čim prej, ko bo mogoče.",
+        "always_title": "Samodejno aktiviraj bota",
+        "always_summary": "Bot bo dejaven za vse pogovore.",
+        "name": "Samodejni odgovor",
+        "description_summary": "Nastavite bot, ki samodejno odgovarja na klice s podanim besedilom."
+}

@@ -1,0 +1,528 @@
+/*
+ * Copyright (C) 2022-2023 Savoir-faire Linux Inc.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation; either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public
+ * License along with this program.  If not, see
+ * <https://www.gnu.org/licenses/>.
+ */
+
+// Requirements:
+// - gerrit-trigger plugin
+// - Docker plugin
+// - ansicolor plugin
+
+pipeline {
+    agent {
+        node {
+            label 'jami-buildmachine-02.mtl.sfl'
+        }
+    }
+
+    triggers {
+        gerrit customUrl: '',
+            gerritProjects: [
+                [branches: [[compareType: 'PLAIN', pattern: 'master']],
+                 compareType: 'PLAIN',
+                 disableStrictForbiddenFileVerification: false,
+                 pattern: 'jami-plugins']],
+            triggerOnEvents: [
+                commentAddedContains('!build'),
+                patchsetCreated(excludeDrafts: true, excludeNoCodeChange: true,
+                    excludeTrivialRebase: true)]
+    }
+
+    options {
+        ansiColor('xterm')
+    }
+
+    parameters {
+        string(name: 'GERRIT_REFSPEC',
+                defaultValue: 'refs/heads/master',
+                description: 'The Gerrit plugins refspec to fetch.')
+        string(name: 'dockerfile',
+                defaultValue: 'Dockerfile_android',
+                description: 'Dockerfile in plugins/docker/ repository to use for the build')
+        string(name: 'GERRIT_TOPIC',
+                defaultValue: '',
+                description: 'topic must match the plugins name if the pipeline is to build that plugins.')
+        booleanParam(name: 'ARCHIVE',
+                     defaultValue: true,
+                     description: 'Archive artifacts in Jenkins (true) or rsync to the download server (false). Set to false only for release builds where SSH_CREDENTIALS and SSH_HOST_DL_RING_CX are configured.')
+    }
+
+    environment {
+        jenkinsUID = sh(returnStdout: true, script: 'id -u jenkins').replaceAll("\n", '').trim()
+        jenkinsGID = sh(returnStdout: true, script: 'id -g jenkins').replaceAll("\n", '').trim()
+        jenkinsUser = '${jenkinsUID}:${jenkinsGID}'
+        cpuCount = sh returnStdout: true, script: 'nproc || echo -n 4'
+    }
+
+    stages {
+        stage('SCM Checkout') {
+            steps {
+                // Wipe workspace and fetch jami-plugins
+                checkout changelog: true, poll: false,
+                    scm: [$class: 'GitSCM',
+                        branches: [[name: 'FETCH_HEAD']],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [
+                            [$class: 'CloneOption', noTags: true, reference: '', shallow: true],
+                            [$class: 'WipeWorkspace']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[refspec: '${GERRIT_REFSPEC}', url: 'https://${JAMI_GERRIT_URL}/jami-plugins']]]
+            }
+        }
+
+        stage('Init repository') {
+            steps {
+                script {
+                    sh """
+                        git rev-parse HEAD
+                        git submodule update --init --recursive
+                    """
+                }
+            }
+        }
+
+        stage('Building Docker Image') {
+            steps {
+                script {
+                    docker.build('plugins-android', "-f docker/${dockerfile} .")
+                }
+            }
+        }
+
+        stage('Setup and Build Dependencies') {
+            steps {
+                script {
+                    def hostBaseDir = "/var/lib/jenkins/android-plugins"
+                    def containerBaseDir = "/home/gradle/jami/daemon/contrib"
+                    def subdirs = [
+                        "tarballs",
+                        "aarch64-linux-android",
+                        "native-aarch64-linux-android",
+                        "x86_64-linux-android",
+                        "native-x86_64-linux-android",
+                        "arm-linux-android",
+                        "native-arm-linux-android"
+                    ]
+
+                    sh(script: "mkdir -p ${hostBaseDir}", returnStatus: true).with {
+                        if (it!= 0) {
+                            error("Failed to create base directory: ${hostBaseDir}")
+                        }
+                    }
+
+                    subdirs.each { subdir ->
+                        def result = sh(script: "mkdir -p ${hostBaseDir}/${subdir}", returnStatus: true)
+                        if (result!= 0) {
+                            error("Failed to create directory: ${hostBaseDir}/${subdir}")
+                        } else {
+                            println "Successfully created directory: ${hostBaseDir}/${subdir}"
+                        }
+
+                        println "Inside container, ensure this directory exists: ${containerBaseDir}/${subdir}"
+                    }
+                    docker.image('plugins-android').withRun('-t \
+                                  -v '+pwd()+':/home/gradle/jami:rw \
+                                  -v /var/lib/jenkins/android-plugins/tarballs:/home/gradle/jami/daemon/contrib/tarballs:rw \
+                                  -v /var/lib/jenkins/android-plugins/aarch64-linux-android:/home/gradle/jami/daemon/contrib/aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-aarch64-linux-android:/home/gradle/jami/daemon/contrib/native-aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/x86_64-linux-android:/home/gradle/jami/daemon/contrib/x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-x86_64-linux-android:/home/gradle/jami/daemon/contrib/native-x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/arm-linux-android:/home/gradle/jami/daemon/contrib/arm-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-arm-linux-android:/home/gradle/jami/daemon/contrib/native-arm-linux-android:rw \
+                                  -e BATCH_MODE=1', '/bin/bash') {
+                        container -> code:{
+                            def base_cmd = 'docker exec -u '+jenkinsUser+' '+container.id+" sh -c '"
+                            def base_root_cmd = 'docker exec '+container.id+" sh -c '"
+                            def exec_cmd = { cmd -> sh script:base_cmd+cmd+"'" }
+                            def exec_root_cmd = { cmd -> sh script:base_root_cmd+cmd+"'" }
+                            ansiColor('css') {
+                                exec_cmd("""
+                                    echo "=== Daemon directory check ==="
+                                    if [ -d /home/gradle/jami/daemon ]; then
+                                        echo "daemon/ is present"
+                                        echo "commit: \$(git -C /home/gradle/jami/daemon rev-parse HEAD 2>&1)"
+                                        echo "extras/tools present: \$(test -d /home/gradle/jami/daemon/extras/tools && echo yes || echo NO)"
+                                    else
+                                        echo "ERROR: daemon/ directory not found"
+                                    fi
+                                    echo "=============================="
+                                    DAEMON_HASH=\$(git -C /home/gradle/jami/daemon rev-parse HEAD 2>/dev/null || echo unknown)
+                                    HASH_FILE=/home/gradle/jami/daemon/contrib/tarballs/.daemon-build-hash
+                                    CACHED_HASH=\$(cat "\$HASH_FILE" 2>/dev/null || echo "")
+                                    NEED_REBUILD=0
+                                    if [ "\$DAEMON_HASH" = "unknown" ] || [ "\$DAEMON_HASH" != "\$CACHED_HASH" ]; then
+                                        echo "Daemon changed or no cache (\$CACHED_HASH -> \$DAEMON_HASH), will rebuild"
+                                        NEED_REBUILD=1
+                                    else
+                                        for natdir in /home/gradle/jami/daemon/contrib/native-*; do
+                                            cmake_sys=\$(find "\$natdir" -name "CMakeSystem.cmake" 2>/dev/null | head -1)
+                                            if [ -n "\$cmake_sys" ] && ! grep -qF "\$ANDROID_NDK" "\$cmake_sys"; then
+                                                echo "Stale NDK cache detected in \$natdir, will rebuild"
+                                                NEED_REBUILD=1
+                                                break
+                                            fi
+                                        done
+                                    fi
+                                    if [ "\$NEED_REBUILD" = "1" ]; then
+                                        for natdir in /home/gradle/jami/daemon/contrib/native-*; do
+                                            echo "Wiping \$natdir"
+                                            find "\$natdir" -mindepth 1 -delete 2>/dev/null || true
+                                        done
+                                        cd /home/gradle/jami/contrib
+                                        ANDROID_ABI="armeabi-v7a" sh build-dependencies.sh
+                                        ANDROID_ABI="arm64-v8a" sh build-dependencies.sh
+                                        ANDROID_ABI="x86_64" sh build-dependencies.sh
+                                        echo "\$DAEMON_HASH" > "\$HASH_FILE"
+                                    else
+                                        echo "Daemon unchanged (\$DAEMON_HASH), reusing cached contribs"
+                                    fi
+                                """)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Setup Virtual Environment') {
+            steps {
+                script {
+                    docker.image('plugins-android').withRun('-t \
+                              -v '+pwd()+':/home/gradle/jami:rw \
+                              -e BATCH_MODE=1', '/bin/bash') {
+                        container -> code:{
+                            def base_cmd = 'docker exec -u '+jenkinsUser+' '+container.id+" sh -c '"
+                            def exec_cmd = { cmd -> sh script:base_cmd+cmd+"'" }
+
+                            ansiColor('css') {
+                                exec_cmd("""
+                                    cd /home/gradle/jami
+                                    python3 -m venv .venv
+                                    ./.venv/bin/pip install --upgrade pip
+                                    ./.venv/bin/pip install -r ./SDK/certificate_requirements.txt
+                                    ./.venv/bin/pip install -r ./SDK/requirements.txt
+                                """)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Build GreenScreen') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if(env.GERRIT_TOPIC == "" || env.GERRIT_TOPIC == "all" || env.GERRIT_TOPIC == "GreenScreen") {
+                        docker.image('plugins-android').withRun('-t \
+                                  -v '+pwd()+':/home/gradle/jami:rw \
+                                  -v /var/lib/jenkins/android-plugins/tarballs:/home/gradle/jami/daemon/contrib/tarballs:rw \
+                                  -v /var/lib/jenkins/android-plugins/aarch64-linux-android:/home/gradle/jami/daemon/contrib/aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-aarch64-linux-android:/home/gradle/jami/daemon/contrib/native-aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/x86_64-linux-android:/home/gradle/jami/daemon/contrib/x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-x86_64-linux-android:/home/gradle/jami/daemon/contrib/native-x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/arm-linux-android:/home/gradle/jami/daemon/contrib/arm-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-arm-linux-android:/home/gradle/jami/daemon/contrib/native-arm-linux-android:rw \
+                                  -e BATCH_MODE=1', '/bin/bash') {
+                            container -> code:{
+                                def base_cmd = 'docker exec -u '+jenkinsUser+' '+container.id+" sh -c '"
+                                def base_root_cmd = 'docker exec '+container.id+" sh -c '"
+                                def exec_cmd = { cmd -> sh script:base_cmd+cmd+"'" }
+                                def exec_root_cmd = { cmd -> sh script:base_root_cmd+cmd+"'" }
+
+                                ansiColor('css') {
+                                    exec_cmd("""
+                                        cd jami
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="armeabi-v7a" ./.venv/bin/python3 build-plugin.py --projects="GreenScreen" --distribution="android"
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="arm64-v8a" ./.venv/bin/python3 build-plugin.py --projects="GreenScreen" --distribution="android"
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="x86_64" ./.venv/bin/python3 build-plugin.py --projects="GreenScreen" --distribution="android"
+                                        """)
+                                }
+                            }
+                        }
+                        if (env.ARCHIVE == 'false') {
+                            sshagent(credentials: [env.SSH_CREDENTIALS]) {
+                                // def sshPrivateKey = '/var/lib/jenkins/.ssh/gplpriv'
+                                def remoteHost = env.SSH_HOST_DL_RING_CX
+                                def remoteBaseDir = '/srv/repository/ring/plugins/GreenScreen/android'
+
+                                sh """
+                                    rsync --verbose build/android/GreenScreen.jpl ${remoteHost}:${remoteBaseDir}/archive/GreenScreen-\$(date '+%Y%m%d%H%M').jpl
+                                    rsync --verbose build/android/GreenScreen.jpl ${remoteHost}:${remoteBaseDir}/GreenScreen.jpl
+                                """
+                            }
+                        } else {
+                            archiveArtifacts 'build/android/GreenScreen.jpl'
+                        }
+                    }
+                }
+                }
+            }
+        }
+
+        stage('Build AudioFilter') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if(env.GERRIT_TOPIC == "" || env.GERRIT_TOPIC == "all" || env.GERRIT_TOPIC == "AudioFilter") {
+                        docker.image('plugins-android').withRun('-t \
+                                  -v '+pwd()+':/home/gradle/jami:rw \
+                                  -v /var/lib/jenkins/android-plugins/tarballs:/home/gradle/jami/daemon/contrib/tarballs:rw \
+                                  -v /var/lib/jenkins/android-plugins/aarch64-linux-android:/home/gradle/jami/daemon/contrib/aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-aarch64-linux-android:/home/gradle/jami/daemon/contrib/native-aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/x86_64-linux-android:/home/gradle/jami/daemon/contrib/x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-x86_64-linux-android:/home/gradle/jami/daemon/contrib/native-x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/arm-linux-android:/home/gradle/jami/daemon/contrib/arm-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-arm-linux-android:/home/gradle/jami/daemon/contrib/native-arm-linux-android:rw \
+                                  -e BATCH_MODE=1', '/bin/bash') {
+                            container -> code:{
+                                def base_cmd = 'docker exec -u '+jenkinsUser+' '+container.id+" sh -c '"
+                                def base_root_cmd = 'docker exec '+container.id+" sh -c '"
+                                def exec_cmd = { cmd -> sh script:base_cmd+cmd+"'" }
+                                def exec_root_cmd = { cmd -> sh script:base_root_cmd+cmd+"'" }
+
+                                ansiColor('css') {
+                                    exec_cmd("""
+                                        cd jami
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="armeabi-v7a" ./.venv/bin/python3 build-plugin.py --projects="AudioFilter" --distribution="android"
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="arm64-v8a" ./.venv/bin/python3 build-plugin.py --projects="AudioFilter" --distribution="android"
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="x86_64" ./.venv/bin/python3 build-plugin.py --projects="AudioFilter" --distribution="android"
+                                """)
+                                }
+                            }
+                        }
+                        if (env.ARCHIVE == 'false') {
+                            sshagent(credentials: [env.SSH_CREDENTIALS]) {
+                                // def sshPrivateKey = '/var/lib/jenkins/.ssh/gplpriv'
+                                def remoteHost = env.SSH_HOST_DL_RING_CX
+                                def remoteBaseDir = '/srv/repository/ring/plugins/AudioFilter/android'
+
+                                sh """
+                                    rsync --verbose build/android/AudioFilter.jpl ${remoteHost}:${remoteBaseDir}/archive/AudioFilter-\$(date '+%Y%m%d%H%M').jpl
+                                    rsync --verbose build/android/AudioFilter.jpl ${remoteHost}:${remoteBaseDir}/AudioFilter.jpl
+                                """
+                            }
+                        } else {
+                            archiveArtifacts 'build/android/AudioFilter.jpl'
+                        }
+                    }
+                }
+                }
+            }
+        }
+
+        stage('Build AutoAnswer') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if(env.GERRIT_TOPIC == "" || env.GERRIT_TOPIC == "all" || env.GERRIT_TOPIC == "AutoAnswer") {
+                        docker.image('plugins-android').withRun('-t \
+                                  -v '+pwd()+':/home/gradle/jami:rw \
+                                  -v /var/lib/jenkins/android-plugins/tarballs:/home/gradle/jami/daemon/contrib/tarballs:rw \
+                                  -v /var/lib/jenkins/android-plugins/aarch64-linux-android:/home/gradle/jami/daemon/contrib/aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-aarch64-linux-android:/home/gradle/jami/daemon/contrib/native-aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/x86_64-linux-android:/home/gradle/jami/daemon/contrib/x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-x86_64-linux-android:/home/gradle/jami/daemon/contrib/native-x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/arm-linux-android:/home/gradle/jami/daemon/contrib/arm-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-arm-linux-android:/home/gradle/jami/daemon/contrib/native-arm-linux-android:rw \
+                                  -e BATCH_MODE=1', '/bin/bash') {
+                            container -> code:{
+                                def base_cmd = 'docker exec -u '+jenkinsUser+' '+container.id+" sh -c '"
+                                def base_root_cmd = 'docker exec '+container.id+" sh -c '"
+                                def exec_cmd = { cmd -> sh script:base_cmd+cmd+"'" }
+                                def exec_root_cmd = { cmd -> sh script:base_root_cmd+cmd+"'" }
+
+                                ansiColor('css') {
+                                    exec_cmd("""
+                                        cd jami
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="armeabi-v7a" ./.venv/bin/python3 build-plugin.py --projects="AutoAnswer" --distribution="android"
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="arm64-v8a" ./.venv/bin/python3 build-plugin.py --projects="AutoAnswer" --distribution="android"
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="x86_64" ./.venv/bin/python3 build-plugin.py --projects="AutoAnswer" --distribution="android"
+                                """)
+                                }
+                            }
+                        }
+                        if (env.ARCHIVE == 'false') {
+                            sshagent(credentials: [env.SSH_CREDENTIALS]) {
+                                // def sshPrivateKey = '/var/lib/jenkins/.ssh/gplpriv'
+                                def remoteHost = env.SSH_HOST_DL_RING_CX
+                                def remoteBaseDir = '/srv/repository/ring/plugins/AutoAnswer/android'
+
+                                sh """
+                                    rsync --verbose build/android/AutoAnswer.jpl ${remoteHost}:${remoteBaseDir}/archive/AutoAnswer-\$(date '+%Y%m%d%H%M').jpl
+                                    rsync --verbose build/android/AutoAnswer.jpl ${remoteHost}:${remoteBaseDir}/AutoAnswer.jpl
+                                """
+                            }
+                        } else {
+                            archiveArtifacts 'build/android/AutoAnswer.jpl'
+                        }
+                    }
+                }
+                }
+            }
+        }
+
+        stage('Build WaterMark') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if(env.GERRIT_TOPIC == "" || env.GERRIT_TOPIC == "all" || env.GERRIT_TOPIC == "WaterMark") {
+                        docker.image('plugins-android').withRun('-t \
+                                  -v '+pwd()+':/home/gradle/jami:rw \
+                                  -v /var/lib/jenkins/android-plugins/tarballs:/home/gradle/jami/daemon/contrib/tarballs:rw \
+                                  -v /var/lib/jenkins/android-plugins/aarch64-linux-android:/home/gradle/jami/daemon/contrib/aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-aarch64-linux-android:/home/gradle/jami/daemon/contrib/native-aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/x86_64-linux-android:/home/gradle/jami/daemon/contrib/x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-x86_64-linux-android:/home/gradle/jami/daemon/contrib/native-x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/arm-linux-android:/home/gradle/jami/daemon/contrib/arm-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-arm-linux-android:/home/gradle/jami/daemon/contrib/native-arm-linux-android:rw \
+                                  -e BATCH_MODE=1', '/bin/bash') {
+                            container -> code:{
+                                def base_cmd = 'docker exec -u '+jenkinsUser+' '+container.id+" sh -c '"
+                                def base_root_cmd = 'docker exec '+container.id+" sh -c '"
+                                def exec_cmd = { cmd -> sh script:base_cmd+cmd+"'" }
+                                def exec_root_cmd = { cmd -> sh script:base_root_cmd+cmd+"'" }
+
+                                ansiColor('css') {
+                                    exec_cmd("""
+                                        cd jami
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="armeabi-v7a" ./.venv/bin/python3 build-plugin.py --projects="WaterMark" --distribution="android"
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="arm64-v8a" ./.venv/bin/python3 build-plugin.py --projects="WaterMark" --distribution="android"
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="x86_64" ./.venv/bin/python3 build-plugin.py --projects="WaterMark" --distribution="android"
+                                """)
+                                }
+                            }
+                        }
+                        if (env.ARCHIVE == 'false') {
+                            sshagent(credentials: [env.SSH_CREDENTIALS]) {
+                                def remoteHost = env.SSH_HOST_DL_RING_CX
+                                def remoteBaseDir = '/srv/repository/ring/plugins/WaterMark/android'
+
+                                sh """
+                                    rsync --verbose build/android/WaterMark.jpl ${remoteHost}:${remoteBaseDir}/archive/WaterMark-\$(date '+%Y%m%d%H%M').jpl
+                                    rsync --verbose build/android/WaterMark.jpl ${remoteHost}:${remoteBaseDir}/WaterMark.jpl
+                                """
+                            }
+                        } else {
+                            archiveArtifacts 'build/android/WaterMark.jpl'
+                        }
+                    }
+                }
+                }
+            }
+        }
+
+        stage('Build Whisper') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if(env.GERRIT_TOPIC == "" || env.GERRIT_TOPIC == "all" || env.GERRIT_TOPIC == "Whisper" || env.GERRIT_TOPIC == "WhisperTranscript") {
+                        docker.image('plugins-android').withRun('-t \
+                                  -v '+pwd()+':/home/gradle/jami:rw \
+                                  -v /var/lib/jenkins/android-plugins/tarballs:/home/gradle/jami/daemon/contrib/tarballs:rw \
+                                  -v /var/lib/jenkins/android-plugins/aarch64-linux-android:/home/gradle/jami/daemon/contrib/aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-aarch64-linux-android:/home/gradle/jami/daemon/contrib/native-aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/x86_64-linux-android:/home/gradle/jami/daemon/contrib/x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-x86_64-linux-android:/home/gradle/jami/daemon/contrib/native-x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/arm-linux-android:/home/gradle/jami/daemon/contrib/arm-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-arm-linux-android:/home/gradle/jami/daemon/contrib/native-arm-linux-android:rw \
+                                  -e BATCH_MODE=1', '/bin/bash') {
+                            container -> code:{
+                                def base_cmd = 'docker exec -u '+jenkinsUser+' '+container.id+" sh -c '"
+                                def base_root_cmd = 'docker exec '+container.id+" sh -c '"
+                                def exec_cmd = { cmd -> sh script:base_cmd+cmd+"'" }
+                                def exec_root_cmd = { cmd -> sh script:base_root_cmd+cmd+"'" }
+
+                                ansiColor('css') {
+                                    exec_cmd("""
+                                        cd jami
+                                        PLATFORM_TYPE="ANDROID" AUTHOR="SFL" DIVISION="Internal" ANDROID_ABI="arm64-v8a" ./.venv/bin/python3 build-plugin.py --projects="WhisperTranscript" --distribution="android"
+                                """)
+                                }
+                            }
+                        }
+                        if (env.ARCHIVE == 'false') {
+                            sshagent(credentials: [env.SSH_CREDENTIALS]) {
+                                // def sshPrivateKey = '/var/lib/jenkins/.ssh/gplpriv'
+                                def remoteHost = env.SSH_HOST_DL_RING_CX
+                                def remoteBaseDir = '/srv/repository/ring/plugins/WhisperTranscript/android'
+
+                                sh """
+                                    rsync --verbose build/android/WhisperTranscript.jpl ${remoteHost}:${remoteBaseDir}/archive/WhisperTranscript-\$(date '+%Y%m%d%H%M').jpl
+                                    rsync --verbose build/android/WhisperTranscript.jpl ${remoteHost}:${remoteBaseDir}/WhisperTranscript.jpl
+                                """
+                            }
+                        } else {
+                            archiveArtifacts 'build/android/WhisperTranscript.jpl'
+                        }
+                    }
+                }
+                }
+            }
+        }
+
+        stage('Build TranslateMessages') {
+            steps {
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                script {
+                    if(env.GERRIT_TOPIC == "" || env.GERRIT_TOPIC == "all" || env.GERRIT_TOPIC == "TranslateMessages") {
+                        docker.image('plugins-android').withRun('-t \
+                                  -v '+pwd()+':/home/gradle/jami:rw \
+                                  -v /var/lib/jenkins/android-plugins/tarballs:/home/gradle/jami/daemon/contrib/tarballs:rw \
+                                  -v /var/lib/jenkins/android-plugins/aarch64-linux-android:/home/gradle/jami/daemon/contrib/aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-aarch64-linux-android:/home/gradle/jami/daemon/contrib/native-aarch64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/x86_64-linux-android:/home/gradle/jami/daemon/contrib/x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-x86_64-linux-android:/home/gradle/jami/daemon/contrib/native-x86_64-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/arm-linux-android:/home/gradle/jami/daemon/contrib/arm-linux-android:rw \
+                                  -v /var/lib/jenkins/android-plugins/native-arm-linux-android:/home/gradle/jami/daemon/contrib/native-arm-linux-android:rw \
+                                  -e BATCH_MODE=1', '/bin/bash') {
+                            container -> code:{
+                                def base_cmd = 'docker exec -u '+jenkinsUser+' '+container.id+" sh -c '"
+                                def base_root_cmd = 'docker exec '+container.id+" sh -c '"
+                                def exec_cmd = { cmd -> sh script:base_cmd+cmd+"'" }
+                                def exec_root_cmd = { cmd -> sh script:base_root_cmd+cmd+"'" }
+
+                                ansiColor('css') {
+                                    exec_cmd("""
+                                        cd jami
+                                        [ -d TranslateMessages ] || { echo "TranslateMessages not in this patchset, skipping"; exit 0; }
+                                        ./.venv/bin/pip install -r ./TranslateMessages/data/models/requirements.txt
+                                        cd TranslateMessages/data/models && ../../../.venv/bin/python3 download_model.py --model-type m2m100 --quantize && cd ../../..
+                                        PLATFORM_TYPE="ANDROID" ANDROID_ABI="arm64-v8a" ./.venv/bin/python3 build-plugin.py --projects="TranslateMessages" --distribution="android"
+                                """)
+                                }
+                            }
+                        }
+                        if (env.ARCHIVE == 'false') {
+                            sshagent(credentials: [env.SSH_CREDENTIALS]) {
+                                def remoteHost = env.SSH_HOST_DL_RING_CX
+                                def remoteBaseDir = '/srv/repository/ring/plugins/TranslateMessages/android'
+
+                                sh """
+                                    rsync --verbose build/android/TranslateMessages.jpl ${remoteHost}:${remoteBaseDir}/archive/TranslateMessages-\$(date '+%Y%m%d%H%M').jpl
+                                    rsync --verbose build/android/TranslateMessages.jpl ${remoteHost}:${remoteBaseDir}/TranslateMessages.jpl
+                                """
+                            }
+                        } else {
+                            archiveArtifacts 'build/android/TranslateMessages.jpl'
+                        }
+                    }
+                }
+                }
+            }
+        }
+    }
+}

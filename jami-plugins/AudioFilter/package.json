@@ -1,0 +1,22 @@
+{
+    "name": "AudioFilter",
+    "version": "1.0.2",
+    "extractLibs": false,
+    "deps": [
+        "fmt",
+        "yaml-cpp",
+        "opendht"
+    ],
+    "defines": [
+        "TESTPROCESS=False"
+    ],
+    "custom_scripts": {
+        "pre_build": [
+            "mkdir msvc"
+        ],
+        "build": [
+            "cmake --build ./msvc --config Release"
+        ],
+        "post_build": []
+    }
+}

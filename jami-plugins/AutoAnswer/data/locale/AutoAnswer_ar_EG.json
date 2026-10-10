@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "أزرار الروبوت",
+        "trigger_summary": "النص الذي سوف يستجيب الروبوت",
+        "bot_answer": "رد الفعل",
+        "answer_summary": "الرسالة التي سيتبعدها الروبوت",
+        "default_trigger": "مرحباً",
+        "default_answer": "مرحباً، أنا مشغول حالياً، لكنّي سأجيب لك في أقرب وقت ممكن.",
+        "always_title": "تنشيط الآلي لـ \" بوت \"",
+        "always_summary": "(بوت) سيكون نشطًا في جميع المحادثات",
+        "name": "رد ألي",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

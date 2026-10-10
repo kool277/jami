@@ -1,0 +1,26 @@
+
+Create (or Delete) a preference: PREFERENCE (-del)
+
+List preference formation example:
+{
+    "category" : "Streams",                       -> user choice;
+    "type": "List",                               -> fixed as List;
+    "key": "videostreams",                        -> user choice, must not repeate other key inside 
+                                                     same preferences.json file;
+    "title": "Streams to transform",              -> user choice;
+    "summary": "Select video to transform",       -> user choice;
+    "defaultValue": "0",                          -> must be a value listed in 'entryValues';
+    "entries": ["sent", "received"],              -> names to the possible values listed in 'entryValues',
+                                                     must have the same size as 'entryValues';
+    "entryValues": ["0", "1"],                    -> list of possible values this preference can take;
+    "scope": "plugin"                             -> if a preference value may be changed while the
+                                                     functionality is being used, this functionality name
+                                                     must be listed in the scope.
+}
+
+A List preference must have a list of possible values to be used.
+and a list of 'names' for these values. For example:
+    If you have two values: '0' and '1', these values may not be understandable
+    by the user.
+    The names 'sent' and 'received' set at 'entries' will be shown in the UI and
+    are more intuitive!

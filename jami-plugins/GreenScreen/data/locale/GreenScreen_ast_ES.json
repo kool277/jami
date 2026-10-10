@@ -1,0 +1,15 @@
+{
+    "background_title": "Imáxenes de fondo",
+    "blur_title": "El fondu ta borroso",
+    "acceleration_title": "Utiliza aceleración de hardware",
+    "acceleration_summary": "Utiliza CUDA o NNAPI si ye aplicable.",
+    "blurlevel_title": "Nivel de borrosu",
+    "streamslist_title": "El fluxu de video",
+    "streamslist_summary": "Seleccione la corriente pa ocultar el fondu",
+    "streamslist_entries_1": "Enviáu",
+    "streamslist_entries_2": "Recibíos",
+    "ForegroundSegmentationAlways_title": "Activar automáticamente GreenScreen",
+    "ForegroundSegmentationAlways_summary": "La so primer apaición foi nel episodiu de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la serie de televisión de la televisión de la televisión de la televisión de la televisión de la televisión de la televisión de la televisión de la televisión.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

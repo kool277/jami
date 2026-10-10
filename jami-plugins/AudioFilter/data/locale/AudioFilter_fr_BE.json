@@ -1,0 +1,14 @@
+{
+    "irfile_title": "Réponse impulsionnelle",
+    "irfile_entries_1": "Genesis 6 Studio - Live Room Drum Set Up",
+    "irfile_entries_2": "Jack Lions Concert Hall - University of York",
+    "irfile_entries_3": "St. Patrick’s Church - Patrington",
+    "streamlist_title": "Flux audio",
+    "streamlist_summary": "Choisir le flux sur lequel appliquer le filtre ",
+    "streamlist_entries_1": "Envoyé",
+    "streamlist_entries_2": "reçu",
+    "always_summary": "Activer le filtre au démarrage d'un appel",
+    "always_title": "Activer automatiquement le filtre",
+    "name": "Filtre Audio",
+    "description_summary": "Appliquez un filtre de réverbération à votre appel. Utilisez Jami pour des sessions musicales en ligne et jouez de la musique en ligne."
+}

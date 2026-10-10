@@ -1,0 +1,15 @@
+{
+    "background_title": "Хөгжлийн зураг",
+    "blur_title": "Хөгжилгүй өнцөг",
+    "acceleration_title": "Хардварны хурдац ашиглах",
+    "acceleration_summary": "Хэрэглээний үед CUDA эсвэл NNAPI-ийг ашигла",
+    "blurlevel_title": "Уурхай түвшин",
+    "streamslist_title": "Видео урсгал",
+    "streamslist_summary": "Хөгжлийн урмыг татаж",
+    "streamslist_entries_1": "Жинхэнэ",
+    "streamslist_entries_2": "Хөгжил",
+    "ForegroundSegmentationAlways_title": "GreenScreen-ийг автоматжуулж",
+    "ForegroundSegmentationAlways_summary": "Зудлага эхэлснээс хойш нууцла.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

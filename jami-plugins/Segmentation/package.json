@@ -1,0 +1,20 @@
+{
+    "name": "Segmentation",
+    "version": "1.0.0",
+    "extractLibs": false,
+    "deps": [
+        "fmt",
+        "ffmpeg",
+        "opencv"
+    ],
+    "defines": [],
+    "custom_scripts": {
+        "pre_build": [
+            "mkdir msvc"
+        ],
+        "build": [
+            "cmake --build ./msvc --config Release"
+        ],
+        "post_build": []
+    }
+}

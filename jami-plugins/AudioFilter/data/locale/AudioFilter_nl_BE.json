@@ -1,0 +1,12 @@
+{
+    "irfile_title": "Impulse response",
+    "irfile_entries_1": "Genesis 6 Studio - Live Room Drum Set Up",
+    "irfile_entries_2": "Jack Lions Concert Hall - University of York",
+    "irfile_entries_3": "St. Patrick’s Church - Patrington",
+    "streamlist_title": "Audio stream",
+    "streamlist_summary": "Select the stream to filter",
+    "streamlist_entries_1": "Sent",
+    "streamlist_entries_2": "Received",
+    "always_summary": "Activate the filter when a call starts",
+    "always_title": "Automatically activate the filter"
+}

@@ -1,0 +1,14 @@
+{
+    "irfile_title": "Impulzusválasz",
+    "irfile_entries_1": "6. Genezis Stúdió – Élőszoba dobfelszerelés",
+    "irfile_entries_2": "Oroszlánok Jancsi Hangversenyterem – York Egyetem",
+    "irfile_entries_3": "Szent Patrik-templom – Patrington",
+    "streamlist_title": "Hang-adatfolyam",
+    "streamlist_summary": "Adatfolyam kijelölése a szűréshez",
+    "streamlist_entries_1": "Elküldve",
+    "streamlist_entries_2": "Érkezett",
+    "always_summary": "Szűrő elindítása hívás indulásakor",
+    "always_title": "Szűrő önműködő indítása",
+    "name": "Hangszűrő",
+    "description_summary": "Alkalmazzon visszhangszűrőt a videóra. Használja a Jamit az online zenei ülésekhez, és játsszon zenét online."
+}

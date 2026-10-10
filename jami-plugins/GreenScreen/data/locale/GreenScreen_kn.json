@@ -1,0 +1,15 @@
+{
+    "background_title": "ಹಿನ್ನೆಲೆ ಚಿತ್ರ",
+    "blur_title": "ಅಸ್ಪಷ್ಟ ಹಿನ್ನೆಲೆ",
+    "acceleration_title": "ಯಂತ್ರಾಂಶ ವೇಗವರ್ಧಕವನ್ನು ಬಳಸಿ",
+    "acceleration_summary": "ಅನ್ವಯವಾಗುವಾಗ CUDA ಅಥವಾ NNAPI ಬಳಸಿ",
+    "blurlevel_title": "ಮಸುಕಾದ ಮಟ್ಟ",
+    "streamslist_title": "ವೀಡಿಯೊ ಸ್ಟ್ರೀಮ್",
+    "streamslist_summary": "ಹಿನ್ನೆಲೆ ಮರೆಮಾಡಲು ಸ್ಟ್ರೀಮ್ ಅನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    "streamslist_entries_1": "ಕಳುಹಿಸಲಾಗಿದೆ",
+    "streamslist_entries_2": "ಸ್ವೀಕರಿಸಿದ",
+    "ForegroundSegmentationAlways_title": "ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಗ್ರೀನ್ ಸ್ಕ್ರೀನ್ ಅನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ",
+    "ForegroundSegmentationAlways_summary": "ಕರೆ ಪ್ರಾರಂಭವಾದಾಗ ಹಿನ್ನೆಲೆ ಮರೆಮಾಡಿ.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

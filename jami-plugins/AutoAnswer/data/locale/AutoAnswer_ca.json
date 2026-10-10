@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Trigeració de bot",
+        "trigger_summary": "Text que el bot respon",
+        "bot_answer": "Resposta del bot",
+        "answer_summary": "Text que Bot enviarà",
+        "default_trigger": "Hola, que està bé?",
+        "default_answer": "Hola, actualment estic ocupat, però us respondré el més aviat possible.",
+        "always_title": "Activar automàticament Bot",
+        "always_summary": "Bot serà actiu per a totes les converses.",
+        "name": "Resposta automàtica",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

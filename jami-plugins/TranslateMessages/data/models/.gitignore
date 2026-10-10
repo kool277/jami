@@ -1,0 +1,18 @@
+# Runtime binary data — produced by download_model.py, not tracked in git.
+lid.176.ftz
+sentencepiece.bpe.model
+shared_vocabulary.json
+
+# ONNX model files (large binaries, produced by download_model.py)
+**/*.onnx
+**/*.onnx.data
+
+# HuggingFace metadata — downloaded alongside the models, not used at runtime.
+tokenizer.json
+tokenizer_config.json
+vocab.json
+added_tokens.json
+config.json
+
+# Python cache
+__pycache__/

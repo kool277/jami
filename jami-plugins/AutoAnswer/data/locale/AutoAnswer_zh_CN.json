@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "机器人触发器",
+        "trigger_summary": "机器人将回复的文字",
+        "bot_answer": "机器人的回复",
+        "answer_summary": "机器人将发送的文字",
+        "default_trigger": "嗨",
+        "default_answer": "你好，目前我很忙，但会尽快回复你。",
+        "always_title": "自动启用机器人",
+        "always_summary": "机器人将回复所有对话。",
+        "name": "自动应答",
+        "description_summary": "设置一个用特定文本应答的自动回复"
+}

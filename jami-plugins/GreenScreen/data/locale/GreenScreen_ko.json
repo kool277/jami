@@ -1,0 +1,15 @@
+{
+    "background_title": "배경 이미지",
+    "blur_title": "흐릿한 배경",
+    "acceleration_title": "하드웨어 가속을 사용",
+    "acceleration_summary": "해당 경우 CUDA 또는 NNAPI를 사용하십시오.",
+    "blurlevel_title": "미분 수준",
+    "streamslist_title": "비디오 스트림",
+    "streamslist_summary": "배경을 숨기기 위해 스트림을 선택",
+    "streamslist_entries_1": "보내",
+    "streamslist_entries_2": "수신",
+    "ForegroundSegmentationAlways_title": "자동으로 그린스크린을 활성화",
+    "ForegroundSegmentationAlways_summary": "전화가 시작되면 배경을 숨기세요.",
+    "name": "그린스크린",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

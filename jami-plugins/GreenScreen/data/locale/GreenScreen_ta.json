@@ -1,0 +1,15 @@
+{
+    "background_title": "பின்னணி படம்",
+    "blur_title": "புதிரான பின்னணி",
+    "acceleration_title": "வன்பொருள் துரிதப்படுத்தி பயன்படுத்தவும்",
+    "acceleration_summary": "பொருந்தும் போது CUDA அல்லது NNAPI ஐப் பயன்படுத்தவும்",
+    "blurlevel_title": "புதிர் நிலை",
+    "streamslist_title": "வீடியோ ஸ்ட்ரீம்",
+    "streamslist_summary": "பின்னணியை மறைக்க ஸ்ட்ரீமைத் தேர்ந்தெடுக்கவும்",
+    "streamslist_entries_1": "அனுப்பி வைத்தது",
+    "streamslist_entries_2": "பெற்றது",
+    "ForegroundSegmentationAlways_title": "GreenScreen ஐ தானாக செயல்படுத்தவும்",
+    "ForegroundSegmentationAlways_summary": "அழைப்பு தொடங்கும் போது பின்னணியை மறைக்கவும்.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

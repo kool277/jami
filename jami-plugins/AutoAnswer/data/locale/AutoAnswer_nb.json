@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Bottryser",
+        "trigger_summary": "Tekst som Bot vil svare på",
+        "bot_answer": "Bot- reaksjon",
+        "answer_summary": "Tekst som Bot vil sende",
+        "default_trigger": "Hei, hva er det?",
+        "default_answer": "Hei, for øyeblikket er jeg opptatt, men vil svare deg så snart som mulig.",
+        "always_title": "Aktiver automatisk Bot",
+        "always_summary": "Bot vil være aktiv for alle samtaler.",
+        "name": "Autosvar",
+        "description_summary": "Set up a bot that automatically answers with given text."
+}

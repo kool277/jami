@@ -1,0 +1,20 @@
+
+Create (or Delete) a preference: PREFERENCE (-del)
+
+Path preference formation example:
+{
+    "category" : "Backgrounds",                          -> user choice;
+    "type": "Path",                                      -> fixed as Path;
+    "mimeType": "image/png",                             -> user choice;
+    "key": "background",                                 -> user choice, cannot repeate other keys inside
+                                                            same preferences.json file;
+    "title": "Background image",                         -> user choice;
+    "summary": "Select the image background to use",     -> user choice;
+    "defaultValue": "data/backgrounds/background2.png",  -> must be a relative path within the plugin
+                                                            development directory. More specifically any
+                                                            file introduced by the developper must be inside
+                                                            <jami-plugins>/<PLUGINID>/data directory;
+    "scope": "plugin, foo"                               -> if a preference value may be changed while the
+                                                            functionality is being used, this functionality
+                                                            name must be listed in the scope;
+}

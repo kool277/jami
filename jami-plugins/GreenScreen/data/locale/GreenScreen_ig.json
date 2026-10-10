@@ -1,0 +1,15 @@
+{
+    "background_title": "Foto dị n'azụ",
+    "blur_title": "Ihe ndabere na-adịghị mma",
+    "acceleration_title": "Jiri ngwaike ngwaike",
+    "acceleration_summary": "Jiri CUDA ma ọ bụ NNAPI mgbe ọ bụla o kwere omume",
+    "blurlevel_title": "Ọdịdị nke ihe ndị na-adịghị mma",
+    "streamslist_title": "Video iyi",
+    "streamslist_summary": "Họrọ iyi iji zoo ndabere",
+    "streamslist_entries_1": "E zigara ha",
+    "streamslist_entries_2": "E Nwetara",
+    "ForegroundSegmentationAlways_title": "Akpaghị aka rụọ ọrụ GreenScreen",
+    "ForegroundSegmentationAlways_summary": "Zọpụtakwa ihe dị n'azụ mgbe a kpọrọ gị.",
+    "name": "Green Screen",
+    "description_summary": "Modify your background during a video call or add a blur effect."
+}

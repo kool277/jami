@@ -1,0 +1,12 @@
+{
+        "bot_trigger": "Spouštěč bota",
+        "trigger_summary": "Text, na který bude Bot reagovat",
+        "bot_answer": "Botova odpověď",
+        "answer_summary": "Text, který Bot odešle",
+        "default_trigger": "Dobrý den",
+        "default_answer": "Dobrý den, v současné době jsem zaneprázdněn, ale odpovím vám co nejdříve.",
+        "always_title": "Automatická aktivace Bota",
+        "always_summary": "Bot bude aktivní pro všechny konverzace.",
+        "name": "Automatická odpověď",
+        "description_summary": "Nastavte si robota, který automaticky odpovídá daným textem."
+}
