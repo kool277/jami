@@ -118,6 +118,9 @@ docker compose exec coturn sh -c 'turnutils_uclient -p "$TURN_PORT" \
 curl http://192.168.1.92:8000/node/info                          # DHT proxy
 ```
 
+For the device path (client certificate, contacts, messages, calls)
+run `ci/daemon/jams-e2e.sh`, described in `CLIENT-SETUP.md`.
+
 ## TLS
 
 Currently `JAMS_TLS=internal`: Caddy issues a certificate for
