@@ -1,0 +1,72 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<!-- Multibranch job for kool277/@REPO@, created by ci/jenkins/setup.sh jobs. -->
+<org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject plugin="workflow-multibranch">
+  <description>kool277/@REPO@ (Jenkinsfile.kool277). Managed by ci/jenkins/setup.sh in kool277/jami; edits here are overwritten.</description>
+  <properties/>
+  <folderViews class="jenkins.branch.MultiBranchProjectViewHolder" plugin="branch-api">
+    <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+  </folderViews>
+  <healthMetrics/>
+  <icon class="jenkins.branch.MetadataActionFolderIcon" plugin="branch-api">
+    <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+  </icon>
+  <orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy" plugin="cloudbees-folder">
+    <pruneDeadBranches>true</pruneDeadBranches>
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>-1</numToKeep>
+    <abortBuilds>false</abortBuilds>
+  </orphanedItemStrategy>
+  <triggers>
+    <com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger plugin="cloudbees-folder">
+      <spec>* * * * *</spec>
+      <interval>300000</interval>
+    </com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger>
+  </triggers>
+  <disabled>false</disabled>
+  <sources class="jenkins.branch.MultiBranchProject$BranchSourceList" plugin="branch-api">
+    <data>
+      <jenkins.branch.BranchSource>
+        <source class="org.jenkinsci.plugins.github_branch_source.GitHubSCMSource" plugin="github-branch-source">
+          <id>kool277-@REPO@</id>
+          <apiUri>https://api.github.com</apiUri>
+          <credentialsId>github-kool277</credentialsId>
+          <repoOwner>kool277</repoOwner>
+          <repository>@REPO@</repository>
+          <repositoryUrl>https://github.com/kool277/@REPO@</repositoryUrl>
+          <traits>
+            <!-- Branches (except those filed as pull requests), pull requests
+                 from this repository (merged with their target), and tags. -->
+            <org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
+              <strategyId>1</strategyId>
+            </org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
+            <org.jenkinsci.plugins.github__branch__source.OriginPullRequestDiscoveryTrait>
+              <strategyId>1</strategyId>
+            </org.jenkinsci.plugins.github__branch__source.OriginPullRequestDiscoveryTrait>
+            <org.jenkinsci.plugins.github__branch__source.TagDiscoveryTrait/>
+          </traits>
+        </source>
+        <buildStrategies>
+          <jenkins.branch.buildstrategies.basic.BranchBuildStrategyImpl plugin="basic-branch-build-strategies"/>
+          <jenkins.branch.buildstrategies.basic.ChangeRequestBuildStrategyImpl plugin="basic-branch-build-strategies">
+            <ignoreTargetOnlyChanges>false</ignoreTargetOnlyChanges>
+            <ignoreUntrustedChanges>true</ignoreUntrustedChanges>
+          </jenkins.branch.buildstrategies.basic.ChangeRequestBuildStrategyImpl>
+          <!-- Build tags created within the last 7 days, not every old tag found
+               on the first scan. -->
+          <jenkins.branch.buildstrategies.basic.TagBuildStrategyImpl plugin="basic-branch-build-strategies">
+            <atLeastMillis>-1</atLeastMillis>
+            <atMostMillis>604800000</atMostMillis>
+          </jenkins.branch.buildstrategies.basic.TagBuildStrategyImpl>
+        </buildStrategies>
+        <strategy class="jenkins.branch.DefaultBranchPropertyStrategy">
+          <properties class="empty-list"/>
+        </strategy>
+      </jenkins.branch.BranchSource>
+    </data>
+    <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+  </sources>
+  <factory class="org.jenkinsci.plugins.workflow.multibranch.WorkflowBranchProjectFactory">
+    <owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+    <scriptPath>Jenkinsfile.kool277</scriptPath>
+  </factory>
+</org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject>

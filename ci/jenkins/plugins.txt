@@ -1,0 +1,13 @@
+# Plugins the kool277 pipelines need (ci/jenkins/setup.sh plugins).
+workflow-aggregator
+git
+github
+github-branch-source
+docker-workflow
+ansicolor
+timestamper
+junit
+ws-cleanup
+credentials-binding
+# Builds newly discovered tags, so that pushing a v* tag runs its release.
+basic-branch-build-strategies

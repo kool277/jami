@@ -1,0 +1,43 @@
+// kool277 pipeline for the kool277/jami workspace.
+//
+// Every build checks that each submodule pin exists on its remote
+// (ci/release/check-pins.sh). On a v* tag it runs the platform release
+// (ci/release/platform-release.sh): it tags jami-daemon, jami-client-qt,
+// jami-jams and jami-web at their pinned commits, which starts their own
+// release pipelines, and creates the kool277/jami release linking them.
+// See RELEASING.md.
+//
+// Needs on the agent: the gh CLI and the github-kool277 credential
+// (username/password, password = GitHub token with repo scope).
+
+pipeline {
+    agent any
+    options {
+        timestamps()
+        ansiColor('xterm')
+        timeout(time: 30, unit: 'MINUTES')
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '30'))
+    }
+    stages {
+        stage('Check pins') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-kool277',
+                                                  usernameVariable: 'GH_USER',
+                                                  passwordVariable: 'GH_TOKEN')]) {
+                    sh 'ci/release/check-pins.sh'
+                }
+            }
+        }
+        stage('Platform release') {
+            when { tag 'v*' }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-kool277',
+                                                  usernameVariable: 'GH_USER',
+                                                  passwordVariable: 'GH_TOKEN')]) {
+                    sh 'ci/release/platform-release.sh "$TAG_NAME"'
+                }
+            }
+        }
+    }
+}

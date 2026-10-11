@@ -13,7 +13,7 @@ containers (`ci/`) and the documentation (`docs/`).
 | `jami-client-qt/` | [kool277/jami-client-qt](https://github.com/kool277/jami-client-qt) | Desktop client |
 | `jami-client-android/` | [kool277/jami-client-android](https://github.com/kool277/jami-client-android) | |
 | `jami-client-ios/` | [kool277/jami-client-ios](https://github.com/kool277/jami-client-ios) | macOS only |
-| `jami-web/` | [kool277/jami-web](https://github.com/kool277/jami-web) | Uses `JAMI_DAEMON_DIR=../jami-daemon` |
+| `jami-web/` | [kool277/jami-web](https://github.com/kool277/jami-web) | Web client; its server uses the prebuilt `@savoirfairelinux/jami-core` npm package |
 | `jami-jams/` | [kool277/jami-jams](https://github.com/kool277/jami-jams) | Account management server |
 | `dhtnet/` | [kool277/dhtnet](https://github.com/kool277/dhtnet) | Reference; the daemon builds its own via contrib |
 | `jami-plugins/` | upstream [jami-plugins](https://review.jami.net/jami-plugins) | Upstream directly: its history has model files over GitHub's 100 MB limit |
@@ -49,4 +49,5 @@ to build dhtnet on its own.
 2. Here, check out the new `master` in the submodule and commit the new
    pin with `git add <dir>`.
 
-Build, deployment and release docs: `docs/`, `deploy/`, `ci/`.
+Build, deployment and CI docs: `docs/`, `deploy/`, `ci/`. Releases:
+`RELEASING.md`.

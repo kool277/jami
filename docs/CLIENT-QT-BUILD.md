@@ -54,8 +54,9 @@ ci/client-qt/run.sh sh /ci/ci-test.sh
 ```
 
 This runs the two CTest suites in sequence, as upstream CI does: both
-use `/tmp/jami_test` and wipe it at startup. The script stops at the
-first failing suite, so a QML failure means the unit suite did not run.
+use `/tmp/jami_test` and wipe it at startup. Both suites run even if the
+first fails, and their results also go to `build/qml-tests.xml` and
+`build/unit-tests.xml` (JUnit).
 To run one suite, or a subset:
 
 ```sh
