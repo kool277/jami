@@ -35,7 +35,9 @@ for repo in $released; do
     sha=$(pin "$repo")
     [ -n "$sha" ] || { echo "$repo: no submodule pin" >&2; exit 1; }
     # The commit the tag points at, through its tag object if annotated.
-    existing=$(gh api "repos/kool277/$repo/commits/$TAG" -q .sha 2>/dev/null || true)
+    # gh prints the error body on stdout when the tag does not exist, so
+    # keep its output only when it succeeds.
+    existing=$(gh api "repos/kool277/$repo/commits/$TAG" -q .sha 2>/dev/null) || existing=
     if [ -z "$existing" ] && [ -n "${DRY_RUN:-}" ]; then
         echo "$repo: would tag $TAG at $(short "$sha")"
     elif [ -z "$existing" ]; then
