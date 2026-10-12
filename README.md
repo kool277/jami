@@ -24,6 +24,67 @@ Each kool277 repository carries upstream's history
 go to `master` through pull requests. The clients' `daemon` submodules
 point at kool277/jami-daemon.
 
+## Architecture
+
+```
+ desktop / Android / iOS / web clients (each runs jami-core: libjami)
+      |  account, name lookup,       |  calls and messages: DHT +
+      |  device certificates         |  ICE, relayed by TURN if needed
+      v                              v
+ caddy :443 (TLS, client certs) -> JAMS     dhtnode :4222/udp, proxy :8000
+                                            coturn :3479, relays 49160-49200/udp
+```
+
+JAMS manages accounts and pushes the TURN server, DHT bootstrap and DHT
+proxy settings to the clients it enrolls. Everything server-side runs
+from `deploy/` with Docker Compose on `jami-server` (192.168.1.92).
+
+| Port | Service |
+|------|---------|
+| 443/tcp | Caddy, TLS proxy for JAMS |
+| 3479/udp+tcp, 49160-49200/udp | coturn (TURN) |
+| 4222/udp | dhtnode (DHT) |
+| 8000/tcp | dhtnode (DHT proxy) |
+| 8080/tcp | Jenkins (public as https://dechat.systemhost.uz/) |
+
+The host's own `coturn.service` (3478), nginx (80), asterisk, PostgreSQL
+and Jenkins are left as they are.
+
+## Build, run, test
+
+| What | How | Docs |
+|------|-----|------|
+| Daemon | `ci/daemon/run.sh` (build container, contrib cache in `/var/cache/jami`) | `docs/DAEMON-BUILD.md` |
+| Desktop client | `ci/client-qt/run.sh` (builds against `jami-daemon/`) | `docs/CLIENT-QT-BUILD.md` |
+| Server side | `cd deploy && docker compose up -d --build`, then `scripts/jams-setup.sh`, `scripts/verify.sh` | `docs/SERVER-SETUP.md` |
+| Client against JAMS | enroll a device, end-to-end check `ci/daemon/jams-e2e.sh` | `docs/CLIENT-SETUP.md` |
+
+## CI and releases
+
+Jenkins runs one multibranch job per repository, each from its
+`Jenkinsfile.kool277` (upstream CI files are untouched); the scripts
+they run live in `ci/` here and are fetched from `main` at build time.
+
+| Job | Builds |
+|-----|--------|
+| [jami-daemon](https://dechat.systemhost.uz/job/jami-daemon/) | jamid + libjami, smoke tests, D-Bus check |
+| [jami-client-qt](https://dechat.systemhost.uz/job/jami-client-qt/) | client, unit and QML tests, package |
+| [jami-jams](https://dechat.systemhost.uz/job/jami-jams/) | lint, `mvn verify`, image `ghcr.io/kool277/jams` |
+| [jami-web](https://dechat.systemhost.uz/job/jami-web/) | lint, image, smoke test, image `ghcr.io/kool277/jami-web` |
+| [jami](https://dechat.systemhost.uz/job/jami/) | checks every submodule pin; platform release on `v*` tags |
+
+Pull requests are built too. A `v*` tag on this repository releases
+the platform: see `RELEASING.md`.
+
+## What only the owner can do
+
+- A real domain and public TLS certificate for JAMS (Caddy uses its
+  internal CA now; see `docs/SERVER-SETUP.md`, TLS).
+- FCM (Android) and APNs (iOS) keys for mobile push notifications.
+- iOS builds, which need a Mac with Xcode.
+- An Android signing keystore, stored as a Jenkins credential, for
+  signed APKs.
+
 ## Clone
 
 ```sh
