@@ -3,7 +3,8 @@
 # of this workspace):
 # - Dockerfile target test (npm run lint);
 # - production image (target production), tagged jami-web:<VERSION>;
-# - smoke test: the production image starts and answers 200 on /;
+# - smoke test: the production image starts and serves the UI on / (200,
+#   after the redirect to the admin setup wizard of a fresh install);
 # - out/dist/jami-web-<VERSION>.tar.gz and its .sha256: the production tree
 #   (/web-client without node_modules) as jami-web-production/, with
 #   install.sh and jami-web.service, the layout install.sh expects.
@@ -36,14 +37,16 @@ code=000
 until [ "$code" = 200 ]; do
     i=$((i + 1))
     if [ "$i" -gt 60 ] || [ "$(docker inspect -f '{{.State.Running}}' "$cid")" != true ]; then
-        echo "FAIL  / did not answer 200 within 120 s (last: $code)" >&2
+        echo "FAIL  / did not serve the UI (200) within 120 s (last: $code)" >&2
         docker logs --tail 40 "$cid" >&2
         exit 1
     fi
     sleep 2
-    code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:$port/" || true)
+    # -L: a fresh install redirects / to /admin/setup/<step>, which serves
+    # the UI.
+    code=$(curl -s -L -o /dev/null -w '%{http_code}' "http://127.0.0.1:$port/" || true)
 done
-echo "OK    / answered 200 after about $((i * 2)) s"
+echo "OK    / served the UI (200) after about $((i * 2)) s"
 docker rm -f "$cid" >/dev/null
 trap - EXIT
 
