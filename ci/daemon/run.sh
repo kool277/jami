@@ -27,8 +27,12 @@ fi
 
 tty=
 [ -t 0 ] && tty=-it
+# The host's user database, so that the caller's uid has a name in the
+# container: dbus-daemon refuses to start for an unknown uid, which the
+# jenkins user's is (the image only has ubuntu, uid 1000).
 exec docker run --rm $tty \
     --user "$(id -u):$(id -g)" \
+    -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro \
     -e HOME=/tmp -e TARBALLS=/var/cache/jami -e CARGO_HOME=/var/cache/jami/cargo \
     -e JOBS="${JOBS:-16}" \
     -v "$daemon:/src/jami-daemon" -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
