@@ -8,12 +8,13 @@ one per component, plus GHCR images:
 |-----------|---------------|-------|
 | jami-daemon | `jami-daemon-<tag>-linux-x86_64.tar.gz`: jamid, libjami-core.a, headers, jami.pc (prefix `/usr/local`) | |
 | jami-client-qt | `jami-client-qt-<tag>-linux-x86_64.tar.gz`: bin/jami and share/ (needs Qt 6.12.0 in `/opt/qt/6.12.0/gcc_64`) | |
+| jami-client-android | `jami-android-<tag>-<flavor>-unsigned.apk` for the noPush, withFirebase and withUnifiedPush flavors (arm64-v8a, x86_64, armeabi-v7a); unsigned until a keystore is set up | |
 | jami-jams | `jams-<tag>.zip`: the jams folder (jams-launcher.jar) and versions.json | `ghcr.io/kool277/jams:<tag>`, `:latest` |
 | jami-web | `jami-web-<tag>.tar.gz`: jami-web-production with install.sh | `ghcr.io/kool277/jami-web:<tag>`, `:latest` |
 | kool277/jami | release notes linking the above, with every pinned commit | |
 
 Every asset has a `.sha256` next to it. The other submodules (dhtnet,
-jami-client-android, jami-client-ios, jami-plugins, jami-nameservice) are
+jami-client-ios, jami-plugins, jami-nameservice) are
 listed in the notes with their pins but not built.
 
 ## Prerequisites

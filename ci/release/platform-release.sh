@@ -17,7 +17,7 @@ set -eu
 TAG=${1:?usage: platform-release.sh <tag>}
 ws=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$ws"
-released="jami-daemon jami-client-qt jami-jams jami-web"
+released="jami-daemon jami-client-qt jami-client-android jami-jams jami-web"
 notes=$(mktemp)
 trap 'rm -f "$notes"' EXIT
 
@@ -59,7 +59,7 @@ done
     echo "Images: \`ghcr.io/kool277/jams:$TAG\`, \`ghcr.io/kool277/jami-web:$TAG\`."
     echo
     echo "Also pinned, without a release build here:"
-    for p in jami-plugins jami-nameservice dhtnet jami-client-android jami-client-ios; do
+    for p in jami-plugins jami-nameservice dhtnet jami-client-ios; do
         url=$(git config -f .gitmodules "submodule.$p.url" || true)
         [ -n "$url" ] && echo "- $p: \`$(short "$(pin "$p")")\` ($url)"
     done
