@@ -4,7 +4,7 @@
 # as installed by the daemon's own install rules (prefix /usr/local).
 # Writes build/dist/jami-daemon-<VERSION>-linux-<arch>.tar.gz and its
 # .sha256. Run inside the daemon build container after the build:
-#   VERSION=v2026.10.10 DOCKER_RUN_ARGS="-e VERSION" ci/daemon/run.sh sh /ci/package.sh
+#   VERSION=v17.0.0-kool277.1 DOCKER_RUN_ARGS="-e VERSION" ci/daemon/run.sh sh /ci/package.sh
 # Install the result with: sudo tar -C / -xzf <tarball>
 set -eu
 

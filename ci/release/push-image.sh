@@ -3,7 +3,7 @@
 # The registry login lives in a temporary DOCKER_CONFIG, so the token is
 # never stored in the agent's ~/.docker. Needs GH_USER and GH_TOKEN (scope
 # write:packages).
-#   ci/release/push-image.sh jams:v2026.10.10 jams v2026.10.10
+#   ci/release/push-image.sh jams:v3.8-kool277.1 jams v3.8-kool277.1
 set -eu
 
 IMAGE=${1:?usage: push-image.sh <local image> <name> <tag>}

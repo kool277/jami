@@ -6,7 +6,7 @@
 # image installs it with aqtinstall; the other runtime libraries are the
 # Ubuntu 24.04 packages listed in ci/client-qt/Dockerfile. Run inside the
 # client-qt build container after ci-build.sh:
-#   VERSION=v2026.10.10 DOCKER_RUN_ARGS="-e VERSION" ci/client-qt/run.sh sh /ci/package.sh
+#   VERSION=v202609211303-kool277.1 DOCKER_RUN_ARGS="-e VERSION" ci/client-qt/run.sh sh /ci/package.sh
 set -eu
 
 : "${VERSION:?set VERSION, e.g. the release tag}"

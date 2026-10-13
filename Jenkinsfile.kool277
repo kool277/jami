@@ -2,8 +2,8 @@
 //
 // Every build checks that each submodule pin exists on its remote
 // (ci/release/check-pins.sh). On a v* tag it runs the platform release
-// (ci/release/platform-release.sh): it tags jami-daemon, jami-client-qt,
-// jami-jams and jami-web at their pinned commits, which starts their own
+// (ci/release/platform-release.sh): it tags each component listed in
+// VERSIONS with its version at its pinned commit, which starts their own
 // release pipelines, and creates the kool277/jami release linking them.
 // See RELEASING.md.
 //

@@ -2,9 +2,10 @@
 # Move the kool277 component submodules to the current master of their
 # kool277 repository and stage the new pins, as the first step of a
 # platform release (RELEASING.md). Fetches every component first and moves
-# nothing if a fetch fails. Prints old -> new per component; commit the
-# result yourself. Upstream-only submodules (jami-plugins, jami-nameservice)
-# are left alone.
+# nothing if a fetch fails. Then writes and stages VERSIONS with
+# ci/release/versions.sh (RENEW goes to it). Prints old -> new per
+# component and the versions; commit the result yourself. Upstream-only
+# submodules (jami-plugins, jami-nameservice) are left alone.
 #   ci/release/bump-pins.sh
 set -eu
 
@@ -35,3 +36,6 @@ for path in $paths; do
         echo "$path: $(short "$old") -> $(short "$new")"
     fi
 done
+
+"$ws/ci/release/versions.sh"
+git add VERSIONS
