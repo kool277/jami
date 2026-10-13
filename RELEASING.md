@@ -20,11 +20,17 @@ listed in the notes with their pins but not built.
 ## Prerequisites
 
 Jenkins at http://localhost:8080 with the jobs from `ci/jenkins/setup.sh`
-(see that script): the plugins of `ci/jenkins/plugins.txt`, the
-credential `github-kool277` (kool277 + a GitHub token with `repo` and
-`write:packages`), the `jenkins` user in the `docker` group, and write
-access to `/var/cache/jami`. `ci/jenkins/setup.sh status` shows what is
-missing.
+(see that script): the plugins of `ci/jenkins/plugins.txt`, two
+credentials, the `jenkins` user in the `docker` group, and write access
+to `/var/cache/jami`. `ci/jenkins/setup.sh status` shows what is
+missing. The credentials:
+
+- `github-kool277`, for the scans and the GitHub releases: the GitHub
+  App installed on the kool277 repositories, or kool277 + a token with
+  `repo`.
+- `ghcr-kool277`, for the GHCR images: kool277 + a personal access
+  token (classic) with `write:packages`. A GitHub App token cannot
+  create packages on GHCR.
 
 ## Release
 

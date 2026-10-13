@@ -3,7 +3,7 @@
 # Access comes only from JENKINS_URL, JENKINS_USER and JENKINS_API_TOKEN in
 # the environment; the token goes to curl through a private config file,
 # never on the command line or in the output.
-#   ci/jenkins/setup.sh status    # what is in place: plugins, credential, jobs, docker, cache
+#   ci/jenkins/setup.sh status    # what is in place: plugins, credentials, jobs, docker, cache
 #   ci/jenkins/setup.sh plugins   # install the missing plugins of plugins.txt
 #   ci/jenkins/setup.sh jobs      # create or update the jobs, then start a scan
 # Jobs: one multibranch job per repository in REPOS, from multibranch.xml.in
@@ -37,7 +37,11 @@ cmd_status() {
     done
     case $(status_of "$base/credentials/store/system/domain/_/credential/github-kool277/api/json") in
     200) echo "OK    credential github-kool277" ;;
-    *) echo "MISS  credential github-kool277 (Username with password: kool277 + GitHub token)" ;;
+    *) echo "MISS  credential github-kool277 (GitHub App, or Username with password: kool277 + token with repo)" ;;
+    esac
+    case $(status_of "$base/credentials/store/system/domain/_/credential/ghcr-kool277/api/json") in
+    200) echo "OK    credential ghcr-kool277" ;;
+    *) echo "MISS  credential ghcr-kool277 (Username with password: kool277 + classic token with write:packages)" ;;
     esac
     for r in $REPOS; do
         [ "$(status_of "$base/job/$r/api/json")" = 200 ] && echo "OK    job $r: $base/job/$r/" || echo "MISS  job $r"
