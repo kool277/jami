@@ -32,11 +32,16 @@ tty=
 [ -t 0 ] && tty=-it
 # The host's user database, so that the caller's uid has a name in the
 # container (Gradle and the NDK tools look the user up).
+# sdkDownload=false: the image has no platform-tools (adb), which nothing
+# here needs, so the Android Gradle plugin would try to install them in
+# every build. It reads the SDK package lists from dl.google.com without a
+# read timeout, and a connection that stalls hangs the build for good.
 exec docker run --rm $tty \
     --user "$(id -u):$(id -g)" \
     -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro \
     -e HOME=/tmp/home -e TARBALLS=/var/cache/jami \
     -e GRADLE_USER_HOME=/var/cache/jami/gradle \
+    -e GRADLE_OPTS=-Dorg.gradle.project.android.builder.sdkDownload=false \
     -v "$android:/src/jami-client-android" -v "$daemon:/src/jami-client-android/daemon" \
     -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
     ${DOCKER_RUN_ARGS:-} \
