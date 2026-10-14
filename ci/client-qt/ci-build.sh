@@ -31,5 +31,5 @@ until configure; do
     try=$((try + 1))
     sleep 30
 done
-cmake --build build -j"${JOBS:-16}"
+cmake --build build -j"${JOBS:-12}"
 cmake --install build

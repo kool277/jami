@@ -30,7 +30,7 @@ component's version):
 |-----------|---------------|-------|
 | jami-daemon | `jami-daemon-<version>-linux-x86_64.tar.gz`: jamid, libjami-core.a, headers, jami.pc (prefix `/usr/local`) | |
 | jami-client-qt | `jami-client-qt-<version>-linux-x86_64.tar.gz`: bin/jami and share/ (needs Qt 6.12.0 in `/opt/qt/6.12.0/gcc_64`) | |
-| jami-client-android | `jami-android-<version>-<flavor>-unsigned.apk` for the noPush, withFirebase and withUnifiedPush flavors (arm64-v8a, x86_64, armeabi-v7a); unsigned until a keystore is set up | |
+| jami-client-android | `jami-android-<version>-<flavor>.apk` for the noPush, withFirebase and withUnifiedPush flavors (arm64-v8a, x86_64, armeabi-v7a), signed with the release keystore (`android-keystore` below) | |
 | jami-client-ios | `jami-ios-<version>-unsigned.ipa`: the app for devices (arm64), unsigned: it has to be signed with an Apple identity before it installs | |
 | jami-jams | `jams-<version>.zip`: the jams folder (jams-launcher.jar) and versions.json | `ghcr.io/kool277/jams:<version>`, `:latest` |
 | jami-web | `jami-web-<version>.tar.gz`: jami-web-production with install.sh | `ghcr.io/kool277/jami-web:<version>`, `:latest` |
@@ -53,10 +53,11 @@ pins and keeps the `.ipa` as a workflow artifact for a week.
 ## Prerequisites
 
 Jenkins at http://localhost:8080 with the jobs from `ci/jenkins/setup.sh`
-(see that script): the plugins of `ci/jenkins/plugins.txt`, two
-credentials, the `jenkins` user in the `docker` group, and write access
-to `/var/cache/jami`. `ci/jenkins/setup.sh status` shows what is
-missing. The credentials:
+(see that script): the plugins of `ci/jenkins/plugins.txt`, the
+credentials below, the `jenkins` user in the `docker` group, and write
+access to `/var/cache/jami`. `ci/jenkins/setup.sh status` shows what is
+missing. The credentials (all in System > Global credentials
+(unrestricted), the only store the jobs can read):
 
 - `github-kool277`, for the scans and the GitHub releases: the GitHub
   App installed on the kool277 repositories, or kool277 + a token with
@@ -64,6 +65,25 @@ missing. The credentials:
 - `ghcr-kool277`, for the GHCR images: kool277 + a personal access
   token (classic) with `write:packages`. A GitHub App token cannot
   create packages on GHCR.
+- `android-keystore` (secret file: the release keystore, PKCS12),
+  `android-keystore-password`, `android-key-alias` and
+  `android-key-password` (secret texts), for signing the Android APKs.
+  Make the keystore once and keep it and its passwords backed up
+  outside the server: Android only installs an update over an app
+  signed with the same key, so a lost keystore means every member has
+  to uninstall and reinstall. From the workspace:
+
+  ```sh
+  mkdir -p -m 700 ~/secure
+  docker run --rm -it -u "$(id -u):$(id -g)" -e HOME=/tmp -v ~/secure:/out jami-android-build \
+      keytool -genkeypair -v -keystore /out/jami-release.jks -storetype PKCS12 \
+      -alias jami -keyalg RSA -keysize 4096 -validity 10000
+  ```
+
+  (`jami-android-build` is the image the Android pipeline builds; it has
+  a JDK.) keytool asks for the keystore password and the owner's name;
+  with PKCS12 the key password is the keystore password. Then add the
+  four credentials in Jenkins and the next `v*` tag ships signed APKs.
 
 ## Release
 
@@ -125,7 +145,8 @@ jami-client-qt and jami-client-android.
   ```
 
 - **Roll back `:latest` on GHCR** (for deployments that pull it): point it
-  at the previous version.
+  at the previous version. The packages are public (pulls need no login;
+  only pushes do), set once in each package's settings on GitHub.
 
   ```sh
   docker pull ghcr.io/kool277/jams:v3.8-kool277.1

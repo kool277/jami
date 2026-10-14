@@ -10,22 +10,50 @@
 // Needs on the agent: the gh CLI and the github-kool277 credential
 // (username/password, password = GitHub token with repo scope).
 
+// Run a network step up to 10 times, 30 s apart: this agent's connection
+// drops for minutes at a time. The same helper as in the component
+// pipelines.
+def withNetRetry(Closure body) {
+    def attempt = 0
+    retry(10) {
+        if (attempt++ > 0) {
+            sleep(time: 30, unit: 'SECONDS')
+        }
+        body()
+    }
+}
+
 pipeline {
     agent any
     options {
         timestamps()
         ansiColor('xterm')
-        timeout(time: 30, unit: 'MINUTES')
+        // Room for the retries: each network step may wait up to 10 x 30 s.
+        timeout(time: 1, unit: 'HOURS')
         disableConcurrentBuilds()
+        // Checked out in the first stage, with withNetRetry.
+        skipDefaultCheckout()
         buildDiscarder(logRotator(numToKeepStr: '30'))
     }
     stages {
+        stage('Sources') {
+            steps {
+                withNetRetry {
+                    checkout scm
+                }
+            }
+        }
         stage('Check pins') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'github-kool277',
                                                   usernameVariable: 'GH_USER',
                                                   passwordVariable: 'GH_TOKEN')]) {
-                    sh 'ci/release/check-pins.sh'
+                    // Read-only, so safe to retry. A pin that really is
+                    // missing fails every attempt; the retries only cost
+                    // the waits.
+                    withNetRetry {
+                        sh 'ci/release/check-pins.sh'
+                    }
                 }
             }
         }
@@ -35,7 +63,11 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'github-kool277',
                                                   usernameVariable: 'GH_USER',
                                                   passwordVariable: 'GH_TOKEN')]) {
-                    sh 'ci/release/platform-release.sh "$TAG_NAME"'
+                    // Re-running the script is safe: existing tags and
+                    // releases are checked and left as they are.
+                    withNetRetry {
+                        sh 'ci/release/platform-release.sh "$TAG_NAME"'
+                    }
                 }
             }
         }

@@ -8,7 +8,8 @@
 #   ci/client-qt/run.sh sh /ci/ci-test.sh
 # CLIENT_DIR and DAEMON_DIR are the sources (default: jami-client-qt/ and
 # jami-daemon/ of this workspace, whose client daemon submodule stays
-# uninitialized). DOCKER_RUN_ARGS adds options to docker run (word-split).
+# uninitialized). DOCKER_RUN_ARGS adds options to docker run (word-split);
+# BUILD_CPUS, BUILD_MEM, BUILD_MEM_SWAP and BUILD_OOM_ADJ set its limits.
 set -eu
 
 here=$(cd "$(dirname "$0")" && pwd)
@@ -27,14 +28,24 @@ fi
 
 [ $# -eq 0 ] && set -- sh /ci/ci-build.sh
 
+# Resource limits of the build container, so that a build which outgrows
+# the host is what gets killed, not JAMS or Jenkins: BUILD_CPUS is a cpuset
+# (it also caps what nproc reports, so make, ninja and Gradle start that
+# many jobs), BUILD_MEM caps RAM, BUILD_MEM_SWAP caps RAM plus swap, and
+# BUILD_OOM_ADJ makes its processes the OOM killer's first choice. The
+# server services run with -800 (deploy/docker-compose.yml).
+cpus=$(nproc); [ "$cpus" -gt 12 ] && cpus=12
+limits="--cpuset-cpus=${BUILD_CPUS:-0-$((cpus - 1))} --memory=${BUILD_MEM:-18g} \
+--memory-swap=${BUILD_MEM_SWAP:-28g} --oom-score-adj=${BUILD_OOM_ADJ:-800}"
+
 tty=
 [ -t 0 ] && tty=-it
 exec docker run --rm $tty \
     --user "$(id -u):$(id -g)" \
     --shm-size=1g \
     -e HOME=/tmp/home -e TARBALLS=/var/cache/jami -e CARGO_HOME=/var/cache/jami/cargo \
-    -e JOBS="${JOBS:-16}" \
+    -e JOBS="${JOBS:-12}" \
     -v "$client:/src/jami-client-qt" -v "$daemon:/src/jami-client-qt/daemon" \
     -v "$daemon:/src/jami-daemon" -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
-    ${DOCKER_RUN_ARGS:-} \
+    $limits ${DOCKER_RUN_ARGS:-} \
     -w /src/jami-client-qt "$image" "$@"

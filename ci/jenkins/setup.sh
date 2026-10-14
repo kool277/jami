@@ -43,6 +43,12 @@ cmd_status() {
     200) echo "OK    credential ghcr-kool277" ;;
     *) echo "MISS  credential ghcr-kool277 (Username with password: kool277 + classic token with write:packages)" ;;
     esac
+    for c in android-keystore android-keystore-password android-key-alias android-key-password; do
+        case $(status_of "$base/credentials/store/system/domain/_/credential/$c/api/json") in
+        200) echo "OK    credential $c" ;;
+        *) echo "MISS  credential $c (Android APK signing, see RELEASING.md)" ;;
+        esac
+    done
     for r in $REPOS; do
         [ "$(status_of "$base/job/$r/api/json")" = 200 ] && echo "OK    job $r: $base/job/$r/" || echo "MISS  job $r"
     done

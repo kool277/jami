@@ -1,6 +1,10 @@
 # Jami server side: JAMS behind Caddy (HTTPS), coturn (TURN) and an
 # OpenDHT node (DHT bootstrap + DHT proxy). Settings come from .env
 # (copy .env.example). See docs/SERVER-SETUP.md.
+#
+# oom_score_adj -800: when the host runs out of memory, the kernel kills
+# these services last; the CI build containers run with +800 (ci/*/run.sh)
+# and go first.
 name: jami
 
 services:
@@ -16,6 +20,7 @@ services:
     expose:
       - "8080"
     restart: unless-stopped
+    oom_score_adj: -800
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/"]
       interval: 15s
@@ -38,6 +43,7 @@ services:
       - caddy-data:/data
       - caddy-config:/config
     restart: unless-stopped
+    oom_score_adj: -800
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
       interval: 15s
@@ -62,6 +68,7 @@ services:
       - ./coturn/entrypoint.sh:/entrypoint.sh:ro
       - coturn-data:/var/lib/coturn
     restart: unless-stopped
+    oom_score_adj: -800
     healthcheck:
       test: ["CMD-SHELL", "turnutils_stunclient -p ${TURN_PORT:-3479} 127.0.0.1 >/dev/null"]
       interval: 30s
@@ -84,6 +91,7 @@ services:
       - "${DHT_PORT:-4222}:4222/udp"
       - "${DHT_PROXY_PORT:-8000}:8000"
     restart: unless-stopped
+    oom_score_adj: -800
     healthcheck:
       test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8000/ | grep -q node_id"]
       interval: 30s
