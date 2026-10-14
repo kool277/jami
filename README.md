@@ -12,7 +12,7 @@ containers (`ci/`) and the documentation (`docs/`).
 | `jami-daemon/` | [kool277/jami-daemon](https://github.com/kool277/jami-daemon) | Core (libjami + jamid); the daemon every build here uses |
 | `jami-client-qt/` | [kool277/jami-client-qt](https://github.com/kool277/jami-client-qt) | Desktop client |
 | `jami-client-android/` | [kool277/jami-client-android](https://github.com/kool277/jami-client-android) | |
-| `jami-client-ios/` | [kool277/jami-client-ios](https://github.com/kool277/jami-client-ios) | macOS only |
+| `jami-client-ios/` | [kool277/jami-client-ios](https://github.com/kool277/jami-client-ios) | Builds on macOS only: on GitHub Actions, not Jenkins |
 | `jami-web/` | [kool277/jami-web](https://github.com/kool277/jami-web) | Web client; its server uses the prebuilt `@savoirfairelinux/jami-core` npm package |
 | `jami-jams/` | [kool277/jami-jams](https://github.com/kool277/jami-jams) | Account management server |
 | `jami-plugins-store/` | [kool277/jami-plugins-store](https://github.com/kool277/jami-plugins-store) | Plugin store server (the API of plugins.jami.net); branch `main`, as upstream's |
@@ -75,6 +75,11 @@ they run live in `ci/` here and are fetched from `main` at build time.
 | [jami-web](https://dechat.systemhost.uz/job/jami-web/) | lint, image, smoke test, image `ghcr.io/kool277/jami-web` |
 | [jami-plugins-store](https://dechat.systemhost.uz/job/jami-plugins-store/) | lint, jest tests, smoke test, image `ghcr.io/kool277/jami-plugins-store` |
 | [jami](https://dechat.systemhost.uz/job/jami/) | checks every submodule pin; platform release on `v*` tags |
+
+jami-client-ios needs macOS and Xcode, so it builds on a GitHub-hosted
+macOS runner instead, by the same rules (simulator build and unit tests,
+an unsigned `.ipa` for its releases):
+https://github.com/kool277/jami-client-ios/actions.
 
 Pull requests are built too. A `v*` tag on this repository releases
 the platform: see `RELEASING.md`.
