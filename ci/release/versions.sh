@@ -9,6 +9,7 @@
 #   jami-client-qt       the newest upstream beta/<timestamp> tag in its
 #                        history (it has no version in its sources)
 #   jami-client-android  versionCode of jami-android/app/build.gradle.kts
+#   jami-client-ios      the highest MARKETING_VERSION of Ring/Ring.xcodeproj
 #   jami-jams            <revision> of pom.xml
 #   jami-web             version of package.json
 # A pin that already has such a tag on kool277/<component> keeps it: the
@@ -24,7 +25,7 @@ set -eu
 
 ws=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$ws"
-components="jami-daemon jami-client-qt jami-client-android jami-jams jami-web"
+components="jami-daemon jami-client-qt jami-client-android jami-client-ios jami-jams jami-web"
 qt_upstream=https://review.jami.net/jami-client-qt
 RENEW=${RENEW:-}
 
@@ -47,6 +48,10 @@ upstream_version() { # <component> <commit>
     jami-client-android)
         git -C "$1" show "$2:jami-android/app/build.gradle.kts" |
             sed -n 's/^ *versionCode = \([0-9][0-9]*\).*/\1/p' | head -1
+        ;;
+    jami-client-ios)
+        git -C "$1" show "$2:Ring/Ring.xcodeproj/project.pbxproj" |
+            sed -n 's/^[[:space:]]*MARKETING_VERSION = \([0-9][0-9.]*\);.*/\1/p' | sort -V | tail -1
         ;;
     jami-jams)
         git -C "$1" show "$2:pom.xml" | sed -n 's|.*<revision>\(.*\)</revision>.*|\1|p' | head -1

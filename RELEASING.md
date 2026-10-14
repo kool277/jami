@@ -11,6 +11,7 @@ compared with upstream (review.jami.net):
 | jami-daemon | `version` of meson.build or CMakeLists.txt, the higher one (upstream bumps only meson.build now) | `v17.0.0-kool277.1` |
 | jami-client-qt | the newest upstream `beta/<timestamp>` tag in its history: it has no version in its sources | `v202609211303-kool277.1` |
 | jami-client-android | `versionCode` of jami-android/app/build.gradle.kts (upstream tags `android/release_<versionCode>`) | `v505-kool277.1` |
+| jami-client-ios | the highest `MARKETING_VERSION` of Ring/Ring.xcodeproj | `v4.20-kool277.1` |
 | jami-jams | `<revision>` of pom.xml | `v3.8-kool277.1` |
 | jami-web | `version` of package.json | `v1.0.0-kool277.1` |
 
@@ -29,13 +30,24 @@ component's version):
 | jami-daemon | `jami-daemon-<version>-linux-x86_64.tar.gz`: jamid, libjami-core.a, headers, jami.pc (prefix `/usr/local`) | |
 | jami-client-qt | `jami-client-qt-<version>-linux-x86_64.tar.gz`: bin/jami and share/ (needs Qt 6.12.0 in `/opt/qt/6.12.0/gcc_64`) | |
 | jami-client-android | `jami-android-<version>-<flavor>-unsigned.apk` for the noPush, withFirebase and withUnifiedPush flavors (arm64-v8a, x86_64, armeabi-v7a); unsigned until a keystore is set up | |
+| jami-client-ios | `jami-ios-<version>-unsigned.ipa`: the app for devices (arm64), unsigned: it has to be signed with an Apple identity before it installs | |
 | jami-jams | `jams-<version>.zip`: the jams folder (jams-launcher.jar) and versions.json | `ghcr.io/kool277/jams:<version>`, `:latest` |
 | jami-web | `jami-web-<version>.tar.gz`: jami-web-production with install.sh | `ghcr.io/kool277/jami-web:<version>`, `:latest` |
 | kool277/jami | release notes linking the above, with each component's version, upstream version and commit | |
 
 Every asset has a `.sha256` next to it. The other submodules (dhtnet,
-jami-client-ios, jami-plugins, jami-nameservice) are
-listed in the notes with their pins but not built.
+jami-plugins, jami-nameservice) are listed in the notes with their pins
+but not built.
+
+jami-client-ios builds on GitHub Actions instead of Jenkins, because an
+iOS build needs macOS and Xcode and Jenkins runs on Linux: its
+`.github/workflows/kool277.yml` runs on a GitHub-hosted macOS runner
+(free for public repositories) by the same rules as the Jenkins
+pipelines. Follow it at https://github.com/kool277/jami-client-ios/actions.
+Before a platform release, its release path can be tried without
+publishing anything: `gh workflow run kool277.yml -R kool277/jami-client-ios
+-f platform=main` builds the device app against the daemon that `main`
+pins and keeps the `.ipa` as a workflow artifact for a week.
 
 ## Prerequisites
 
