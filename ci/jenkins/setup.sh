@@ -13,7 +13,7 @@ set -eu
 
 : "${JENKINS_URL:?set JENKINS_URL}" "${JENKINS_USER:?set JENKINS_USER}" "${JENKINS_API_TOKEN:?set JENKINS_API_TOKEN}"
 here=$(cd "$(dirname "$0")" && pwd)
-REPOS=${REPOS:-"jami-daemon jami-client-qt jami-client-android jami-jams jami-web jami"}
+REPOS=${REPOS:-"jami-daemon jami-client-qt jami-client-android jami-jams jami-web jami-plugins-store jami"}
 base=${JENKINS_URL%/}
 plugins=$(grep -vE '^\s*(#|$)' "$here/plugins.txt")
 

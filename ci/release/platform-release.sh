@@ -76,7 +76,7 @@ done || exit 1
 {
     echo
     images=
-    for c in jams:jami-jams jami-web:jami-web; do
+    for c in jams:jami-jams jami-web:jami-web jami-plugins-store:jami-plugins-store; do
         v=$(version_of "${c#*:}")
         [ -n "$v" ] && images="$images${images:+, }\`ghcr.io/kool277/${c%%:*}:$v\`"
     done

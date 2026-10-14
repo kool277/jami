@@ -12,6 +12,7 @@
 #   jami-client-ios      the highest MARKETING_VERSION of Ring/Ring.xcodeproj
 #   jami-jams            <revision> of pom.xml
 #   jami-web             version of package.json
+#   jami-plugins-store   version of package.json
 # A pin that already has such a tag on kool277/<component> keeps it: the
 # component did not change since that release. Otherwise n is one more
 # than the highest n of the v<upstream>-kool277.* tags there. RENEW names
@@ -25,7 +26,7 @@ set -eu
 
 ws=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$ws"
-components="jami-daemon jami-client-qt jami-client-android jami-client-ios jami-jams jami-web"
+components="jami-daemon jami-client-qt jami-client-android jami-client-ios jami-jams jami-web jami-plugins-store"
 qt_upstream=https://review.jami.net/jami-client-qt
 RENEW=${RENEW:-}
 
@@ -56,7 +57,7 @@ upstream_version() { # <component> <commit>
     jami-jams)
         git -C "$1" show "$2:pom.xml" | sed -n 's|.*<revision>\(.*\)</revision>.*|\1|p' | head -1
         ;;
-    jami-web)
+    jami-web | jami-plugins-store)
         git -C "$1" show "$2:package.json" | jq -r .version
         ;;
     esac

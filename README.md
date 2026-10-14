@@ -15,13 +15,14 @@ containers (`ci/`) and the documentation (`docs/`).
 | `jami-client-ios/` | [kool277/jami-client-ios](https://github.com/kool277/jami-client-ios) | macOS only |
 | `jami-web/` | [kool277/jami-web](https://github.com/kool277/jami-web) | Web client; its server uses the prebuilt `@savoirfairelinux/jami-core` npm package |
 | `jami-jams/` | [kool277/jami-jams](https://github.com/kool277/jami-jams) | Account management server |
+| `jami-plugins-store/` | [kool277/jami-plugins-store](https://github.com/kool277/jami-plugins-store) | Plugin store server (the API of plugins.jami.net); branch `main`, as upstream's |
 | `dhtnet/` | [kool277/dhtnet](https://github.com/kool277/dhtnet) | Reference; the daemon builds its own via contrib |
 | `jami-plugins/` | upstream [jami-plugins](https://review.jami.net/jami-plugins) | Upstream directly: its history has model files over GitHub's 100 MB limit |
 | `jami-nameservice/` | upstream [jami-nameservice](https://review.jami.net/jami-nameservice) | Reference only; JAMS serves name lookup |
 
 Each kool277 repository carries upstream's history
 (`https://review.jami.net/<name>`, remote `upstream`); kool277 changes
-go to `master` through pull requests. The clients' `daemon` submodules
+go to `master` (`main` for jami-plugins-store) through pull requests. The clients' `daemon` submodules
 point at kool277/jami-daemon.
 
 ## Architecture
@@ -72,6 +73,7 @@ they run live in `ci/` here and are fetched from `main` at build time.
 | [jami-client-android](https://dechat.systemhost.uz/job/jami-client-android/) | unsigned release APKs (3 ABIs, 3 push flavors), libjamiclient unit tests |
 | [jami-jams](https://dechat.systemhost.uz/job/jami-jams/) | lint, `mvn verify`, image `ghcr.io/kool277/jams` |
 | [jami-web](https://dechat.systemhost.uz/job/jami-web/) | lint, image, smoke test, image `ghcr.io/kool277/jami-web` |
+| [jami-plugins-store](https://dechat.systemhost.uz/job/jami-plugins-store/) | lint, jest tests, smoke test, image `ghcr.io/kool277/jami-plugins-store` |
 | [jami](https://dechat.systemhost.uz/job/jami/) | checks every submodule pin; platform release on `v*` tags |
 
 Pull requests are built too. A `v*` tag on this repository releases

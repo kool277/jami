@@ -14,6 +14,7 @@ compared with upstream (review.jami.net):
 | jami-client-ios | the highest `MARKETING_VERSION` of Ring/Ring.xcodeproj | `v4.20-kool277.1` |
 | jami-jams | `<revision>` of pom.xml | `v3.8-kool277.1` |
 | jami-web | `version` of package.json | `v1.0.0-kool277.1` |
+| jami-plugins-store | `version` of package.json | `v1.0.0-kool277.1` |
 
 `<n>` counts the kool277 releases of one upstream version, from 1. A
 component that did not change since the previous platform release keeps
@@ -33,6 +34,7 @@ component's version):
 | jami-client-ios | `jami-ios-<version>-unsigned.ipa`: the app for devices (arm64), unsigned: it has to be signed with an Apple identity before it installs | |
 | jami-jams | `jams-<version>.zip`: the jams folder (jams-launcher.jar) and versions.json | `ghcr.io/kool277/jams:<version>`, `:latest` |
 | jami-web | `jami-web-<version>.tar.gz`: jami-web-production with install.sh | `ghcr.io/kool277/jami-web:<version>`, `:latest` |
+| jami-plugins-store | `jami-plugins-store-<version>.tar.gz`: the server's sources, to run it without Docker (`npm ci && npm start`, Node.js 18) | `ghcr.io/kool277/jami-plugins-store:<version>`, `:latest` |
 | kool277/jami | release notes linking the above, with each component's version, upstream version and commit | |
 
 Every asset has a `.sha256` next to it. The other submodules (dhtnet,
