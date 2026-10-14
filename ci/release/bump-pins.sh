@@ -5,8 +5,8 @@
 # platform release (RELEASING.md). Fetches every component first and moves
 # nothing if a fetch fails. Then writes and stages VERSIONS with
 # ci/release/versions.sh (RENEW goes to it). Prints old -> new per
-# component and the versions; commit the result yourself. Upstream-only
-# submodules (jami-plugins, jami-nameservice) are left alone.
+# component and the versions; commit the result yourself. The
+# upstream-only submodule (jami-plugins) is left alone.
 #   ci/release/bump-pins.sh
 set -eu
 

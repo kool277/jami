@@ -18,7 +18,6 @@ containers (`ci/`) and the documentation (`docs/`).
 | `jami-plugins-store/` | [kool277/jami-plugins-store](https://github.com/kool277/jami-plugins-store) | Plugin store server (the API of plugins.jami.net); branch `main`, as upstream's |
 | `dhtnet/` | [kool277/dhtnet](https://github.com/kool277/dhtnet) | Reference; the daemon builds its own via contrib |
 | `jami-plugins/` | upstream [jami-plugins](https://review.jami.net/jami-plugins) | Upstream directly: its history has model files over GitHub's 100 MB limit |
-| `jami-nameservice/` | upstream [jami-nameservice](https://review.jami.net/jami-nameservice) | Reference only; JAMS serves name lookup |
 
 Each kool277 repository carries upstream's history
 (`https://review.jami.net/<name>`, remote `upstream`); kool277 changes

@@ -22,9 +22,6 @@
 [submodule "jami-plugins"]
 	path = jami-plugins
 	url = https://review.jami.net/jami-plugins
-[submodule "jami-nameservice"]
-	path = jami-nameservice
-	url = https://review.jami.net/jami-nameservice
 [submodule "jami-plugins-store"]
 	path = jami-plugins-store
 	url = https://github.com/kool277/jami-plugins-store.git

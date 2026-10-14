@@ -38,8 +38,7 @@ component's version):
 | kool277/jami | release notes linking the above, with each component's version, upstream version and commit | |
 
 Every asset has a `.sha256` next to it. The other submodules (dhtnet,
-jami-plugins, jami-nameservice) are listed in the notes with their pins
-but not built.
+jami-plugins) are listed in the notes with their pins but not built.
 
 jami-client-ios builds on GitHub Actions instead of Jenkins, because an
 iOS build needs macOS and Xcode and Jenkins runs on Linux: its
