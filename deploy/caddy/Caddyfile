@@ -1,4 +1,4 @@
-# TLS reverse proxy for JAMS.
+# TLS reverse proxy for JAMS and the Jami web client.
 # JAMS_TLS=internal: certificate from Caddy's local CA (root exported to
 # deploy/certs/jams-root.crt by scripts/export-ca.sh).
 # For Let's Encrypt set JAMS_HOST to the public domain and JAMS_TLS to an
@@ -41,4 +41,12 @@ https://{$JAMS_HOST}:443 {
 		request_header @client_cert X-Client-Cert "\+" "%2B"
 		reverse_proxy jams:8080
 	}
+}
+
+# The Jami web client (service web) for other machines: browsers allow the
+# microphone and camera only over HTTPS. Same certificate authority as
+# JAMS; no client certificates here.
+https://{$JAMS_HOST}:{$WEB_HTTPS_PORT} {
+	tls {$JAMS_TLS}
+	reverse_proxy web:8080
 }

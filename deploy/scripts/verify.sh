@@ -1,7 +1,7 @@
 #!/bin/sh
 # Check the running stack: JAMS over HTTPS (and the blueprint clients
-# receive), a TURN allocation against coturn, the DHT proxy. Secrets
-# come from .env and are never printed.
+# receive), a TURN allocation against coturn, the DHT proxy, the web
+# client. Secrets come from .env and are never printed.
 set -eu
 cd "$(dirname "$0")/.."
 
@@ -61,5 +61,11 @@ info=$(curl -sS --fail-with-body "http://$JAMS_HOST:${DHT_PROXY_PORT:-8000}/node
     printf '%s' "$info" | jq -r '"      node_id=\(.node_id) ipv4 good=\(.ipv4.good) dubious=\(.ipv4.dubious)"' &&
     [ "$(printf '%s' "$info" | jq -r '.ipv4.good')" -gt 0 ] &&
     ok "proxy answers and the node has DHT peers" || ko "DHT proxy"
+
+echo "== Web client (http://127.0.0.1:${WEB_PORT:-8090}, https://$JAMS_HOST:${WEB_HTTPS_PORT:-8443})"
+code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${WEB_PORT:-8090}/" || true)
+[ "$code" = 200 ] && ok "GET / on this host -> 200" || ko "web client on 127.0.0.1: $code"
+code=$(curl $curl_opts -o /dev/null -w '%{http_code}' "https://$JAMS_HOST:${WEB_HTTPS_PORT:-8443}/" || true)
+[ "$code" = 200 ] && ok "GET / through Caddy -> 200, certificate verified" || ko "web client through Caddy: $code"
 
 exit "$fail"

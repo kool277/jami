@@ -1,6 +1,7 @@
-# Jami server side: JAMS behind Caddy (HTTPS), coturn (TURN) and an
-# OpenDHT node (DHT bootstrap + DHT proxy). Settings come from .env
-# (copy .env.example). See docs/SERVER-SETUP.md.
+# Jami server side: JAMS behind Caddy (HTTPS), coturn (TURN), an OpenDHT
+# node (DHT bootstrap + DHT proxy) and the Jami web client, whose users
+# sign in with their JAMS account. Settings come from .env (copy
+# .env.example). See docs/SERVER-SETUP.md.
 name: jami
 
 services:
@@ -31,8 +32,10 @@ services:
     environment:
       JAMS_HOST: ${JAMS_HOST:?set JAMS_HOST in .env}
       JAMS_TLS: ${JAMS_TLS:-internal}
+      WEB_HTTPS_PORT: ${WEB_HTTPS_PORT:-8443}
     ports:
       - "${JAMS_HTTPS_PORT:-443}:443"
+      - "${WEB_HTTPS_PORT:-8443}:${WEB_HTTPS_PORT:-8443}"
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data
@@ -68,6 +71,38 @@ services:
       timeout: 5s
       retries: 3
 
+  # Jami web client. Its embedded daemon signs users in at
+  # https://JAMS_HOST, so it trusts Caddy's CA through certs/ca-bundle.crt
+  # (scripts/export-ca.sh) as its system bundle, and Node through
+  # NODE_EXTRA_CA_CERTS. The daemon keeps its accounts in ~/.config/jami
+  # and their data in ~/.local/share/jami: both are volumes, so a user
+  # keeps the same JAMS device across restarts. Plain HTTP on this host
+  # only (127.0.0.1, a secure context for the browser); other machines
+  # use Caddy's HTTPS on WEB_HTTPS_PORT. Configured by scripts/web-setup.sh.
+  web:
+    build:
+      context: ../jami-web
+      target: production
+    image: jami-web:local
+    environment:
+      JAMI_WEB_DATA_DIR: /data/jami-web
+      NODE_EXTRA_CA_CERTS: /etc/ssl/certs/jams-root.crt
+    volumes:
+      - web-data:/data/jami-web
+      - web-daemon-config:/root/.config/jami
+      - web-daemon-data:/root/.local/share/jami
+      - ./certs/ca-bundle.crt:/etc/ssl/certs/ca-certificates.crt:ro
+      - ./certs/jams-root.crt:/etc/ssl/certs/jams-root.crt:ro
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8090}:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8080/').then(r => process.exit(r.status < 500 ? 0 : 1), () => process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   dhtnode:
     build: ./dhtnode
     image: jami-dhtnode:local
@@ -95,3 +130,6 @@ volumes:
   caddy-data:
   caddy-config:
   coturn-data:
+  web-data:
+  web-daemon-config:
+  web-daemon-data:

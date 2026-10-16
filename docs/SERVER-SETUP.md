@@ -1,4 +1,4 @@
-# Server side: JAMS, coturn, dhtnode, Caddy
+# Server side: JAMS, coturn, dhtnode, Caddy, web client
 
 Everything runs from `deploy/` with Docker Compose on `jami-server`
 (192.168.1.92).
@@ -6,9 +6,10 @@ Everything runs from `deploy/` with Docker Compose on `jami-server`
 | Service | Image | Host port(s) | Role |
 |---------|-------|--------------|------|
 | `jams` | `jams:local`, built from `jami-jams/` (`--target prod`) | none (8080 inside the network) | Jami Account Management Server: accounts, name lookup, policies |
-| `caddy` | `caddy:2.10.2-alpine` | 443/tcp | TLS reverse proxy for JAMS |
+| `caddy` | `caddy:2.10.2-alpine` | 443/tcp, 8443/tcp | TLS reverse proxy for JAMS (443) and the web client (8443) |
 | `coturn` | `coturn/coturn:4.6.3` | 3479/udp+tcp, relays 49160-49200/udp (host network) | TURN server pushed to clients by JAMS |
 | `dhtnode` | `jami-dhtnode:local` (Ubuntu 24.04 `dhtnode`, OpenDHT 3.0) | 4222/udp (DHT), 8000/tcp (proxy) | DHT node and DHT proxy pushed to clients by JAMS |
+| `web` | `jami-web:local`, built from `jami-web/` (`--target production`) | 127.0.0.1:8090/tcp (HTTPS for other machines through Caddy on 8443) | Jami web client; users sign in with their JAMS account |
 
 These existing host services are left untouched: `coturn.service` (3478),
 `nginx` (80), `asterisk`, `postgresql`, `jenkins` (8080). Caddy
@@ -20,7 +21,8 @@ therefore serves HTTPS only and has no port 80 listener.
 cd deploy
 cp .env.example .env     # .env is git-ignored
 chmod 600 .env
-# fill in JAMS_ADMIN_PASSWORD, JAMS_TEST_PASSWORD, TURN_PASSWORD, e.g.
+# fill in JAMS_ADMIN_PASSWORD, JAMS_TEST_PASSWORD, TURN_PASSWORD,
+# JAMI_WEB_ADMIN_PASSWORD, e.g.
 #   openssl rand -hex 16
 ```
 
@@ -33,14 +35,17 @@ chmod 600 .env
 | `TURN_REALM`, `TURN_USER`, `TURN_PASSWORD`, `TURN_PORT`, `TURN_MIN_PORT`, `TURN_MAX_PORT` | coturn (long-term credentials). Keep `TURN_REALM=ring`: JAMS does not push `TURN.realm`, and Jami clients default to `ring`, so any other realm makes their TURN authentication fail. |
 | `TURN_EXTERNAL_IP` | Public IP when clients reach the host through NAT |
 | `DHT_PORT`, `DHT_PROXY_PORT`, `DHT_BOOTSTRAP` | OpenDHT node |
+| `WEB_PORT`, `WEB_HTTPS_PORT` | Web client: plain HTTP on 127.0.0.1 (default 8090), HTTPS through Caddy for other machines (default 8443) |
+| `JAMI_WEB_ADMIN_PASSWORD` | Web client administrator (its `/admin` pages) |
 
 ## Start
 
 ```sh
 docker compose up -d --build
-docker compose ps          # all four: running (healthy)
-sh scripts/export-ca.sh    # Caddy root CA -> certs/jams-root.crt
+docker compose ps          # all five: running (healthy)
+sh scripts/export-ca.sh    # Caddy root CA -> certs/jams-root.crt, certs/ca-bundle.crt
 sh scripts/jams-setup.sh   # JAMS setup wizard + blueprint + users
+sh scripts/web-setup.sh    # web client: admin account, JAMS sign-in
 sh scripts/verify.sh       # checks below; exit code 0 = all OK
 ```
 
@@ -54,6 +59,8 @@ npm downloads, `mvn package` with tests).
 | `jami_jams-data` | `/home/jams/data`: JAMS state (Derby DB `jams/`, `config.json`, `CA.pem`, `keystore.jks`, `oauth.*`, `jams.crl`, `images/`) |
 | `jami_caddy-data` | Caddy local CA and certificates |
 | `jami_coturn-data` | coturn SQLite user DB |
+| `jami_web-data` | `/data/jami-web`: web client settings (`admin.json`), JWT keys, its users (`accounts.json`) |
+| `jami_web-daemon-config`, `jami_web-daemon-data` | The web client's daemon: its accounts (`~/.config/jami`) and their data (`~/.local/share/jami`), so a user keeps the same JAMS device across restarts |
 
 JAMS reads its state from its working directory, which also holds its
 jars. `deploy/jams/entrypoint.sh` therefore runs JAMS from the volume
@@ -88,6 +95,27 @@ blueprint. JAMS also answers name lookups itself
 It cannot set the DHT bootstrap host, so clients keep
 `bootstrap.jami.net`. That is why `dhtnode` bootstraps from the public
 network: as a proxy, it must reach the same DHT as the clients.
+
+## Web client (`scripts/web-setup.sh`)
+
+The `web` service runs the Jami web client from the `jami-web`
+submodule. `scripts/web-setup.sh` runs its non-interactive setup
+(`jami-web setup`): JWT keys, the admin account (`JAMI_WEB_ADMIN_PASSWORD`)
+and sign-in with JAMS accounts at `https://<JAMS_HOST>`, with local
+accounts, OpenID and guests disabled. Re-running it is safe.
+
+- On this host: http://127.0.0.1:8090 (plain HTTP, which browsers treat
+  as a secure context on 127.0.0.1, so the microphone and camera work).
+- From other machines: `https://<JAMS_HOST>:8443` through Caddy, with
+  the same certificate as JAMS (browsers must trust `certs/jams-root.crt`
+  or accept the warning).
+
+A user signs in with a JAMS user's credentials; the web client's daemon
+then enrolls a device for that user, like a desktop client. That daemon
+reaches JAMS at `https://<JAMS_HOST>` and must trust Caddy's CA: the
+container mounts `certs/ca-bundle.crt` (written by `export-ca.sh`: the
+host's CA bundle plus `jams-root.crt`) as its system bundle, and Node
+gets `jams-root.crt` through `NODE_EXTRA_CA_CERTS`.
 
 ## Verification (`scripts/verify.sh`)
 
