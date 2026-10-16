@@ -3,6 +3,8 @@
 # of this workspace):
 # - Dockerfile target test (npm run lint);
 # - production image (target production), tagged jami-web:<VERSION>;
+# - CA check: the production image has a system CA bundle, without which
+#   its daemon verifies no HTTPS server (JAMS sign-in fails);
 # - smoke test: the production image starts and serves the UI on / (200,
 #   after the redirect to the admin setup wizard of a fresh install);
 # - out/dist/jami-web-<VERSION>.tar.gz and its .sha256: the production tree
@@ -27,6 +29,14 @@ step "lint (target test)"
 docker build --target test --build-arg GIT_COMMIT_HASH="$commit" -t "jami-web-test:$ver" .
 step "production image jami-web:$ver"
 docker build --target production --build-arg GIT_COMMIT_HASH="$commit" -t "jami-web:$ver" .
+
+step "CA bundle"
+if docker run --rm --entrypoint sh "jami-web:$ver" -c 'test -s /etc/ssl/certs/ca-certificates.crt'; then
+    echo "OK    the production image has /etc/ssl/certs/ca-certificates.crt"
+else
+    echo "FAIL  the production image has no CA bundle: its daemon cannot verify HTTPS servers such as JAMS" >&2
+    exit 1
+fi
 
 step "smoke test"
 cid=$(docker run -d -p 127.0.0.1::8080 "jami-web:$ver")
