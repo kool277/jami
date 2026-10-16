@@ -1,6 +1,7 @@
 # Clients with the local JAMS
 
 How Jami clients connect to the JAMS in `deploy/` (see `SERVER-SETUP.md`),
+how two JAMS users chat between the desktop client and the web client,
 and the end-to-end check that two JAMS users can sign in, become
 contacts, exchange a message and set up a call.
 
@@ -23,6 +24,53 @@ cannot set it.
 
 Every sign-in from a new profile registers a new device for that user in
 JAMS, and JAMS syncs the user's contacts and conversations to it.
+
+## The desktop client on jami-server
+
+The desktop client built here (`jami-client-qt/install/bin/jami`, see
+`CLIENT-QT-BUILD.md`) or released (`jami-client-qt-<version>-linux-x86_64.tar.gz`)
+runs on the server's own Ubuntu 24.04 desktop with:
+
+- Qt 6.12.0 in `/opt/qt/6.12.0/gcc_64`, copied from the build image (as
+  root): `docker run --rm -v /opt/qt:/out --entrypoint sh jami-client-qt-build -c 'cp -a /opt/qt/6.12.0 /out/'`
+- the system libraries it links that a desktop install lacks:
+  `apt install libjsoncpp25 libsecp256k1-1 libvdpau1 libvpx9 libx264-164 libyaml-cpp0.8 libxcb-cursor0`
+  (without `libxcb-cursor0`, Qt's X11 plugin does not load and the client
+  exits at once)
+- the JAMS certificate trusted system-wide (`SERVER-SETUP.md` → TLS):
+  `/usr/local/share/ca-certificates/jams-root.crt`, then
+  `update-ca-certificates`
+
+`~/.local/share/applications/net.jami.Jami.desktop` (the installed one,
+with `Exec` and `Icon` set to absolute paths) puts **Jami** in the
+application launcher.
+
+## The web client
+
+Open http://127.0.0.1:8090 on jami-server, or `https://192.168.1.92:8443`
+from another machine (trust `deploy/certs/jams-root.crt` in that browser,
+or accept the warning), and sign in with a JAMS user: `bob` and
+`JAMS_TEST_PASSWORD`, for instance. See `SERVER-SETUP.md` → Web client.
+
+## Chat between the desktop and web clients
+
+Checked on 2026-10-16 with `alice` in the desktop client on jami-server
+(signed in with **Connect to management server**) and `bob` in the web
+client:
+
+- alice adds bob as a contact; the conversation request reaches bob's web
+  client within 5 seconds, with alice's name resolved by JAMS;
+- bob accepts; the conversation is ready on both sides within 5 seconds
+  (bob a member on alice's side);
+- a message from the desktop client reaches the web client, and the
+  reply reaches the desktop client, each within 10 seconds, and the
+  desktop window shows the conversation with the unread reply.
+
+Both clients were driven through their local APIs, which serve the same
+routes: the web client's `/api` (a session token from
+`POST /api/auth/login`) and the desktop client's API on localhost
+(**Settings** → enable the API, or `EnableApi=true` and `ApiPort` in
+`~/.config/jami.net/Jami.conf`, with an API token).
 
 ## End-to-end check
 
@@ -135,6 +183,17 @@ with a JAMS account.
   two accounts in one daemon on the public DHT, the test call ends with
   SIP 480. Here, two daemons with JAMS and the local DHT proxy, the call
   connects.
+
+- **IP addresses rejected by the web client (fixed in kool277/jami-web#6).**
+  Its URL check accepted only domain names, so the JAMS URL
+  `https://192.168.1.92` could not be set (`Invalid JAMS server URL`).
+- **Web client sign-in failed whatever the password (fixed in
+  kool277/jami-web#7).** Its image had no CA store, so its daemon could
+  verify no HTTPS server and every JAMS sign-in ended in `Invalid JAMS
+  credentials`. `ci/web/build.sh` now checks the image for a CA bundle.
+- **The desktop client could not run on jami-server**: no Qt 6.12, seven
+  missing libraries, and the JAMS certificate not trusted system-wide
+  (see above).
 
 ## Troubleshooting
 
