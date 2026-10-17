@@ -1,7 +1,10 @@
 #!/bin/sh
-# Lint, build, smoke-test and package jami-web (WEB_DIR, default jami-web/
-# of this workspace):
+# Lint, test, build, smoke-test and package jami-web (WEB_DIR, default
+# jami-web/ of this workspace):
 # - Dockerfile target test (npm run lint);
+# - unit tests (npm run test:unit: the scripts, client and server suites)
+#   in the Dockerfile target build, as the server's tests need the client
+#   built; the server suite fetches tsx with npx;
 # - production image (target production), tagged jami-web:<VERSION>;
 # - CA check: the production image has a system CA bundle, without which
 #   its daemon verifies no HTTPS server (JAMS sign-in fails);
@@ -27,6 +30,10 @@ step() { printf '\n== %s\n' "$*"; }
 
 step "lint (target test)"
 docker build --target test --build-arg GIT_COMMIT_HASH="$commit" -t "jami-web-test:$ver" .
+step "unit tests (target build)"
+docker build --target build --build-arg GIT_COMMIT_HASH="$commit" -t "jami-web-build:$ver" .
+docker run --rm "jami-web-build:$ver" npm run test:unit
+docker rmi "jami-web-build:$ver" >/dev/null
 step "production image jami-web:$ver"
 docker build --target production --build-arg GIT_COMMIT_HASH="$commit" -t "jami-web:$ver" .
 

@@ -71,7 +71,7 @@ they run live in `ci/` here and are fetched from `main` at build time.
 | [jami-client-qt](https://dechat.systemhost.uz/job/jami-client-qt/) | client, unit and QML tests, package |
 | [jami-client-android](https://dechat.systemhost.uz/job/jami-client-android/) | unsigned release APKs (3 ABIs, 3 push flavors), libjamiclient unit tests |
 | [jami-jams](https://dechat.systemhost.uz/job/jami-jams/) | lint, `mvn verify`, image `ghcr.io/kool277/jams` |
-| [jami-web](https://dechat.systemhost.uz/job/jami-web/) | lint, image, smoke test, image `ghcr.io/kool277/jami-web` |
+| [jami-web](https://dechat.systemhost.uz/job/jami-web/) | lint, unit tests, image, smoke test, image `ghcr.io/kool277/jami-web` |
 | [jami-plugins-store](https://dechat.systemhost.uz/job/jami-plugins-store/) | lint, jest tests, smoke test, image `ghcr.io/kool277/jami-plugins-store` |
 | [jami](https://dechat.systemhost.uz/job/jami/) | checks every submodule pin; platform release on `v*` tags |
 
