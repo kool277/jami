@@ -7,5 +7,5 @@ jami-client-qt        a31c900fdb9bf809854a33bbe83cef90817ec062 v202609211303-koo
 jami-client-android   b7c2347802ab1d29c2fc816fc769a1878f946eaa v505-kool277.1            505
 jami-client-ios       b14d2a1f28343c752842035b6cd8faf87be3202f v4.20-kool277.1           4.20
 jami-jams             c6b4e82365d8e0e4ef85a056ac52024224041d7e v3.8-kool277.1            3.8
-jami-web              65132eaed044c21a53a50b3319ea161a31a9c357 v1.0.0-kool277.2          1.0.0
+jami-web              625fe91c323df5007506fff370389378ee818439 v1.0.0-kool277.2          1.0.0
 jami-plugins-store    f8b388c5556ff4f731fb36c0620c75f978a971e5 v1.0.0-kool277.1          1.0.0
