@@ -67,5 +67,13 @@ code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:${WEB_PORT:-8090
 [ "$code" = 200 ] && ok "GET / on this host -> 200" || ko "web client on 127.0.0.1: $code"
 code=$(curl $curl_opts -o /dev/null -w '%{http_code}' "https://$JAMS_HOST:${WEB_HTTPS_PORT:-8443}/" || true)
 [ "$code" = 200 ] && ok "GET / through Caddy -> 200, certificate verified" || ko "web client through Caddy: $code"
+# Its daemon runs in Node.js and verifies JAMS with the OpenSSL of Node.js
+# and its default CA locations (SSL_CERT_FILE), not with
+# NODE_EXTRA_CA_CERTS: node --use-openssl-ca trusts the same certificates.
+code=$(docker compose exec -T web env -u NODE_EXTRA_CA_CERTS node --use-openssl-ca -e '
+require("https").get(process.argv[1], { agent: false }, (r) => { console.log(r.statusCode); r.resume() })
+    .on("error", (e) => console.log(e.code))' "$base/api/auth/device" 2>/dev/null || true)
+[ "$code" = 401 ] && ok "its daemon trusts the JAMS certificate (GET /api/auth/device -> 401)" ||
+    ko "the web client's daemon cannot verify JAMS: $code"
 
 exit "$fail"

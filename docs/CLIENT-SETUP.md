@@ -188,9 +188,21 @@ with a JAMS account.
   Its URL check accepted only domain names, so the JAMS URL
   `https://192.168.1.92` could not be set (`Invalid JAMS server URL`).
 - **Web client sign-in failed whatever the password (fixed in
-  kool277/jami-web#7).** Its image had no CA store, so its daemon could
-  verify no HTTPS server and every JAMS sign-in ended in `Invalid JAMS
-  credentials`. `ci/web/build.sh` now checks the image for a CA bundle.
+  kool277/jami-web#7 and `deploy/docker-compose.yml`).** Its image had no
+  CA store, so its daemon could verify no HTTPS server and every JAMS
+  sign-in ended in `Invalid JAMS credentials`. `ci/web/build.sh` now
+  checks the image for a CA bundle. That was not enough for our JAMS,
+  whose certificate comes from Caddy's own CA: the daemon runs inside
+  Node.js and verifies certificates with the OpenSSL of Node.js, which
+  never reads the bundle file the container mounts. Sign-ins worked on
+  2026-10-16 only while `SSL_CERT_FILE` was set for debugging; it is now
+  set in `docker-compose.yml`, and `verify.sh` checks the daemon's view.
+- **Every failed web sign-in read `Invalid JAMS credentials` (fixed in
+  kool277/jami-web#9).** The daemon reports any failure as
+  `ERROR_GENERIC`; the web client now asks JAMS, as the daemon does but
+  without the credentials, and answers 401 only when JAMS refused them,
+  otherwise 502 with the cause (unreachable, certificate, not a JAMS,
+  JAMS error).
 - **The desktop client could not run on jami-server**: no Qt 6.12, seven
   missing libraries, and the JAMS certificate not trusted system-wide
   (see above).

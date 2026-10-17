@@ -114,8 +114,21 @@ A user signs in with a JAMS user's credentials; the web client's daemon
 then enrolls a device for that user, like a desktop client. That daemon
 reaches JAMS at `https://<JAMS_HOST>` and must trust Caddy's CA: the
 container mounts `certs/ca-bundle.crt` (written by `export-ca.sh`: the
-host's CA bundle plus `jams-root.crt`) as its system bundle, and Node
-gets `jams-root.crt` through `NODE_EXTRA_CA_CERTS`.
+host's CA bundle plus `jams-root.crt`) as its system bundle, and
+`SSL_CERT_FILE` names it. The daemon runs inside Node.js and verifies
+certificates with the OpenSSL of Node.js, which looks for
+`/etc/ssl/cert.pem` (absent on Debian) and for hashed files in
+`/etc/ssl/certs`, so without `SSL_CERT_FILE` it would not read the
+bundle. Node itself gets `jams-root.crt` through `NODE_EXTRA_CA_CERTS`,
+which the daemon ignores. `verify.sh` checks the daemon's view with
+`node --use-openssl-ca` in the container, which trusts the same
+certificates.
+
+When a sign-in fails, the web client tells why: `Invalid JAMS
+credentials` (401) only when JAMS refused them; otherwise 502 with the
+cause, also in the container's log (`docker compose logs web`): JAMS
+unreachable, its certificate not verified, no JAMS at that URL, or a
+JAMS error.
 
 ## Verification (`scripts/verify.sh`)
 
@@ -135,6 +148,10 @@ OK    wrong password is rejected
 == DHT proxy (http://192.168.1.92:8000)
       node_id=8dadb2ef… ipv4 good=12 dubious=27
 OK    proxy answers and the node has DHT peers
+== Web client (http://127.0.0.1:8090, https://192.168.1.92:8443)
+OK    GET / on this host -> 200
+OK    GET / through Caddy -> 200, certificate verified
+OK    its daemon trusts the JAMS certificate (GET /api/auth/device -> 401)
 ```
 
 Equivalent manual checks:

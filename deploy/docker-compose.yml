@@ -72,9 +72,13 @@ services:
       retries: 3
 
   # Jami web client. Its embedded daemon signs users in at
-  # https://JAMS_HOST, so it trusts Caddy's CA through certs/ca-bundle.crt
-  # (scripts/export-ca.sh) as its system bundle, and Node through
-  # NODE_EXTRA_CA_CERTS. The daemon keeps its accounts in ~/.config/jami
+  # https://JAMS_HOST, so it has to trust Caddy's CA: certs/ca-bundle.crt
+  # (scripts/export-ca.sh) is mounted as the system bundle. The daemon runs
+  # in Node.js and verifies certificates with the OpenSSL of Node.js, which
+  # looks for /etc/ssl/cert.pem (absent on Debian) and hashed files in
+  # /etc/ssl/certs, not for the bundle: SSL_CERT_FILE points it there.
+  # Node itself trusts Caddy's CA through NODE_EXTRA_CA_CERTS, which the
+  # daemon ignores. The daemon keeps its accounts in ~/.config/jami
   # and their data in ~/.local/share/jami: both are volumes, so a user
   # keeps the same JAMS device across restarts. Plain HTTP on this host
   # only (127.0.0.1, a secure context for the browser); other machines
@@ -86,6 +90,7 @@ services:
     image: jami-web:local
     environment:
       JAMI_WEB_DATA_DIR: /data/jami-web
+      SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
       NODE_EXTRA_CA_CERTS: /etc/ssl/certs/jams-root.crt
     volumes:
       - web-data:/data/jami-web
