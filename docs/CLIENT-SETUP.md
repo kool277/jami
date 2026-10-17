@@ -72,6 +72,30 @@ routes: the web client's `/api` (a session token from
 (**Settings** → enable the API, or `EnableApi=true` and `ApiPort` in
 `~/.config/jami.net/Jami.conf`, with an API token).
 
+## Group chat and calls (2026-10-17)
+
+Checked on jami-server with:
+- the JAMS users of `JAMS_TEST_USERS`;
+- the web client as bob, carol and dave;
+- a second desktop client as erin, on a virtual display (Xvfb `:99`) with its own profile and its local API on;
+- two scripted Jami peers, frank and gina (`jamid` in the daemon build container).
+
+iOS was not part of it: there is no Mac here.
+
+| Check | Result |
+|---|---|
+| Group chat: bob, carol and dave (web) with erin (desktop) | Invitations arrived within 10 s; every member had all four messages within 6 s; the desktop window lists the group |
+| One-to-one video call to the desktop client (frank calls erin) | Answered on the desktop (Ctrl+Y); frank's shared screen arrives as live H.264 video, decoded and shown |
+| Group call with the desktop client (frank hosts erin and gina) | A conference of three; erin's window shows frank's and gina's video |
+| One-to-one video call in the web client (bob and carol) | Works in Firefox. In Chrome the caller's tab crashed when the callee answered; fixed in kool277/jami-web#10 (two Chromium runs connected) |
+| Group call in the web client | Not supported: the web client's calls are one-to-one (one remote stream on the call page, one connection's state) |
+| Call between the web client and the desktop client | Not possible: the web client calls with the browser's WebRTC, signaled over Jami text messages, while the desktop, Android and iOS clients use the daemon's calls |
+
+The web calls were driven with Playwright in Chromium and Firefox, with a fake camera and microphone. The checks read each peer connection's state and its decoded video frames from WebRTC statistics. Found along the way:
+
+- The daemon starts a `file://` video source paused; a client starts it with `pausePlayer`. Calling `requestMediaChange` with the file the call already sends, then `pausePlayer`, crashed jamid (`std::future_error: Future already retrieved` in `MediaPlayer`). This is an unusual sequence: the clients switch to a file from the camera.
+- The JAMS blueprint sets `autoAnswer: false`, which every device of a JAMS user follows, so a test client answers with its shortcut instead.
+
 ## End-to-end check
 
 ```sh
