@@ -25,33 +25,31 @@ image=${ANDROID_BUILD_IMAGE:-jami-android-build}
 # sdkmanager exits 0 when its downloads fail, so with no connection the image
 # builds without the SDK platform, build tools and NDK, and Docker caches that
 # step: every later build would then fail in Gradle ("NDK not configured").
+# The license step before it fails the same way: it then accepts no license,
+# and the install step skips every package, even once the connection is back.
 sdk_installed() {
     docker run --rm --entrypoint sh "$image" -c 'test -d "$ANDROID_NDK" &&
         test -n "$(ls -A "$ANDROID_SDK_ROOT/platforms")" && test -n "$(ls -A "$ANDROID_SDK_ROOT/build-tools")"' 2>/dev/null
 }
 
-# The cached results of the image's sdkmanager install step that hold almost
-# nothing (under 100 MB, the full SDK is about 3.5 GB): failed downloads.
-failed_sdk_steps() {
-    docker buildx du --verbose 2>/dev/null | awk 'BEGIN { RS = ""; FS = "\n" }
-        /sdkmanager --channel=1 --no_https "platforms/ {
-            id = ""; size = ""
-            for (i = 1; i <= NF; i++) {
-                line = $i
-                if (line ~ /^ID:/) { sub(/^ID:[ \t]+/, "", line); id = line }
-                else if (line ~ /^Size:/) { sub(/^Size:[ \t]+/, "", line); size = line }
-            }
-            if (id != "" && (size ~ /^[0-9.]+k?B$/ || (size ~ /MB$/ && size + 0 < 100))) print id
-        }'
+# The cached results of the image's sdkmanager steps, the install step first:
+# a record can only be pruned once no other record builds on it.
+sdk_steps() {
+    for step in 'sdkmanager --channel=1' 'sdkmanager --licenses' 'sdkmanager --update'; do
+        docker buildx du --verbose 2>/dev/null | awk -v step="$step" 'BEGIN { RS = ""; FS = "\n" }
+            index($0, step) {
+                for (i = 1; i <= NF; i++) if ($i ~ /^ID:/) { sub(/^ID:[ \t]+/, "", $i); print $i }
+            }'
+    done
 }
 
 if [ -z "${SKIP_IMAGE_BUILD:-}" ]; then
     docker build -q --target build -t "$image" "$android/docker" >/dev/null
     if ! sdk_installed; then
         echo "The $image image has no Android SDK or NDK: sdkmanager could not download them." >&2
-        echo "Removing the image and the cached sdkmanager step, so that the next build downloads them again." >&2
+        echo "Removing the image and the cached sdkmanager steps, so that the next build downloads them again." >&2
         docker rmi "$image" >/dev/null || true
-        for id in $(failed_sdk_steps); do docker buildx prune -f --filter "id=$id" >/dev/null || true; done
+        for id in $(sdk_steps); do docker buildx prune -f --filter "id=$id" >/dev/null || true; done
         exit 1
     fi
 fi
