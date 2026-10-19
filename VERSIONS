@@ -3,9 +3,9 @@
 # release tags each component with it (see RELEASING.md).
 # component           commit                                   version                   upstream
 jami-daemon           0e758643f6614dea2cf71be61e4cb2f23e042ea1 v17.0.0-kool277.1         17.0.0
-jami-client-qt        a31c900fdb9bf809854a33bbe83cef90817ec062 v202609211303-kool277.1   beta/202609211303
-jami-client-android   b7c2347802ab1d29c2fc816fc769a1878f946eaa v505-kool277.1            505
-jami-client-ios       b14d2a1f28343c752842035b6cd8faf87be3202f v4.20-kool277.1           4.20
+jami-client-qt        8e30093b60ac8db72e036a8717464c2abe04b3b5 v202609211303-kool277.2   beta/202609211303
+jami-client-android   586f039b003c4924dbf205eaf93c6e644c5c7ce9 v505-kool277.2            505
+jami-client-ios       f3eadb57c0d8f249c59e052c7fca64581c509817 v4.20-kool277.2           4.20
 jami-jams             c6b4e82365d8e0e4ef85a056ac52024224041d7e v3.8-kool277.1            3.8
-jami-web              625fe91c323df5007506fff370389378ee818439 v1.0.0-kool277.2          1.0.0
+jami-web              dce22184cdba5b11b171656d69ff7e6d59bb870e v1.0.0-kool277.3          1.0.0
 jami-plugins-store    f8b388c5556ff4f731fb36c0620c75f978a971e5 v1.0.0-kool277.1          1.0.0
