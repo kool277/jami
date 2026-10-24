@@ -89,7 +89,7 @@ iOS was not part of it: there is no Mac here.
 | Group call with the desktop client (frank hosts erin and gina) | A conference of three; erin's window shows frank's and gina's video |
 | One-to-one video call in the web client (bob and carol) | Works in Firefox. In Chrome the caller's tab crashed when the callee answered; fixed in kool277/jami-web#10 (two Chromium runs connected) |
 | Group call in the web client | Not supported then: the web client's calls were one-to-one (one remote stream on the call page, one connection's state). Added in kool277/jami-web#15 on 2026-10-19, after v1.4.0: bob, carol and dave each connected to the other two, in Chromium and Firefox; a member leaving, a late joiner and a page reload during the call work too |
-| Call between the web client and the desktop client | Not possible: the web client calls with the browser's WebRTC, signaled over Jami text messages, while the desktop, Android and iOS clients use the daemon's calls |
+| Call between the web client and the desktop client | Not possible then: the web client calls with the browser's WebRTC, signaled over Jami text messages, while the desktop, Android and iOS clients use the daemon's calls. Added on 2026-10-24: the daemon speaks the browser's WebRTC, for one-to-one and group calls in both directions (`WEBRTC-CALLS.md`) |
 
 The web calls were driven with Playwright in Chromium and Firefox, with a fake camera and microphone. The checks read each peer connection's state and its decoded video frames from WebRTC statistics. Found along the way:
 

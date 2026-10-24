@@ -58,6 +58,7 @@ and Jenkins are left as they are.
 | Desktop client | `ci/client-qt/run.sh` (builds against `jami-daemon/`) | `docs/CLIENT-QT-BUILD.md` |
 | Server side | `cd deploy && docker compose up -d --build`, then `scripts/jams-setup.sh`, `scripts/verify.sh` | `docs/SERVER-SETUP.md` |
 | Client against JAMS | enroll a device, end-to-end check `ci/daemon/jams-e2e.sh` | `docs/CLIENT-SETUP.md` |
+| Calls between the web client and the native clients | WebRTC in the daemon (design, security, tests) | `docs/WEBRTC-CALLS.md` |
 
 ## CI and releases
 
