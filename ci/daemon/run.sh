@@ -7,7 +7,8 @@
 #   ci/daemon/run.sh                      # configure + build
 #   ci/daemon/run.sh ctest --test-dir build -R '^base64$'
 # DAEMON_DIR is the daemon source (default: jami-daemon/ of this
-# workspace). DOCKER_RUN_ARGS adds options to docker run (word-split).
+# workspace). DOCKER_RUN_ARGS adds options to docker run (word-split);
+# BUILD_CPUS, BUILD_MEM, BUILD_MEM_SWAP and BUILD_OOM_ADJ set its limits.
 set -eu
 
 here=$(cd "$(dirname "$0")" && pwd)
@@ -22,8 +23,18 @@ docker build -q -t "$image" "$here" >/dev/null
 if [ $# -eq 0 ]; then
     set -- sh -c 'mkdir -p build && cd build &&
         cmake .. -GNinja -DJAMI_DBUS=On -DBUILD_TESTING=ON &&
-        ninja -j"${JOBS:-16}"'
+        ninja -j"${JOBS:-12}"'
 fi
+
+# Resource limits of the build container, so that a build which outgrows
+# the host is what gets killed, not JAMS or Jenkins: BUILD_CPUS is a cpuset
+# (it also caps what nproc reports, so make, ninja and Gradle start that
+# many jobs), BUILD_MEM caps RAM, BUILD_MEM_SWAP caps RAM plus swap, and
+# BUILD_OOM_ADJ makes its processes the OOM killer's first choice. The
+# server services run with -800 (deploy/docker-compose.yml).
+cpus=$(nproc); [ "$cpus" -gt 12 ] && cpus=12
+limits="--cpuset-cpus=${BUILD_CPUS:-0-$((cpus - 1))} --memory=${BUILD_MEM:-18g} \
+--memory-swap=${BUILD_MEM_SWAP:-28g} --oom-score-adj=${BUILD_OOM_ADJ:-800}"
 
 tty=
 [ -t 0 ] && tty=-it
@@ -34,7 +45,7 @@ exec docker run --rm $tty \
     --user "$(id -u):$(id -g)" \
     -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro \
     -e HOME=/tmp -e TARBALLS=/var/cache/jami -e CARGO_HOME=/var/cache/jami/cargo \
-    -e JOBS="${JOBS:-16}" \
+    -e JOBS="${JOBS:-12}" \
     -v "$daemon:/src/jami-daemon" -v "$cache:/var/cache/jami" -v "$here:/ci:ro" \
-    ${DOCKER_RUN_ARGS:-} \
+    $limits ${DOCKER_RUN_ARGS:-} \
     -w /src/jami-daemon "$image" "$@"

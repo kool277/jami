@@ -70,7 +70,7 @@ they run live in `ci/` here and are fetched from `main` at build time.
 |-----|--------|
 | [jami-daemon](https://dechat.systemhost.uz/job/jami-daemon/) | jamid + libjami, smoke tests, D-Bus check |
 | [jami-client-qt](https://dechat.systemhost.uz/job/jami-client-qt/) | client, unit and QML tests, package |
-| [jami-client-android](https://dechat.systemhost.uz/job/jami-client-android/) | unsigned release APKs (3 ABIs, 3 push flavors), libjamiclient unit tests |
+| [jami-client-android](https://dechat.systemhost.uz/job/jami-client-android/) | release APKs (3 ABIs, 3 push flavors; signed on `v*` tags), libjamiclient unit tests |
 | [jami-jams](https://dechat.systemhost.uz/job/jami-jams/) | lint, `mvn verify`, image `ghcr.io/kool277/jams` |
 | [jami-web](https://dechat.systemhost.uz/job/jami-web/) | lint, unit tests, image, smoke test, image `ghcr.io/kool277/jami-web` |
 | [jami-plugins-store](https://dechat.systemhost.uz/job/jami-plugins-store/) | lint, jest tests, smoke test, image `ghcr.io/kool277/jami-plugins-store` |
@@ -90,8 +90,8 @@ the platform: see `RELEASING.md`.
   internal CA now; see `docs/SERVER-SETUP.md`, TLS).
 - FCM (Android) and APNs (iOS) keys for mobile push notifications.
 - iOS builds, which need a Mac with Xcode.
-- An Android signing keystore, stored as a Jenkins credential, for
-  signed APKs.
+- The Android release keystore and its backups (`RELEASING.md`,
+  Prerequisites); the Jenkins credentials that hold it.
 
 ## Clone
 
