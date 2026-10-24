@@ -47,6 +47,15 @@ included, took about 15 minutes. CMake builds contrib at configure time
 tree and `contrib/x86_64-linux-gnu/` the installed result. Tarballs go
 to `/var/cache/jami` and are never downloaded twice.
 
+contrib rebuilds a package when its tarball is newer than its unpacked
+source, so a version whose tarball another build downloaded earlier
+would go unnoticed. Before each build, the `run.sh` scripts of
+`ci/daemon`, `ci/client-qt` and `ci/android` run
+`ci/daemon/contrib-refresh.sh`. It makes contrib rebuild every package
+whose `contrib/src/<pkg>/` changed since that build tree built it, and
+the packages that depend on it. Its first run on an existing tree
+rebuilds all of contrib once.
+
 Outputs in `jami-daemon/build/`: `jamid` (the D-Bus daemon),
 `libjami-core.a`, `jamidst`, the `ut_*` test binaries.
 

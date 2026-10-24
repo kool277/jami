@@ -28,6 +28,10 @@ fi
 
 [ $# -eq 0 ] && set -- sh /ci/ci-build.sh
 
+# contrib decides what to rebuild by file times, which the shared tarball
+# cache defeats: build again the packages whose rules changed.
+sh "$here/../daemon/contrib-refresh.sh" "$daemon"
+
 # Resource limits of the build container, so that a build which outgrows
 # the host is what gets killed, not JAMS or Jenkins: BUILD_CPUS is a cpuset
 # (it also caps what nproc reports, so make, ninja and Gradle start that
