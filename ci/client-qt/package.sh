@@ -15,6 +15,9 @@ name=jami-client-qt-$(printf %s "$VERSION" | tr / -)-linux-$(uname -m)
 dist=build/dist
 
 [ -x install/bin/jami ] || { echo "install/bin/jami missing: run ci-build.sh first" >&2; exit 1; }
+# The daemon's ringtones, which the client installs since
+# kool277/jami-client-qt#12: without them the app rings silently.
+[ -e install/share/jami/ringtones/default.opus ] || { echo "install/share/jami/ringtones/default.opus missing" >&2; exit 1; }
 rm -rf "$dist"
 mkdir -p "$dist/$name/bin"
 cp -a install/bin/jami "$dist/$name/bin/"
