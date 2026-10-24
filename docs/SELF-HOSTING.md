@@ -67,6 +67,7 @@ Without push, a phone only rings while the app runs. Use the `noPush` APK, which
 - **Boot:**
   - Reserve 192.168.1.92 in DHCP. After a reboot the VM first gets 192.168.1.155; coturn binds that address and TURN fails until `docker compose restart coturn` (needed again today).
   - The host's own `coturn.service` (3478) has the same stale bind. Restart it after boot, or stop it if unused: the stack runs its own coturn on 3479.
+  - Both restarts on 2026-10-24 were crashes, not shutdowns. Before the first, memory ran out. Before the second, the VM's disk and network stopped at 14:26, and nothing written after that was kept: the system log ends there, and a Jenkins workspace came back as empty files. Check the hypervisor (its storage, any backup or snapshot job at that time), and shut the VM down from inside before changing its hardware.
 - **Updates:** today an unattended upgrade of Docker restarted every container, the stack included. Plan update windows, or hold the docker packages and update them by hand.
 - **Monitoring:** add disk, memory and service health alerts.
 
