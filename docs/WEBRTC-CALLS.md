@@ -100,7 +100,10 @@ the other members' joins and offers, and the call ends when the host ends it.
    peer cannot make the daemon fetch a URL of its choice.
 4. SRTP: SRTP_AES128_CM_HMAC_SHA1_80 keys from the DTLS exporter (RFC 5764);
    RTP and RTCP both protected; packets that fail authentication dropped.
-5. Bounds: at most 8 legs per group call; ICE credentials of 4-64 and
+5. Bounds: at most 8 legs per group call, counting legs still being torn
+   down; a member's new sessions make a leg at most every 3 s (a member
+   sending join after join with new sessions gets one leg per pause); ICE
+   credentials of 4-64 and
    22-256 characters (pjnath copies them into a 128-byte stack buffer: a
    longer one would overflow it); candidates must be IP literals (no DNS
    lookups chosen by the peer); bounded queues of candidates and early
@@ -132,6 +135,22 @@ Fixed on the way:
   nothing received for 30 s.
 - Hold with a browser is local (no renegotiation): this side stops sending
   and playing.
+- A mesh leg sends the camera (and any source but the microphone)
+  itself, not the conference's mix, so the conference tells its mesh legs
+  whenever the host mutes, holds, resumes or switches camera
+  (`Call::applyHostMedia`): members get nothing the user turned off or put
+  on hold, from a leg's first packet. When the conference dissolves, the
+  remaining leg stays muted or on hold as the conference was.
+- A member joining never takes the user back into the call: while the
+  group's call is on hold or another call is the user's, the new leg waits
+  on hold and joins when the user resumes.
+- Late messages of a member's session that left, or that a newer one
+  replaced, are dropped (a restarted web server may send its queue again);
+  while ringing, the member who invited keeps its invite's session. If that
+  member leaves while others are in the call, the device rings for one of
+  them instead.
+- The legs of a group call write no call history into the members'
+  one-to-one conversations.
 - The browser's first key frame can arrive before the RTP session is set up:
   the DTLS-SRTP transport keeps up to 256 packets until it attaches; key
   frame requests are coalesced to one per 500 ms.
@@ -168,7 +187,8 @@ and Firefox), `web_call_signaling`; `CallTest::testCallBetweenContacts`
 (needs the public DHT). jami-web: client and server unit tests for the call
 messages, late invites and hosted calls.
 
-End to end on jami-server (2026-10-23): browsers in Playwright (Chromium and
+End to end on jami-server (2026-10-23, the rows marked 2026-10-24 after the
+review of the group calls): browsers in Playwright (Chromium and
 Firefox, fake camera and microphone; the deployed web client swapped for a
 test image), native devices = the daemon of this change in containers
 (frank; a native device of bob for multi-device), driven over D-Bus with a
@@ -182,3 +202,6 @@ daemon's decoder signals.
 | Group call started in the browser, native member joins before or after the other browsers | A conference forms on the native device; the browsers get its camera (640x480), it gets theirs; it can leave and the others go on |
 | Group call hosted by a native device | The browsers ring, each connects to the host alone and gets the 1280x720 mix and audio; the call ends for them when the host ends it |
 | Browser tab killed mid-call | The native side ends the call 31 s later |
+| Mesh: the native member turns the camera off, then holds the conference (2026-10-24) | The browsers get no frames from it while off and while on hold, and no sound while on hold (received audio energy flat); both come back on resume |
+| Mesh: the native member holds the call, another member joins | The new leg is on hold from its first packet: no video, silence, no conference; on resume one conference with both |
+| A member sends 20 joins with new sessions in 4 s | 3 legs (one per 3 s pause) instead of 20 |
