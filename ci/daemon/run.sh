@@ -55,12 +55,15 @@ limits="--cpuset-cpus=${BUILD_CPUS:-0-$((cpus - 1))} --memory=${BUILD_MEM:-18g} 
 meson_cache=meson/$(id -u)
 mkdir -p "$cache/$meson_cache"
 
+# --init: an init process as PID 1 passes on the SIGTERM of an aborted
+# build. A shell as PID 1 ignores it, and the container went on building
+# after Jenkins had aborted jami-client-android master #6.
 tty=
 [ -t 0 ] && tty=-it
 # The host's user database, so that the caller's uid has a name in the
 # container: dbus-daemon refuses to start for an unknown uid, which the
 # jenkins user's is (the image only has ubuntu, uid 1000).
-exec docker run --rm $tty \
+exec docker run --rm --init $tty \
     --user "$(id -u):$(id -g)" \
     -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro \
     -e HOME=/tmp -e TARBALLS=/var/cache/jami -e CARGO_HOME=/var/cache/jami/cargo \

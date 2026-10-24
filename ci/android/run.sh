@@ -90,6 +90,9 @@ limits="--cpuset-cpus=${BUILD_CPUS:-0-$((cpus - 1))} --memory=${BUILD_MEM:-18g} 
 meson_cache=meson/$(id -u)
 mkdir -p "$cache/$meson_cache"
 
+# --init: an init process as PID 1 passes on the SIGTERM of an aborted
+# build. A shell as PID 1 ignores it, and the container went on building
+# after Jenkins had aborted jami-client-android master #6.
 tty=
 [ -t 0 ] && tty=-it
 # The host's user database, so that the caller's uid has a name in the
@@ -98,7 +101,7 @@ tty=
 # here needs, so the Android Gradle plugin would try to install them in
 # every build. It reads the SDK package lists from dl.google.com without a
 # read timeout, and a connection that stalls hangs the build for good.
-exec docker run --rm $tty \
+exec docker run --rm --init $tty \
     --user "$(id -u):$(id -g)" \
     -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro \
     -e HOME=/tmp/home -e TARBALLS=/var/cache/jami \

@@ -50,9 +50,12 @@ limits="--cpuset-cpus=${BUILD_CPUS:-0-$((cpus - 1))} --memory=${BUILD_MEM:-18g} 
 meson_cache=meson/$(id -u)
 mkdir -p "$cache/$meson_cache"
 
+# --init: an init process as PID 1 passes on the SIGTERM of an aborted
+# build. A shell as PID 1 ignores it, and the container went on building
+# after Jenkins had aborted jami-client-android master #6.
 tty=
 [ -t 0 ] && tty=-it
-exec docker run --rm $tty \
+exec docker run --rm --init $tty \
     --user "$(id -u):$(id -g)" \
     --shm-size=1g \
     -e HOME=/tmp/home -e TARBALLS=/var/cache/jami -e CARGO_HOME=/var/cache/jami/cargo \
