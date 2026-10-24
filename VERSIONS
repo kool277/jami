@@ -2,8 +2,8 @@
 # ci/release/versions.sh: v<upstream version>-kool277.<n>. The platform
 # release tags each component with it (see RELEASING.md).
 # component           commit                                   version                   upstream
-jami-daemon           be2140b80b29fa5bdf137fc87f9c07ff972f5efb v17.0.0-kool277.2         17.0.0
-jami-client-qt        bca5131ac991ccf35a33e88f4c599138007fde58 v202609211303-kool277.3   beta/202609211303
+jami-daemon           890d914519f1ae0c09ce9c083676b3ff18bb29a4 v17.0.0-kool277.3         17.0.0
+jami-client-qt        8b32b377bf7534dd4a6a8872f38a9f6a5ee01d73 v202609211303-kool277.4   beta/202609211303
 jami-client-android   bf0e8dbab057b2713935d0e1b65d51625c8f3e97 v505-kool277.3            505
 jami-client-ios       e50c69837e25022fe93182e610d7a44c9403ad9f v4.20-kool277.3           4.20
 jami-jams             c6b4e82365d8e0e4ef85a056ac52024224041d7e v3.8-kool277.1            3.8
