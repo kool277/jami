@@ -20,9 +20,14 @@ image=${DAEMON_BUILD_IMAGE:-jami-daemon-build}
 
 docker build -q -t "$image" "$here" >/dev/null
 
+# A configure that fails (contrib stopped by a network drop, say) leaves
+# the pkg-config results of a half-built contrib in CMakeCache.txt, and
+# the next configure keeps them: it then links without some of their
+# libraries. So the cache goes with the failed configure.
 if [ $# -eq 0 ]; then
     set -- sh -c 'mkdir -p build && cd build &&
-        cmake .. -GNinja -DJAMI_DBUS=On -DBUILD_TESTING=ON &&
+        { cmake .. -GNinja -DJAMI_DBUS=On -DBUILD_TESTING=ON ||
+          { echo "configure failed: removing build/CMakeCache.txt" >&2; rm -f CMakeCache.txt; exit 1; }; } &&
         ninja -j"${JOBS:-12}"'
 fi
 
