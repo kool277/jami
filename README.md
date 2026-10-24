@@ -59,6 +59,7 @@ and Jenkins are left as they are.
 | Server side | `cd deploy && docker compose up -d --build`, then `scripts/jams-setup.sh`, `scripts/verify.sh` | `docs/SERVER-SETUP.md` |
 | Client against JAMS | enroll a device, end-to-end check `ci/daemon/jams-e2e.sh` | `docs/CLIENT-SETUP.md` |
 | Calls between the web client and the native clients | WebRTC in the daemon (design, security, tests) | `docs/WEBRTC-CALLS.md` |
+| What a complete self-hosted setup still needs | public access, push, signing, packaging, hardening, operations | `docs/SELF-HOSTING.md` |
 
 ## CI and releases
 
