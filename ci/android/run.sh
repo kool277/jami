@@ -10,7 +10,8 @@
 #   ci/android/run.sh sh /ci/test.sh
 # ANDROID_DIR and DAEMON_DIR are the sources (default: jami-client-android/
 # and jami-daemon/ of this workspace, whose client daemon submodule stays
-# uninitialized). SKIP_IMAGE_BUILD=1 reuses the image. DOCKER_RUN_ARGS adds
+# uninitialized). SKIP_IMAGE_BUILD=1 reuses the image, REBUILD_IMAGE=1 rebuilds
+# it even if its docker/ directory did not change. DOCKER_RUN_ARGS adds
 # options to docker run (word-split); BUILD_CPUS, BUILD_MEM, BUILD_MEM_SWAP
 # and BUILD_OOM_ADJ set its limits.
 set -eu
@@ -44,8 +45,16 @@ sdk_steps() {
     done
 }
 
-if [ -z "${SKIP_IMAGE_BUILD:-}" ]; then
-    docker build -q --target build -t "$image" "$android/docker" >/dev/null
+# The image is rebuilt only when the app's docker/ directory changes, which
+# its label records. Its base, gradle:jdk25-resolute, is a tag that moves
+# upstream; each move made the next build rebuild the whole image (SDK, NDK,
+# Rust: gigabytes to download), and fail when the connection dropped.
+# REBUILD_IMAGE=1 rebuilds it anyway, on the current base.
+context=$(cd "$android/docker" && find . -type f -print0 | sort -z | xargs -0 sha256sum | sha256sum | cut -c1-16)
+label=net.jami.kool277.docker-context
+built=$(docker image inspect -f "{{index .Config.Labels \"$label\"}}" "$image" 2>/dev/null || true)
+if [ -z "${SKIP_IMAGE_BUILD:-}" ] && { [ "$built" != "$context" ] || [ -n "${REBUILD_IMAGE:-}" ]; }; then
+    docker build -q --target build --label "$label=$context" -t "$image" "$android/docker" >/dev/null
     if ! sdk_installed; then
         echo "The $image image has no Android SDK or NDK: sdkmanager could not download them." >&2
         echo "Removing the image and the cached sdkmanager steps, so that the next build downloads them again." >&2
