@@ -2,10 +2,10 @@
 # ci/release/versions.sh: v<upstream version>-kool277.<n>. The platform
 # release tags each component with it (see RELEASING.md).
 # component           commit                                   version                   upstream
-jami-daemon           0e758643f6614dea2cf71be61e4cb2f23e042ea1 v17.0.0-kool277.1         17.0.0
-jami-client-qt        8e30093b60ac8db72e036a8717464c2abe04b3b5 v202609211303-kool277.2   beta/202609211303
-jami-client-android   586f039b003c4924dbf205eaf93c6e644c5c7ce9 v505-kool277.2            505
-jami-client-ios       f3eadb57c0d8f249c59e052c7fca64581c509817 v4.20-kool277.2           4.20
+jami-daemon           be2140b80b29fa5bdf137fc87f9c07ff972f5efb v17.0.0-kool277.2         17.0.0
+jami-client-qt        bca5131ac991ccf35a33e88f4c599138007fde58 v202609211303-kool277.3   beta/202609211303
+jami-client-android   bf0e8dbab057b2713935d0e1b65d51625c8f3e97 v505-kool277.3            505
+jami-client-ios       e50c69837e25022fe93182e610d7a44c9403ad9f v4.20-kool277.3           4.20
 jami-jams             c6b4e82365d8e0e4ef85a056ac52024224041d7e v3.8-kool277.1            3.8
-jami-web              dce22184cdba5b11b171656d69ff7e6d59bb870e v1.0.0-kool277.3          1.0.0
+jami-web              9f62726f0ac09faa0706e8dcc76a3f925b2cb4c2 v1.0.0-kool277.4          1.0.0
 jami-plugins-store    f8b388c5556ff4f731fb36c0620c75f978a971e5 v1.0.0-kool277.1          1.0.0
