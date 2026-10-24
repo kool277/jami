@@ -165,6 +165,9 @@ Fixed on the way:
 - Plugins do not process web legs' media.
 - A web-started mesh and a native-hosted call in the same conversation at
   the same time stay two calls.
+- The desktop app finds the conversation of an incoming call by its caller,
+  so a group call started in the web client rings there as a call from
+  the member who started it, in the one-to-one conversation with them.
 - The web client's server runs upstream's prebuilt daemon addon
   (`@savoirfairelinux/jami-core` 0.5.2), which can lose an account message
   sent before it has a connection to the peer (the first call after its
@@ -183,8 +186,10 @@ browsers, as before.
 
 Unit tests (in the daemon's Jenkins smoke tests): `socket_pair_mux`,
 `dtls_srtp_transport`, `webrtc_sdp` (with descriptions captured from Chrome
-and Firefox), `web_call_signaling`; `CallTest::testCallBetweenContacts`
-(needs the public DHT). jami-web: client and server unit tests for the call
+and Firefox), `web_call_signaling`, `webrtc_call` (an incoming web call
+names its account and its peer as an incoming SIP call does, which the
+desktop app needs to show it); `CallTest::testCallBetweenContacts` (needs
+the public DHT). jami-web: client and server unit tests for the call
 messages, late invites and hosted calls.
 
 End to end on jami-server (2026-10-23, the rows marked 2026-10-24 after the
@@ -205,3 +210,6 @@ daemon's decoder signals.
 | Mesh: the native member turns the camera off, then holds the conference (2026-10-24) | The browsers get no frames from it while off and while on hold, and no sound while on hold (received audio energy flat); both come back on resume |
 | Mesh: the native member holds the call, another member joins | The new leg is on hold from its first packet: no video, silence, no conference; on resume one conference with both |
 | A member sends 20 joins with new sessions in 4 s | 3 legs (one per 3 s pause) instead of 20 |
+| The desktop app, built on this daemon, gets a call from a browser (2026-10-24) | It shows "Incoming video call from bob"; Ctrl+Y answers, and the window shows the browser's video. With the v1.5.0 daemon it rang without showing the call, then renamed the caller to their URI: fixed in kool277/jami-daemon#6 |
+| The desktop app calls a browser | The browser rings and answers; the desktop shows its video (the test machine has no camera or sound card, so the desktop sends no media there) |
+| A browser starts a group call; the desktop app is a member | It rings as a call from the member who started it; answered, the desktop forms a conference with both browsers and shows their two videos |

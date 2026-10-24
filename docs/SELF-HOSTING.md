@@ -1,6 +1,6 @@
 # What a complete self-hosted Jami still needs
 
-Status on 2026-10-24 (platform v1.5.0), jami-server at 192.168.1.92.
+Status on 2026-10-24 (platform v1.5.1), jami-server at 192.168.1.92.
 
 ## In place
 
