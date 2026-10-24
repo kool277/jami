@@ -54,7 +54,12 @@ would go unnoticed. Before each build, the `run.sh` scripts of
 `ci/daemon/contrib-refresh.sh`. It makes contrib rebuild every package
 whose `contrib/src/<pkg>/` changed since that build tree built it, and
 the packages that depend on it. Its first run on an existing tree
-rebuilds all of contrib once.
+rebuilds all of contrib once. Each configure also asks pkg-config again
+(`cmake -U '__pkg_config_checked_*'`): the CMake cache would keep the
+include directories of the previous version. Gradle configures the
+Android build again only when its CMake files change, so
+`ci/android/run.sh` has the script remove `jami-android/app/.cxx` until
+contrib has rebuilt those packages.
 
 Outputs in `jami-daemon/build/`: `jamid` (the D-Bus daemon),
 `libjami-core.a`, `jamidst`, the `ut_*` test binaries.

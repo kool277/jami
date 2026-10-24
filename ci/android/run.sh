@@ -67,8 +67,10 @@ fi
 [ $# -eq 0 ] && set -- sh /ci/build.sh
 
 # contrib decides what to rebuild by file times, which the shared tarball
-# cache defeats: build again the packages whose rules changed.
-sh "$here/../daemon/contrib-refresh.sh" "$daemon"
+# cache defeats: build again the packages whose rules changed. Gradle's
+# CMake trees go until contrib has: their configure builds contrib, and
+# Gradle runs it again only when the CMake files change.
+sh "$here/../daemon/contrib-refresh.sh" "$daemon" "$android/jami-android/app/.cxx"
 
 # Resource limits of the build container, so that a build which outgrows
 # the host is what gets killed, not JAMS or Jenkins: BUILD_CPUS is a cpuset

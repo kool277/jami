@@ -23,10 +23,12 @@ docker build -q -t "$image" "$here" >/dev/null
 # A configure that fails (contrib stopped by a network drop, say) leaves
 # the pkg-config results of a half-built contrib in CMakeCache.txt, and
 # the next configure keeps them: it then links without some of their
-# libraries. So the cache goes with the failed configure.
+# libraries. So the cache goes with the failed configure. And each
+# configure asks pkg-config again (-U): the cache would keep what it found
+# in an older contrib, include directories that a new version moves.
 if [ $# -eq 0 ]; then
     set -- sh -c 'mkdir -p build && cd build &&
-        { cmake .. -GNinja -DJAMI_DBUS=On -DBUILD_TESTING=ON ||
+        { cmake .. -GNinja -DJAMI_DBUS=On -DBUILD_TESTING=ON -U "__pkg_config_checked_*" ||
           { echo "configure failed: removing build/CMakeCache.txt" >&2; rm -f CMakeCache.txt; exit 1; }; } &&
         ninja -j"${JOBS:-12}"'
 fi

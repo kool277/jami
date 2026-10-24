@@ -16,12 +16,21 @@
 # from every build directory: contrib then builds it again, and after it
 # the packages that depend on it, whose stamps are now older than its own.
 # With no record (build directories from before this script), every
-# package is built again once. Run on the host, before the build.
-#   ci/daemon/contrib-refresh.sh <daemon source>
+# package is built again once.
+#
+# The other arguments are build trees to remove until contrib has built
+# those packages again (contrib/build.kool277-pending lists the ones it has
+# not): trees whose CMake configure builds contrib and keeps what
+# pkg-config found there, but does not run again by itself, as Gradle's.
+# A package that contrib no longer builds stays listed, and the trees go
+# at every build: remove its line. Run on the host, before the build.
+#   ci/daemon/contrib-refresh.sh <daemon source> [<build tree>...]
 set -eu
 
 contrib=$1/contrib
+shift
 record=$contrib/build.kool277-rules
+pending=$contrib/build.kool277-pending
 sums=$(for src in "$contrib"/src/*/; do
     printf '%s %s\n' "$(basename "$src")" \
         "$(cd "$src" && find . -type f | LC_ALL=C sort | xargs -r sha256sum | sha256sum | cut -c1-64)"
@@ -33,6 +42,7 @@ else
     changed=$(printf '%s\n' "$sums" | cut -d' ' -f1)
 fi
 
+[ -f "$pending" ] || : >"$pending"
 for build in "$contrib"/build-*/; do
     [ -d "$build" ] || continue
     again=
@@ -40,8 +50,26 @@ for build in "$contrib"/build-*/; do
         if [ -e "$build.$pkg" ] || [ -e "$build$pkg" ]; then
             rm -rf "$build$pkg" "$build.$pkg" "$build.sum-$pkg"
             again="$again $pkg"
+            echo "$(basename "$build") $pkg" >>"$pending"
         fi
     done
     [ -z "$again" ] || echo "contrib/$(basename "$build"): rules changed, building again:$again" >&2
 done
 printf '%s\n' "$sums" >"$record"
+
+waiting=$(while read -r build pkg; do
+    if [ -d "$contrib/src/$pkg" ] && [ ! -e "$contrib/$build/.$pkg" ]; then
+        echo "$build $pkg"
+    fi
+done <"$pending" | LC_ALL=C sort -u)
+if [ -z "$waiting" ]; then
+    : >"$pending"
+    exit 0
+fi
+printf '%s\n' "$waiting" >"$pending"
+for tree in "$@"; do
+    if [ -e "$tree" ]; then
+        echo "contrib has yet to build again$(printf '%s\n' "$waiting" | cut -d' ' -f2 | LC_ALL=C sort -u | tr '\n' ' ' | sed 's/^/ /; s/ $//'): removing $tree" >&2
+        rm -rf "$tree"
+    fi
+done

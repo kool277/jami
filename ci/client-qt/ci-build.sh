@@ -5,7 +5,11 @@
 # Configuring downloads dependencies (FetchContent: qwindowkit and its
 # submodules) from GitHub, so a configure that fails on the network is
 # retried: up to 10 tries, 30 s apart, like withNetRetry in the
-# Jenkinsfiles. Any other configure error fails at once.
+# Jenkinsfiles. Any other configure error fails at once. Each configure
+# asks pkg-config again (-U): the cache would keep what it found in an
+# older contrib, include directories that a new version moves
+# (jami-client-qt master #8 looked for webrtc-audio-processing's headers
+# in their old place).
 set -eu
 
 network_errors="Could not resolve host|Couldn't resolve host|Failed to connect|Couldn't connect to server|Connection refused|Connection timed out|Timeout was reached|Temporary failure in name resolution|Network is unreachable|unable to access|early EOF|remote end hung up|RPC failed"
@@ -17,7 +21,8 @@ configure() {
           -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_INSTALL_PREFIX="$PWD/install" \
           -DCMAKE_PREFIX_PATH="$QT_ROOT" \
-          -DBUILD_TESTING=On
+          -DBUILD_TESTING=On \
+          -U '__pkg_config_checked_*'
       echo $? >"$log.status"; } 2>&1 | tee "$log"
     return "$(cat "$log.status")"
 }
