@@ -67,6 +67,14 @@ cpus=$(nproc); [ "$cpus" -gt 12 ] && cpus=12
 limits="--cpuset-cpus=${BUILD_CPUS:-0-$((cpus - 1))} --memory=${BUILD_MEM:-18g} \
 --memory-swap=${BUILD_MEM_SWAP:-28g} --oom-score-adj=${BUILD_OOM_ADJ:-800}"
 
+# Meson downloads the wraps of some contrib packages (abseil-cpp for
+# webrtc-audio-processing) at configure time; keep them in the cache, as
+# the contrib tarballs, so that a network drop does not fail the build.
+# One directory per user: meson writes its files readable by their owner
+# only.
+meson_cache=meson/$(id -u)
+mkdir -p "$cache/$meson_cache"
+
 tty=
 [ -t 0 ] && tty=-it
 # The host's user database, so that the caller's uid has a name in the
@@ -79,6 +87,7 @@ exec docker run --rm $tty \
     --user "$(id -u):$(id -g)" \
     -v /etc/passwd:/etc/passwd:ro -v /etc/group:/etc/group:ro \
     -e HOME=/tmp/home -e TARBALLS=/var/cache/jami \
+    -e MESON_PACKAGE_CACHE_DIR="/var/cache/jami/$meson_cache" \
     -e GRADLE_USER_HOME=/var/cache/jami/gradle \
     -e GRADLE_OPTS=-Dorg.gradle.project.android.builder.sdkDownload=false \
     -v "$android:/src/jami-client-android" -v "$daemon:/src/jami-client-android/daemon" \
