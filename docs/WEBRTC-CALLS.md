@@ -168,6 +168,9 @@ Fixed on the way:
 - The desktop app finds the conversation of an incoming call by its caller,
   so a group call started in the web client rings there as a call from
   the member who started it, in the one-to-one conversation with them.
+- A call started in the web client writes no call history. The caller's
+  daemon writes a one-to-one call's history, and the web client writes
+  none, so the conversation shows neither the call nor a missed call.
 - The web client's server runs upstream's prebuilt daemon addon
   (`@savoirfairelinux/jami-core` 0.5.2), which can lose an account message
   sent before it has a connection to the peer (the first call after its

@@ -16,7 +16,7 @@ Status on 2026-10-24 (platform v1.5.1), jami-server at 192.168.1.92.
 
 ### 1. Reachability from outside the LAN
 
-Today JAMS, the web client and TURN answer on the LAN only, with a certificate from Caddy's own CA. Phones on mobile data, and anyone at another site, cannot sign in or relay calls.
+Today JAMS, the web client and TURN answer on the LAN only, with a certificate from Caddy's own CA. Phones on mobile data, and anyone at another site, cannot sign in or relay calls. The Android and iOS apps cannot sign in to JAMS even on the LAN: they trust only the CAs bundled in the app, not one installed on the phone (`docs/SERVER-SETUP.md`, TLS). The phone apps need this whole section.
 
 - **DNS:** create names for JAMS and the web client, pointing to the public IP (`dechat.systemhost.uz` already serves Jenkins).
 - **Port forwarding** on the router (192.168.1.5) to 192.168.1.92:
@@ -24,6 +24,7 @@ Today JAMS, the web client and TURN answer on the LAN only, with a certificate f
   - 3479/udp+tcp and 49160-49200/udp (TURN);
   - 4222/udp (DHT) and 8000/tcp (DHT proxy).
 - **Let's Encrypt** instead of the internal CA: set `JAMS_TLS` to an e-mail address (`docs/SERVER-SETUP.md`, TLS). Devices then trust the server without installing `jams-root.crt`.
+- **TLS passthrough:** `dechat.systemhost.uz` is not served by this VM's Caddy or nginx, so another proxy answers on the public 443. If the JAMS name goes through that proxy, it must pass the TLS connection to Caddy unchanged, routed by SNI, without terminating it. Devices sign in to JAMS with a client certificate, which a terminating proxy drops.
 - **`TURN_EXTERNAL_IP`:** set it to the public IP. Add TURN over TLS (`turns:`, 5349) for networks that block UDP.
 
 ### 2. Push notifications for phones

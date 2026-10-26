@@ -174,8 +174,16 @@ Currently `JAMS_TLS=internal`: Caddy issues a certificate for
 
 - Linux: copy it to `/usr/local/share/ca-certificates/jams-root.crt`,
   then run `update-ca-certificates`
-- Android: Settings → Security → Install a certificate → CA certificate
+- A phone's browser (the web client): on Android, Settings → Security →
+  Install a certificate → CA certificate; on iOS, install it as a profile,
+  then turn on full trust in Settings → General → About → Certificate
+  Trust Settings.
 - In containers: copy it into the image's CA store the same way as on Linux.
+
+The Android and iOS apps cannot use it. Their daemon trusts only the CA
+list bundled in the app (`cacert.pem`, which the app sets as
+`CA_ROOT_FILE`), not the phone's certificate store, so they sign in only
+once JAMS has a Let's Encrypt certificate (below).
 
 Clients that connect by IP send no SNI, so the Caddyfile sets
 `default_sni`.
