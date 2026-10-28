@@ -132,6 +132,22 @@ cause, also in the container's log (`docker compose logs web`): JAMS
 unreachable, its certificate not verified, no JAMS at that URL, or a
 JAMS error.
 
+## Apps page (`scripts/fetch-apps.sh`)
+
+`scripts/fetch-apps.sh [platform tag]` puts the apps of a platform
+release (default: the newest `v*` tag) in `downloads/`, which Caddy
+serves at `https://<JAMS_HOST>:8443/downloads/`, and with access from the
+internet at `https://<PUBLIC_HOST>:8443/downloads/` too: the Android APKs, the
+unsigned iOS `.ipa`, the Linux desktop archive and `jams-root.crt`, with
+a page that says how to install each one and which address each app
+connects to. The files come from the components' GitHub releases and
+must match their `.sha256` files. On a server with Qt in `/opt/qt`
+(`CLIENT-SETUP.md`), the script also packs the Qt runtime that the
+desktop app needs (`qt-6.12.0-gcc_64-runtime.tar.xz`, about 750 MB
+unpacked), since other computers don't have it. Run it again after each
+release; files of older releases stay in `downloads/<tag>/` until you
+delete them.
+
 ## Verification (`scripts/verify.sh`)
 
 ```
@@ -155,6 +171,7 @@ OK    proxy answers and the node has DHT peers
 OK    GET / on this host -> 200
 OK    GET / through Caddy -> 200, certificate verified
 OK    its daemon trusts the JAMS certificate (GET /api/auth/device -> 401)
+OK    apps page (scripts/fetch-apps.sh) -> 200
 == Access from the internet (https://jams.jaybi.uz:9443, https://jams.jaybi.uz:8443)
 OK    JAMS: GET / -> 200, certificate trusted by the phone apps
 OK    certificate valid until Jan 26 05:28:09 2027 GMT (Caddy renews it 30 days ahead)
@@ -162,6 +179,7 @@ OK    user 'alice' can log in
 OK    JAMS administration is refused (403)
 OK    JAMS setup is refused (404)
 OK    web client: GET / -> 200
+OK    apps page
 OK    port 8081 for Let's Encrypt answers
 ```
 
@@ -256,7 +274,7 @@ dechat.systemhost.uz, the router's address 5.133.122.43):
 | Address | What | Router |
 |---------|------|--------|
 | `https://jams.jaybi.uz:9443` | JAMS for the apps: sign-in, device certificates, contacts and conversations, names. Its administration (`/api/admin/*`, 403) and setup (`/api/install/*`, 404) stay on the LAN, at `https://192.168.1.92` | TCP 9443 |
-| `https://jams.jaybi.uz:8443` | The web client | TCP 8443 |
+| `https://jams.jaybi.uz:8443` | The web client, and the apps page at `/downloads/` | TCP 8443 |
 | `jams.jaybi.uz:3479`, relays 49160-49200 | TURN | TCP and UDP 3479, UDP 49160-49200 |
 | `jams.jaybi.uz:8000` | DHT proxy | TCP 8000 |
 | port 4222 | DHT node | UDP 4222 |
@@ -299,7 +317,8 @@ back into the LAN.
    address: away from home, devices skip that check when it fails.
 4. `sh scripts/jams-setup.sh`: the blueprint gives devices TURN and the DHT
    proxy at `jams.jaybi.uz`.
-5. `sh scripts/verify.sh`: its "Access from the internet" part checks the
+5. `sh scripts/fetch-apps.sh`: the apps page gives the public addresses.
+6. `sh scripts/verify.sh`: its "Access from the internet" part checks the
    public addresses through this host, with the certificate authorities the
    phone apps ship with.
 
@@ -331,6 +350,7 @@ What this leaves out:
 |-----|---------|
 | Web client | `https://jams.jaybi.uz:8443` |
 | Android, iOS and desktop apps: Advanced features → Connect to management server | `https://jams.jaybi.uz:9443`, typed in full |
+| Apps | `https://jams.jaybi.uz:8443/downloads/` |
 | JAMS administration (users, devices) | `https://192.168.1.92`, on the LAN only |
 
 On Android at home, a "Private DNS" setting makes the phone ask a public

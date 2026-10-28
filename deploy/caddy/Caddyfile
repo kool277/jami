@@ -50,6 +50,22 @@
 	}
 }
 
+# The apps of a release and a page on how to install them, written to
+# deploy/downloads/ by scripts/fetch-apps.sh.
+(downloads) {
+	redir /downloads /downloads/
+	handle_path /downloads/* {
+		root * /srv/downloads
+		# Without its type, phones show the certificate as text instead of
+		# offering to install it.
+		@certificate path *.crt
+		header @certificate Content-Type application/x-x509-ca-cert
+		file_server {
+			hide .gitignore *.part
+		}
+	}
+}
+
 # Let's Encrypt for the public sites, by the HTTP challenge: the router's
 # reverse proxy keeps its ports 80 and 443 and passes http://PUBLIC_HOST
 # on to Caddy's HTTP port. Caddy answers a challenge before any route.
@@ -68,10 +84,13 @@ https://{$JAMS_HOST}:443 {
 
 # The Jami web client (service web) for other machines: browsers allow the
 # microphone and camera only over HTTPS. Same certificate authority as
-# JAMS; no client certificates here.
+# JAMS; no client certificates here, so phones can fetch the apps too.
 https://{$JAMS_HOST}:{$WEB_HTTPS_PORT} {
 	tls {$JAMS_TLS}
-	reverse_proxy web:8080
+	import downloads
+	handle {
+		reverse_proxy web:8080
+	}
 }
 
 import sites/*.caddy

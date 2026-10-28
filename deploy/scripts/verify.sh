@@ -94,6 +94,10 @@ require("https").get(process.argv[1], { agent: false }, (r) => { console.log(r.s
     .on("error", (e) => console.log(e.code))' "$base/api/auth/device" 2>/dev/null || true)
 [ "$code" = 401 ] && ok "its daemon trusts the JAMS certificate (GET /api/auth/device -> 401)" ||
     ko "the web client's daemon cannot verify JAMS: $code"
+if [ -f downloads/index.html ]; then
+    code=$(curl $curl_opts -o /dev/null -w '%{http_code}' "https://$JAMS_HOST:${WEB_HTTPS_PORT:-8443}/downloads/" || true)
+    [ "$code" = 200 ] && ok "apps page (scripts/fetch-apps.sh) -> 200" || ko "apps page /downloads/: $code"
+fi
 
 if [ -n "${PUBLIC_HOST:-}" ]; then
     jp=${JAMS_PUBLIC_PORT:-9443} wp=${WEB_HTTPS_PORT:-8443}
@@ -126,6 +130,12 @@ if [ -n "${PUBLIC_HOST:-}" ]; then
     [ "$code" = 404 ] && ok "JAMS setup is refused (404)" || ko "JAMS setup: $code"
     code=$(pub "$wp" /)
     [ "$code" = 200 ] && ok "web client: GET / -> 200" || ko "web client at $PUBLIC_HOST:$wp: $code"
+    # The web client answers every path with its own page: look for the
+    # apps page itself.
+    if [ -f downloads/index.html ]; then
+        curl -s --cacert "$cas" --resolve "$PUBLIC_HOST:$wp:$JAMS_HOST" "https://$PUBLIC_HOST:$wp/downloads/" |
+            grep -q '<title>Jami apps</title>' && ok "apps page" || ko "no apps page at $PUBLIC_HOST:$wp/downloads/"
+    fi
     # The router passes http://PUBLIC_HOST on to port 8081, for the Let's
     # Encrypt HTTP challenge.
     out=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' -H "Host: $PUBLIC_HOST" "http://$JAMS_HOST:8081/" || true)

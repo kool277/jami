@@ -1,0 +1,4 @@
+# The apps that scripts/fetch-apps.sh downloads; Caddy serves this folder
+# at https://JAMS_HOST:WEB_HTTPS_PORT/downloads/.
+*
+!.gitignore

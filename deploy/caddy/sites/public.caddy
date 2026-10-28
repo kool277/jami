@@ -28,11 +28,15 @@ https://{$PUBLIC_HOST}:{$JAMS_PUBLIC_PORT} {
 	}
 }
 
+# The web client, and the apps page (scripts/fetch-apps.sh) for the users.
 https://{$PUBLIC_HOST}:{$WEB_HTTPS_PORT} {
 	tls {
 		import public_tls
 	}
-	reverse_proxy web:8080
+	import downloads
+	handle {
+		reverse_proxy web:8080
+	}
 }
 
 # http://PUBLIC_HOST through the router: Caddy answers the challenges
