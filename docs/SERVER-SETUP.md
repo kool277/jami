@@ -73,8 +73,9 @@ and copying `jami_jams-data`.
 ## JAMS setup
 
 `scripts/jams-setup.sh` makes the same REST calls as the web setup
-wizard. Re-running it is safe: finished steps are skipped and the
-blueprint is updated.
+wizard. Re-running it is safe: finished steps are skipped, and the
+blueprint and the test users' password are set again from `.env` (to
+change that password, change it there and run the script).
 
 | Wizard page (https://192.168.1.92/) | REST call | Values |
 |------------------------------|-----------|--------|

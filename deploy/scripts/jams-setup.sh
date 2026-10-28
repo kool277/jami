@@ -2,7 +2,8 @@
 # Configure a fresh JAMS through its REST API (the same calls as the web
 # setup wizard), then create the Jami blueprint with our TURN server and
 # DHT proxy, a group using it, and the test users from .env.
-# Safe to re-run: finished steps are skipped, the blueprint is updated.
+# Safe to re-run: finished steps are skipped; the blueprint and the test
+# users' password are set again from .env.
 # Passwords and tokens are read from .env and never printed.
 set -eu
 cd "$(dirname "$0")/.."
@@ -119,7 +120,10 @@ fi
 
 for user in $(printf '%s' "$JAMS_TEST_USERS" | tr ',' ' '); do
     if api GET "/api/admin/user?username=$user" >/dev/null 2>&1; then
-        step "user '$user' exists"
+        # To change the test users' password, change it in .env and run
+        # this script again.
+        step "user '$user' exists: password from .env"
+        api PUT /api/admin/user "$(credentials "$user" "$JAMS_TEST_PASSWORD")" >/dev/null
     else
         step "create user '$user'"
         api POST /api/admin/user "$(credentials "$user" "$JAMS_TEST_PASSWORD")" >/dev/null
