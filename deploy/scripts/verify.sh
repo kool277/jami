@@ -1,7 +1,8 @@
 #!/bin/sh
 # Check the running stack: JAMS over HTTPS (and the blueprint clients
 # receive), a TURN allocation against coturn, the DHT proxy, the web
-# client. Secrets come from .env and are never printed.
+# client, and with PUBLIC_HOST the addresses for the internet. Secrets come
+# from .env and are never printed.
 set -eu
 cd "$(dirname "$0")/.."
 
@@ -41,9 +42,12 @@ EOF
 )
 printf '%s' "$policy" | jq -r '.policyData // . | (if type == "string" then fromjson else . end)
     | "      turnEnabled=\(.turnEnabled) turnServer=\(.turnServer) turnServerUserName=\(.turnServerUserName) turnServerPassword=\(if (.turnServerPassword // "") != "" then "(set)" else "(empty)" end)\n      proxyEnabled=\(.proxyEnabled) proxyServer=\(.proxyServer)"'
-printf '%s' "$policy" | grep -q "$JAMS_HOST:${TURN_PORT:-3479}" &&
-    printf '%s' "$policy" | grep -q "$JAMS_HOST:${DHT_PROXY_PORT:-8000}" &&
-    ok "blueprint 'jami-default' pushes TURN and DHT proxy" || ko "blueprint values"
+# Devices reach TURN and the DHT proxy by the public name when there is one
+# (scripts/jams-setup.sh).
+host=${PUBLIC_HOST:-$JAMS_HOST}
+printf '%s' "$policy" | grep -q "$host:${TURN_PORT:-3479}" &&
+    printf '%s' "$policy" | grep -q "$host:${DHT_PROXY_PORT:-8000}" &&
+    ok "blueprint 'jami-default' pushes TURN and DHT proxy at $host" || ko "blueprint values"
 
 echo "== TURN allocation ($JAMS_HOST:${TURN_PORT:-3479})"
 out=$(docker compose exec -T coturn sh -c 'turnutils_uclient -p "$TURN_PORT" \
@@ -75,5 +79,42 @@ require("https").get(process.argv[1], { agent: false }, (r) => { console.log(r.s
     .on("error", (e) => console.log(e.code))' "$base/api/auth/device" 2>/dev/null || true)
 [ "$code" = 401 ] && ok "its daemon trusts the JAMS certificate (GET /api/auth/device -> 401)" ||
     ko "the web client's daemon cannot verify JAMS: $code"
+
+if [ -n "${PUBLIC_HOST:-}" ]; then
+    jp=${JAMS_PUBLIC_PORT:-9443} wp=${WEB_HTTPS_PORT:-8443}
+    echo "== Access from the internet (https://$PUBLIC_HOST:$jp, https://$PUBLIC_HOST:$wp)"
+    # Through this host's address: from the internet, the router forwards
+    # the same ports here. The phone apps trust only the certificate
+    # authorities they ship with, so the certificate is checked against those.
+    cas=../jami-client-android/jami-android/app/src/main/assets/cacert.pem
+    [ -f "$cas" ] || cas=/etc/ssl/certs/ca-certificates.crt
+    pub() { # pub <port> <path> [curl options]: HTTP status
+        p=$1 path=$2
+        shift 2
+        curl -s -o /dev/null -w '%{http_code}' --cacert "$cas" --resolve "$PUBLIC_HOST:$p:$JAMS_HOST" \
+            "$@" "https://$PUBLIC_HOST:$p$path" || true
+    }
+    code=$(pub "$jp" /)
+    [ "$code" = 200 ] && ok "JAMS: GET / -> 200, certificate trusted by the phone apps" || ko "JAMS at $PUBLIC_HOST:$jp: $code"
+    cert=$(openssl s_client -connect "$JAMS_HOST:$jp" -servername "$PUBLIC_HOST" </dev/null 2>/dev/null |
+        openssl x509 2>/dev/null || true)
+    end=$(printf '%s\n' "$cert" | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)
+    printf '%s\n' "$cert" | openssl x509 -noout -checkend 1209600 >/dev/null 2>&1 &&
+        ok "certificate valid until $end (Caddy renews it 30 days ahead)" ||
+        ko "certificate expires within 14 days: ${end:-none}"
+    code=$(jq -n --arg u "$user" --arg p "$JAMS_TEST_PASSWORD" '{username: $u, password: $p}' |
+        pub "$jp" /api/login -X POST -H 'Content-Type: application/json' --data-binary @-)
+    [ "$code" = 200 ] && ok "user '$user' can log in" || ko "user '$user' login: $code"
+    code=$(pub "$jp" /api/admin/users)
+    [ "$code" = 403 ] && ok "JAMS administration is refused (403)" || ko "JAMS administration: $code"
+    code=$(pub "$jp" /api/install/start)
+    [ "$code" = 404 ] && ok "JAMS setup is refused (404)" || ko "JAMS setup: $code"
+    code=$(pub "$wp" /)
+    [ "$code" = 200 ] && ok "web client: GET / -> 200" || ko "web client at $PUBLIC_HOST:$wp: $code"
+    # The router passes http://PUBLIC_HOST on to port 8081, for the Let's
+    # Encrypt HTTP challenge.
+    out=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' -H "Host: $PUBLIC_HOST" "http://$JAMS_HOST:8081/" || true)
+    [ "$out" = "302 https://$PUBLIC_HOST:$wp/" ] && ok "port 8081 for Let's Encrypt answers" || ko "port 8081: $out"
+fi
 
 exit "$fail"

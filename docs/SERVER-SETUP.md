@@ -6,14 +6,15 @@ Everything runs from `deploy/` with Docker Compose on `jami-server`
 | Service | Image | Host port(s) | Role |
 |---------|-------|--------------|------|
 | `jams` | `jams:local`, built from `jami-jams/` (`--target prod`) | none (8080 inside the network) | Jami Account Management Server: accounts, name lookup, policies |
-| `caddy` | `caddy:2.10.2-alpine` | 443/tcp, 8443/tcp | TLS reverse proxy for JAMS (443) and the web client (8443) |
+| `caddy` | `caddy:2.10.2-alpine` | 443/tcp, 8443/tcp; with access from the internet also 9443/tcp, 8081/tcp | TLS reverse proxy for JAMS (443, and 9443 from the internet) and the web client (8443); 8081 answers Let's Encrypt |
 | `coturn` | `coturn/coturn:4.6.3` | 3479/udp+tcp, relays 49160-49200/udp (host network) | TURN server pushed to clients by JAMS |
 | `dhtnode` | `jami-dhtnode:local` (Ubuntu 24.04 `dhtnode`, OpenDHT 3.0) | 4222/udp (DHT), 8000/tcp (proxy) | DHT node and DHT proxy pushed to clients by JAMS |
 | `web` | `jami-web:local`, built from `jami-web/` (`--target production`) | 127.0.0.1:8090/tcp (HTTPS for other machines through Caddy on 8443) | Jami web client; users sign in with their JAMS account |
 
 These existing host services are left untouched: `coturn.service` (3478),
 `nginx` (80), `asterisk`, `postgresql`, `jenkins` (8080). Caddy
-therefore serves HTTPS only and has no port 80 listener.
+therefore has no port 80 listener: it serves HTTPS, and plain HTTP only on
+8081 for Let's Encrypt.
 
 ## Configuration
 
@@ -34,6 +35,7 @@ chmod 600 .env
 | `JAMS_TEST_USERS` / `JAMS_TEST_PASSWORD` | Test users (comma-separated) |
 | `TURN_REALM`, `TURN_USER`, `TURN_PASSWORD`, `TURN_PORT`, `TURN_MIN_PORT`, `TURN_MAX_PORT` | coturn (long-term credentials). Keep `TURN_REALM=ring`: JAMS does not push `TURN.realm`, and Jami clients default to `ring`, so any other realm makes their TURN authentication fail. |
 | `TURN_EXTERNAL_IP` | Public IP when clients reach the host through NAT |
+| `PUBLIC_HOST`, `JAMS_PUBLIC_PORT`, `COMPOSE_FILE` | Access from the internet: the public name, the port of JAMS on it (default 9443), and `docker-compose.yml:docker-compose.public.yml` to turn it on |
 | `DHT_PORT`, `DHT_PROXY_PORT`, `DHT_BOOTSTRAP` | OpenDHT node |
 | `WEB_PORT`, `WEB_HTTPS_PORT` | Web client: plain HTTP on 127.0.0.1 (default 8090), HTTPS through Caddy for other machines (default 8443) |
 | `JAMI_WEB_ADMIN_PASSWORD` | Web client administrator (its `/admin` pages) |
@@ -80,7 +82,7 @@ blueprint is updated.
 | 2. Certificate authority | `POST /api/install/ca` | CN `Jami <JAMS_HOST>`, O `Jami`, 10 years |
 | 3. User database | `POST /api/install/auth` | Local database (no LDAP/AD) |
 | 4. Server parameters | `POST /api/install/settings` | Domain `https://<JAMS_HOST>:443`, behind a reverse proxy, SHA512WITHRSA, device and user certificates 1 year, CRL 5 min |
-| Blueprints → new `jami-default` | `POST`/`PUT /api/admin/policy?name=jami-default` | TURN: custom, `<JAMS_HOST>:3479`, `TURN_USER`/`TURN_PASSWORD`. DHT proxy: custom, `<JAMS_HOST>:8000`. UPnP, peer discovery and video on |
+| Blueprints → new `jami-default` | `POST`/`PUT /api/admin/policy?name=jami-default` | TURN: custom, `<host>:3479`, `TURN_USER`/`TURN_PASSWORD`. DHT proxy: custom, `<host>:8000`. `<host>` is `PUBLIC_HOST`, else `JAMS_HOST`. UPnP, peer discovery and video on |
 | Groups → new `jami-users` | `POST /api/admin/group` | Blueprint `jami-default` |
 | Users → new user | `POST /api/admin/user` + `/api/admin/directory/entry` + `/api/admin/group/members/<id>` | `alice`, `bob`; password `JAMS_TEST_PASSWORD` |
 
@@ -139,19 +141,27 @@ OK    GET / -> 200, certificate verified
       X509v3 Subject Alternative Name: critical
           IP Address:192.168.1.92
 OK    user 'alice' can log in
-      turnEnabled=true turnServer=192.168.1.92:3479 turnServerUserName=jami turnServerPassword=(set)
-      proxyEnabled=true proxyServer=192.168.1.92:8000
-OK    blueprint 'jami-default' pushes TURN and DHT proxy
+      turnEnabled=true turnServer=jams.jaybi.uz:3479 turnServerUserName=jami turnServerPassword=(set)
+      proxyEnabled=true proxyServer=jams.jaybi.uz:8000
+OK    blueprint 'jami-default' pushes TURN and DHT proxy at jams.jaybi.uz
 == TURN allocation (192.168.1.92:3479)
 OK    allocation succeeded, 20 messages relayed, 0 lost
 OK    wrong password is rejected
 == DHT proxy (http://192.168.1.92:8000)
-      node_id=8dadb2ef… ipv4 good=12 dubious=27
+      node_id=e8086490… ipv4 good=55 dubious=0
 OK    proxy answers and the node has DHT peers
 == Web client (http://127.0.0.1:8090, https://192.168.1.92:8443)
 OK    GET / on this host -> 200
 OK    GET / through Caddy -> 200, certificate verified
 OK    its daemon trusts the JAMS certificate (GET /api/auth/device -> 401)
+== Access from the internet (https://jams.jaybi.uz:9443, https://jams.jaybi.uz:8443)
+OK    JAMS: GET / -> 200, certificate trusted by the phone apps
+OK    certificate valid until Jan 26 05:28:09 2027 GMT (Caddy renews it 30 days ahead)
+OK    user 'alice' can log in
+OK    JAMS administration is refused (403)
+OK    JAMS setup is refused (404)
+OK    web client: GET / -> 200
+OK    port 8081 for Let's Encrypt answers
 ```
 
 Equivalent manual checks:
@@ -224,6 +234,79 @@ To switch to **Let's Encrypt** when you have a domain:
    vi is available), then run `docker compose restart jams`.
 
 With port 80 taken by nginx, Caddy uses the TLS-ALPN challenge on 443.
+Where the router keeps ports 80 and 443 for other sites, as here, see the
+next section instead.
+
+## Access from the internet
+
+The router (Kerio Control at 192.168.1.5) keeps its public ports 80 and
+443 for its own reverse proxy, which serves other sites
+(dechat.systemhost.uz, ...). That proxy decrypts the connection, which
+would drop the client certificate a Jami device logs in with. So JAMS and
+the web client get their own ports, which the router forwards to this host
+unchanged, at the public name `jams.jaybi.uz` (a CNAME to
+dechat.systemhost.uz, the router's address 5.133.122.43):
+
+| Address | What | Router |
+|---------|------|--------|
+| `https://jams.jaybi.uz:9443` | JAMS for the apps: sign-in, device certificates, contacts and conversations, names. Its administration (`/api/admin/*`, 403) and setup (`/api/install/*`, 404) stay on the LAN, at `https://192.168.1.92` | TCP 9443 |
+| `https://jams.jaybi.uz:8443` | The web client | TCP 8443 |
+| `jams.jaybi.uz:3479`, relays 49160-49200 | TURN | TCP and UDP 3479, UDP 49160-49200 |
+| `jams.jaybi.uz:8000` | DHT proxy | TCP 8000 |
+| port 4222 | DHT node | UDP 4222 |
+| `http://jams.jaybi.uz` | Let's Encrypt's HTTP challenge, which the router's reverse proxy passes on to port 8081 | reverse proxy rule |
+
+On the LAN the router's DNS answers `jams.jaybi.uz` with 192.168.1.92, so
+devices use the same addresses at home and outside, and at home they reach
+this host directly. The router does not pass traffic for its public address
+back into the LAN.
+
+**Router** (Kerio Control administration, https://192.168.1.5:4081):
+
+1. Proxy Server → Reverse Proxy: a rule for host `jams.jaybi.uz`, protocol
+   HTTP only, server `192.168.1.92:8081`, without "Use secured
+   connection", HTTPS redirection or antivirus; above any rule for `*`.
+2. Traffic Rules: source Internet interfaces, destination Firewall,
+   services TCP 9443, TCP 8443, TCP and UDP 3479, UDP 49160-49200, UDP
+   4222, TCP 8000, action Allow, translation Destination NAT to
+   192.168.1.92 with the ports unchanged; above the rule that blocks the
+   rest. Never 80 or 443: they belong to the router's other sites.
+3. DNS: `192.168.1.92 jams.jaybi.uz` in the hosts table, then clear the
+   DNS cache.
+4. DHCP Server: reserve 192.168.1.92 for this host (MAC
+   `bc:24:11:9e:9f:21`): coturn and the blueprint depend on it.
+
+**Server**, from `deploy/`:
+
+1. In `.env`: `COMPOSE_FILE=docker-compose.yml:docker-compose.public.yml`
+   and `PUBLIC_HOST=jams.jaybi.uz` (`JAMS_PUBLIC_PORT` defaults to 9443).
+2. `docker compose up -d`: Caddy serves `caddy/sites/public.caddy` and gets
+   the certificate from Let's Encrypt through the router's port 80 (the
+   TLS-ALPN challenge is off: port 443 is the router's). It renews it 30
+   days ahead.
+3. JAMS's public URL, which goes into the OCSP and CRL addresses of every
+   device certificate it issues: set `serverPublicURI` and the
+   `serverDomain` inside `caConfiguration` to `https://jams.jaybi.uz:9443`
+   in `/home/jams/data/config.json` (see "Let's Encrypt" above), then
+   `docker compose restart jams`. Certificates issued before keep the LAN
+   address: away from home, devices skip that check when it fails.
+4. `sh scripts/jams-setup.sh`: the blueprint gives devices TURN and the DHT
+   proxy at `jams.jaybi.uz`.
+5. `sh scripts/verify.sh`: its "Access from the internet" part checks the
+   public addresses through this host, with the certificate authorities the
+   phone apps ship with.
+
+**Using it.** People sign in with their JAMS user name and password:
+
+| App | Address |
+|-----|---------|
+| Web client | `https://jams.jaybi.uz:8443` |
+| Android, iOS and desktop apps: Advanced features → Connect to management server | `https://jams.jaybi.uz:9443`, typed in full |
+| JAMS administration (users, devices) | `https://192.168.1.92`, on the LAN only |
+
+On Android at home, a "Private DNS" setting makes the phone ask a public
+DNS server, which answers with the router's public address: turn it off.
+`https://jams.jaybi.uz` without a port shows the router's own page.
 
 ## Operations
 

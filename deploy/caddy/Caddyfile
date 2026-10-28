@@ -1,10 +1,16 @@
-# TLS reverse proxy for JAMS and the Jami web client.
-# JAMS_TLS=internal: certificate from Caddy's local CA (root exported to
-# deploy/certs/jams-root.crt by scripts/export-ca.sh).
-# For Let's Encrypt set JAMS_HOST to the public domain and JAMS_TLS to an
-# e-mail address; port 443 must be reachable from the internet.
+# TLS reverse proxy for JAMS and the Jami web client:
+# - on the LAN at JAMS_HOST. JAMS_TLS=internal: certificate from Caddy's
+#   local CA (root exported to deploy/certs/jams-root.crt by
+#   scripts/export-ca.sh). For Let's Encrypt set JAMS_HOST to the public
+#   domain and JAMS_TLS to an e-mail address; port 443 must be reachable
+#   from the internet.
+# - from the internet at PUBLIC_HOST, with Let's Encrypt certificates:
+#   sites/public.caddy, mounted by docker-compose.public.yml
+#   (docs/SERVER-SETUP.md, "Access from the internet").
 {
-	# nginx on the host owns port 80; Caddy only serves HTTPS.
+	# nginx on the host owns port 80. Caddy's HTTP port only answers the
+	# Let's Encrypt challenges of the public sites, which the router passes
+	# on from its port 80.
 	auto_https disable_redirects
 	http_port 8081
 	# Clients connecting to an IP address send no SNI.
@@ -12,27 +18,28 @@
 	servers {
 		# With client_auth on, Caddy by default rejects requests whose
 		# Host differs from the TLS SNI (421), which is every request by
-		# IP. There is one site and the client certificate only
-		# identifies the device to JAMS, so the check protects nothing.
+		# IP. The client certificate only identifies the device to JAMS,
+		# so the check protects nothing.
 		strict_sni_host insecure_off
 	}
 }
 
-https://{$JAMS_HOST}:443 {
-	tls {$JAMS_TLS} {
-		# Jami devices get their JAMS device token (POST /api/login) with
-		# their client certificate. Request one, without making it
-		# mandatory for the web UI.
-		client_auth {
-			mode request
-		}
+# Jami devices get their JAMS device token (POST /api/login) with their
+# client certificate. Request one, without making it mandatory for the
+# web UI.
+(device_certificates) {
+	client_auth {
+		mode request
 	}
-	# JAMS in reverse-proxy mode reads the certificate from X-Client-Cert
-	# and URL-decodes it (nginx $ssl_client_escaped_cert), so '+' must be
-	# sent as %2B. Set it only when there is a certificate: if the header
-	# is present, even empty, JAMS skips username/password login. Without
-	# a certificate the placeholder stays unreplaced, hence the match on
-	# the "MI" that starts every base64 DER certificate.
+}
+
+# JAMS in reverse-proxy mode reads the certificate from X-Client-Cert and
+# URL-decodes it (nginx $ssl_client_escaped_cert), so '+' must be sent as
+# %2B. Set it only when there is a certificate: if the header is present,
+# even empty, JAMS skips username/password login. Without a certificate
+# the placeholder stays unreplaced, hence the match on the "MI" that starts
+# every base64 DER certificate.
+(jams) {
 	@client_cert vars_regexp {http.request.tls.client.certificate_der_base64} ^MI
 	# route keeps these in order (delete first, then set).
 	route {
@@ -43,6 +50,22 @@ https://{$JAMS_HOST}:443 {
 	}
 }
 
+# Let's Encrypt for the public sites, by the HTTP challenge: the router's
+# reverse proxy keeps its ports 80 and 443 and passes http://PUBLIC_HOST
+# on to Caddy's HTTP port. Caddy answers a challenge before any route.
+(public_tls) {
+	issuer acme {
+		disable_tlsalpn_challenge
+	}
+}
+
+https://{$JAMS_HOST}:443 {
+	tls {$JAMS_TLS} {
+		import device_certificates
+	}
+	import jams
+}
+
 # The Jami web client (service web) for other machines: browsers allow the
 # microphone and camera only over HTTPS. Same certificate authority as
 # JAMS; no client certificates here.
@@ -50,3 +73,5 @@ https://{$JAMS_HOST}:{$WEB_HTTPS_PORT} {
 	tls {$JAMS_TLS}
 	reverse_proxy web:8080
 }
+
+import sites/*.caddy

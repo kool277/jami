@@ -1,0 +1,14 @@
+# Access from the internet (docs/SERVER-SETUP.md): JAMS and the web client
+# at PUBLIC_HOST, with Let's Encrypt certificates (caddy/sites/). Enabled
+# by COMPOSE_FILE=docker-compose.yml:docker-compose.public.yml in .env.
+services:
+  caddy:
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST:?set PUBLIC_HOST in .env}
+      JAMS_PUBLIC_PORT: ${JAMS_PUBLIC_PORT:-9443}
+    ports:
+      - "${JAMS_PUBLIC_PORT:-9443}:${JAMS_PUBLIC_PORT:-9443}"
+      # Let's Encrypt HTTP challenge, passed on by the router
+      - "8081:8081"
+    volumes:
+      - ./caddy/sites:/etc/caddy/sites:ro

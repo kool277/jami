@@ -83,10 +83,13 @@ fi
 step "setup wizard complete"
 
 # 2. Blueprint with TURN and DHT proxy ----------------------------------
+# Devices reach both by the public name when there is one: from the
+# internet through the router, on the LAN through its DNS entry for it.
+host=${PUBLIC_HOST:-$JAMS_HOST}
 policy=$(jq -n \
-    --arg turn "$JAMS_HOST:${TURN_PORT:-3479}" \
+    --arg turn "$host:${TURN_PORT:-3479}" \
     --arg tu "$TURN_USER" --arg tp "$TURN_PASSWORD" \
-    --arg proxy "$JAMS_HOST:${DHT_PROXY_PORT:-8000}" '{
+    --arg proxy "$host:${DHT_PROXY_PORT:-8000}" '{
     videoEnabled: true, publicInCalls: false, autoAnswer: false,
     peerDiscovery: true, accountDiscovery: false, accountPublish: false,
     rendezVous: false, defaultModerators: "", upnpEnabled: true,
@@ -97,10 +100,10 @@ policy=$(jq -n \
     uiCustomization: "{\"areTipsEnabled\":true,\"backgroundType\":\"default\"}"}')
 
 if api GET "/api/admin/policy/$blueprint" >/dev/null 2>&1; then
-    step "update blueprint '$blueprint' (TURN + DHT proxy)"
+    step "update blueprint '$blueprint' (TURN + DHT proxy at $host)"
     api PUT "/api/admin/policy?name=$blueprint" "$policy" >/dev/null
 else
-    step "create blueprint '$blueprint' (TURN + DHT proxy)"
+    step "create blueprint '$blueprint' (TURN + DHT proxy at $host)"
     api POST "/api/admin/policy?name=$blueprint" "$policy" >/dev/null
 fi
 

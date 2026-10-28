@@ -1,0 +1,42 @@
+# JAMS and the web client from the internet, at PUBLIC_HOST. The router's
+# reverse proxy keeps the public ports 80 and 443 for other sites, so:
+# - JAMS is at https://PUBLIC_HOST:JAMS_PUBLIC_PORT and the web client at
+#   https://PUBLIC_HOST:WEB_HTTPS_PORT. The router forwards both ports to
+#   this host as they are: Jami devices get their JAMS token with their
+#   client certificate, which a proxy decrypting the connection would drop.
+# - The router's reverse proxy passes http://PUBLIC_HOST (port 80) on to
+#   port 8081 here, for the Let's Encrypt HTTP challenge.
+# On the LAN, the router's DNS answers PUBLIC_HOST with this host's
+# address: devices use the same addresses at home and outside.
+
+https://{$PUBLIC_HOST}:{$JAMS_PUBLIC_PORT} {
+	tls {
+		import public_tls
+		import device_certificates
+	}
+	# JAMS administration and setup stay on the LAN, at https://JAMS_HOST.
+	# The setup API answers 404, as it does once JAMS is set up: the web UI
+	# then shows its login page.
+	handle /api/install/* {
+		respond 404
+	}
+	handle /api/admin/* {
+		respond "JAMS administration is available on the LAN only" 403
+	}
+	handle {
+		import jams
+	}
+}
+
+https://{$PUBLIC_HOST}:{$WEB_HTTPS_PORT} {
+	tls {
+		import public_tls
+	}
+	reverse_proxy web:8080
+}
+
+# http://PUBLIC_HOST through the router: Caddy answers the challenges
+# first; everything else goes to the web client.
+http://{$PUBLIC_HOST}:8081 {
+	redir https://{$PUBLIC_HOST}:{$WEB_HTTPS_PORT}{uri}
+}
