@@ -50,12 +50,27 @@ printf '%s' "$policy" | grep -q "$host:${TURN_PORT:-3479}" &&
     ok "blueprint 'jami-default' pushes TURN and DHT proxy at $host" || ko "blueprint values"
 
 echo "== TURN allocation ($JAMS_HOST:${TURN_PORT:-3479})"
-out=$(docker compose exec -T coturn sh -c 'turnutils_uclient -p "$TURN_PORT" \
-    -u "$TURN_USER" -w "$TURN_PASSWORD" -r "$TURN_REALM" -y -n 5 -m 1 -l 100 '"$JAMS_HOST"' 2>&1')
-lost=$(printf '%s\n' "$out" | sed -n 's/.*Total lost packets \([0-9]*\).*/\1/p')
-recv=$(printf '%s\n' "$out" | sed -n 's/.*tot_recv_msgs=\([0-9]*\)$/\1/p' | tail -1)
-[ -n "$recv" ] && [ "$recv" -gt 0 ] && [ "$lost" = 0 ] &&
-    ok "allocation succeeded, $recv messages relayed, $lost lost" || ko "TURN allocation"
+if [ -z "${TURN_EXTERNAL_IP:-}" ]; then
+    out=$(docker compose exec -T coturn sh -c 'turnutils_uclient -p "$TURN_PORT" \
+        -u "$TURN_USER" -w "$TURN_PASSWORD" -r "$TURN_REALM" -y -n 5 -m 1 -l 100 '"$JAMS_HOST"' 2>&1')
+    lost=$(printf '%s\n' "$out" | sed -n 's/.*Total lost packets \([0-9]*\).*/\1/p')
+    recv=$(printf '%s\n' "$out" | sed -n 's/.*tot_recv_msgs=\([0-9]*\)$/\1/p' | tail -1)
+    [ -n "$recv" ] && [ "$recv" -gt 0 ] && [ "$lost" = 0 ] &&
+        ok "allocation succeeded, $recv messages relayed, $lost lost" || ko "TURN allocation"
+else
+    # Behind the router (coturn/entrypoint.sh), relays get the public
+    # address, and nothing is relayed to private addresses. Relaying between
+    # two clients can't be tried from here: it takes the router passing
+    # traffic for its public address back in. (turnutils_uclient exits with
+    # an error once the relay is refused.)
+    out=$(docker compose exec -T coturn sh -c 'turnutils_uclient -v -p "$TURN_PORT" \
+        -u "$TURN_USER" -w "$TURN_PASSWORD" -r "$TURN_REALM" -e '"$JAMS_HOST"' -n 1 -m 1 -l 100 '"$JAMS_HOST"' 2>&1' || true)
+    relay=$(printf '%s\n' "$out" | sed -n 's/.*Received relay addr: \([0-9.]*\):.*/\1/p' | head -1)
+    [ "$relay" = "${TURN_EXTERNAL_IP%%/*}" ] &&
+        ok "allocation succeeded, relay address $relay (public)" || ko "TURN allocation: relay address ${relay:-none}"
+    printf '%s\n' "$out" | grep -q '403 (Forbidden IP)' &&
+        ok "relaying to this host ($JAMS_HOST) is refused" || ko "TURN relays to $JAMS_HOST"
+fi
 docker compose exec -T coturn sh -c 'turnutils_uclient -p "$TURN_PORT" -u "$TURN_USER" \
     -w not-the-password -r "$TURN_REALM" -y -n 1 -m 1 '"$JAMS_HOST"' 2>&1' |
     grep -q 'Cannot complete Allocation' && ok "wrong password is rejected" || ko "wrong password accepted"

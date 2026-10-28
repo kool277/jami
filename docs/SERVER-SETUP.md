@@ -34,7 +34,7 @@ chmod 600 .env
 | `JAMS_ADMIN_USER` / `JAMS_ADMIN_PASSWORD` | JAMS administrator |
 | `JAMS_TEST_USERS` / `JAMS_TEST_PASSWORD` | Test users (comma-separated) |
 | `TURN_REALM`, `TURN_USER`, `TURN_PASSWORD`, `TURN_PORT`, `TURN_MIN_PORT`, `TURN_MAX_PORT` | coturn (long-term credentials). Keep `TURN_REALM=ring`: JAMS does not push `TURN.realm`, and Jami clients default to `ring`, so any other realm makes their TURN authentication fail. |
-| `TURN_EXTERNAL_IP` | Public IP when clients reach the host through NAT |
+| `TURN_EXTERNAL_IP` | `PUBLIC/PRIVATE` when clients reach the host through NAT: the router's public IP and this host's address ([Access from the internet](#access-from-the-internet)) |
 | `PUBLIC_HOST`, `JAMS_PUBLIC_PORT`, `COMPOSE_FILE` | Access from the internet: the public name, the port of JAMS on it (default 9443), and `docker-compose.yml:docker-compose.public.yml` to turn it on |
 | `DHT_PORT`, `DHT_PROXY_PORT`, `DHT_BOOTSTRAP` | OpenDHT node |
 | `WEB_PORT`, `WEB_HTTPS_PORT` | Web client: plain HTTP on 127.0.0.1 (default 8090), HTTPS through Caddy for other machines (default 8443) |
@@ -145,7 +145,8 @@ OK    user 'alice' can log in
       proxyEnabled=true proxyServer=jams.jaybi.uz:8000
 OK    blueprint 'jami-default' pushes TURN and DHT proxy at jams.jaybi.uz
 == TURN allocation (192.168.1.92:3479)
-OK    allocation succeeded, 20 messages relayed, 0 lost
+OK    allocation succeeded, relay address 5.133.122.43 (public)
+OK    relaying to this host (192.168.1.92) is refused
 OK    wrong password is rejected
 == DHT proxy (http://192.168.1.92:8000)
       node_id=e8086490… ipv4 good=55 dubious=0
@@ -164,10 +165,15 @@ OK    web client: GET / -> 200
 OK    port 8081 for Let's Encrypt answers
 ```
 
+Without access from the internet (`TURN_EXTERNAL_IP` empty), the TURN
+check relays 20 messages between two allocations instead.
+
 Equivalent manual checks:
 
 ```sh
 curl --cacert certs/jams-root.crt https://192.168.1.92/          # JAMS UI
+# without TURN_EXTERNAL_IP; behind the router, coturn refuses the relay
+# (403 Forbidden IP), as it does any relay to a private address
 docker compose exec coturn sh -c 'turnutils_uclient -p "$TURN_PORT" \
   -u "$TURN_USER" -w "$TURN_PASSWORD" -r "$TURN_REALM" -y 192.168.1.92'
 curl http://192.168.1.92:8000/node/info                          # DHT proxy
@@ -278,8 +284,9 @@ back into the LAN.
 
 **Server**, from `deploy/`:
 
-1. In `.env`: `COMPOSE_FILE=docker-compose.yml:docker-compose.public.yml`
-   and `PUBLIC_HOST=jams.jaybi.uz` (`JAMS_PUBLIC_PORT` defaults to 9443).
+1. In `.env`: `COMPOSE_FILE=docker-compose.yml:docker-compose.public.yml`,
+   `PUBLIC_HOST=jams.jaybi.uz` (`JAMS_PUBLIC_PORT` defaults to 9443) and
+   `TURN_EXTERNAL_IP=5.133.122.43/192.168.1.92`.
 2. `docker compose up -d`: Caddy serves `caddy/sites/public.caddy` and gets
    the certificate from Let's Encrypt through the router's port 80 (the
    TLS-ALPN challenge is off: port 443 is the router's). It renews it 30
@@ -295,6 +302,28 @@ back into the LAN.
 5. `sh scripts/verify.sh`: its "Access from the internet" part checks the
    public addresses through this host, with the certificate authorities the
    phone apps ship with.
+
+**TURN behind the router.** coturn opens relays on 192.168.1.92 and gives
+clients 5.133.122.43 as their relay address, which the router forwards
+back. It relays nothing to private or reserved addresses
+(`coturn/entrypoint.sh`): every device gets the TURN credentials from the
+blueprint, and the web client gives them to every browser, so a relay must
+not reach into the LAN or into this host's other services. Given as
+`PUBLIC/PRIVATE` in one `--external-ip`, coturn would allow every port of
+192.168.1.92 (`mainrelay.c`: "Whitelisting external-ip private part"), so
+the entrypoint passes the two parts as `--external-ip` and `--relay-ip`.
+What this leaves out:
+
+- Devices on the LAN connect to each other directly, not through relays.
+  A device outside reaches one on the LAN through the relay of the LAN
+  device.
+- Two relays of this server cannot reach each other, since the router does
+  not pass traffic for its public address back in. A call where neither
+  side can reach the other except through relays fails.
+- For the same reason, Docker networks on this host that are isolated
+  from each other no longer reach each other through TURN: a container
+  with a Jami daemon that talks to the web client's daemon belongs on its
+  network (`jami_default`).
 
 **Using it.** People sign in with their JAMS user name and password:
 
