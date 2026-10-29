@@ -274,7 +274,7 @@ dechat.systemhost.uz, the router's address 5.133.122.43):
 
 | Address | What | Router |
 |---------|------|--------|
-| `https://jams.jaybi.uz:9443` | JAMS for the apps: sign-in, device certificates, contacts and conversations, names. Its administration (`/api/admin/*`, 403) and setup (`/api/install/*`, 404) stay on the LAN, at `https://192.168.1.92` | TCP 9443 |
+| `https://jams.jaybi.uz:9443` | JAMS for the apps: sign-in, device certificates, contacts and conversations, names. In a browser, each user's own profile, devices and contacts. Its administration (`/api/admin/*`, 403) and setup (`/api/install/*`, 404) stay on the LAN, at `https://192.168.1.92` | TCP 9443 |
 | `https://jams.jaybi.uz:8443` | The web client, and the apps page at `/downloads/` | TCP 8443 |
 | `jams.jaybi.uz:3479`, relays 49160-49200 | TURN | TCP and UDP 3479, UDP 49160-49200 |
 | `jams.jaybi.uz:8000` | DHT proxy | TCP 8000 |
@@ -321,7 +321,9 @@ back into the LAN.
 5. `sh scripts/fetch-apps.sh`: the apps page gives the public addresses.
 6. `sh scripts/verify.sh`: its "Access from the internet" part checks the
    public addresses through this host, with the certificate authorities the
-   phone apps ship with.
+   phone apps ship with. It does not go through the router: to check the
+   port forwarding, open `https://jams.jaybi.uz:8443` on a phone on mobile
+   data.
 
 **TURN behind the router.** coturn opens relays on 192.168.1.92 and gives
 clients 5.133.122.43 as their relay address, which the router forwards
@@ -352,6 +354,7 @@ What this leaves out:
 | Web client | `https://jams.jaybi.uz:8443` |
 | Android, iOS and desktop apps: Advanced features → Connect to management server | `https://jams.jaybi.uz:9443`, typed in full |
 | Apps | `https://jams.jaybi.uz:8443/downloads/` |
+| Your devices (revoke a lost one there) and contacts | `https://jams.jaybi.uz:9443` in a browser |
 | JAMS administration (users, devices) | `https://192.168.1.92`, on the LAN only |
 
 On Android at home, a "Private DNS" setting makes the phone ask a public
