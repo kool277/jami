@@ -6,11 +6,12 @@
 # upgrades JAMS without touching its data.
 #
 # Cap the heap at 2 GB; JAMS keeps about 350 MB live. Without a cap the
-# JVM takes up to a quarter of the host's memory: JAMS's update check
-# reads its jars (200 MB) every 2 minutes, and that garbage reached
-# 12 GB. JDK_JAVA_OPTIONS also reaches jams-server.jar, which
-# jams-launcher.jar starts as a second java process. If the heap runs
-# out, JAMS exits and Docker restarts it.
+# JVM takes up to a quarter of the host's memory and keeps it: JAMS
+# reached 12 GB, mostly garbage from its update check, which read all
+# its jars (200 MB) every 2 minutes before v3.8-kool277.3.
+# JDK_JAVA_OPTIONS also reaches jams-server.jar, which jams-launcher.jar
+# starts as a second java process. If the heap runs out, JAMS exits and
+# Docker restarts it.
 set -eu
 
 data=/home/jams/data
