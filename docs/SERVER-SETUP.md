@@ -68,7 +68,9 @@ JAMS reads its state from its working directory, which also holds its
 jars. `deploy/jams/entrypoint.sh` therefore runs JAMS from the volume
 and copies the image's jars into it on every start. Rebuilding the
 image upgrades JAMS and keeps its data. Back up by stopping `jams`
-and copying `jami_jams-data`.
+and copying `jami_jams-data`. The entrypoint also caps JAMS's Java
+heap at 2 GB: JAMS keeps about 350 MB in use, but without a cap its
+heap grew to 12 GB, a quarter of this host's memory.
 
 ## JAMS setup
 
