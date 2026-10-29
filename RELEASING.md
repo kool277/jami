@@ -145,13 +145,14 @@ jami-client-qt and jami-client-android.
   ```
 
 - **Roll back `:latest` on GHCR** (for deployments that pull it): point it
-  at the previous version. The packages are public (pulls need no login;
-  only pushes do), set once in each package's settings on GitHub.
+  at the previous version. The packages are private, so pulls need a
+  login too.
 
   ```sh
+  docker login ghcr.io -u kool277    # a token with read:packages and write:packages
   docker pull ghcr.io/kool277/jams:v3.8-kool277.1
   docker tag ghcr.io/kool277/jams:v3.8-kool277.1 ghcr.io/kool277/jams:latest
-  docker push ghcr.io/kool277/jams:latest    # after docker login ghcr.io
+  docker push ghcr.io/kool277/jams:latest
   ```
 
 - **Withdraw a release**: `gh release edit <tag> --repo kool277/<name> --prerelease`
