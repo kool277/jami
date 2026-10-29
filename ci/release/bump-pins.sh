@@ -25,10 +25,11 @@ done)
 paths=$(printf '%s\n' "$subs" | awk '{print $1}')
 short() { printf %s "$1" | cut -c1-10; }
 
+# set -e is off in a command followed by ||, so each fetch stops the loop
+# itself.
 printf '%s\n' "$subs" | while read -r path branch; do
-    git -C "$path" fetch -q origin "$branch"
-    git -C "$path" update-ref refs/kool277/bump FETCH_HEAD
-done || exit 1
+    git -C "$path" fetch -q origin "+$branch:refs/kool277/bump" || exit
+done || exit
 
 for path in $paths; do
     old=$(git ls-tree HEAD "$path" | awk '{print $3}')
