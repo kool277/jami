@@ -33,6 +33,13 @@
 	}
 }
 
+# Compress pages, scripts and JSON for browsers that accept it: the JAMS
+# web page's script is 1.4 MB, 0.4 MB with gzip. The Jami apps do not ask
+# for compression, and the downloads (APKs, archives) are left as they are.
+(compress) {
+	encode zstd gzip
+}
+
 # JAMS in reverse-proxy mode reads the certificate from X-Client-Cert and
 # URL-decodes it (nginx $ssl_client_escaped_cert), so '+' must be sent as
 # %2B. Set it only when there is a certificate: if the header is present,
@@ -40,6 +47,7 @@
 # the placeholder stays unreplaced, hence the match on the "MI" that starts
 # every base64 DER certificate.
 (jams) {
+	import compress
 	@client_cert vars_regexp {http.request.tls.client.certificate_der_base64} ^MI
 	# route keeps these in order (delete first, then set).
 	route {
@@ -87,6 +95,7 @@ https://{$JAMS_HOST}:443 {
 # JAMS; no client certificates here, so phones can fetch the apps too.
 https://{$JAMS_HOST}:{$WEB_HTTPS_PORT} {
 	tls {$JAMS_TLS}
+	import compress
 	import downloads
 	handle {
 		reverse_proxy web:8080

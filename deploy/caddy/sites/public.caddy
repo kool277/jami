@@ -33,6 +33,7 @@ https://{$PUBLIC_HOST}:{$WEB_HTTPS_PORT} {
 	tls {
 		import public_tls
 	}
+	import compress
 	import downloads
 	handle {
 		reverse_proxy web:8080
