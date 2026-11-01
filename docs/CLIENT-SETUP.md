@@ -34,9 +34,12 @@ runs on the server's own Ubuntu 24.04 desktop with:
 - Qt 6.12.0 in `/opt/qt/6.12.0/gcc_64`, copied from the build image (as
   root): `docker run --rm -v /opt/qt:/out --entrypoint sh jami-client-qt-build -c 'cp -a /opt/qt/6.12.0 /out/'`
 - the system libraries it links that a desktop install lacks:
-  `apt install libjsoncpp25 libsecp256k1-1 libvdpau1 libvpx9 libx264-164 libyaml-cpp0.8 libxcb-cursor0`
+  `apt install libjsoncpp25 libsecp256k1-1 libvdpau1 libvpx9 libx264-164 libyaml-cpp0.8 libxcb-cursor0 libva2 libva-drm2 libva-x11-2`
   (without `libxcb-cursor0`, Qt's X11 plugin does not load and the client
-  exits at once)
+  exits at once; without the `libva` ones it does not start: `error while
+  loading shared libraries: libva-drm.so.2`). jami-server already had the
+  `libva` ones; a fresh Ubuntu 24.04 desktop does not (checked 2026-10-31
+  against its package manifest)
 - the JAMS certificate trusted system-wide (`SERVER-SETUP.md` → TLS):
   `/usr/local/share/ca-certificates/jams-root.crt`, then
   `update-ca-certificates`

@@ -250,10 +250,12 @@ EOF
     else
         qt_step="# Qt $qt_version in $qt (docs/CLIENT-SETUP.md)"
     fi
+    # The libraries that the app links and a stock Ubuntu 24.04 desktop
+    # lacks (docs/CLIENT-SETUP.md).
     cat <<EOF
 </ul>
 <p>In the folder with the downloads:</p>
-<pre>sudo apt install libjsoncpp25 libsecp256k1-1 libvdpau1 libvpx9 libx264-164 libyaml-cpp0.8 libxcb-cursor0
+<pre>sudo apt install libjsoncpp25 libsecp256k1-1 libvdpau1 libvpx9 libx264-164 libyaml-cpp0.8 libxcb-cursor0 libva2 libva-drm2 libva-x11-2
 $qt_step
 EOF
     # The public address has a certificate that the system already trusts.
