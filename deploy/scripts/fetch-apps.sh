@@ -64,6 +64,20 @@ fetch jami-client-android "$android" "$(apk withFirebase)"
 fetch jami-client-ios "$ios" "$ipa"
 fetch jami-client-qt "$desktop" "$tarball"
 
+# The Windows installer and the macOS disk image come from GitHub Actions
+# (kool277/jami-client-qt .github/workflows/kool277-desktop.yml), since
+# release v1.7.0: a release may not have them, or not yet.
+msi=jami-client-qt-$desktop-windows-x86_64.msi
+dmg=jami-client-qt-$desktop-macos-arm64.dmg
+assets=$(curl -fsSL --retry 20 --retry-delay 30 --retry-all-errors \
+    "https://api.github.com/repos/kool277/jami-client-qt/releases/tags/$desktop" |
+    python3 -I -c 'import json, sys; print("\n".join(a["name"] for a in json.load(sys.stdin)["assets"]))')
+for f in "$msi" "$dmg"; do
+    if printf '%s\n' "$assets" | grep -qxF "$f"; then
+        fetch jami-client-qt "$desktop" "$f"
+    fi
+done
+
 qt_tar=qt-$qt_version-gcc_64-runtime.tar.xz
 if [ ! -f "$out/$qt_tar" ] && [ -d "$qt/lib" ]; then
     echo "pack  $qt_tar"
@@ -266,9 +280,50 @@ tar -xzf $tarball
 ${tarball%.tar.gz}/bin/jami</pre>
 <p>Then in Jami: <b>Advanced features</b> → <b>Connect to management server</b>,
 and the address above.</p>
+EOF
+    # Without a signing identity, both systems warn before the first start.
+    if [ -f "$out/$tag/$msi" ]; then
+        cat <<EOF
+
+<h2>Windows</h2>
+<p>Version $desktop, for Windows 10 and 11 (64-bit).</p>
+<ul class="files">
+$(entry "$tag/$msi")
+</ul>
+<ul>
+<li>The installer is not signed, so Windows says “Windows protected your PC”:
+click <b>More info</b>, then <b>Run anyway</b>.</li>
+<li>Then in Jami: <b>Advanced features</b> → <b>Connect to management server</b>,
+and the address above.</li>
+</ul>
+EOF
+    fi
+    if [ -f "$out/$tag/$dmg" ]; then
+        cat <<EOF
+
+<h2>macOS</h2>
+<p>Version $desktop, for Macs with Apple silicon (M1 and later) and macOS 13 or later.</p>
+<ul class="files">
+$(entry "$tag/$dmg")
+</ul>
+<ul>
+<li>Open the disk image and drag Jami to Applications.</li>
+<li>Apple hasn't checked this app, so macOS won't open it the first time: click
+<b>Done</b>, open <b>System Settings</b> → <b>Privacy &amp; Security</b>, click
+<b>Open Anyway</b> next to the message about Jami, and confirm.</li>
+<li>Then in Jami: <b>Advanced features</b> → <b>Connect to management server</b>,
+and the address above.</li>
+</ul>
+EOF
+    fi
+    if [ ! -f "$out/$tag/$msi" ] && [ ! -f "$out/$tag/$dmg" ]; then
+        cat <<EOF
 
 <h2>Windows and macOS</h2>
-<p>No builds yet.</p>
+<p>No builds in this release.</p>
+EOF
+    fi
+    cat <<EOF
 
 <footer>Files from the GitHub releases of
 <a href="https://github.com/kool277/jami/releases/tag/$tag">Jami platform $tag</a>,
