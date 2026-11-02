@@ -29,7 +29,7 @@ component's version):
 | Component | Release asset | Image |
 |-----------|---------------|-------|
 | jami-daemon | `jami-daemon-<version>-linux-x86_64.tar.gz`: jamid, libjami-core.a, headers, jami.pc (prefix `/usr/local`) | |
-| jami-client-qt | `jami-client-qt-<version>-linux-x86_64.tar.gz`: bin/jami and share/ (needs Qt 6.12.0 in `/opt/qt/6.12.0/gcc_64`) | |
+| jami-client-qt | `jami-client-qt-<version>-linux-x86_64.tar.gz`: bin/jami and share/ (needs Qt 6.12.0 in `/opt/qt/6.12.0/gcc_64`); `jami-client-qt-<version>-windows-x86_64.msi`, the Windows installer; `jami-client-qt-<version>-macos-arm64.dmg`, the app for Macs with Apple silicon. Both are unsigned: Windows and macOS warn before the first start | |
 | jami-client-android | `jami-android-<version>-<flavor>.apk` for the noPush, withFirebase and withUnifiedPush flavors (arm64-v8a, x86_64, armeabi-v7a), signed with the release keystore (`android-keystore` below) | |
 | jami-client-ios | `jami-ios-<version>-unsigned.ipa`: the app for devices (arm64), unsigned: it has to be signed with an Apple identity before it installs | |
 | jami-jams | `jams-<version>.zip`: the jams folder (jams-launcher.jar) and versions.json | `ghcr.io/kool277/jams:<version>`, `:latest` |
@@ -49,6 +49,15 @@ Before a platform release, its release path can be tried without
 publishing anything: `gh workflow run kool277.yml -R kool277/jami-client-ios
 -f platform=main` builds the device app against the daemon that `main`
 pins and keeps the `.ipa` as a workflow artifact for a week.
+
+The Windows and macOS apps of jami-client-qt build on GitHub Actions too,
+because they need MSVC and Xcode: `.github/workflows/kool277-desktop.yml`
+(https://github.com/kool277/jami-client-qt/actions) publishes them to the
+same release as the Linux app that Jenkins builds. A first build takes
+about an hour (Qt and the daemon's contribs); later ones reuse their
+caches. Its dry run:
+`gh workflow run kool277-desktop.yml -R kool277/jami-client-qt -f
+platform=main` keeps the `.msi` and the `.dmg` as artifacts for a week.
 
 ## Prerequisites
 
