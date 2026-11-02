@@ -12,9 +12,10 @@
 # A component that did not change since an earlier release keeps its
 # version, whose tag exists already: it is left as it is. The script does
 # not wait for the component builds: their releases appear when those
-# pipelines finish. Re-running is safe: existing tags must already point at
-# the pinned commit, and an existing release is left as it is. DRY_RUN=1
-# only prints what it would tag and the release notes.
+# pipelines finish. A failed GitHub request stops the script, and
+# re-running it is safe: existing tags must already point at the pinned
+# commit, and an existing release is left as it is. DRY_RUN=1 only prints
+# what it would tag and the release notes.
 #   GH_TOKEN=... ci/release/platform-release.sh v1.0.0
 #   DRY_RUN=1 ci/release/platform-release.sh v1.0.0
 set -eu
@@ -49,11 +50,18 @@ done || exit 1
     echo "|-----------|---------|----------|--------|"
 } >"$notes"
 
+# set -e does not apply inside this loop (its status is tested by ||):
+# every gh call stops it by itself on failure.
 printf '%s\n' "$versions" | while read -r repo sha version upstream; do
-    # The commit the tag points at, through its tag object if annotated.
-    # gh prints the error body on stdout when the tag does not exist, so
-    # keep its output only when it succeeds.
-    existing=$(gh api "repos/kool277/$repo/commits/$version" -q .sha 2>/dev/null) || existing=
+    # matching-refs answers an empty list when no tag starts with the
+    # version, so a request that failed (no network, rate limit) is never
+    # taken for a missing tag.
+    refs=$(gh api "repos/kool277/$repo/git/matching-refs/tags/$version" -q '.[].ref') || exit 1
+    existing=
+    if printf '%s\n' "$refs" | grep -Fqx "refs/tags/$version"; then
+        # The commit the tag points at, through its tag object if annotated.
+        existing=$(gh api "repos/kool277/$repo/commits/$version" -q .sha) || exit 1
+    fi
     if [ -z "$existing" ] && [ -n "${DRY_RUN:-}" ]; then
         echo "$repo: would tag $version at $(short "$sha")"
     elif [ -z "$existing" ]; then
@@ -61,8 +69,8 @@ printf '%s\n' "$versions" | while read -r repo sha version upstream; do
         # commit, and the jobs only build tags younger than 7 days.
         obj=$(gh api -X POST "repos/kool277/$repo/git/tags" -f tag="$version" \
             -f message="$(printf '%s %s\n\nPlatform: %s\nUpstream: %s\n' "$repo" "$version" "$TAG" "$upstream")" \
-            -f object="$sha" -f type=commit -q .sha)
-        gh api -X POST "repos/kool277/$repo/git/refs" -f ref="refs/tags/$version" -f sha="$obj" >/dev/null
+            -f object="$sha" -f type=commit -q .sha) || exit 1
+        gh api -X POST "repos/kool277/$repo/git/refs" -f ref="refs/tags/$version" -f sha="$obj" >/dev/null || exit 1
         echo "$repo: tagged $version at $(short "$sha")"
     elif [ "$existing" = "$sha" ]; then
         echo "$repo: $version already at $(short "$sha")"
