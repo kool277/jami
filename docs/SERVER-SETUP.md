@@ -371,3 +371,105 @@ docker compose restart jams
 docker compose down                  # stops; volumes stay
 docker compose build jams && docker compose up -d jams   # after updating jami-jams/
 ```
+
+## Moving to another server
+
+The repository holds the code and the configuration. What makes this
+server this server is outside it: `deploy/.env` and the seven volumes of
+[Persistence](#persistence). Without them a new server starts empty: no
+users or devices (`jami_jams-data`), a new Caddy CA that no device trusts
+(`jami_caddy-data`), new web client accounts. Jenkins keeps its jobs,
+history and credentials in `/var/lib/jenkins`. They hold passwords and
+private keys, so they never go into this public repository: they go
+encrypted with gpg (AES-256) into the releases of the private repository
+[kool277/jami-server-backup](https://github.com/kool277/jami-server-backup),
+under a passphrase that stays off GitHub, in `~/jami-migration.key` on the
+server that made them; copy it to the new server by hand. The backup of
+2026-11-05 is its release `backup-2026-11-05`.
+
+**Back up**, from `deploy/` on the old server. JAMS and the web client stop
+for the copy (25 s on 2026-11-05), so that their databases are copied
+whole. Accounts and devices added afterwards are not in it: make the last
+backup at the switch.
+
+```sh
+umask 077; b=jami-server-backup-$(date -u +%F); d=~/jami-migration/$b
+mkdir -p $d/volumes && cp .env $d/deploy.env
+docker compose stop jams web
+for v in jams-data web-data web-daemon-config web-daemon-data caddy-data caddy-config coturn-data; do
+  docker run --rm --network none --user 0 --entrypoint sh -v jami_$v:/v:ro -v $d/volumes:/out \
+    jams:local -c "tar --numeric-owner -C /v -cf /out/jami_$v.tar . && chown $(id -u) /out/jami_$v.tar"
+done
+docker compose start jams web
+[ -e ~/jami-migration.key ] || openssl rand -base64 48 > ~/jami-migration.key
+tar -C ~/jami-migration -cf - $b | zstd -19 -T0 | gpg --batch --pinentry-mode loopback \
+  --passphrase-file ~/jami-migration.key --symmetric --cipher-algo AES256 -o $d.tar.zst.gpg
+shred -u $d/deploy.env $d/volumes/*.tar && rmdir $d/volumes $d
+gh release create backup-$(date -u +%F) -R kool277/jami-server-backup $d.tar.zst.gpg
+```
+
+Jenkins' home goes without its workspaces (54 GB) and caches, which come
+back with the builds, in parts under GitHub's limit of 2 GB per release
+file (`sudo` asks for the password):
+
+```sh
+sudo tar -C /var/lib --exclude=jenkins/workspace --exclude=jenkins/caches -cf - jenkins \
+  | zstd -10 -T0 | gpg --batch --pinentry-mode loopback --passphrase-file ~/jami-migration.key \
+      --symmetric --cipher-algo AES256 \
+  | split -b 1900M -d - ~/jami-migration/jenkins-home-$(date -u +%F).tar.zst.gpg.part
+gh release upload backup-$(date -u +%F) -R kool277/jami-server-backup ~/jami-migration/jenkins-home-*.part*
+```
+
+**Restore**, on the new server: Docker with its Compose plugin, `gh` signed
+in as kool277, the workspace cloned as in the README's
+[Clone](../README.md#clone) (the server builds only from `jami-jams` and
+`jami-web`), and the key copied to `~/jami-migration.key` with mode 600.
+From `deploy/`, before anything has run there. Docker creates a missing
+bind-mount file as a directory when the container starts, so Caddy starts
+first, `scripts/export-ca.sh` writes the certificates the web client
+mounts, and then the rest:
+
+```sh
+b=jami-server-backup-2026-11-05; d=~/jami-migration/$b
+gh release download backup-2026-11-05 -R kool277/jami-server-backup -p "$b.tar.zst.gpg" -D ~/jami-migration
+gpg --batch --pinentry-mode loopback --passphrase-file ~/jami-migration.key \
+  -d $d.tar.zst.gpg | zstd -d | tar -C ~/jami-migration -x
+cp $d/deploy.env .env && chmod 600 .env    # then the address, below
+docker compose up --no-start --build       # images, containers and volumes; nothing runs
+for f in $d/volumes/*.tar; do
+  docker run --rm --network none --user 0 --entrypoint tar -v "$(basename $f .tar):/v" \
+    -v "$f:/b.tar:ro" jams:local --numeric-owner -C /v -xf /b.tar
+done
+docker compose up -d caddy       # and JAMS: the restored CA and certificates
+sh scripts/export-ca.sh          # certs/ from that CA: the root devices already trust
+docker compose up -d
+sh scripts/jams-setup.sh         # safe to re-run: sets the blueprint again from .env
+sh scripts/web-setup.sh          # safe to re-run: points the web client at JAMS_HOST
+sh scripts/fetch-apps.sh         # the apps page; downloads/ is not in the backup
+sh scripts/verify.sh
+shred -u $d/deploy.env $d/volumes/*.tar
+```
+
+**The address.** The simplest move gives the new server the old one's
+address, 192.168.1.92, through the router's DHCP reservation (with the new
+server's MAC), once the old server is off: then nothing else changes.
+Otherwise:
+
+| Where | What changes |
+|-------|--------------|
+| `.env` | `JAMS_HOST`, and the private part of `TURN_EXTERNAL_IP` (the public part too if the router's public address changes); then `scripts/jams-setup.sh` and `scripts/web-setup.sh` |
+| Router ([Access from the internet](#access-from-the-internet)) | The reverse proxy rule (`<address>:8081`, for Let's Encrypt renewals), the Destination NAT of the traffic rule, the hosts table entry of `jams.jaybi.uz`, the DHCP reservation |
+| Devices | The JAMS administration moves to `https://<address>` on the LAN. Apps signed in at `https://jams.jaybi.uz:9443` keep working once the router points there; device certificates issued with the old LAN address in their OCSP and CRL addresses fail that check, which devices skip, as away from home |
+
+**Jenkins**, if it moves too: install the same version (pkg.jenkins.io) and
+Docker, add the `jenkins` user to the `docker` group, then:
+
+```sh
+sudo systemctl stop jenkins
+cat ~/jami-migration/jenkins-home-*.part* | gpg --batch --pinentry-mode loopback \
+  --passphrase-file ~/jami-migration.key -d | zstd -d | sudo tar -C /var/lib -x
+sudo chown -R jenkins:jenkins /var/lib/jenkins && sudo systemctl start jenkins
+```
+
+Without that backup, `ci/jenkins/setup.sh plugins` and `ci/jenkins/setup.sh
+jobs` set up a new Jenkins, whose GitHub credentials are entered by hand.
